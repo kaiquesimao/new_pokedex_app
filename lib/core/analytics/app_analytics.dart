@@ -77,10 +77,7 @@ class FirebaseAppAnalytics implements AppAnalytics {
 
   @override
   void sortChanged({required String sortLabel}) {
-    _analytics.logEvent(
-      name: 'sort_changed',
-      parameters: {'sort': sortLabel},
-    );
+    _analytics.logEvent(name: 'sort_changed', parameters: {'sort': sortLabel});
   }
 
   @override
@@ -89,7 +86,7 @@ class FirebaseAppAnalytics implements AppAnalytics {
       name: 'favorite_toggled',
       parameters: {
         'pokemon_id': pokemonId,
-        'is_favorite': isFavorite,
+        'is_favorite': isFavorite ? 'true' : 'false',
       },
     );
   }

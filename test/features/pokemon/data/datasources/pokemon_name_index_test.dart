@@ -9,7 +9,7 @@ void main() {
   late PokemonLocalDataSource local;
 
   setUp(() {
-    db = AppDatabase.forTesting(NativeDatabase.memory());
+    db = AppDatabase(NativeDatabase.memory());
     local = PokemonLocalDataSource(db);
   });
 

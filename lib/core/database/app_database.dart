@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
@@ -30,9 +28,7 @@ class PokemonNameIndex extends Table {
 
 @DriftDatabase(tables: [CachedPokemonEntries, PokemonNameIndex])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
-
-  AppDatabase.forTesting(super.executor);
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 2;
@@ -145,12 +141,13 @@ class AppDatabase extends _$AppDatabase {
   bool isFresh(DateTime cachedAt) {
     return DateTime.now().difference(cachedAt) < cacheTtl;
   }
-}
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'pokedex_cache.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
+  static QueryExecutor _openConnection() {
+    return driftDatabase(
+      name: 'pokedex_cache',
+      native: const DriftNativeOptions(
+        databaseDirectory: getApplicationSupportDirectory,
+      ),
+    );
+  }
 }
