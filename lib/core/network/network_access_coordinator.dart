@@ -1,18 +1,15 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 
 /// Applies global network policies when connectivity changes.
 class NetworkAccessCoordinator {
   NetworkAccessCoordinator({
-    required ConnectivityService connectivity,
-    required bool firebaseAvailable,
+    required this._connectivity,
+    required this._firebaseAvailable,
     FirebaseFirestore? firestore,
-  }) : _connectivity = connectivity,
-       _firebaseAvailable = firebaseAvailable,
-       _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final ConnectivityService _connectivity;
   final bool _firebaseAvailable;
@@ -29,8 +26,6 @@ class NetworkAccessCoordinator {
   }
 
   Future<void> _apply(bool online) async {
-    GoogleFonts.config.allowRuntimeFetching = online;
-
     if (!_firebaseAvailable) return;
 
     try {

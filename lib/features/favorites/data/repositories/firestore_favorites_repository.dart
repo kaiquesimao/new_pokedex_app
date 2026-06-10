@@ -10,10 +10,9 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   FirestoreFavoritesRepository({
     required this.userId,
     required this.localCache,
-    required ConnectivityService connectivity,
+    required this._connectivity,
     FirebaseFirestore? firestore,
-  }) : _connectivity = connectivity,
-       _firestore = firestore ?? FirebaseFirestore.instance {
+  }) : _firestore = firestore ?? FirebaseFirestore.instance {
     if (_connectivity.isOnline) {
       unawaited(_syncOnLogin());
     }

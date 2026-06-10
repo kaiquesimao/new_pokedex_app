@@ -19,6 +19,12 @@ final class NotFoundException extends AppException {
   const NotFoundException([super.message = 'Resource not found']);
 }
 
+final class ApiException extends AppException {
+  const ApiException(super.message, {this.statusCode});
+
+  final int? statusCode;
+}
+
 final class OfflineEmptyCacheException extends AppException {
   const OfflineEmptyCacheException([
     super.message =

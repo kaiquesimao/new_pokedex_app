@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
@@ -13,6 +17,7 @@ class RegionalPokedexState {
     this.isLoadingSummaries = false,
     this.totalCount = 0,
     this.error,
+    this.errorIsConnectivityFailure = false,
     this.isOfflineMode = false,
   });
 
@@ -21,6 +26,7 @@ class RegionalPokedexState {
   final bool isLoadingSummaries;
   final int totalCount;
   final String? error;
+  final bool errorIsConnectivityFailure;
   final bool isOfflineMode;
 
   bool get hasMore => items.length < totalCount;
@@ -34,6 +40,7 @@ class RegionalPokedexState {
     bool? isLoadingSummaries,
     int? totalCount,
     String? error,
+    bool? errorIsConnectivityFailure,
     bool? isOfflineMode,
     bool clearError = false,
   }) {
@@ -43,22 +50,31 @@ class RegionalPokedexState {
       isLoadingSummaries: isLoadingSummaries ?? this.isLoadingSummaries,
       totalCount: totalCount ?? this.totalCount,
       error: clearError ? null : (error ?? this.error),
+      errorIsConnectivityFailure: clearError
+          ? false
+          : (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
     );
   }
 }
 
 class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
-  RegionalPokedexNotifier(this._regionRepository, this._pokemonRepository)
-    : super(const RegionalPokedexState());
+  RegionalPokedexNotifier(
+    this._regionRepository,
+    this._pokemonRepository,
+    this._connectivity,
+  ) : super(const RegionalPokedexState());
 
   final RegionRepository _regionRepository;
   final PokemonRepository _pokemonRepository;
+  final ConnectivityService _connectivity;
 
   static const int _concurrency = 8;
   int _loadGeneration = 0;
 
   Future<void> load(String regionName) async {
+    await _connectivity.refresh();
+
     final generation = ++_loadGeneration;
 
     state = const RegionalPokedexState(isLoadingEntries: true);
@@ -67,7 +83,9 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
       final entries = await _regionRepository.getRegionalPokedexEntries(
         regionName,
       );
-      final isOfflineMode = _regionRepository.takeOfflineFallbackUsed();
+      final isOfflineMode =
+          _regionRepository.takeOfflineFallbackUsed() &&
+          !_connectivity.isOnline;
 
       if (generation != _loadGeneration) return;
 
@@ -89,9 +107,14 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
       );
     } catch (error) {
       if (generation != _loadGeneration) return;
+      final connectivityFailure = isConnectivityFailure(error);
       state = RegionalPokedexState(
         error: friendlyErrorMessage(error),
-        isOfflineMode: _regionRepository.takeOfflineFallbackUsed(),
+        errorIsConnectivityFailure: connectivityFailure,
+        isOfflineMode:
+            connectivityFailure &&
+            _regionRepository.takeOfflineFallbackUsed() &&
+            !_connectivity.isOnline,
       );
     }
   }
@@ -121,7 +144,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
         isLoadingSummaries: visible.length < entries.length,
         totalCount: entries.length,
         isOfflineMode:
-            isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed(),
+            (isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed()) &&
+            !_connectivity.isOnline,
       );
     }
 
@@ -164,7 +188,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
       items: _contiguousPrefix(entries, loaded),
       totalCount: entries.length,
       isOfflineMode:
-          isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed(),
+          (isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed()) &&
+          !_connectivity.isOnline,
     );
   }
 
@@ -180,6 +205,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
     }
     return visible;
   }
+
+  bool get showingOfflineData => state.isOfflineMode;
 }
 
 final regionalPokedexProvider =
@@ -188,10 +215,23 @@ final regionalPokedexProvider =
       RegionalPokedexState,
       String
     >((ref, regionName) {
+      final connectivity = ref.watch(connectivityServiceProvider);
       final notifier = RegionalPokedexNotifier(
         ref.watch(regionRepositoryProvider),
         ref.watch(pokemonRepositoryProvider),
+        connectivity,
       );
+
+      ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (
+        previous,
+        next,
+      ) {
+        if (next.value != true) return;
+        if (notifier.showingOfflineData) {
+          unawaited(notifier.load(regionName));
+        }
+      });
+
       Future.microtask(() => notifier.load(regionName));
       return notifier;
     });

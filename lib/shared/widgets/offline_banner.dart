@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 
 class OfflineBanner extends StatelessWidget {
   const OfflineBanner({
@@ -43,34 +45,75 @@ class OfflineBanner extends StatelessWidget {
   }
 }
 
+/// Wraps the entire app so the offline banner stays fixed above all routes.
+class AppOfflineShell extends ConsumerWidget {
+  const AppOfflineShell({super.key, required this.child});
+
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        const ConnectivityOfflineBanner(compact: true),
+        Expanded(child: child ?? const SizedBox.shrink()),
+      ],
+    );
+  }
+}
+
+class ConnectivityOfflineBanner extends ConsumerWidget {
+  const ConnectivityOfflineBanner({
+    super.key,
+    this.message =
+        'Você está offline. Mostrando Pokémon salvos no dispositivo.',
+    this.compact = false,
+  });
+
+  final String message;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOnline = ref.watch(isDeviceOnlineProvider);
+    if (isOnline) return const SizedBox.shrink();
+    return OfflineBanner(message: message, compact: compact);
+  }
+}
+
 class OfflineEmptyState extends StatelessWidget {
   const OfflineEmptyState({
     super.key,
     required this.message,
     required this.onRetry,
+    this.isConnectivityFailure = true,
   });
 
   final String message;
   final VoidCallback onRetry;
+  final bool isConnectivityFailure;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final title = isConnectivityFailure ? 'Sem conexão' : 'Erro ao carregar';
+    final icon = isConnectivityFailure
+        ? Icons.cloud_off_outlined
+        : Icons.error_outline_rounded;
 
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.cloud_off_outlined,
-              size: 56,
-              color: theme.colorScheme.outline,
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(icon, size: 52, color: theme.colorScheme.outline),
             ),
             const SizedBox(height: 16),
             Text(
-              'Sem conexão',
+              title,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),

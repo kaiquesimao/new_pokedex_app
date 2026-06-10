@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
@@ -21,6 +24,7 @@ class PokemonListState {
     this.lockedItemCount = 0,
     this.batchTarget = 0,
     this.error,
+    this.errorIsConnectivityFailure = false,
     this.isOfflineMode = false,
     this.catalogIds = const [],
     this.catalogCursor = 0,
@@ -35,6 +39,7 @@ class PokemonListState {
   final int lockedItemCount;
   final int batchTarget;
   final String? error;
+  final bool errorIsConnectivityFailure;
   final bool isOfflineMode;
   final List<int> catalogIds;
   final int catalogCursor;
@@ -54,6 +59,7 @@ class PokemonListState {
     int? lockedItemCount,
     int? batchTarget,
     String? error,
+    bool? errorIsConnectivityFailure,
     bool? isOfflineMode,
     bool clearError = false,
     List<int>? catalogIds,
@@ -69,6 +75,9 @@ class PokemonListState {
       lockedItemCount: lockedItemCount ?? this.lockedItemCount,
       batchTarget: batchTarget ?? this.batchTarget,
       error: clearError ? null : (error ?? this.error),
+      errorIsConnectivityFailure: clearError
+          ? false
+          : (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
       catalogIds: catalogIds ?? this.catalogIds,
       catalogCursor: catalogCursor ?? this.catalogCursor,
@@ -77,11 +86,15 @@ class PokemonListState {
 }
 
 class PokemonListNotifier extends StateNotifier<PokemonListState> {
-  PokemonListNotifier(this._repository, this._filtersNotifier)
-    : super(const PokemonListState());
+  PokemonListNotifier(
+    this._repository,
+    this._filtersNotifier,
+    this._connectivity,
+  ) : super(const PokemonListState());
 
   final PokemonRepository _repository;
   final PokemonFiltersNotifier _filtersNotifier;
+  final ConnectivityService _connectivity;
 
   static const int _pageSize = 20;
   static const int _catalogBatchSize = 20;
@@ -93,6 +106,8 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
 
   Future<void> loadInitial() async {
     if (state.isLoadingIds || state.isLoadingSummaries) return;
+
+    await _connectivity.refresh();
 
     final generation = ++_loadGeneration;
     state = const PokemonListState(isLoadingIds: true);
@@ -108,9 +123,11 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       }
     } catch (error) {
       if (generation != _loadGeneration) return;
+      final connectivityFailure = isConnectivityFailure(error);
       state = PokemonListState(
         error: friendlyErrorMessage(error),
-        isOfflineMode: error is! OfflineEmptyCacheException,
+        errorIsConnectivityFailure: connectivityFailure,
+        isOfflineMode: connectivityFailure,
       );
     }
   }
@@ -122,6 +139,8 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
         !state.hasMore) {
       return;
     }
+
+    await _connectivity.refresh();
 
     final generation = _loadGeneration;
     state = state.copyWith(isLoadingMore: true, clearError: true);
@@ -137,10 +156,12 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       }
     } catch (error) {
       if (generation != _loadGeneration) return;
+      final connectivityFailure = isConnectivityFailure(error);
       state = state.copyWith(
         isLoadingMore: false,
         error: friendlyErrorMessage(error),
-        isOfflineMode: true,
+        errorIsConnectivityFailure: connectivityFailure,
+        isOfflineMode: connectivityFailure,
       );
     }
   }
@@ -171,7 +192,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       weakToTypes: null,
       catalogIds: const [],
       catalogCursor: 0,
-      isOfflineMode: slice.fromCache,
+      isOfflineMode: slice.fromCache && !_connectivity.isOnline,
     );
   }
 
@@ -193,7 +214,8 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       weakToTypes: null,
       catalogIds: state.catalogIds,
       catalogCursor: state.catalogCursor,
-      isOfflineMode: slice.fromCache || state.isOfflineMode,
+      isOfflineMode:
+          (slice.fromCache || state.isOfflineMode) && !_connectivity.isOnline,
     );
   }
 
@@ -499,6 +521,8 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
     return sorted;
   }
 
+  bool get showingOfflineData => state.isOfflineMode;
+
   Future<Set<PokemonType>?> _resolveWeakToTypes(
     PokemonListFilters filters,
   ) async {
@@ -517,14 +541,27 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
 final pokemonListProvider =
     StateNotifierProvider<PokemonListNotifier, PokemonListState>((ref) {
       final filtersNotifier = ref.watch(pokemonFiltersProvider.notifier);
+      final connectivity = ref.watch(connectivityServiceProvider);
       final notifier = PokemonListNotifier(
         ref.watch(pokemonRepositoryProvider),
         filtersNotifier,
+        connectivity,
       );
 
       ref.listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
         if (previous == next) return;
         notifier.reloadForFilters(next);
+      });
+
+      ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (
+        previous,
+        next,
+      ) {
+        final online = next.value;
+        if (online != true) return;
+        if (notifier.showingOfflineData) {
+          unawaited(notifier.loadInitial());
+        }
       });
 
       return notifier;

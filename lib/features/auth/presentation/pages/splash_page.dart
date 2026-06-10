@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:pokedex_app/core/theme/app_fonts.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -96,7 +96,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             children: [
               RichText(
                 text: TextSpan(
-                  style: GoogleFonts.poppins(
+                  style: AppFonts.poppins(
                     fontSize: 48,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -1,

@@ -75,12 +75,6 @@ class RegionalPokedexPage extends ConsumerWidget {
                 ],
               ),
             ),
-            if (state.isOfflineMode)
-              const OfflineBanner(
-                message:
-                    'Modo offline. Mostrando a Pokédex regional salva no dispositivo.',
-                compact: true,
-              ),
             Expanded(child: _buildBody(context, ref, state, filters)),
           ],
         ),
@@ -101,6 +95,7 @@ class RegionalPokedexPage extends ConsumerWidget {
     if (state.error != null && state.items.isEmpty) {
       return OfflineEmptyState(
         message: state.error!,
+        isConnectivityFailure: state.errorIsConnectivityFailure,
         onRetry: () => ref
             .read(regionalPokedexProvider(regionName).notifier)
             .load(regionName),

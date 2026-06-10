@@ -255,16 +255,35 @@ class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     try {
-      final listResponse = await _remote.fetchPokemonList(
-        offset: 0,
-        limit: 2000,
-      );
-      final refs = _mapRefs(listResponse.results);
+      final refs = await _fetchAllPokemonRefsForIndex();
       await _local.replaceNameIndex(refs);
-      _allPokemonRefsCache = listResponse.results;
+      _allPokemonRefsCache = refs
+          .map(
+            (ref) =>
+                NamedApiResource(name: ref.name, url: '/pokemon/${ref.id}/'),
+          )
+          .toList();
     } catch (error) {
-      if (!isNetworkError(error)) rethrow;
+      if (error is! NetworkException && error is! ApiException) rethrow;
     }
+  }
+
+  Future<List<PokemonRef>> _fetchAllPokemonRefsForIndex() async {
+    const pageSize = 100;
+    final refs = <PokemonRef>[];
+    var offset = 0;
+
+    while (true) {
+      final page = await _remote.fetchPokemonList(
+        offset: offset,
+        limit: pageSize,
+      );
+      refs.addAll(_mapRefs(page.results));
+      if (page.next == null) break;
+      offset += pageSize;
+    }
+
+    return refs;
   }
 
   @override

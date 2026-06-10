@@ -46,9 +46,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     AuthState? initial,
     this._firebaseAuth,
     this._googleSignIn,
-    ConnectivityService? connectivity,
-  }) : _connectivity = connectivity,
-       super(initial ?? const AuthState());
+    this._connectivity,
+  }) : super(initial ?? const AuthState());
 
   final FirebaseAuth? _firebaseAuth;
   final GoogleSignIn? _googleSignIn;

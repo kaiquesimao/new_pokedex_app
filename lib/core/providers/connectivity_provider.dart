@@ -9,6 +9,17 @@ final isOnlineProvider = Provider<bool>((ref) {
   return ref.watch(connectivityServiceProvider).isOnline;
 });
 
+/// Reactive online status for UI. Prefer this over [isOnlineProvider].
+final isDeviceOnlineProvider = Provider<bool>((ref) {
+  final status = ref.watch(connectivityStatusProvider);
+  return status.maybeWhen(
+    data: (online) => online,
+    orElse: () {
+      return ref.watch(isOnlineProvider);
+    },
+  );
+});
+
 final connectivityStatusProvider = StreamProvider<bool>((ref) {
   return ref.watch(connectivityServiceProvider).onlineStatus;
 });

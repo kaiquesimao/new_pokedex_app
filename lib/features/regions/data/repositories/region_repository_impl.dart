@@ -8,11 +8,7 @@ import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_en
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
 
 class RegionRepositoryImpl implements RegionRepository {
-  RegionRepositoryImpl({
-    required PokeApiClient client,
-    required RegionLocalDataSource local,
-  }) : _client = client,
-       _local = local;
+  RegionRepositoryImpl({required this._client, required this._local});
 
   final PokeApiClient _client;
   final RegionLocalDataSource _local;

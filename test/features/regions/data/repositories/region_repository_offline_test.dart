@@ -2,7 +2,6 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
-import 'package:pokedex_app/core/errors/app_exception.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/features/regions/data/datasources/region_local_datasource.dart';
 import 'package:pokedex_app/features/regions/data/repositories/region_repository_impl.dart';

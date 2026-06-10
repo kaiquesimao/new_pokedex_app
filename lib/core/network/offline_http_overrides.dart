@@ -12,26 +12,14 @@ class OfflineHttpOverrides extends HttpOverrides {
 
   @override
   HttpClient createHttpClient(SecurityContext? context) {
+    if (connectivity.isOnline) {
+      return super.createHttpClient(context);
+    }
+
     final client = super.createHttpClient(context);
-
-    client.connectionFactory =
-        (Uri url, String? proxyHost, int? proxyPort) async {
-          if (!connectivity.isOnline) {
-            throw const SocketException(offlineMessage);
-          }
-
-          final host = proxyHost ?? url.host;
-          final port =
-              proxyPort ??
-              (url.hasPort
-                  ? url.port
-                  : url.scheme == 'https'
-                  ? HttpClient.defaultHttpsPort
-                  : HttpClient.defaultHttpPort);
-
-          return Socket.startConnect(host, port);
-        };
-
+    client.connectionFactory = (Uri url, String? proxyHost, int? proxyPort) {
+      throw const SocketException(offlineMessage);
+    };
     return client;
   }
 }

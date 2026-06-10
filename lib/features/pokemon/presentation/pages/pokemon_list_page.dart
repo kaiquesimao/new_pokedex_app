@@ -111,7 +111,6 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                     .read(pokemonFiltersProvider.notifier)
                     .setGeneration(null),
               ),
-            if (state.isOfflineMode) const OfflineBanner(compact: true),
             Expanded(child: _buildBody(state)),
           ],
         ),
@@ -147,6 +146,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         !state.isLoadingIds) {
       return OfflineEmptyState(
         message: state.error!,
+        isConnectivityFailure: state.errorIsConnectivityFailure,
         onRetry: () => ref.read(pokemonListProvider.notifier).loadInitial(),
       );
     }

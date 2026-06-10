@@ -37,6 +37,7 @@ class PokemonDetailPage extends ConsumerWidget {
         body: SafePageBody.belowAppBar(
           child: OfflineEmptyState(
             message: friendlyErrorMessage(error),
+            isConnectivityFailure: isConnectivityFailure(error),
             onRetry: () =>
                 ref.invalidate(pokemonDetailBundleProvider(pokemonId)),
           ),
@@ -46,7 +47,6 @@ class PokemonDetailPage extends ConsumerWidget {
         pokemonId: pokemonId,
         pokemon: bundle.detail,
         evolution: bundle.evolution,
-        isOfflineMode: bundle.isOfflineMode,
       ),
     );
   }
@@ -57,13 +57,11 @@ class _PokemonDetailContent extends ConsumerStatefulWidget {
     required this.pokemonId,
     required this.pokemon,
     required this.evolution,
-    this.isOfflineMode = false,
   });
 
   final int pokemonId;
   final PokemonDetail pokemon;
   final EvolutionChain evolution;
-  final bool isOfflineMode;
 
   @override
   ConsumerState<_PokemonDetailContent> createState() =>
@@ -103,84 +101,73 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafePageBody(
-        child: Column(
-          children: [
-            if (widget.isOfflineMode)
-              const OfflineBanner(
-                message: 'Modo offline. Alguns dados podem estar incompletos.',
-                compact: true,
-              ),
-            Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: _HeroSection(
-                      pokemonId: widget.pokemonId,
-                      pokemon: pokemon,
-                      headerColor: headerColor,
-                      isFavorite: isFavorite,
-                      onFavoriteTap: () => _toggleFavorite(context),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            pokemon.displayName,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '#${pokemon.id.toString().padLeft(3, '0')}',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: pokemon.types
-                                .map((t) => PokemonTypeChip(type: t))
-                                .toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: PokemonDetailAboutSection(pokemon: pokemon),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                  SliverToBoxAdapter(
-                    child: PokemonWeaknessSection(types: pokemon.types),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                  SliverToBoxAdapter(
-                    child: _EvolutionSection(
-                      pokemonId: widget.pokemonId,
-                      evolution: widget.evolution,
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _CollapsibleStats(
-                      pokemon: pokemon,
-                      expanded: _statsExpanded,
-                      onToggle: () =>
-                          setState(() => _statsExpanded = !_statsExpanded),
-                    ),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                ],
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: _HeroSection(
+                pokemonId: widget.pokemonId,
+                pokemon: pokemon,
+                headerColor: headerColor,
+                isFavorite: isFavorite,
+                onFavoriteTap: () => _toggleFavorite(context),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pokemon.displayName,
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '#${pokemon.id.toString().padLeft(3, '0')}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: pokemon.types
+                          .map((t) => PokemonTypeChip(type: t))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: PokemonDetailAboutSection(pokemon: pokemon),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverToBoxAdapter(
+              child: PokemonWeaknessSection(types: pokemon.types),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverToBoxAdapter(
+              child: _EvolutionSection(
+                pokemonId: widget.pokemonId,
+                evolution: widget.evolution,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: _CollapsibleStats(
+                pokemon: pokemon,
+                expanded: _statsExpanded,
+                onToggle: () =>
+                    setState(() => _statsExpanded = !_statsExpanded),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),
