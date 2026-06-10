@@ -1,0 +1,20 @@
+{
+  "id": 2,
+  "name": "original",
+  "pokemon_entries": [
+    {
+      "entry_number": 1,
+      "pokemon_species": {
+        "name": "bulbasaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+      }
+    },
+    {
+      "entry_number": 2,
+      "pokemon_species": {
+        "name": "ivysaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+      }
+    }
+  ]
+}

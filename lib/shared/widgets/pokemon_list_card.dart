@@ -1,0 +1,85 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
+import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
+
+class PokemonListCard extends StatelessWidget {
+  const PokemonListCard({
+    super.key,
+    required this.number,
+    required this.name,
+    required this.types,
+    this.spriteUrl,
+    this.onTap,
+  });
+
+  final int number;
+  final String name;
+  final List<PokemonType> types;
+  final String? spriteUrl;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '#${number.toString().padLeft(3, '0')}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Hero(
+                    tag: PokemonHeroTags.sprite(number),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: spriteUrl != null
+                          ? CachedNetworkImage(
+                              imageUrl: spriteUrl!,
+                              height: 72,
+                              memCacheWidth: 96,
+                              memCacheHeight: 96,
+                              fit: BoxFit.contain,
+                              errorWidget: (_, _, _) =>
+                                  const Icon(Icons.catching_pokemon, size: 48),
+                            )
+                          : const Icon(Icons.catching_pokemon, size: 48),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                name,
+                style: theme.textTheme.titleLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: types
+                    .map(
+                      (type) => PokemonTypeChip(type: type, showLabel: false),
+                    )
+                    .toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
