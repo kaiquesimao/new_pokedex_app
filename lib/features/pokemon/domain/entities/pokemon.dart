@@ -95,10 +95,12 @@ class PokemonListSlice {
     required this.totalCount,
     required this.hasMore,
     required this.nextOffset,
+    this.fromCache = false,
   });
 
   final List<int> ids;
   final int totalCount;
   final bool hasMore;
   final int nextOffset;
+  final bool fromCache;
 }

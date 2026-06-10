@@ -1,6 +1,8 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/network/connectivity_service.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 
 /// Analytics facade. Uses Firebase when bootstrap is available.
@@ -55,13 +57,19 @@ class NoOpAppAnalytics implements AppAnalytics {
 }
 
 class FirebaseAppAnalytics implements AppAnalytics {
-  FirebaseAppAnalytics(this._analytics);
+  FirebaseAppAnalytics(this._analytics, this._connectivity);
 
   final FirebaseAnalytics _analytics;
+  final ConnectivityService _connectivity;
+
+  void _logEvent({required String name, Map<String, Object>? parameters}) {
+    if (!_connectivity.isOnline) return;
+    _analytics.logEvent(name: name, parameters: parameters);
+  }
 
   @override
   void pokemonViewed({required int pokemonId, required String name}) {
-    _analytics.logEvent(
+    _logEvent(
       name: 'pokemon_viewed',
       parameters: {'pokemon_id': pokemonId, 'name': name},
     );
@@ -69,20 +77,17 @@ class FirebaseAppAnalytics implements AppAnalytics {
 
   @override
   void filterType({String? typeName}) {
-    _analytics.logEvent(
-      name: 'filter_type',
-      parameters: {'type': typeName ?? 'todos'},
-    );
+    _logEvent(name: 'filter_type', parameters: {'type': typeName ?? 'todos'});
   }
 
   @override
   void sortChanged({required String sortLabel}) {
-    _analytics.logEvent(name: 'sort_changed', parameters: {'sort': sortLabel});
+    _logEvent(name: 'sort_changed', parameters: {'sort': sortLabel});
   }
 
   @override
   void favoriteToggled({required int pokemonId, required bool isFavorite}) {
-    _analytics.logEvent(
+    _logEvent(
       name: 'favorite_toggled',
       parameters: {
         'pokemon_id': pokemonId,
@@ -93,17 +98,17 @@ class FirebaseAppAnalytics implements AppAnalytics {
 
   @override
   void regionOpened({required String regionName}) {
-    _analytics.logEvent(
-      name: 'region_opened',
-      parameters: {'region': regionName},
-    );
+    _logEvent(name: 'region_opened', parameters: {'region': regionName});
   }
 }
 
 final appAnalyticsProvider = Provider<AppAnalytics>((ref) {
   final bootstrap = ref.watch(firebaseBootstrapProvider);
   if (bootstrap.isAvailable) {
-    return FirebaseAppAnalytics(FirebaseAnalytics.instance);
+    return FirebaseAppAnalytics(
+      FirebaseAnalytics.instance,
+      ref.watch(connectivityServiceProvider),
+    );
   }
   return const NoOpAppAnalytics();
 });

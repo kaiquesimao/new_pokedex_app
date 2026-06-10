@@ -592,6 +592,293 @@ class PokemonNameIndexCompanion extends UpdateCompanion<PokemonNameIndexData> {
   }
 }
 
+class $CachedRegionalPokedexEntriesTable extends CachedRegionalPokedexEntries
+    with
+        TableInfo<
+          $CachedRegionalPokedexEntriesTable,
+          CachedRegionalPokedexEntry
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CachedRegionalPokedexEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _regionNameMeta = const VerificationMeta(
+    'regionName',
+  );
+  @override
+  late final GeneratedColumn<String> regionName = GeneratedColumn<String>(
+    'region_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entriesJsonMeta = const VerificationMeta(
+    'entriesJson',
+  );
+  @override
+  late final GeneratedColumn<String> entriesJson = GeneratedColumn<String>(
+    'entries_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cachedAtMeta = const VerificationMeta(
+    'cachedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
+    'cached_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [regionName, entriesJson, cachedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cached_regional_pokedex_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CachedRegionalPokedexEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('region_name')) {
+      context.handle(
+        _regionNameMeta,
+        regionName.isAcceptableOrUnknown(data['region_name']!, _regionNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_regionNameMeta);
+    }
+    if (data.containsKey('entries_json')) {
+      context.handle(
+        _entriesJsonMeta,
+        entriesJson.isAcceptableOrUnknown(
+          data['entries_json']!,
+          _entriesJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_entriesJsonMeta);
+    }
+    if (data.containsKey('cached_at')) {
+      context.handle(
+        _cachedAtMeta,
+        cachedAt.isAcceptableOrUnknown(data['cached_at']!, _cachedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cachedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {regionName};
+  @override
+  CachedRegionalPokedexEntry map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CachedRegionalPokedexEntry(
+      regionName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}region_name'],
+      )!,
+      entriesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entries_json'],
+      )!,
+      cachedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cached_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CachedRegionalPokedexEntriesTable createAlias(String alias) {
+    return $CachedRegionalPokedexEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CachedRegionalPokedexEntry extends DataClass
+    implements Insertable<CachedRegionalPokedexEntry> {
+  final String regionName;
+  final String entriesJson;
+  final DateTime cachedAt;
+  const CachedRegionalPokedexEntry({
+    required this.regionName,
+    required this.entriesJson,
+    required this.cachedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['region_name'] = Variable<String>(regionName);
+    map['entries_json'] = Variable<String>(entriesJson);
+    map['cached_at'] = Variable<DateTime>(cachedAt);
+    return map;
+  }
+
+  CachedRegionalPokedexEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CachedRegionalPokedexEntriesCompanion(
+      regionName: Value(regionName),
+      entriesJson: Value(entriesJson),
+      cachedAt: Value(cachedAt),
+    );
+  }
+
+  factory CachedRegionalPokedexEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CachedRegionalPokedexEntry(
+      regionName: serializer.fromJson<String>(json['regionName']),
+      entriesJson: serializer.fromJson<String>(json['entriesJson']),
+      cachedAt: serializer.fromJson<DateTime>(json['cachedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'regionName': serializer.toJson<String>(regionName),
+      'entriesJson': serializer.toJson<String>(entriesJson),
+      'cachedAt': serializer.toJson<DateTime>(cachedAt),
+    };
+  }
+
+  CachedRegionalPokedexEntry copyWith({
+    String? regionName,
+    String? entriesJson,
+    DateTime? cachedAt,
+  }) => CachedRegionalPokedexEntry(
+    regionName: regionName ?? this.regionName,
+    entriesJson: entriesJson ?? this.entriesJson,
+    cachedAt: cachedAt ?? this.cachedAt,
+  );
+  CachedRegionalPokedexEntry copyWithCompanion(
+    CachedRegionalPokedexEntriesCompanion data,
+  ) {
+    return CachedRegionalPokedexEntry(
+      regionName: data.regionName.present
+          ? data.regionName.value
+          : this.regionName,
+      entriesJson: data.entriesJson.present
+          ? data.entriesJson.value
+          : this.entriesJson,
+      cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedRegionalPokedexEntry(')
+          ..write('regionName: $regionName, ')
+          ..write('entriesJson: $entriesJson, ')
+          ..write('cachedAt: $cachedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(regionName, entriesJson, cachedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CachedRegionalPokedexEntry &&
+          other.regionName == this.regionName &&
+          other.entriesJson == this.entriesJson &&
+          other.cachedAt == this.cachedAt);
+}
+
+class CachedRegionalPokedexEntriesCompanion
+    extends UpdateCompanion<CachedRegionalPokedexEntry> {
+  final Value<String> regionName;
+  final Value<String> entriesJson;
+  final Value<DateTime> cachedAt;
+  final Value<int> rowid;
+  const CachedRegionalPokedexEntriesCompanion({
+    this.regionName = const Value.absent(),
+    this.entriesJson = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CachedRegionalPokedexEntriesCompanion.insert({
+    required String regionName,
+    required String entriesJson,
+    required DateTime cachedAt,
+    this.rowid = const Value.absent(),
+  }) : regionName = Value(regionName),
+       entriesJson = Value(entriesJson),
+       cachedAt = Value(cachedAt);
+  static Insertable<CachedRegionalPokedexEntry> custom({
+    Expression<String>? regionName,
+    Expression<String>? entriesJson,
+    Expression<DateTime>? cachedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (regionName != null) 'region_name': regionName,
+      if (entriesJson != null) 'entries_json': entriesJson,
+      if (cachedAt != null) 'cached_at': cachedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CachedRegionalPokedexEntriesCompanion copyWith({
+    Value<String>? regionName,
+    Value<String>? entriesJson,
+    Value<DateTime>? cachedAt,
+    Value<int>? rowid,
+  }) {
+    return CachedRegionalPokedexEntriesCompanion(
+      regionName: regionName ?? this.regionName,
+      entriesJson: entriesJson ?? this.entriesJson,
+      cachedAt: cachedAt ?? this.cachedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (regionName.present) {
+      map['region_name'] = Variable<String>(regionName.value);
+    }
+    if (entriesJson.present) {
+      map['entries_json'] = Variable<String>(entriesJson.value);
+    }
+    if (cachedAt.present) {
+      map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedRegionalPokedexEntriesCompanion(')
+          ..write('regionName: $regionName, ')
+          ..write('entriesJson: $entriesJson, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -600,6 +887,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PokemonNameIndexTable pokemonNameIndex = $PokemonNameIndexTable(
     this,
   );
+  late final $CachedRegionalPokedexEntriesTable cachedRegionalPokedexEntries =
+      $CachedRegionalPokedexEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -607,6 +896,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     cachedPokemonEntries,
     pokemonNameIndex,
+    cachedRegionalPokedexEntries,
   ];
 }
 
@@ -974,6 +1264,191 @@ typedef $$PokemonNameIndexTableProcessedTableManager =
       PokemonNameIndexData,
       PrefetchHooks Function()
     >;
+typedef $$CachedRegionalPokedexEntriesTableCreateCompanionBuilder =
+    CachedRegionalPokedexEntriesCompanion Function({
+      required String regionName,
+      required String entriesJson,
+      required DateTime cachedAt,
+      Value<int> rowid,
+    });
+typedef $$CachedRegionalPokedexEntriesTableUpdateCompanionBuilder =
+    CachedRegionalPokedexEntriesCompanion Function({
+      Value<String> regionName,
+      Value<String> entriesJson,
+      Value<DateTime> cachedAt,
+      Value<int> rowid,
+    });
+
+class $$CachedRegionalPokedexEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CachedRegionalPokedexEntriesTable> {
+  $$CachedRegionalPokedexEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get regionName => $composableBuilder(
+    column: $table.regionName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entriesJson => $composableBuilder(
+    column: $table.entriesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CachedRegionalPokedexEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CachedRegionalPokedexEntriesTable> {
+  $$CachedRegionalPokedexEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get regionName => $composableBuilder(
+    column: $table.regionName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entriesJson => $composableBuilder(
+    column: $table.entriesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CachedRegionalPokedexEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CachedRegionalPokedexEntriesTable> {
+  $$CachedRegionalPokedexEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get regionName => $composableBuilder(
+    column: $table.regionName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entriesJson => $composableBuilder(
+    column: $table.entriesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get cachedAt =>
+      $composableBuilder(column: $table.cachedAt, builder: (column) => column);
+}
+
+class $$CachedRegionalPokedexEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CachedRegionalPokedexEntriesTable,
+          CachedRegionalPokedexEntry,
+          $$CachedRegionalPokedexEntriesTableFilterComposer,
+          $$CachedRegionalPokedexEntriesTableOrderingComposer,
+          $$CachedRegionalPokedexEntriesTableAnnotationComposer,
+          $$CachedRegionalPokedexEntriesTableCreateCompanionBuilder,
+          $$CachedRegionalPokedexEntriesTableUpdateCompanionBuilder,
+          (
+            CachedRegionalPokedexEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $CachedRegionalPokedexEntriesTable,
+              CachedRegionalPokedexEntry
+            >,
+          ),
+          CachedRegionalPokedexEntry,
+          PrefetchHooks Function()
+        > {
+  $$CachedRegionalPokedexEntriesTableTableManager(
+    _$AppDatabase db,
+    $CachedRegionalPokedexEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CachedRegionalPokedexEntriesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$CachedRegionalPokedexEntriesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CachedRegionalPokedexEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> regionName = const Value.absent(),
+                Value<String> entriesJson = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedRegionalPokedexEntriesCompanion(
+                regionName: regionName,
+                entriesJson: entriesJson,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String regionName,
+                required String entriesJson,
+                required DateTime cachedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => CachedRegionalPokedexEntriesCompanion.insert(
+                regionName: regionName,
+                entriesJson: entriesJson,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CachedRegionalPokedexEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CachedRegionalPokedexEntriesTable,
+      CachedRegionalPokedexEntry,
+      $$CachedRegionalPokedexEntriesTableFilterComposer,
+      $$CachedRegionalPokedexEntriesTableOrderingComposer,
+      $$CachedRegionalPokedexEntriesTableAnnotationComposer,
+      $$CachedRegionalPokedexEntriesTableCreateCompanionBuilder,
+      $$CachedRegionalPokedexEntriesTableUpdateCompanionBuilder,
+      (
+        CachedRegionalPokedexEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $CachedRegionalPokedexEntriesTable,
+          CachedRegionalPokedexEntry
+        >,
+      ),
+      CachedRegionalPokedexEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -982,4 +1457,10 @@ class $AppDatabaseManager {
       $$CachedPokemonEntriesTableTableManager(_db, _db.cachedPokemonEntries);
   $$PokemonNameIndexTableTableManager get pokemonNameIndex =>
       $$PokemonNameIndexTableTableManager(_db, _db.pokemonNameIndex);
+  $$CachedRegionalPokedexEntriesTableTableManager
+  get cachedRegionalPokedexEntries =>
+      $$CachedRegionalPokedexEntriesTableTableManager(
+        _db,
+        _db.cachedRegionalPokedexEntries,
+      );
 }

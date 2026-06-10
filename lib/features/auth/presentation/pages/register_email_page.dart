@@ -5,6 +5,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/register_flow_p
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 enum _RegisterStep { email, password, name }
 
@@ -96,7 +97,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
           },
         ),
       ),
-      body: SafeArea(
+      body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -159,7 +160,8 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
 
   String get _subtitle => switch (_step) {
     _RegisterStep.email => 'Usaremos este e-mail para acessar sua conta.',
-    _RegisterStep.password => 'Use pelo menos 6 caracteres para proteger sua conta.',
+    _RegisterStep.password =>
+      'Use pelo menos 6 caracteres para proteger sua conta.',
     _RegisterStep.name => 'Este nome aparecerá no seu perfil de treinador.',
   };
 

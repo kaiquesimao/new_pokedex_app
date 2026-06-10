@@ -11,29 +11,61 @@ class PokemonLocalDataSource {
 
   final AppDatabase _db;
 
-  Future<PokemonSummary?> getSummary(int id) async {
+  Future<PokemonSummary?> getSummary(int id, {bool allowStale = false}) async {
     final entry = await _db.getEntry(id);
-    if (entry == null || !_db.isFresh(entry.cachedAt)) return null;
+    if (entry == null) return null;
+    if (!allowStale && !_db.isFresh(entry.cachedAt)) return null;
 
     return _entryToSummary(entry);
   }
 
-  Future<List<PokemonSummary>> getSummaries(List<int> ids) async {
+  Future<List<PokemonSummary>> getSummaries(
+    List<int> ids, {
+    bool allowStale = false,
+  }) async {
     final entries = await _db.getEntriesByIds(ids);
     return entries
-        .where((e) => _db.isFresh(e.cachedAt))
+        .where((e) => allowStale || _db.isFresh(e.cachedAt))
         .map(_entryToSummary)
         .toList();
   }
 
-  Future<PokemonResponse?> getPokemonResponse(int id) async {
+  Future<PokemonResponse?> getPokemonResponse(
+    int id, {
+    bool allowStale = false,
+  }) async {
     final entry = await _db.getEntry(id);
-    if (entry?.detailJson == null || !_db.isFresh(entry!.cachedAt)) {
+    if (entry?.detailJson == null) return null;
+    if (!allowStale && !_db.isFresh(entry!.cachedAt)) {
       return null;
     }
     return PokemonResponse.fromJson(
-      jsonDecode(entry.detailJson!) as Map<String, dynamic>,
+      jsonDecode(entry!.detailJson!) as Map<String, dynamic>,
     );
+  }
+
+  Future<int> countCachedSummaries() => _db.countCachedEntries();
+
+  Future<bool> hasCachedData() async {
+    return (await countCachedSummaries()) > 0;
+  }
+
+  Future<List<PokemonSummary>> getCachedSummariesPage({
+    required int offset,
+    required int limit,
+  }) async {
+    final entries = await _db.getCachedEntriesPage(
+      offset: offset,
+      limit: limit,
+    );
+    return entries.map(_entryToSummary).toList();
+  }
+
+  Future<List<int>> getAllCachedSummaryIds() => _db.getAllCachedEntryIds();
+
+  Future<List<PokemonRef>> searchCachedRefsByName(String query) async {
+    final rows = await _db.searchCachedEntriesByName(query);
+    return rows.map((row) => PokemonRef(id: row.id, name: row.name)).toList();
   }
 
   Future<void> saveSummary(PokemonSummary summary) {

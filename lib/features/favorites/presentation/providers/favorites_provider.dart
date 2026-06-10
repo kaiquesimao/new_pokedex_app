@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/data/repositories/firestore_favorites_repository.dart';
@@ -21,7 +22,11 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
 
   final userId = auth.uid ?? auth.email;
   if (auth.isAuthenticated && userId != null) {
-    return FirestoreFavoritesRepository(userId: userId, localCache: local);
+    return FirestoreFavoritesRepository(
+      userId: userId,
+      localCache: local,
+      connectivity: ref.watch(connectivityServiceProvider),
+    );
   }
 
   return local;

@@ -1,21 +1,82 @@
+import 'package:pokedex_app/core/constants/region_card_assets.dart';
+import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
+import 'package:pokedex_app/features/regions/data/datasources/region_local_datasource.dart';
 import 'package:pokedex_app/features/regions/data/models/region_models.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
 
 class RegionRepositoryImpl implements RegionRepository {
-  RegionRepositoryImpl({required this._client});
+  RegionRepositoryImpl({
+    required PokeApiClient client,
+    required RegionLocalDataSource local,
+  }) : _client = client,
+       _local = local;
 
   final PokeApiClient _client;
+  final RegionLocalDataSource _local;
+  bool _usedOfflineFallback = false;
+
+  @override
+  bool takeOfflineFallbackUsed() {
+    final value = _usedOfflineFallback;
+    _usedOfflineFallback = false;
+    return value;
+  }
+
+  void _markOfflineFallback() {
+    _usedOfflineFallback = true;
+  }
 
   @override
   Future<List<NamedApiResource>> getRegions() async {
-    final response = await _client.getRegions();
-    return response.results;
+    try {
+      final response = await _client.getRegions();
+      return response.results;
+    } catch (error) {
+      if (!isNetworkError(error)) rethrow;
+      _markOfflineFallback();
+      return RegionCardAssets.curated
+          .map(
+            (region) => NamedApiResource(
+              name: region.apiName,
+              url: '/region/${region.apiName}/',
+            ),
+          )
+          .toList();
+    }
   }
 
   @override
   Future<List<RegionalPokedexEntry>> getRegionalPokedexEntries(
+    String regionName,
+  ) async {
+    try {
+      final entries = await _fetchRegionalPokedexEntries(regionName);
+      await _local.saveRegionalEntries(regionName, entries);
+      return entries;
+    } catch (error) {
+      if (!isNetworkError(error)) rethrow;
+      _markOfflineFallback();
+
+      final cached = await _local.getRegionalEntries(
+        regionName,
+        allowStale: true,
+      );
+      if (cached == null || cached.isEmpty) {
+        throw OfflineEmptyCacheException(
+          'A Pokédex de ${RegionCardAssets.forApiName(regionName)?.displayName ?? regionName} '
+          'não está salva no dispositivo.\n'
+          'Abra esta região online pelo menos uma vez.',
+        );
+      }
+
+      return cached;
+    }
+  }
+
+  Future<List<RegionalPokedexEntry>> _fetchRegionalPokedexEntries(
     String regionName,
   ) async {
     final region = await _client.getRegion(regionName);

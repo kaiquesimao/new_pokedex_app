@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -59,7 +60,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     final isLastPage = _currentPage == _pages.length - 1;
 
     return Scaffold(
-      body: SafeArea(
+      body: SafePageBody(
         child: Column(
           children: [
             Expanded(

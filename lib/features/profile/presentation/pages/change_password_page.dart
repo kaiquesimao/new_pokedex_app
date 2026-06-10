@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 enum _ChangePasswordStep { current, newPassword, confirm, success }
 
@@ -132,7 +133,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                 },
               ),
       ),
-      body: SafeArea(
+      body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(

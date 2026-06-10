@@ -1,5 +1,7 @@
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -19,6 +21,7 @@ class PokemonListState {
     this.lockedItemCount = 0,
     this.batchTarget = 0,
     this.error,
+    this.isOfflineMode = false,
     this.catalogIds = const [],
     this.catalogCursor = 0,
   });
@@ -32,6 +35,7 @@ class PokemonListState {
   final int lockedItemCount;
   final int batchTarget;
   final String? error;
+  final bool isOfflineMode;
   final List<int> catalogIds;
   final int catalogCursor;
 
@@ -50,6 +54,7 @@ class PokemonListState {
     int? lockedItemCount,
     int? batchTarget,
     String? error,
+    bool? isOfflineMode,
     bool clearError = false,
     List<int>? catalogIds,
     int? catalogCursor,
@@ -64,6 +69,7 @@ class PokemonListState {
       lockedItemCount: lockedItemCount ?? this.lockedItemCount,
       batchTarget: batchTarget ?? this.batchTarget,
       error: clearError ? null : (error ?? this.error),
+      isOfflineMode: isOfflineMode ?? this.isOfflineMode,
       catalogIds: catalogIds ?? this.catalogIds,
       catalogCursor: catalogCursor ?? this.catalogCursor,
     );
@@ -102,7 +108,10 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       }
     } catch (error) {
       if (generation != _loadGeneration) return;
-      state = PokemonListState(error: error.toString());
+      state = PokemonListState(
+        error: friendlyErrorMessage(error),
+        isOfflineMode: error is! OfflineEmptyCacheException,
+      );
     }
   }
 
@@ -128,7 +137,11 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       }
     } catch (error) {
       if (generation != _loadGeneration) return;
-      state = state.copyWith(isLoadingMore: false, error: error.toString());
+      state = state.copyWith(
+        isLoadingMore: false,
+        error: friendlyErrorMessage(error),
+        isOfflineMode: true,
+      );
     }
   }
 
@@ -158,6 +171,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       weakToTypes: null,
       catalogIds: const [],
       catalogCursor: 0,
+      isOfflineMode: slice.fromCache,
     );
   }
 
@@ -179,6 +193,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       weakToTypes: null,
       catalogIds: state.catalogIds,
       catalogCursor: state.catalogCursor,
+      isOfflineMode: slice.fromCache || state.isOfflineMode,
     );
   }
 
@@ -297,6 +312,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
     required Set<PokemonType>? weakToTypes,
     required List<int> catalogIds,
     required int catalogCursor,
+    bool isOfflineMode = false,
   }) async {
     if (ids.isEmpty) {
       state = PokemonListState(
@@ -305,6 +321,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
         nextOffset: nextOffset,
         catalogIds: catalogIds,
         catalogCursor: catalogCursor,
+        isOfflineMode: isOfflineMode,
       );
       return;
     }
@@ -318,6 +335,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       batchTarget: ids.length,
       catalogIds: catalogIds,
       catalogCursor: catalogCursor,
+      isOfflineMode: isOfflineMode,
     );
 
     final processed = <int, PokemonSummary?>{};
@@ -353,6 +371,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
         batchTarget: ids.length,
         catalogIds: catalogIds,
         catalogCursor: catalogCursor,
+        isOfflineMode: isOfflineMode,
       );
     }
 
@@ -411,6 +430,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       nextOffset: nextOffset,
       catalogIds: catalogIds,
       catalogCursor: catalogCursor,
+      isOfflineMode: isOfflineMode,
     );
   }
 

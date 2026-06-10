@@ -26,18 +26,32 @@ class PokemonNameIndex extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [CachedPokemonEntries, PokemonNameIndex])
+class CachedRegionalPokedexEntries extends Table {
+  TextColumn get regionName => text()();
+  TextColumn get entriesJson => text()();
+  DateTimeColumn get cachedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {regionName};
+}
+
+@DriftDatabase(
+  tables: [CachedPokemonEntries, PokemonNameIndex, CachedRegionalPokedexEntries],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (migrator, from, to) async {
       if (from < 2) {
         await migrator.createTable(pokemonNameIndex);
+      }
+      if (from < 3) {
+        await migrator.createTable(cachedRegionalPokedexEntries);
       }
     },
   );
@@ -97,6 +111,38 @@ class AppDatabase extends _$AppDatabase {
     return (select(cachedPokemonEntries)..where((t) => t.id.isIn(ids))).get();
   }
 
+  Future<List<CachedPokemonEntry>> getCachedEntriesPage({
+    required int offset,
+    required int limit,
+  }) {
+    return (select(cachedPokemonEntries)
+          ..orderBy([(t) => OrderingTerm.asc(t.id)])
+          ..limit(limit, offset: offset))
+        .get();
+  }
+
+  Future<int> countCachedEntries() async {
+    final countExp = cachedPokemonEntries.id.count();
+    final query = selectOnly(cachedPokemonEntries)..addColumns([countExp]);
+    final row = await query.getSingle();
+    return row.read(countExp) ?? 0;
+  }
+
+  Future<List<CachedPokemonEntry>> searchCachedEntriesByName(String query) {
+    final normalized = query.trim().toLowerCase();
+    if (normalized.isEmpty) return Future.value([]);
+
+    return (select(cachedPokemonEntries)
+          ..where((t) => t.name.lower().like('%$normalized%')))
+        .get();
+  }
+
+  Future<List<int>> getAllCachedEntryIds() async {
+    final rows = await select(cachedPokemonEntries).get();
+    final ids = rows.map((row) => row.id).toList()..sort();
+    return ids;
+  }
+
   Future<void> replaceNameIndex(List<({int id, String name})> entries) async {
     await transaction(() async {
       await delete(pokemonNameIndex).go();
@@ -140,6 +186,25 @@ class AppDatabase extends _$AppDatabase {
 
   bool isFresh(DateTime cachedAt) {
     return DateTime.now().difference(cachedAt) < cacheTtl;
+  }
+
+  Future<void> upsertRegionalPokedex({
+    required String regionName,
+    required String entriesJson,
+  }) {
+    return into(cachedRegionalPokedexEntries).insertOnConflictUpdate(
+      CachedRegionalPokedexEntriesCompanion(
+        regionName: Value(regionName),
+        entriesJson: Value(entriesJson),
+        cachedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<CachedRegionalPokedexEntry?> getRegionalPokedex(String regionName) {
+    return (select(cachedRegionalPokedexEntries)
+          ..where((t) => t.regionName.equals(regionName)))
+        .getSingleOrNull();
   }
 
   static QueryExecutor _openConnection() {

@@ -7,4 +7,6 @@ abstract class RegionRepository {
   Future<List<RegionalPokedexEntry>> getRegionalPokedexEntries(
     String regionName,
   );
+
+  bool takeOfflineFallbackUsed();
 }

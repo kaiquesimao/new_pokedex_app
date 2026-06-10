@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
@@ -12,6 +13,7 @@ class RegionalPokedexState {
     this.isLoadingSummaries = false,
     this.totalCount = 0,
     this.error,
+    this.isOfflineMode = false,
   });
 
   final List<RegionalPokemon> items;
@@ -19,6 +21,7 @@ class RegionalPokedexState {
   final bool isLoadingSummaries;
   final int totalCount;
   final String? error;
+  final bool isOfflineMode;
 
   bool get hasMore => items.length < totalCount;
 
@@ -31,6 +34,7 @@ class RegionalPokedexState {
     bool? isLoadingSummaries,
     int? totalCount,
     String? error,
+    bool? isOfflineMode,
     bool clearError = false,
   }) {
     return RegionalPokedexState(
@@ -39,6 +43,7 @@ class RegionalPokedexState {
       isLoadingSummaries: isLoadingSummaries ?? this.isLoadingSummaries,
       totalCount: totalCount ?? this.totalCount,
       error: clearError ? null : (error ?? this.error),
+      isOfflineMode: isOfflineMode ?? this.isOfflineMode,
     );
   }
 }
@@ -62,6 +67,7 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
       final entries = await _regionRepository.getRegionalPokedexEntries(
         regionName,
       );
+      final isOfflineMode = _regionRepository.takeOfflineFallbackUsed();
 
       if (generation != _loadGeneration) return;
 
@@ -73,19 +79,28 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
       state = RegionalPokedexState(
         isLoadingSummaries: true,
         totalCount: entries.length,
+        isOfflineMode: isOfflineMode,
       );
 
-      await _loadSummariesProgressive(entries, generation);
+      await _loadSummariesProgressive(
+        entries,
+        generation,
+        isOfflineMode: isOfflineMode,
+      );
     } catch (error) {
       if (generation != _loadGeneration) return;
-      state = RegionalPokedexState(error: error.toString());
+      state = RegionalPokedexState(
+        error: friendlyErrorMessage(error),
+        isOfflineMode: _regionRepository.takeOfflineFallbackUsed(),
+      );
     }
   }
 
   Future<void> _loadSummariesProgressive(
     List<RegionalPokedexEntry> entries,
-    int generation,
-  ) async {
+    int generation, {
+    required bool isOfflineMode,
+  }) async {
     final loaded = <int, RegionalPokemon>{};
     var nextIndex = 0;
     var visibleCount = 0;
@@ -105,6 +120,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
         items: visible,
         isLoadingSummaries: visible.length < entries.length,
         totalCount: entries.length,
+        isOfflineMode:
+            isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed(),
       );
     }
 
@@ -146,6 +163,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
     state = RegionalPokedexState(
       items: _contiguousPrefix(entries, loaded),
       totalCount: entries.length,
+      isOfflineMode:
+          isOfflineMode || _pokemonRepository.takeOfflineFallbackUsed(),
     );
   }
 

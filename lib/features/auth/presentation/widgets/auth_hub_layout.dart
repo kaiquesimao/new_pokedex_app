@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class AuthHubLayout extends StatelessWidget {
   const AuthHubLayout({
@@ -47,7 +48,7 @@ class AuthHubLayout extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      body: SafeArea(
+      body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(

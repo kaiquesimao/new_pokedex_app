@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
@@ -11,6 +12,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_provider.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -35,14 +37,17 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Future<void> _bootstrap() async {
     final authInit = ref.read(authProvider.notifier).initialize();
     final repository = ref.read(pokemonRepositoryProvider);
+    final isOnline = ref.read(connectivityServiceProvider).isOnline;
 
-    unawaited(repository.warmPokemonNameIndex());
+    if (isOnline) {
+      unawaited(repository.warmPokemonNameIndex());
+    }
 
     unawaited(
       authInit.then((_) {
         if (!mounted) return;
         final auth = ref.read(authProvider);
-        if (auth.isAuthenticated) {
+        if (auth.isAuthenticated && isOnline) {
           ref.read(appDatabaseProvider);
           unawaited(ref.read(pokemonListProvider.notifier).loadInitial());
         }
@@ -84,32 +89,34 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColorsLight.splashNavy,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: GoogleFonts.poppins(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -1,
+      body: SafePageBody(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RichText(
+                text: TextSpan(
+                  style: GoogleFonts.poppins(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1,
+                  ),
+                  children: const [
+                    TextSpan(
+                      text: 'Poké',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    TextSpan(
+                      text: 'dex',
+                      style: TextStyle(color: AppColorsLight.pokedexRed),
+                    ),
+                  ],
                 ),
-                children: const [
-                  TextSpan(
-                    text: 'Poké',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  TextSpan(
-                    text: 'dex',
-                    style: TextStyle(color: AppColorsLight.pokedexRed),
-                  ),
-                ],
               ),
-            ),
-            const SizedBox(height: 32),
-            const CircularProgressIndicator(color: Colors.white),
-          ],
+              const SizedBox(height: 32),
+              const CircularProgressIndicator(color: Colors.white),
+            ],
+          ),
         ),
       ),
     );

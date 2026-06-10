@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -17,69 +18,72 @@ class ProfilePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Conta')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        children: [
-          _AccountSection(
-            name: auth.displayName ?? 'Treinador',
-            email: auth.email ?? '',
-            onEditName: () => _showPlaceholderEdit(context, 'Nome'),
-            onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
-            onChangePassword: () => context.push('/profile/change-password'),
-          ),
-          const SizedBox(height: 24),
-          _SettingsSections(
-            settings: settings,
-            onToggleMega: (value) => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .setShowMegaEvolutions(value),
+      body: SafePageBody.inTabShell(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          children: [
+            _AccountSection(
+              name: auth.displayName ?? 'Treinador',
+              email: auth.email ?? '',
+              onEditName: () => _showPlaceholderEdit(context, 'Nome'),
+              onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
+              onChangePassword: () => context.push('/profile/change-password'),
             ),
-            onToggleOtherForms: (value) => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .setShowOtherForms(value),
+            const SizedBox(height: 24),
+            _SettingsSections(
+              settings: settings,
+              onToggleMega: (value) => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .setShowMegaEvolutions(value),
+              ),
+              onToggleOtherForms: (value) => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .setShowOtherForms(value),
+              ),
+              onToggleNotifyNew: (value) => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .setNotifyNewPokemon(value),
+              ),
+              onToggleNotifyUpdates: (value) => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .setNotifyAppUpdates(value),
+              ),
+              onToggleInterfaceLanguage: () => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .toggleInterfaceLanguage(),
+              ),
+              onToggleGameInfoLanguage: () => _saveSetting(
+                context,
+                ref,
+                () => ref
+                    .read(profileSettingsProvider.notifier)
+                    .toggleGameInfoLanguage(),
+              ),
+              onPlaceholderLink: (label) =>
+                  _showPlaceholderLink(context, label),
             ),
-            onToggleNotifyNew: (value) => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .setNotifyNewPokemon(value),
+            const SizedBox(height: 32),
+            _LogoutSection(
+              displayName: auth.displayName ?? 'Treinador',
+              onLogout: () => _handleLogout(context, ref),
             ),
-            onToggleNotifyUpdates: (value) => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .setNotifyAppUpdates(value),
-            ),
-            onToggleInterfaceLanguage: () => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .toggleInterfaceLanguage(),
-            ),
-            onToggleGameInfoLanguage: () => _saveSetting(
-              context,
-              ref,
-              () => ref
-                  .read(profileSettingsProvider.notifier)
-                  .toggleGameInfoLanguage(),
-            ),
-            onPlaceholderLink: (label) => _showPlaceholderLink(context, label),
-          ),
-          const SizedBox(height: 32),
-          _LogoutSection(
-            displayName: auth.displayName ?? 'Treinador',
-            onLogout: () => _handleLogout(context, ref),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

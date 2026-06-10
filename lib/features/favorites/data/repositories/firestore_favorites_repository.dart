@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/features/favorites/data/repositories/local_favorites_repository.dart';
 import 'package:pokedex_app/features/favorites/domain/repositories/favorites_repository.dart';
 
@@ -9,13 +10,18 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   FirestoreFavoritesRepository({
     required this.userId,
     required this.localCache,
+    required ConnectivityService connectivity,
     FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance {
-    unawaited(_syncOnLogin());
+  }) : _connectivity = connectivity,
+       _firestore = firestore ?? FirebaseFirestore.instance {
+    if (_connectivity.isOnline) {
+      unawaited(_syncOnLogin());
+    }
   }
 
   final String userId;
   final LocalFavoritesRepository localCache;
+  final ConnectivityService _connectivity;
   final FirebaseFirestore _firestore;
 
   static const _collection = 'users';
@@ -34,6 +40,8 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   Future<void> toggleFavorite(int pokemonId) async {
     final wasFavorite = await localCache.isFavorite(pokemonId);
     await localCache.toggleFavorite(pokemonId);
+
+    if (!_connectivity.isOnline) return;
 
     try {
       final doc = _favoritesCollection.doc(pokemonId.toString());
@@ -54,12 +62,16 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   Stream<Set<int>> watchFavoriteIds() async* {
     yield await localCache.getFavoriteIds();
 
+    if (!_connectivity.isOnline) {
+      yield* localCache.watchFavoriteIds();
+      return;
+    }
+
     try {
       await for (final snapshot in _favoritesCollection.snapshots()) {
         final remoteIds = snapshot.docs
             .map(
-              (doc) =>
-                  int.tryParse(doc.id) ?? doc.data()['pokemonId'] as int?,
+              (doc) => int.tryParse(doc.id) ?? doc.data()['pokemonId'] as int?,
             )
             .whereType<int>()
             .toSet();
@@ -67,8 +79,7 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
         final localIds = await localCache.getFavoriteIds();
         final merged = {...localIds, ...remoteIds};
 
-        if (merged.length != localIds.length ||
-            !merged.containsAll(localIds)) {
+        if (merged.length != localIds.length || !merged.containsAll(localIds)) {
           await localCache.replaceAll(merged);
         }
 
@@ -80,6 +91,8 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   }
 
   Future<void> _syncOnLogin() async {
+    if (!_connectivity.isOnline) return;
+
     try {
       final snapshot = await _favoritesCollection.get();
       final remoteIds = snapshot.docs

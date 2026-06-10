@@ -8,6 +8,7 @@ import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 enum _ForgotPasswordStep { email, otp, newPassword, success, emailSent }
 
@@ -15,8 +16,7 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  ConsumerState<ForgotPasswordPage> createState() =>
-      _ForgotPasswordPageState();
+  ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
@@ -74,10 +74,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     });
 
     try {
-      final valid = await ref.read(authProvider.notifier).verifyOtp(
-            email: _emailController.text.trim(),
-            code: code,
-          );
+      final valid = await ref
+          .read(authProvider.notifier)
+          .verifyOtp(email: _emailController.text.trim(), code: code);
 
       if (!valid) {
         setState(() => _error = 'Código inválido. Tente novamente.');
@@ -96,9 +95,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         .sendOtp(email: _emailController.text.trim());
     if (mounted) {
       setState(() => _resent = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Código reenviado (mock)')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Código reenviado (mock)')));
     }
   }
 
@@ -122,7 +121,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     });
 
     try {
-      await ref.read(authProvider.notifier).resetPassword(
+      await ref
+          .read(authProvider.notifier)
+          .resetPassword(
             email: _emailController.text.trim(),
             newPassword: password,
           );
@@ -152,7 +153,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitle),
-        leading: _step == _ForgotPasswordStep.success ||
+        leading:
+            _step == _ForgotPasswordStep.success ||
                 _step == _ForgotPasswordStep.emailSent
             ? null
             : IconButton(
@@ -168,7 +170,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       ),
       body: Stack(
         children: [
-          SafeArea(
+          SafePageBody.belowAppBar(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(

@@ -8,6 +8,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart'
     show PokemonDetail;
 import 'package:pokedex_app/shared/widgets/empty_state_illustration.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class FavoritesPage extends ConsumerWidget {
   const FavoritesPage({super.key});
@@ -18,9 +19,11 @@ class FavoritesPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Favoritos')),
-      body: favoriteIds.isEmpty
-          ? const _EmptyFavoritesBody()
-          : _FavoritesListBody(favoriteIds: favoriteIds.toList()..sort()),
+      body: SafePageBody.inTabShell(
+        child: favoriteIds.isEmpty
+            ? const _EmptyFavoritesBody()
+            : _FavoritesListBody(favoriteIds: favoriteIds.toList()..sort()),
+      ),
     );
   }
 }

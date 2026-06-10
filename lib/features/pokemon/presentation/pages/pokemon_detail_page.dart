@@ -8,7 +8,10 @@ import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
+import 'package:pokedex_app/shared/widgets/offline_banner.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
@@ -27,23 +30,15 @@ class PokemonDetailPage extends ConsumerWidget {
     final bundleAsync = ref.watch(pokemonDetailBundleProvider(pokemonId));
 
     return bundleAsync.when(
-      loading: () => const Scaffold(body: PokemonDetailSkeleton()),
+      loading: () =>
+          const Scaffold(body: SafePageBody(child: PokemonDetailSkeleton())),
       error: (error, _) => Scaffold(
         appBar: AppBar(),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 48),
-              const SizedBox(height: 12),
-              Text('Erro: $error'),
-              const SizedBox(height: 12),
-              FilledButton(
-                onPressed: () =>
-                    ref.invalidate(pokemonDetailBundleProvider(pokemonId)),
-                child: const Text('Tentar novamente'),
-              ),
-            ],
+        body: SafePageBody.belowAppBar(
+          child: OfflineEmptyState(
+            message: friendlyErrorMessage(error),
+            onRetry: () =>
+                ref.invalidate(pokemonDetailBundleProvider(pokemonId)),
           ),
         ),
       ),
@@ -51,6 +46,7 @@ class PokemonDetailPage extends ConsumerWidget {
         pokemonId: pokemonId,
         pokemon: bundle.detail,
         evolution: bundle.evolution,
+        isOfflineMode: bundle.isOfflineMode,
       ),
     );
   }
@@ -61,11 +57,13 @@ class _PokemonDetailContent extends ConsumerStatefulWidget {
     required this.pokemonId,
     required this.pokemon,
     required this.evolution,
+    this.isOfflineMode = false,
   });
 
   final int pokemonId;
   final PokemonDetail pokemon;
   final EvolutionChain evolution;
+  final bool isOfflineMode;
 
   @override
   ConsumerState<_PokemonDetailContent> createState() =>
@@ -104,74 +102,87 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: _HeroSection(
-              pokemonId: widget.pokemonId,
-              pokemon: pokemon,
-              headerColor: headerColor,
-              isFavorite: isFavorite,
-              onFavoriteTap: () => _toggleFavorite(context),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pokemon.displayName,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+      body: SafePageBody(
+        child: Column(
+          children: [
+            if (widget.isOfflineMode)
+              const OfflineBanner(
+                message: 'Modo offline. Alguns dados podem estar incompletos.',
+                compact: true,
+              ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _HeroSection(
+                      pokemonId: widget.pokemonId,
+                      pokemon: pokemon,
+                      headerColor: headerColor,
+                      isFavorite: isFavorite,
+                      onFavoriteTap: () => _toggleFavorite(context),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '#${pokemon.id.toString().padLeft(3, '0')}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w600,
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pokemon.displayName,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '#${pokemon.id.toString().padLeft(3, '0')}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: pokemon.types
+                                .map((t) => PokemonTypeChip(type: t))
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 4,
-                    children: pokemon.types
-                        .map((t) => PokemonTypeChip(type: t))
-                        .toList(),
+                  SliverToBoxAdapter(
+                    child: PokemonDetailAboutSection(pokemon: pokemon),
                   ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  SliverToBoxAdapter(
+                    child: PokemonWeaknessSection(types: pokemon.types),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  SliverToBoxAdapter(
+                    child: _EvolutionSection(
+                      pokemonId: widget.pokemonId,
+                      evolution: widget.evolution,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _CollapsibleStats(
+                      pokemon: pokemon,
+                      expanded: _statsExpanded,
+                      onToggle: () =>
+                          setState(() => _statsExpanded = !_statsExpanded),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
                 ],
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: PokemonDetailAboutSection(pokemon: pokemon),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          SliverToBoxAdapter(
-            child: PokemonWeaknessSection(types: pokemon.types),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          SliverToBoxAdapter(
-            child: _EvolutionSection(
-              pokemonId: widget.pokemonId,
-              evolution: widget.evolution,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: _CollapsibleStats(
-              pokemon: pokemon,
-              expanded: _statsExpanded,
-              onToggle: () => setState(() => _statsExpanded = !_statsExpanded),
-            ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -204,10 +215,8 @@ class _HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
-
     return SizedBox(
-      height: 280 + topPadding,
+      height: 280,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -225,7 +234,7 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: topPadding + 4,
+            top: 4,
             left: 4,
             child: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -233,7 +242,7 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: topPadding + 4,
+            top: 4,
             right: 4,
             child: IconButton(
               icon: Icon(
@@ -245,7 +254,7 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: topPadding + 48,
+            top: 48,
             left: 0,
             right: 0,
             child: Center(

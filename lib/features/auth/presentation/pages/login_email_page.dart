@@ -6,6 +6,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class LoginEmailPage extends ConsumerStatefulWidget {
   const LoginEmailPage({super.key});
@@ -54,7 +55,7 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
       appBar: AppBar(title: const Text('Entrar')),
       body: Stack(
         children: [
-          SafeArea(
+          SafePageBody.belowAppBar(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(

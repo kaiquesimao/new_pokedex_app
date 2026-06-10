@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class VerifyEmailPage extends ConsumerStatefulWidget {
   const VerifyEmailPage({super.key});
@@ -33,7 +34,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
 
       try {
         if (_usesFirebase) {
-          await ref.read(authProvider.notifier).createPendingAccount(
+          await ref
+              .read(authProvider.notifier)
+              .createPendingAccount(
                 email: draft.email,
                 password: draft.password,
                 name: draft.name,
@@ -68,7 +71,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
         return;
       }
 
-      await ref.read(authProvider.notifier).signUp(
+      await ref
+          .read(authProvider.notifier)
+          .signUp(
             email: draft.email,
             password: draft.password,
             name: draft.name,
@@ -110,7 +115,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       appBar: AppBar(title: const Text('Confirmar e-mail')),
       body: Stack(
         children: [
-          SafeArea(
+          SafePageBody.belowAppBar(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(

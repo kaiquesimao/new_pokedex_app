@@ -7,22 +7,25 @@ class PokemonDetailBundle {
   const PokemonDetailBundle({
     required this.detail,
     required this.evolution,
+    this.isOfflineMode = false,
   });
 
   final PokemonDetail detail;
   final EvolutionChain evolution;
+  final bool isOfflineMode;
 }
 
 final pokemonDetailBundleProvider =
     FutureProvider.family<PokemonDetailBundle, int>((ref, pokemonId) async {
-  final repo = ref.watch(pokemonRepositoryProvider);
-  final results = await Future.wait([
-    repo.getPokemonDetail(pokemonId),
-    repo.getEvolutionChain(pokemonId),
-  ]);
+      final repo = ref.watch(pokemonRepositoryProvider);
+      final detail = await repo.getPokemonDetail(pokemonId);
+      final offlineFromDetail = repo.takeOfflineFallbackUsed();
+      final evolution = await repo.getEvolutionChain(pokemonId);
+      final offlineFromEvolution = repo.takeOfflineFallbackUsed();
 
-  return PokemonDetailBundle(
-    detail: results[0] as PokemonDetail,
-    evolution: results[1] as EvolutionChain,
-  );
-});
+      return PokemonDetailBundle(
+        detail: detail,
+        evolution: evolution,
+        isOfflineMode: offlineFromDetail || offlineFromEvolution,
+      );
+    });

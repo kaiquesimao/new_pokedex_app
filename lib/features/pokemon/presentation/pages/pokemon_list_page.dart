@@ -9,6 +9,8 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dar
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_filter_sheets.dart';
+import 'package:pokedex_app/shared/widgets/offline_banner.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
@@ -76,39 +78,43 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: PokemonSearchBar(
-              initialValue: filters.searchQuery,
-              onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+      body: SafePageBody.inTabShell(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: PokemonSearchBar(
+                initialValue: filters.searchQuery,
+                onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Row(
-              children: [
-                _TypeFilterChip(
-                  typeFilter: filters.typeFilter,
-                  onTap: () => showPokemonTypeSheet(context),
-                ),
-                const SizedBox(width: 8),
-                _SortFilterChip(
-                  sort: filters.sort,
-                  onTap: () => showPokemonSortSheet(context),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Row(
+                children: [
+                  _TypeFilterChip(
+                    typeFilter: filters.typeFilter,
+                    onTap: () => showPokemonTypeSheet(context),
+                  ),
+                  const SizedBox(width: 8),
+                  _SortFilterChip(
+                    sort: filters.sort,
+                    onTap: () => showPokemonSortSheet(context),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (filters.generationId != null)
-            _ActiveFilterChip(
-              label: _generationLabel(filters.generationId!),
-              onClear: () =>
-                  ref.read(pokemonFiltersProvider.notifier).setGeneration(null),
-            ),
-          Expanded(child: _buildBody(state)),
-        ],
+            if (filters.generationId != null)
+              _ActiveFilterChip(
+                label: _generationLabel(filters.generationId!),
+                onClear: () => ref
+                    .read(pokemonFiltersProvider.notifier)
+                    .setGeneration(null),
+              ),
+            if (state.isOfflineMode) const OfflineBanner(compact: true),
+            Expanded(child: _buildBody(state)),
+          ],
+        ),
       ),
     );
   }
@@ -139,21 +145,9 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         state.items.isEmpty &&
         !state.isLoadingSummaries &&
         !state.isLoadingIds) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.cloud_off, size: 48),
-            const SizedBox(height: 12),
-            Text(state.error!),
-            const SizedBox(height: 12),
-            FilledButton(
-              onPressed: () =>
-                  ref.read(pokemonListProvider.notifier).loadInitial(),
-              child: const Text('Tentar novamente'),
-            ),
-          ],
-        ),
+      return OfflineEmptyState(
+        message: state.error!,
+        onRetry: () => ref.read(pokemonListProvider.notifier).loadInitial(),
       );
     }
 
@@ -182,27 +176,33 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(pokemonListProvider.notifier).loadInitial(),
-      child: ListView.separated(
+      child: CustomScrollView(
         controller: _scrollController,
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        itemCount: state.items.length + skeletonCount,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          if (index >= state.items.length) {
-            return const PokemonListRowSkeleton();
-          }
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            sliver: SliverList.separated(
+              itemCount: state.items.length + skeletonCount,
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                if (index >= state.items.length) {
+                  return const PokemonListRowSkeleton();
+                }
 
-          final pokemon = state.items[index];
-          return PokemonListRowCard(
-            number: pokemon.id,
-            name: pokemon.displayName,
-            types: pokemon.types,
-            spriteUrl: pokemon.spriteUrl,
-            isFavorite: favorites.contains(pokemon.id),
-            onTap: () => context.push('/pokemon/${pokemon.id}'),
-            onFavoriteTap: () => _toggleFavorite(context, pokemon.id),
-          );
-        },
+                final pokemon = state.items[index];
+                return PokemonListRowCard(
+                  number: pokemon.id,
+                  name: pokemon.displayName,
+                  types: pokemon.types,
+                  spriteUrl: pokemon.spriteUrl,
+                  isFavorite: favorites.contains(pokemon.id),
+                  onTap: () => context.push('/pokemon/${pokemon.id}'),
+                  onFavoriteTap: () => _toggleFavorite(context, pokemon.id),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_app/core/constants/firebase_auth_config.dart';
+import 'package:pokedex_app/core/network/connectivity_service.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
@@ -40,14 +42,27 @@ AuthState _authStateFromFirebaseUser(User? user) {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier({AuthState? initial, this._firebaseAuth, this._googleSignIn})
-    : super(initial ?? const AuthState());
+  AuthNotifier({
+    AuthState? initial,
+    this._firebaseAuth,
+    this._googleSignIn,
+    ConnectivityService? connectivity,
+  }) : _connectivity = connectivity,
+       super(initial ?? const AuthState());
 
   final FirebaseAuth? _firebaseAuth;
   final GoogleSignIn? _googleSignIn;
+  final ConnectivityService? _connectivity;
   StreamSubscription<User?>? _authSubscription;
 
   bool get usesFirebase => _firebaseAuth != null;
+
+  void _requireOnline() {
+    final connectivity = _connectivity;
+    if (connectivity != null && !connectivity.isOnline) {
+      throw Exception('Sem conexão com a internet.');
+    }
+  }
 
   @override
   void dispose() {
@@ -83,6 +98,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       try {
         await _firebaseAuth.signInWithEmailAndPassword(
           email: email,
@@ -121,6 +137,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       final user = _firebaseAuth.currentUser;
       if (user != null && user.email == email) {
         await user.updateDisplayName(name);
@@ -156,6 +173,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     if (_firebaseAuth == null) return;
 
+    _requireOnline();
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -187,6 +205,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<bool> verifyCurrentPassword(String password) async {
     if (_firebaseAuth != null) {
+      _requireOnline();
       final user = _firebaseAuth.currentUser;
       final email = user?.email;
       if (user == null || email == null || email.isEmpty) return false;
@@ -215,6 +234,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       final user = _firebaseAuth.currentUser;
       if (user != null && user.email == email) {
         await user.sendEmailVerification();
@@ -232,6 +252,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       try {
         await _firebaseAuth.sendPasswordResetEmail(email: email);
       } catch (e) {
@@ -247,6 +268,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (email.isEmpty) return false;
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       final user = _firebaseAuth.currentUser;
       if (user == null || user.email != email) return false;
       await user.reload();
@@ -292,6 +314,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
 
     if (_firebaseAuth != null) {
+      _requireOnline();
       final user = _firebaseAuth.currentUser;
       final email = user?.email;
       if (user == null || email == null) {
@@ -325,6 +348,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       throw Exception('Login com Google indisponível');
     }
 
+    _requireOnline();
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return;
@@ -350,6 +374,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       throw Exception('Login com Apple disponível apenas no iOS');
     }
 
+    _requireOnline();
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -372,11 +397,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final bootstrap = ref.watch(firebaseBootstrapProvider);
+  final connectivity = ref.watch(connectivityServiceProvider);
   if (bootstrap.isAvailable) {
     return AuthNotifier(
       firebaseAuth: FirebaseAuth.instance,
       googleSignIn: FirebaseAuthConfig.createGoogleSignIn(),
+      connectivity: connectivity,
     );
   }
-  return AuthNotifier();
+  return AuthNotifier(connectivity: connectivity);
 });

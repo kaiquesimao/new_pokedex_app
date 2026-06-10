@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class RegisterSuccessPage extends ConsumerWidget {
   const RegisterSuccessPage({super.key});
@@ -25,7 +26,7 @@ class RegisterSuccessPage extends ConsumerWidget {
         context.go('/pokedex');
       },
       child: Scaffold(
-        body: SafeArea(
+        body: SafePageBody(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(

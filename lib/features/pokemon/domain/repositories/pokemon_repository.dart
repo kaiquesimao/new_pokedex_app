@@ -39,4 +39,6 @@ abstract class PokemonRepository {
     PokemonListFilters? filters,
     Set<PokemonType>? weakToTypes,
   });
+
+  bool takeOfflineFallbackUsed();
 }

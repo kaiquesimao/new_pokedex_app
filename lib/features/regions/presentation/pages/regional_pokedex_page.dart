@@ -9,6 +9,8 @@ import 'package:pokedex_app/features/regions/domain/utils/regional_pokemon_filte
 import 'package:pokedex_app/features/regions/presentation/widgets/regional_filter_sheets.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_provider.dart';
+import 'package:pokedex_app/shared/widgets/offline_banner.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
@@ -45,41 +47,50 @@ class RegionalPokedexPage extends ConsumerWidget {
               )
             : null,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: PokemonSearchBar(
-              initialValue: filters.searchQuery,
-              onChanged: (query) => ref
-                  .read(regionalPokedexFiltersProvider(regionName).notifier)
-                  .update((current) => current.copyWith(searchQuery: query)),
+      body: SafePageBody.belowAppBar(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: PokemonSearchBar(
+                initialValue: filters.searchQuery,
+                onChanged: (query) => ref
+                    .read(regionalPokedexFiltersProvider(regionName).notifier)
+                    .update((current) => current.copyWith(searchQuery: query)),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Row(
-              children: [
-                _TypeFilterChip(
-                  typeFilter: filters.typeFilter,
-                  onTap: () => showRegionalTypeSheet(context, regionName),
-                ),
-                const SizedBox(width: 8),
-                _SortFilterChip(
-                  sort: filters.sort,
-                  onTap: () => showRegionalSortSheet(context, regionName),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Row(
+                children: [
+                  _TypeFilterChip(
+                    typeFilter: filters.typeFilter,
+                    onTap: () => showRegionalTypeSheet(context, regionName),
+                  ),
+                  const SizedBox(width: 8),
+                  _SortFilterChip(
+                    sort: filters.sort,
+                    onTap: () => showRegionalSortSheet(context, regionName),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(child: _buildBody(context, state, filters)),
-        ],
+            if (state.isOfflineMode)
+              const OfflineBanner(
+                message:
+                    'Modo offline. Mostrando a Pokédex regional salva no dispositivo.',
+                compact: true,
+              ),
+            Expanded(child: _buildBody(context, ref, state, filters)),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildBody(
     BuildContext context,
+    WidgetRef ref,
     RegionalPokedexState state,
     PokemonListFilters filters,
   ) {
@@ -88,15 +99,11 @@ class RegionalPokedexPage extends ConsumerWidget {
     }
 
     if (state.error != null && state.items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline, size: 48),
-            const SizedBox(height: 12),
-            Text('Erro: ${state.error}'),
-          ],
-        ),
+      return OfflineEmptyState(
+        message: state.error!,
+        onRetry: () => ref
+            .read(regionalPokedexProvider(regionName).notifier)
+            .load(regionName),
       );
     }
 
@@ -169,7 +176,11 @@ class _TypeFilterChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
+            const Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.white,
+              size: 18,
+            ),
           ],
         ),
       ),
@@ -205,7 +216,11 @@ class _SortFilterChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
+            const Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.white,
+              size: 18,
+            ),
           ],
         ),
       ),
