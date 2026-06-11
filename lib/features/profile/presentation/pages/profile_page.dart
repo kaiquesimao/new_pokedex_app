@@ -125,7 +125,7 @@ class ProfilePage extends ConsumerWidget {
 
     await ref.read(authProvider.notifier).signOut();
     if (context.mounted) {
-      context.go('/login');
+      context.go('/welcome');
     }
   }
 }

@@ -154,6 +154,7 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.error,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
         if (widget.onResend != null) ...[

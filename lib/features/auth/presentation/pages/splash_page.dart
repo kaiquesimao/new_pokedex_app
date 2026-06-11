@@ -75,7 +75,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       return;
     }
 
-    context.go('/login');
+    context.go('/welcome');
   }
 
   @override

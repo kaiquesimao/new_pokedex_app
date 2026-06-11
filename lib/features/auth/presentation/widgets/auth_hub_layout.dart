@@ -34,7 +34,7 @@ class AuthHubLayout extends StatelessWidget {
             ? IconButton(
                 icon: const Icon(Icons.chevron_left, size: 28),
                 onPressed: () =>
-                    context.canPop() ? context.pop() : context.go('/login'),
+                    context.canPop() ? context.pop() : context.go('/welcome'),
               )
             : null,
         title: Text(

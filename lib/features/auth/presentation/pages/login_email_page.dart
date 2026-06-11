@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
@@ -43,7 +44,7 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
           );
       if (!mounted) return;
     } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
+      if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -69,7 +70,8 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Use o e-mail e a senha da sua conta.',
+                    'Use o e-mail e a senha cadastrados no app. '
+                    'Contas criadas com Google ou Apple devem entrar por esses botões.',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,

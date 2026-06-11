@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
+import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
@@ -61,8 +63,9 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
 
   void _submitNew() {
     final value = _newController.text;
-    if (value.length < 6) {
-      setState(() => _error = 'A senha deve ter pelo menos 6 caracteres');
+    final passwordError = PasswordPolicy.validate(value);
+    if (passwordError != null) {
+      setState(() => _error = passwordError);
       return;
     }
     setState(() {
@@ -96,7 +99,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
         setState(() => _step = _ChangePasswordStep.success);
       }
     } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
+      if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -222,8 +225,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   String get _subtitle => switch (_step) {
     _ChangePasswordStep.current =>
       'Por segurança, confirme sua senha antes de continuar.',
-    _ChangePasswordStep.newPassword =>
-      'Use pelo menos 6 caracteres para proteger sua conta.',
+    _ChangePasswordStep.newPassword => PasswordPolicy.requirementsHint,
     _ChangePasswordStep.confirm =>
       'Digite novamente a nova senha para confirmar.',
     _ChangePasswordStep.success => '',

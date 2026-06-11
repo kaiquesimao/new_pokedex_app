@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 
+import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
 
 import 'package:pokedex_app/features/auth/presentation/pages/login_email_page.dart';
@@ -52,9 +53,18 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 bool _isPublicAuthRoute(String path) {
   return path == '/onboarding' ||
+      path == '/welcome' ||
       path.startsWith('/login') ||
       path.startsWith('/register') ||
       path == '/forgot-password';
+}
+
+bool _isGuestShellRoute(String path) {
+  return path == '/pokedex' ||
+      path.startsWith('/regions') ||
+      path == '/favorites' ||
+      path == '/profile' ||
+      path.startsWith('/pokemon/');
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -81,14 +91,31 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
 
       if (path == '/onboarding') {
-        return auth.isAuthenticated ? '/pokedex' : '/login';
+        return auth.isAuthenticated ? '/pokedex' : '/welcome';
       }
 
       if (!auth.isAuthenticated) {
         if (path == '/login/success' || path == '/register/success') {
-          return '/login';
+          return '/welcome';
         }
-        return _isPublicAuthRoute(path) ? null : '/login';
+        if (_isPublicAuthRoute(path) || _isGuestShellRoute(path)) {
+          return null;
+        }
+        return '/welcome';
+      }
+
+      if (auth.needsEmailVerification) {
+        const pendingVerificationRoutes = {
+          '/register/verify-email',
+          '/register/email',
+        };
+        if (pendingVerificationRoutes.contains(path)) return null;
+        if (path == '/register/success') return '/register/verify-email';
+        return '/register/verify-email';
+      }
+
+      if (path == '/welcome') {
+        return '/pokedex';
       }
 
       if (path == '/login/success' || path == '/register/success') {
@@ -99,6 +126,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return switch (path) {
           '/login' || '/login/email' => '/login/success',
           '/register' => '/register/success',
+          '/register/verify-email' => null,
           _ => '/pokedex',
         };
       }
@@ -110,6 +138,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/splash', builder: (_, _) => const SplashPage()),
 
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingPage()),
+
+      GoRoute(path: '/welcome', builder: (_, _) => const AuthWelcomePage()),
 
       GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
 

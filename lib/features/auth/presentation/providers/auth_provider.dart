@@ -10,6 +10,7 @@ import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
+import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -35,6 +36,7 @@ AuthState _authStateFromFirebaseUser(User? user) {
   return AuthState(
     isInitialized: true,
     isAuthenticated: true,
+    emailVerified: user.emailVerified,
     uid: user.uid,
     email: user.email,
     displayName: user.displayName ?? user.email?.split('@').first,
@@ -59,7 +61,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void _requireOnline() {
     final connectivity = _connectivity;
     if (connectivity != null && !connectivity.isOnline) {
-      throw Exception('Sem conexão com a internet.');
+      throw AuthException('Sem conexão com a internet.');
     }
   }
 
@@ -93,7 +95,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> signIn({required String email, required String password}) async {
     if (email.isEmpty || password.isEmpty) {
-      throw Exception('Preencha e-mail e senha');
+      throw AuthException('Preencha e-mail e senha');
     }
 
     if (_firebaseAuth != null) {
@@ -105,7 +107,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
         state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
       } catch (e) {
-        throw Exception(firebaseAuthErrorMessage(e));
+        throw AuthException(
+          firebaseAuthErrorMessage(
+            e,
+            context: FirebaseAuthErrorContext.emailSignIn,
+          ),
+        );
       }
       return;
     }
@@ -126,14 +133,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
+  void _requireValidPassword(String password) {
+    final error = PasswordPolicy.validate(password);
+    if (error != null) throw AuthException(error);
+  }
+
   Future<void> signUp({
     required String email,
     required String password,
     required String name,
   }) async {
     if (email.isEmpty || password.isEmpty || name.isEmpty) {
-      throw Exception('Preencha todos os campos');
+      throw AuthException('Preencha todos os campos');
     }
+    _requireValidPassword(password);
 
     if (_firebaseAuth != null) {
       _requireOnline();
@@ -154,7 +167,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         await credential.user?.sendEmailVerification();
         state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
       } catch (e) {
-        throw Exception(firebaseAuthErrorMessage(e));
+        throw AuthException(
+          firebaseAuthErrorMessage(
+            e,
+            context: FirebaseAuthErrorContext.emailSignUp,
+          ),
+        );
       }
       return;
     }
@@ -168,21 +186,59 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> createPendingAccount({
     required String email,
     required String password,
-    required String name,
   }) async {
     if (_firebaseAuth == null) return;
 
+    _requireValidPassword(password);
     _requireOnline();
+
+    final trimmedEmail = email.trim();
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null && currentUser.email == trimmedEmail) {
+      return;
+    }
+
+    if (currentUser != null) {
+      await signOut();
+    }
+
     try {
-      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: trimmedEmail,
         password: password,
       );
-      await credential.user?.updateDisplayName(name);
-      await credential.user?.sendEmailVerification();
       state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
-    } catch (e) {
-      throw Exception(firebaseAuthErrorMessage(e));
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(
+        firebaseAuthErrorMessage(
+          e,
+          context: FirebaseAuthErrorContext.emailSignUp,
+        ),
+      );
+    }
+  }
+
+  Future<void> completePendingRegistration({required String name}) async {
+    if (_firebaseAuth == null) return;
+
+    _requireOnline();
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw AuthException('Sessão inválida');
+    }
+
+    try {
+      await user.updateDisplayName(name);
+      await user.sendEmailVerification();
+      await user.reload();
+      state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(
+        firebaseAuthErrorMessage(
+          e,
+          context: FirebaseAuthErrorContext.emailSignUp,
+        ),
+      );
     }
   }
 
@@ -229,7 +285,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> sendOtp({required String email}) async {
     if (email.isEmpty || !email.contains('@')) {
-      throw Exception('Informe um e-mail válido');
+      throw AuthException('Informe um e-mail válido');
     }
 
     if (_firebaseAuth != null) {
@@ -239,7 +295,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         await user.sendEmailVerification();
         return;
       }
-      throw Exception('Crie a conta antes de verificar o e-mail');
+      throw AuthException('Crie a conta antes de verificar o e-mail');
     }
 
     await Future<void>.delayed(_mockOtpDelay);
@@ -247,7 +303,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> sendPasswordResetEmail({required String email}) async {
     if (email.isEmpty || !email.contains('@')) {
-      throw Exception('Informe um e-mail válido');
+      throw AuthException('Informe um e-mail válido');
     }
 
     if (_firebaseAuth != null) {
@@ -255,7 +311,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       try {
         await _firebaseAuth.sendPasswordResetEmail(email: email);
       } catch (e) {
-        throw Exception(firebaseAuthErrorMessage(e));
+        throw AuthException(firebaseAuthErrorMessage(e));
       }
       return;
     }
@@ -272,6 +328,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (user == null || user.email != email) return false;
       await user.reload();
       final refreshed = _firebaseAuth.currentUser;
+      if (refreshed != null) {
+        state = _authStateFromFirebaseUser(refreshed);
+      }
       return refreshed?.emailVerified ?? false;
     }
 
@@ -283,12 +342,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String email,
     required String newPassword,
   }) async {
-    if (newPassword.length < 6) {
-      throw Exception('A senha deve ter pelo menos 6 caracteres');
-    }
+    _requireValidPassword(newPassword);
 
     if (_firebaseAuth != null) {
-      throw Exception('Use o link enviado por e-mail para redefinir a senha');
+      throw AuthException(
+        'Use o link enviado por e-mail para redefinir a senha',
+      );
     }
 
     await Future<void>.delayed(_mockOtpDelay);
@@ -305,19 +364,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String newPassword,
   }) async {
     if (!state.isAuthenticated) {
-      throw Exception('Faça login para alterar a senha');
+      throw AuthException('Faça login para alterar a senha');
     }
 
-    if (newPassword.length < 6) {
-      throw Exception('A senha deve ter pelo menos 6 caracteres');
-    }
+    _requireValidPassword(newPassword);
 
     if (_firebaseAuth != null) {
       _requireOnline();
       final user = _firebaseAuth.currentUser;
       final email = user?.email;
       if (user == null || email == null) {
-        throw Exception('Sessão inválida');
+        throw AuthException('Sessão inválida');
       }
 
       try {
@@ -328,14 +385,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
         await user.reauthenticateWithCredential(credential);
         await user.updatePassword(newPassword);
       } catch (e) {
-        throw Exception(firebaseAuthErrorMessage(e));
+        throw AuthException(firebaseAuthErrorMessage(e));
       }
       return;
     }
 
     final valid = await verifyCurrentPassword(currentPassword);
     if (!valid) {
-      throw Exception('Senha atual incorreta');
+      throw AuthException('Senha atual incorreta');
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -344,7 +401,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> signInWithGoogle() async {
     if (_firebaseAuth == null || _googleSignIn == null) {
-      throw Exception('Login com Google indisponível');
+      throw AuthException('Login com Google indisponível');
     }
 
     _requireOnline();
@@ -360,17 +417,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _firebaseAuth.signInWithCredential(credential);
       state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
     } catch (e) {
-      throw Exception(firebaseAuthErrorMessage(e));
+      throw AuthException(
+        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+      );
     }
   }
 
   Future<void> signInWithApple() async {
     if (_firebaseAuth == null) {
-      throw Exception('Login com Apple indisponível');
+      throw AuthException('Login com Apple indisponível');
     }
 
     if (defaultTargetPlatform != TargetPlatform.iOS) {
-      throw Exception('Login com Apple disponível apenas no iOS');
+      throw AuthException('Login com Apple disponível apenas no iOS');
     }
 
     _requireOnline();
@@ -389,7 +448,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _firebaseAuth.signInWithCredential(oauthCredential);
       state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
     } catch (e) {
-      throw Exception(firebaseAuthErrorMessage(e));
+      throw AuthException(
+        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+      );
     }
   }
 }

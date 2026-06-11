@@ -40,7 +40,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   Future<void> _finish() async {
     await ref.read(onboardingProvider.notifier).complete();
-    if (mounted) context.go('/login');
+    if (mounted) context.go('/welcome');
   }
 
   void _next() {

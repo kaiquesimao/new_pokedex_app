@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
+import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
+import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
@@ -61,7 +63,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         if (mounted) setState(() => _step = _ForgotPasswordStep.otp);
       }
     } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
+      if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -105,8 +107,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     final password = _passwordController.text;
     final confirm = _confirmController.text;
 
-    if (password.length < 6) {
-      setState(() => _error = 'A senha deve ter pelo menos 6 caracteres');
+    final passwordError = PasswordPolicy.validate(password);
+    if (passwordError != null) {
+      setState(() => _error = passwordError);
       return;
     }
 
@@ -129,7 +132,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           );
       if (mounted) setState(() => _step = _ForgotPasswordStep.success);
     } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
+      if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -292,8 +295,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       'Informe seu e-mail para receber um código de verificação.',
     _ForgotPasswordStep.otp =>
       'Digite o código de 6 dígitos enviado para ${_emailController.text.trim()}.',
-    _ForgotPasswordStep.newPassword =>
-      'Use pelo menos 6 caracteres para proteger sua conta.',
+    _ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHint,
     _ForgotPasswordStep.success => '',
     _ForgotPasswordStep.emailSent => '',
   };

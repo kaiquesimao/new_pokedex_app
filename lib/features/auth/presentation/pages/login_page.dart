@@ -18,7 +18,6 @@ class LoginPage extends ConsumerWidget {
       fit: StackFit.expand,
       children: [
         AuthHubLayout(
-          showBackButton: false,
           appBarTitle: 'Entrar',
           illustrationAsset: TrainerAvatars.assetPathFor('hilbert'),
           headline: 'Que bom te ver aqui novamente!',
