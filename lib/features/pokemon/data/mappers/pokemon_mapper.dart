@@ -15,7 +15,7 @@ class PokemonMapper {
       id: response.id,
       name: response.name,
       types: mapTypes(response.types),
-      spriteUrl: response.listSpriteUrl ?? response.spriteUrl,
+      spriteUrl: response.spriteUrl ?? response.listSpriteUrl,
       height: response.height,
       weight: response.weight,
     );

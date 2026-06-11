@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 
 class RegionCardData {
   const RegionCardData({
@@ -23,10 +24,8 @@ class RegionCardData {
 }
 
 abstract final class RegionCardAssets {
-  static const String _spritesBase =
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
-
-  static String starterSpriteUrl(int pokemonId) => '$_spritesBase/$pokemonId.png';
+  static String starterSpriteUrl(int pokemonId) =>
+      PokemonSpriteUrls.officialArtwork(pokemonId);
 
   static const List<RegionCardData> curated = [
     RegionCardData(

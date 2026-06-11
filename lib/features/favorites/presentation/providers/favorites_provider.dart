@@ -6,9 +6,10 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/data/repositories/firestore_favorites_repository.dart';
 import 'package:pokedex_app/features/favorites/data/repositories/local_favorites_repository.dart';
+import 'package:pokedex_app/features/favorites/data/repositories/unauthenticated_favorites_repository.dart';
 import 'package:pokedex_app/features/favorites/domain/repositories/favorites_repository.dart';
 
-final _localFavoritesRepositoryProvider = Provider<LocalFavoritesRepository>((
+final localFavoritesRepositoryProvider = Provider<LocalFavoritesRepository>((
   ref,
 ) {
   final repo = LocalFavoritesRepository(ref.watch(sharedPreferencesProvider));
@@ -17,19 +18,19 @@ final _localFavoritesRepositoryProvider = Provider<LocalFavoritesRepository>((
 });
 
 final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
-  final local = ref.watch(_localFavoritesRepositoryProvider);
   final auth = ref.watch(authProvider);
 
   final userId = auth.uid ?? auth.email;
-  if (auth.isAuthenticated && userId != null) {
-    return FirestoreFavoritesRepository(
-      userId: userId,
-      localCache: local,
-      connectivity: ref.watch(connectivityServiceProvider),
-    );
+  if (!auth.isAuthenticated || userId == null) {
+    return const UnauthenticatedFavoritesRepository();
   }
 
-  return local;
+  final local = ref.watch(localFavoritesRepositoryProvider);
+  return FirestoreFavoritesRepository(
+    userId: userId,
+    localCache: local,
+    connectivity: ref.watch(connectivityServiceProvider),
+  );
 });
 
 class FavoritesNotifier extends StateNotifier<Set<int>> {

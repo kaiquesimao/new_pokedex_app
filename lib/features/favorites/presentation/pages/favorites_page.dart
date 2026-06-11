@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart'
     show PokemonDetail;
+import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/empty_state_illustration.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -15,14 +18,40 @@ class FavoritesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
     final favoriteIds = ref.watch(favoritesProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Favoritos')),
       body: SafePageBody.inTabShell(
-        child: favoriteIds.isEmpty
+        child: !auth.isAuthenticated
+            ? _GuestFavoritesBody(onAuth: () => context.go('/welcome'))
+            : favoriteIds.isEmpty
             ? const _EmptyFavoritesBody()
             : _FavoritesListBody(favoriteIds: favoriteIds.toList()..sort()),
+      ),
+    );
+  }
+}
+
+class _GuestFavoritesBody extends StatelessWidget {
+  const _GuestFavoritesBody({required this.onAuth});
+
+  final VoidCallback onAuth;
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateIllustration(
+      imageAsset: TrainerAvatars.assetPathFor('rhydon_costume'),
+      imageHeight: 180,
+      title: 'Você precisa entrar em uma conta para fazer isso.',
+      subtitle:
+          'Para acessar essa funcionalidade, é necessário fazer login ou '
+          'criar uma conta. Faça isso agora!',
+      action: AppButton(
+        label: 'Entre ou Cadastre-se',
+        variant: AppButtonVariant.outline,
+        onPressed: onAuth,
       ),
     );
   }
@@ -35,10 +64,11 @@ class _EmptyFavoritesBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateIllustration(
       imageAsset: AppAssets.patternMagikarp,
-      imageHeight: 160,
-      title: 'Nenhum Pokémon favorito ainda',
+      imageHeight: 200,
+      title: 'Você não favoritou nenhum Pokémon :(',
       subtitle:
-          'Toque no coração nos cards da Pokédex para adicionar favoritos.',
+          'Clique no ícone de coração dos seus pokémons favoritos e eles '
+          'aparecerão aqui.',
     );
   }
 }
@@ -121,6 +151,7 @@ class _DismissibleFavoriteCard extends ConsumerWidget {
         types: pokemon.types,
         spriteUrl: pokemon.spriteUrl,
         isFavorite: true,
+        heroShellTabIndex: 2,
         onTap: () => context.push('/pokemon/${pokemon.id}'),
         onFavoriteTap: () =>
             ref.read(favoritesProvider.notifier).toggle(pokemon.id),

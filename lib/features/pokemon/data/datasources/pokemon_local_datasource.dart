@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
@@ -117,6 +118,11 @@ class PokemonLocalDataSource {
       weight = detail['weight'] as int?;
     }
 
+    final spriteUrl =
+        PokemonSpriteUrls.isLowResolutionSpriteUrl(entry.spriteUrl)
+        ? PokemonSpriteUrls.officialArtwork(entry.id)
+        : entry.spriteUrl;
+
     return PokemonSummary(
       id: entry.id,
       name: entry.name,
@@ -124,7 +130,7 @@ class PokemonLocalDataSource {
           .map((name) => PokemonType.fromApiName(name))
           .whereType<PokemonType>()
           .toList(),
-      spriteUrl: entry.spriteUrl,
+      spriteUrl: spriteUrl,
       height: height,
       weight: weight,
     );

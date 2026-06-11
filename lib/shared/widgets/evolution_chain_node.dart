@@ -1,6 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 class EvolutionChainNodeCard extends StatelessWidget {
   const EvolutionChainNodeCard({
@@ -41,12 +42,10 @@ class EvolutionChainNodeCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (node.spriteUrl != null)
-                CachedNetworkImage(
+                PokemonSpriteImage(
                   imageUrl: node.spriteUrl!,
                   height: 72,
-                  fit: BoxFit.contain,
-                  errorWidget: (_, _, _) =>
-                      const Icon(Icons.catching_pokemon, size: 48),
+                  maxCachePixels: PokemonSpriteCachePresets.evolution,
                 )
               else
                 const Icon(Icons.catching_pokemon, size: 48),

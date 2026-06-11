@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
@@ -196,6 +198,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                   types: pokemon.types,
                   spriteUrl: pokemon.spriteUrl,
                   isFavorite: favorites.contains(pokemon.id),
+                  heroShellTabIndex: 0,
                   onTap: () => context.push('/pokemon/${pokemon.id}'),
                   onFavoriteTap: () => _toggleFavorite(context, pokemon.id),
                 );
@@ -208,6 +211,11 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   }
 
   void _toggleFavorite(BuildContext context, int pokemonId) {
+    if (!ref.read(authProvider).isAuthenticated) {
+      showLoginRequiredBottomSheet(context);
+      return;
+    }
+
     final favorites = ref.read(favoritesProvider);
     final willFavorite = !favorites.contains(pokemonId);
     ref.read(favoritesProvider.notifier).toggle(pokemonId);

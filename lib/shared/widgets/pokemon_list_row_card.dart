@@ -1,8 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonListRowCard extends StatelessWidget {
@@ -13,6 +14,9 @@ class PokemonListRowCard extends StatelessWidget {
     required this.types,
     this.spriteUrl,
     this.isFavorite = false,
+    this.heroShellTabIndex,
+    this.useHero = false,
+    this.heroPokemonId,
     this.onTap,
     this.onFavoriteTap,
   });
@@ -22,6 +26,15 @@ class PokemonListRowCard extends StatelessWidget {
   final List<PokemonType> types;
   final String? spriteUrl;
   final bool isFavorite;
+
+  /// Shell tab that must be active for the list-to-detail hero animation.
+  final int? heroShellTabIndex;
+
+  /// Enables hero on root-navigator lists (e.g. regional Pokédex).
+  final bool useHero;
+
+  /// Pokémon id used for the hero tag; defaults to [number].
+  final int? heroPokemonId;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteTap;
 
@@ -32,82 +45,84 @@ class PokemonListRowCard extends StatelessWidget {
     final primaryType = types.isNotEmpty ? types.first : PokemonType.normal;
     final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
 
-    final semanticsLabel =
-        '$name, número ${number.toString().padLeft(3, '0')}';
+    final semanticsLabel = '$name, número ${number.toString().padLeft(3, '0')}';
 
     return Semantics(
       label: semanticsLabel,
       button: true,
       child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: typeColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: SizedBox(
-            height: 110,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '#${number.toString().padLeft(3, '0')}',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.6,
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: typeColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: SizedBox(
+              height: 110,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '#${number.toString().padLeft(3, '0')}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                              fontWeight: FontWeight.w600,
                             ),
-                            fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                          const SizedBox(height: 2),
+                          Text(
+                            name,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 6),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: types
-                              .map(
-                                (type) => PokemonTypeChip(
-                                  type: type,
-                                  showLabel: false,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ],
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: types
+                                .map(
+                                  (type) => PokemonTypeChip(
+                                    type: type,
+                                    showLabel: false,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                _TypePanel(
-                  typeColor: typeColor,
-                  primaryType: primaryType,
-                  number: number,
-                  spriteUrl: spriteUrl,
-                  isFavorite: isFavorite,
-                  onFavoriteTap: onFavoriteTap,
-                ),
-              ],
+                  _TypePanel(
+                    typeColor: typeColor,
+                    primaryType: primaryType,
+                    number: number,
+                    spriteUrl: spriteUrl,
+                    isFavorite: isFavorite,
+                    heroShellTabIndex: heroShellTabIndex,
+                    useHero: useHero,
+                    heroPokemonId: heroPokemonId,
+                    onFavoriteTap: onFavoriteTap,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }
@@ -119,6 +134,9 @@ class _TypePanel extends StatelessWidget {
     required this.number,
     this.spriteUrl,
     this.isFavorite = false,
+    this.heroShellTabIndex,
+    this.useHero = false,
+    this.heroPokemonId,
     this.onFavoriteTap,
   });
 
@@ -127,6 +145,9 @@ class _TypePanel extends StatelessWidget {
   final int number;
   final String? spriteUrl;
   final bool isFavorite;
+  final int? heroShellTabIndex;
+  final bool useHero;
+  final int? heroPokemonId;
   final VoidCallback? onFavoriteTap;
 
   @override
@@ -153,30 +174,24 @@ class _TypePanel extends StatelessWidget {
               ),
             ),
             Center(
-              child: Hero(
-                tag: PokemonHeroTags.sprite(number),
-                child: Material(
-                  color: Colors.transparent,
-                  child: spriteUrl != null
-                      ? CachedNetworkImage(
-                          imageUrl: spriteUrl!,
-                          height: 72,
-                          memCacheWidth: 96,
-                          memCacheHeight: 96,
-                          fit: BoxFit.contain,
-                          errorWidget: (_, _, _) => const Icon(
-                            Icons.catching_pokemon,
-                            size: 48,
-                            color: Colors.white70,
-                          ),
-                        )
-                      : const Icon(
-                          Icons.catching_pokemon,
-                          size: 48,
-                          color: Colors.white70,
-                        ),
-                ),
-              ),
+              child: spriteUrl != null
+                  ? PokemonSpriteImage(
+                      imageUrl: spriteUrl!,
+                      height: 72,
+                      maxCachePixels: PokemonSpriteCachePresets.listRow,
+                      heroTag: PokemonHeroTags.listSpriteHeroTag(
+                        context,
+                        pokemonId: heroPokemonId ?? number,
+                        heroShellTabIndex: heroShellTabIndex,
+                        useHero: useHero,
+                      ),
+                      errorIconColor: Colors.white70,
+                    )
+                  : const Icon(
+                      Icons.catching_pokemon,
+                      size: 48,
+                      color: Colors.white70,
+                    ),
             ),
             Positioned(
               top: 4,
@@ -189,8 +204,10 @@ class _TypePanel extends StatelessWidget {
                 child: IconButton(
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
                     color: isFavorite ? Colors.red : Colors.white,

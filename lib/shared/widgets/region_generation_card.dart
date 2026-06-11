@@ -1,13 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 class RegionGenerationCard extends StatelessWidget {
-  const RegionGenerationCard({
-    super.key,
-    required this.data,
-    this.onTap,
-  });
+  const RegionGenerationCard({super.key, required this.data, this.onTap});
 
   final RegionCardData data;
   final VoidCallback? onTap;
@@ -108,17 +105,12 @@ class _StarterSprites extends StatelessWidget {
         for (final id in starterIds)
           Padding(
             padding: const EdgeInsets.only(left: 4),
-            child: CachedNetworkImage(
+            child: PokemonSpriteImage(
               imageUrl: RegionCardAssets.starterSpriteUrl(id),
               width: 48,
               height: 48,
-              fit: BoxFit.contain,
-              memCacheWidth: 64,
-              memCacheHeight: 64,
-              errorWidget: (_, _, _) => const SizedBox(
-                width: 48,
-                height: 48,
-              ),
+              maxCachePixels: PokemonSpriteCachePresets.compact,
+              errorIconSize: 32,
             ),
           ),
       ],

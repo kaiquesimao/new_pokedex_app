@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
+import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -22,13 +23,21 @@ class ProfilePage extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
-            _AccountSection(
-              name: auth.displayName ?? 'Treinador',
-              email: auth.email ?? '',
-              onEditName: () => _showPlaceholderEdit(context, 'Nome'),
-              onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
-              onChangePassword: () => context.push('/profile/change-password'),
-            ),
+            if (auth.isAuthenticated) ...[
+              _AccountSection(
+                name: auth.displayName ?? 'Treinador',
+                email: auth.email ?? '',
+                onEditName: () => _showPlaceholderEdit(context, 'Nome'),
+                onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
+                onChangePassword: () =>
+                    context.push('/profile/change-password'),
+              ),
+            ] else ...[
+              _GuestAccountSection(
+                onLogin: () => context.push('/login'),
+                onRegister: () => context.push('/register'),
+              ),
+            ],
             const SizedBox(height: 24),
             _SettingsSections(
               settings: settings,
@@ -77,11 +86,13 @@ class ProfilePage extends ConsumerWidget {
               onPlaceholderLink: (label) =>
                   _showPlaceholderLink(context, label),
             ),
-            const SizedBox(height: 32),
-            _LogoutSection(
-              displayName: auth.displayName ?? 'Treinador',
-              onLogout: () => _handleLogout(context, ref),
-            ),
+            if (auth.isAuthenticated) ...[
+              const SizedBox(height: 32),
+              _LogoutSection(
+                displayName: auth.displayName ?? 'Treinador',
+                onLogout: () => _handleLogout(context, ref),
+              ),
+            ],
           ],
         ),
       ),
@@ -127,6 +138,47 @@ class ProfilePage extends ConsumerWidget {
     if (context.mounted) {
       context.go('/welcome');
     }
+  }
+}
+
+class _GuestAccountSection extends StatelessWidget {
+  const _GuestAccountSection({required this.onLogin, required this.onRegister});
+
+  final VoidCallback onLogin;
+  final VoidCallback onRegister;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return _SettingsGroup(
+      title: 'Conta',
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            'Entre na sua conta para sincronizar favoritos e gerenciar seus dados.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            children: [
+              AppButton(label: 'Entrar', onPressed: onLogin),
+              const SizedBox(height: 12),
+              AppButton(
+                label: 'Criar conta',
+                variant: AppButtonVariant.outline,
+                onPressed: onRegister,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 

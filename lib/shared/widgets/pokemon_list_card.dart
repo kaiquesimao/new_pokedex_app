@@ -1,7 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonListCard extends StatelessWidget {
@@ -41,23 +42,14 @@ class PokemonListCard extends StatelessWidget {
               ),
               Expanded(
                 child: Center(
-                  child: Hero(
-                    tag: PokemonHeroTags.sprite(number),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: spriteUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: spriteUrl!,
-                              height: 72,
-                              memCacheWidth: 96,
-                              memCacheHeight: 96,
-                              fit: BoxFit.contain,
-                              errorWidget: (_, _, _) =>
-                                  const Icon(Icons.catching_pokemon, size: 48),
-                            )
-                          : const Icon(Icons.catching_pokemon, size: 48),
-                    ),
-                  ),
+                  child: spriteUrl != null
+                      ? PokemonSpriteImage(
+                          imageUrl: spriteUrl!,
+                          height: 72,
+                          maxCachePixels: PokemonSpriteCachePresets.listRow,
+                          heroTag: PokemonHeroTags.sprite(number),
+                        )
+                      : const Icon(Icons.catching_pokemon, size: 48),
                 ),
               ),
               Text(

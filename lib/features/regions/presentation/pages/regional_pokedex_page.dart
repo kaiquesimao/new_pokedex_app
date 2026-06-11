@@ -34,18 +34,6 @@ class RegionalPokedexPage extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         title: Text(title),
-        bottom:
-            state.isLoadingSummaries &&
-                state.totalCount > 0 &&
-                state.items.isNotEmpty
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(4),
-                child: LinearProgressIndicator(
-                  minHeight: 3,
-                  value: state.items.length / state.totalCount,
-                ),
-              )
-            : null,
       ),
       body: SafePageBody.belowAppBar(
         child: Column(
@@ -130,6 +118,8 @@ class RegionalPokedexPage extends ConsumerWidget {
           name: entry.displayName,
           types: entry.types,
           spriteUrl: entry.spriteUrl,
+          heroPokemonId: entry.pokemonId,
+          useHero: true,
           onTap: () => context.push('/pokemon/${entry.pokemonId}'),
         );
       },

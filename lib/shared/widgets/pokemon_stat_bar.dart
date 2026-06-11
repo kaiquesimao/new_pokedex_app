@@ -25,7 +25,7 @@ class PokemonStatBar extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 48,
+            width: 100,
             child: Text(
               label,
               style: theme.textTheme.bodyMedium?.copyWith(

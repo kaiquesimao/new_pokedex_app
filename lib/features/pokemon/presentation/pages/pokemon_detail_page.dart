@@ -1,10 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -15,7 +16,9 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
@@ -175,6 +178,11 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   }
 
   void _toggleFavorite(BuildContext context) {
+    if (!ref.read(authProvider).isAuthenticated) {
+      showLoginRequiredBottomSheet(context);
+      return;
+    }
+
     final willFavorite = !ref
         .read(favoritesProvider)
         .contains(widget.pokemonId);
@@ -256,16 +264,13 @@ class _HeroSection extends StatelessWidget {
                 ),
                 child: Center(
                   child: pokemon.spriteUrl != null
-                      ? Hero(
-                          tag: PokemonHeroTags.sprite(pokemonId),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: CachedNetworkImage(
-                              imageUrl: pokemon.spriteUrl!,
-                              height: 140,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
+                      ? PokemonSpriteImage(
+                          imageUrl: pokemon.spriteUrl!,
+                          height: 140,
+                          maxCachePixels: PokemonSpriteCachePresets.detail,
+                          heroTag: PokemonHeroTags.sprite(pokemonId),
+                          errorIconColor: Colors.white,
+                          errorIconSize: 96,
                         )
                       : Hero(
                           tag: PokemonHeroTags.sprite(pokemonId),
