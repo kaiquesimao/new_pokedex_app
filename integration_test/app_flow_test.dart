@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:pokedex_app/app.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
+import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import '../test/helpers/firebase_test_overrides.dart';
 import 'package:pokedex_app/core/providers/theme_provider.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
-import 'package:pokedex_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
@@ -17,7 +17,7 @@ import 'package:pokedex_app/features/profile/presentation/providers/profile_sett
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// User journey: splash (onboarding já concluído) → lista Pokédex → tap no
+/// User journey: cold start (onboarding já concluído) → lista Pokédex → tap no
 /// primeiro card, se a lista carregar.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -55,17 +55,16 @@ void main() {
           profileSettingsProvider.overrideWith(
             (ref) => ProfileSettingsNotifier(const ProfileSettings()),
           ),
+          appInitialLocationHolderProvider.overrideWithValue(
+            AppInitialLocation('/pokedex'),
+          ),
         ],
         child: const PokedexApp(),
       );
     }
 
-    testWidgets('splash navigates to pokedex list', (tester) async {
+    testWidgets('opens pokedex list on launch', (tester) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump();
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
-
-      await tester.pump(SplashPage.splashDuration);
       await tester.pumpAndSettle(const Duration(seconds: 8));
 
       expect(find.widgetWithText(AppBar, 'Pokédex'), findsOneWidget);
@@ -75,7 +74,6 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(buildTestApp());
-      await tester.pump(SplashPage.splashDuration);
       await tester.pumpAndSettle(const Duration(seconds: 10));
 
       expect(find.widgetWithText(AppBar, 'Pokédex'), findsOneWidget);

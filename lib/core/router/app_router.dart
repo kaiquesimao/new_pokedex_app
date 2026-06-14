@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 
+import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
 
@@ -18,8 +19,6 @@ import 'package:pokedex_app/features/auth/presentation/pages/register_email_page
 import 'package:pokedex_app/features/auth/presentation/pages/register_page.dart';
 
 import 'package:pokedex_app/features/auth/presentation/pages/register_success_page.dart';
-
-import 'package:pokedex_app/features/auth/presentation/pages/splash_page.dart';
 
 import 'package:pokedex_app/features/auth/presentation/pages/verify_email_page.dart';
 
@@ -71,7 +70,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
 
-    initialLocation: '/splash',
+    initialLocation: ref.watch(appInitialLocationProvider),
 
     redirect: (context, state) {
       final auth = ref.read(authProvider);
@@ -79,12 +78,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final onboardingCompleted = ref.read(onboardingProvider);
 
       final path = state.uri.path;
-
-      if (!auth.isInitialized) {
-        return path == '/splash' ? null : '/splash';
-      }
-
-      if (path == '/splash') return null;
 
       if (!onboardingCompleted) {
         return path == '/onboarding' ? null : '/onboarding';
@@ -135,8 +128,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     },
 
     routes: [
-      GoRoute(path: '/splash', builder: (_, _) => const SplashPage()),
-
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingPage()),
 
       GoRoute(path: '/welcome', builder: (_, _) => const AuthWelcomePage()),

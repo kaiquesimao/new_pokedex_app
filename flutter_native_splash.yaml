@@ -1,0 +1,11 @@
+flutter_native_splash:
+  background_image: assets/images/splash/splash_background.png
+  fullscreen: true
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
+
+  android_12:
+    color: "#0D1B2A"
+    image: assets/images/splash/splash_icon.png
+    branding: assets/images/splash/splash_branding.png
+    branding_bottom_padding: 24
