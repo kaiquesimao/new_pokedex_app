@@ -47,12 +47,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier({
     AuthState? initial,
     this._firebaseAuth,
-    this._googleSignIn,
+    this._googleSignInEnabled = false,
     this._connectivity,
   }) : super(initial ?? const AuthState());
 
   final FirebaseAuth? _firebaseAuth;
-  final GoogleSignIn? _googleSignIn;
+  final bool _googleSignInEnabled;
   final ConnectivityService? _connectivity;
   StreamSubscription<User?>? _authSubscription;
 
@@ -244,7 +244,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> signOut() async {
     if (_firebaseAuth != null) {
-      await _googleSignIn?.signOut();
+      if (_googleSignInEnabled) {
+        await FirebaseAuthConfig.ensureGoogleSignInInitialized();
+        await GoogleSignIn.instance.signOut();
+      }
       await _firebaseAuth.signOut();
       state = const AuthState(isInitialized: true);
       return;
@@ -400,22 +403,28 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
-    if (_firebaseAuth == null || _googleSignIn == null) {
+    if (_firebaseAuth == null || !_googleSignInEnabled) {
       throw AuthException('Login com Google indisponível');
     }
 
     _requireOnline();
     try {
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return;
+      await FirebaseAuthConfig.ensureGoogleSignInInitialized();
+      final googleUser = await GoogleSignIn.instance.authenticate(
+        scopeHint: const ['email'],
+      );
 
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       await _firebaseAuth.signInWithCredential(credential);
       state = _authStateFromFirebaseUser(_firebaseAuth.currentUser);
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) return;
+      throw AuthException(
+        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+      );
     } catch (e) {
       throw AuthException(
         firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
@@ -461,7 +470,7 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   if (bootstrap.isAvailable) {
     return AuthNotifier(
       firebaseAuth: FirebaseAuth.instance,
-      googleSignIn: FirebaseAuthConfig.createGoogleSignIn(),
+      googleSignInEnabled: true,
       connectivity: connectivity,
     );
   }

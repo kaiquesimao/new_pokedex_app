@@ -29,6 +29,8 @@ void main() {
       );
 
       await service.initialize();
+      await service.refresh();
+      await service.refresh();
 
       expect(service.isOnline, isTrue);
     },
@@ -41,6 +43,7 @@ void main() {
     );
 
     await service.initialize();
+    await service.refresh();
 
     expect(service.isOnline, isFalse);
   });
@@ -54,6 +57,8 @@ void main() {
       );
 
       await service.initialize();
+      await service.refresh();
+      await service.refresh();
 
       expect(service.isOnline, isFalse);
     },
@@ -68,6 +73,8 @@ void main() {
       );
 
       await service.initialize();
+      await service.refresh();
+      await service.refresh();
 
       expect(service.isOnline, isTrue);
     },
@@ -82,6 +89,8 @@ void main() {
       );
 
       await service.initialize();
+      await service.refresh();
+      await service.refresh();
 
       expect(service.isOnline, isTrue);
     },

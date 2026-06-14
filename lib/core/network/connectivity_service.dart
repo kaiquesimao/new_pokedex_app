@@ -28,8 +28,19 @@ class ConnectivityService {
   }
 
   Future<void> initialize() async {
-    _isOnline = await _checkOnline();
     _subscription = _connectivity.onConnectivityChanged.listen(_updateStatus);
+    final results = await _connectivity.checkConnectivity();
+    _isOnline = _initialOnlineGuess(results);
+    unawaited(refresh());
+  }
+
+  bool _initialOnlineGuess(List<ConnectivityResult> results) {
+    if (kIsWeb) {
+      return _hasNetworkInterface(results);
+    }
+
+    // Optimistic when a network interface is present; DNS probe refines status.
+    return _hasNetworkInterface(results);
   }
 
   Future<bool> refresh() async {
