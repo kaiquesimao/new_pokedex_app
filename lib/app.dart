@@ -5,7 +5,6 @@ import 'package:pokedex_app/core/router/app_router.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_session_effects_provider.dart';
 import 'package:pokedex_app/core/theme/app_theme.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
-import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class PokedexApp extends ConsumerWidget {
   const PokedexApp({super.key});
@@ -22,8 +21,7 @@ class PokedexApp extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       routerConfig: router,
-      builder: (context, child) =>
-          SafePageBody(child: AppOfflineShell(child: child)),
+      builder: (context, child) => AppOfflineShell(child: child),
     );
   }
 }

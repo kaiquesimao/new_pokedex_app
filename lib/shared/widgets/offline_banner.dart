@@ -77,7 +77,12 @@ class ConnectivityOfflineBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isOnline = ref.watch(isDeviceOnlineProvider);
     if (isOnline) return const SizedBox.shrink();
-    return OfflineBanner(message: message, compact: compact);
+    return SafeArea(
+      bottom: false,
+      left: false,
+      right: false,
+      child: OfflineBanner(message: message, compact: compact),
+    );
   }
 }
 
