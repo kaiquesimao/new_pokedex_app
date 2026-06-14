@@ -5,7 +5,6 @@ import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 
 String resolveInitialLocation({
   required bool onboardingCompleted,
@@ -22,19 +21,13 @@ Future<void> runAppBootstrap(ProviderContainer container) async {
   final repository = container.read(pokemonRepositoryProvider);
   final isOnline = container.read(connectivityServiceProvider).isOnline;
 
+  // Warm the local DB and name index during splash; list loading stays on the page
+  // so state updates always happen after the widget tree is listening.
+  container.read(appDatabaseProvider);
+
   if (isOnline) {
     unawaited(repository.warmPokemonNameIndex());
   }
-
-  unawaited(
-    authInit.then((_) {
-      final auth = container.read(authProvider);
-      if (auth.isAuthenticated && isOnline) {
-        container.read(appDatabaseProvider);
-        unawaited(container.read(pokemonListProvider.notifier).loadInitial());
-      }
-    }),
-  );
 
   await authInit;
 }

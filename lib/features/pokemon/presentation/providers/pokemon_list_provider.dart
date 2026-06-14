@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
@@ -363,7 +362,6 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
     final processed = <int, PokemonSummary?>{};
     var nextIndex = 0;
     var visibleInBatch = 0;
-    var publishScheduled = false;
 
     void publishNow() {
       if (generation != _loadGeneration) return;
@@ -376,9 +374,10 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       );
 
       final processedCount = ids.where(processed.containsKey).length;
+      final batchComplete = processedCount >= ids.length;
 
-      if (batchVisible.length == visibleInBatch &&
-          batchVisible.length < ids.length &&
+      if (!batchComplete &&
+          batchVisible.length == visibleInBatch &&
           state.isLoadingSummaries) {
         return;
       }
@@ -386,7 +385,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       visibleInBatch = batchVisible.length;
       state = PokemonListState(
         items: [...lockedItems, ...batchVisible],
-        isLoadingSummaries: processedCount < ids.length,
+        isLoadingSummaries: !batchComplete,
         hasMore: hasMore,
         nextOffset: nextOffset,
         lockedItemCount: lockedItems.length,
@@ -397,14 +396,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
       );
     }
 
-    void publish() {
-      if (publishScheduled) return;
-      publishScheduled = true;
-      SchedulerBinding.instance.scheduleFrameCallback((_) {
-        publishScheduled = false;
-        publishNow();
-      });
-    }
+    void publish() => publishNow();
 
     Future<void> worker() async {
       while (true) {
@@ -436,7 +428,6 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
 
     if (generation != _loadGeneration) return;
 
-    publishScheduled = false;
     publishNow();
 
     final batchVisible = _visibleFromBatch(

@@ -32,7 +32,9 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       final state = ref.read(pokemonListProvider);
       if (state.items.isEmpty &&
           !state.isLoadingIds &&
