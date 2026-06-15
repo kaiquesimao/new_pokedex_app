@@ -1,27 +1,27 @@
+import 'package:pokedex_app/core/constants/app_assets.dart';
+
 enum PokemonType {
-  normal('normal', 'normal'),
-  fire('fire', 'fire'),
-  water('water', 'water'),
-  grass('grass', 'leaf'),
-  electric('electric', 'electric'),
-  ice('ice', 'ice'),
-  fighting('fighting', 'fighting'),
-  poison('poison', 'poison'),
-  ground('ground', 'ground'),
-  flying('flying', 'flying'),
-  psychic('psychic', 'psychic'),
-  bug('bug', 'bug'),
-  rock('rock', 'rock'),
-  ghost('ghost', 'ghost'),
-  dragon('dragon', 'dragon'),
-  dark('dark', 'dark'),
-  steel('steel', 'steel'),
-  fairy('fairy', 'fairy');
+  normal('normal'),
+  fire('fire'),
+  water('water'),
+  grass('grass'),
+  electric('electric'),
+  ice('ice'),
+  fighting('fighting'),
+  poison('poison'),
+  ground('ground'),
+  flying('flying'),
+  psychic('psychic'),
+  bug('bug'),
+  rock('rock'),
+  ghost('ghost'),
+  dragon('dragon'),
+  dark('dark'),
+  steel('steel'),
+  fairy('fairy');
 
-  const PokemonType(this.apiName, this.assetName);
-
+  const PokemonType(this.apiName);
   final String apiName;
-  final String assetName;
 
   static PokemonType? fromApiName(String name) {
     final normalized = name.toLowerCase();
@@ -33,7 +33,7 @@ enum PokemonType {
     return null;
   }
 
-  String get assetPath => 'assets/images/elements/$assetName.png';
+  String get assetPath => '${AppAssets.elementsBase}$apiName.svg';
 
   String get labelPt => switch (this) {
     PokemonType.normal => 'Normal',

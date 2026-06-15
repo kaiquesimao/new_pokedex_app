@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 
 class AppBottomNavBar extends StatelessWidget {
@@ -19,6 +20,7 @@ class AppBottomNavBar extends StatelessWidget {
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       height: 72,
+      indicatorColor: Colors.transparent,
       labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       destinations: List.generate(_labels.length, (index) {
         final selected = currentIndex == index;
@@ -71,11 +73,11 @@ class _NavIcon extends StatelessWidget {
         opacity: selected ? 1 : 0.75,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        child: Image.asset(
+        child: SvgPicture.asset(
           asset,
           width: 26,
           height: 26,
-          errorBuilder: (_, _, _) => Icon(fallback, color: color, size: 26),
+          placeholderBuilder: (_) => Icon(fallback, color: color, size: 26),
         ),
       ),
     );

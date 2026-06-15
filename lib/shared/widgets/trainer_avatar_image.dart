@@ -20,7 +20,7 @@ class TrainerAvatarImage extends StatelessWidget {
       width: size,
       height: size,
       fit: fit,
-      filterQuality: FilterQuality.none,
+      filterQuality: FilterQuality.high,
       errorBuilder: (_, _, _) => Icon(Icons.person, size: size * 0.8),
     );
   }

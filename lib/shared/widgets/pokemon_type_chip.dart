@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class PokemonTypeChip extends StatelessWidget {
   const PokemonTypeChip({
@@ -37,12 +38,7 @@ class PokemonTypeChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              type.assetPath,
-              width: 18,
-              height: 18,
-              errorBuilder: (_, _, _) => const SizedBox(width: 18, height: 18),
-            ),
+            PokemonTypeIcon(assetPath: type.assetPath, size: 18),
             if (showLabel) ...[
               const SizedBox(width: 6),
               Text(
