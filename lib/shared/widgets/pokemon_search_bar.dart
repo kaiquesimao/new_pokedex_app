@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pokedex_app/core/constants/app_assets.dart';
 
 class PokemonSearchBar extends StatefulWidget {
   const PokemonSearchBar({

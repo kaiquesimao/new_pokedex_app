@@ -46,6 +46,8 @@ import 'package:pokedex_app/features/regions/presentation/pages/regions_page.dar
 
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart';
 
+import 'package:pokedex_app/features/shell/presentation/widgets/animated_branch_container.dart';
+
 import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -226,11 +228,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      StatefulShellRoute.indexedStack(
+      StatefulShellRoute(
         builder: (_, _, navigationShell) {
           return MainShellPage(navigationShell: navigationShell);
         },
-
+        navigatorContainerBuilder: (_, navigationShell, children) {
+          return AnimatedBranchContainer(
+            currentIndex: navigationShell.currentIndex,
+            children: children,
+          );
+        },
         branches: [
           StatefulShellBranch(
             routes: [

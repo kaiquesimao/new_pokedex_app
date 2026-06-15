@@ -63,11 +63,21 @@ class _NavIcon extends StatelessWidget {
       _ => Icons.person_outline,
     };
 
-    return Image.asset(
-      asset,
-      width: 26,
-      height: 26,
-      errorBuilder: (_, _, _) => Icon(fallback, color: color, size: 26),
+    return AnimatedScale(
+      scale: selected ? 1.1 : 1,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOutBack,
+      child: AnimatedOpacity(
+        opacity: selected ? 1 : 0.75,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: Image.asset(
+          asset,
+          width: 26,
+          height: 26,
+          errorBuilder: (_, _, _) => Icon(fallback, color: color, size: 26),
+        ),
+      ),
     );
   }
 }

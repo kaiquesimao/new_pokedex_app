@@ -16,7 +16,10 @@ class MainShellPage extends StatelessWidget {
         body: navigationShell,
         bottomNavigationBar: AppBottomNavBar(
           currentIndex: navigationShell.currentIndex,
-          onTap: navigationShell.goBranch,
+          onTap: (index) => navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          ),
         ),
       ),
     );
