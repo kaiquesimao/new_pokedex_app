@@ -72,7 +72,7 @@ class _PokemonDetailContent extends ConsumerStatefulWidget {
 }
 
 class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
-  var _statsExpanded = false;
+  var _statsExpanded = true;
 
   @override
   void initState() {

@@ -22,14 +22,12 @@ void main() {
       ProviderScope(
         overrides: [
           firebaseUnavailableOverride,
-          authProvider.overrideWith(
-            (ref) => AuthNotifier(
-              initial: const AuthState(
-                isInitialized: true,
-                isAuthenticated: true,
-                email: 'ash@pokemon.com',
-                displayName: 'Ash',
-              ),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              email: 'ash@pokemon.com',
+              displayName: 'Ash',
             ),
           ),
         ],

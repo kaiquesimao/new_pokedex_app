@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 
-class PokemonFiltersNotifier extends StateNotifier<PokemonListFilters> {
-  PokemonFiltersNotifier() : super(const PokemonListFilters());
+class PokemonFiltersNotifier extends Notifier<PokemonListFilters> {
+  @override
+  PokemonListFilters build() => const PokemonListFilters();
 
   void setSearch(String query) {
     state = state.copyWith(searchQuery: query);
@@ -48,6 +49,6 @@ class PokemonFiltersNotifier extends StateNotifier<PokemonListFilters> {
 }
 
 final pokemonFiltersProvider =
-    StateNotifierProvider<PokemonFiltersNotifier, PokemonListFilters>((ref) {
-      return PokemonFiltersNotifier();
-    });
+    NotifierProvider<PokemonFiltersNotifier, PokemonListFilters>(
+      PokemonFiltersNotifier.new,
+    );

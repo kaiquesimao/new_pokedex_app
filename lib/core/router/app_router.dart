@@ -66,11 +66,30 @@ bool _isGuestShellRoute(String path) {
       path.startsWith('/pokemon/');
 }
 
+/// Notifies [GoRouter] when auth-related state changes so [redirect] re-runs.
+class GoRouterRefreshNotifier extends ChangeNotifier {
+  void notifyRouter() => notifyListeners();
+}
+
+final goRouterRefreshNotifierProvider = Provider<GoRouterRefreshNotifier>((
+  ref,
+) {
+  final notifier = GoRouterRefreshNotifier();
+  ref.listen<AuthState>(authProvider, (_, _) => notifier.notifyRouter());
+  ref.listen<bool>(onboardingProvider, (_, _) => notifier.notifyRouter());
+  ref.onDispose(notifier.dispose);
+  return notifier;
+});
+
 final goRouterProvider = Provider<GoRouter>((ref) {
+  final refreshListenable = ref.watch(goRouterRefreshNotifierProvider);
+
   final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
 
     initialLocation: ref.watch(appInitialLocationProvider),
+
+    refreshListenable: refreshListenable,
 
     redirect: (context, state) {
       final auth = ref.read(authProvider);
@@ -273,10 +292,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
-
-  ref.listen<AuthState>(authProvider, (_, _) => router.refresh());
-
-  ref.listen<bool>(onboardingProvider, (_, _) => router.refresh());
 
   ref.onDispose(router.dispose);
 

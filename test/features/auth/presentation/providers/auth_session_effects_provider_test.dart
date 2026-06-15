@@ -19,24 +19,21 @@ void main() {
 
   test('clears local favorites and register draft on sign out', () async {
     final prefs = await SharedPreferences.getInstance();
-    final container = ProviderContainer(
+    final container = ProviderContainer.test(
       overrides: [
         firebaseUnavailableOverride,
         sharedPreferencesProvider.overrideWithValue(prefs),
-        authProvider.overrideWith(
-          (ref) => AuthNotifier(
-            initial: const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              uid: 'user-1',
-              email: 'ash@pokemon.com',
-              displayName: 'Ash',
-            ),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            uid: 'user-1',
+            email: 'ash@pokemon.com',
+            displayName: 'Ash',
           ),
         ),
       ],
     );
-    addTearDown(container.dispose);
 
     container.read(authSessionEffectsProvider);
     container.read(registerFlowProvider.notifier).setEmail('draft@pokemon.com');

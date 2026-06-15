@@ -84,16 +84,10 @@ class PokemonListState {
   }
 }
 
-class PokemonListNotifier extends StateNotifier<PokemonListState> {
-  PokemonListNotifier(
-    this._repository,
-    this._filtersNotifier,
-    this._connectivity,
-  ) : super(const PokemonListState());
-
-  final PokemonRepository _repository;
-  final PokemonFiltersNotifier _filtersNotifier;
-  final ConnectivityService _connectivity;
+class PokemonListNotifier extends Notifier<PokemonListState> {
+  PokemonRepository get _repository => ref.read(pokemonRepositoryProvider);
+  ConnectivityService get _connectivity =>
+      ref.read(connectivityServiceProvider);
 
   static const int _pageSize = 20;
   static const int _catalogBatchSize = 20;
@@ -102,6 +96,22 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
   int _loadGeneration = 0;
   Set<PokemonType>? _weakToTypesCache;
   PokemonType? _weakToTypesFor;
+
+  @override
+  PokemonListState build() {
+    ref.listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
+      if (previous == next) return;
+      reloadForFilters(next);
+    });
+    ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
+      final online = next.value;
+      if (online != true) return;
+      if (showingOfflineData) {
+        unawaited(loadInitial());
+      }
+    });
+    return const PokemonListState();
+  }
 
   Future<void> loadInitial() async {
     if (state.isLoadingIds || state.isLoadingSummaries) return;
@@ -112,7 +122,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
     state = const PokemonListState(isLoadingIds: true);
 
     try {
-      final filters = _filtersNotifier.state;
+      final filters = ref.read(pokemonFiltersProvider);
       if (filters.usesSearchOnlyMode) {
         await _loadSearchInitial(filters, generation);
       } else if (filters.usesCatalogMode) {
@@ -145,7 +155,7 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
     state = state.copyWith(isLoadingMore: true, clearError: true);
 
     try {
-      final filters = _filtersNotifier.state;
+      final filters = ref.read(pokemonFiltersProvider);
       if (filters.usesSearchOnlyMode) {
         await _loadSearchMore(generation);
       } else if (filters.usesCatalogMode) {
@@ -530,30 +540,6 @@ class PokemonListNotifier extends StateNotifier<PokemonListState> {
 }
 
 final pokemonListProvider =
-    StateNotifierProvider<PokemonListNotifier, PokemonListState>((ref) {
-      final filtersNotifier = ref.watch(pokemonFiltersProvider.notifier);
-      final connectivity = ref.watch(connectivityServiceProvider);
-      final notifier = PokemonListNotifier(
-        ref.watch(pokemonRepositoryProvider),
-        filtersNotifier,
-        connectivity,
-      );
-
-      ref.listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
-        if (previous == next) return;
-        notifier.reloadForFilters(next);
-      });
-
-      ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (
-        previous,
-        next,
-      ) {
-        final online = next.value;
-        if (online != true) return;
-        if (notifier.showingOfflineData) {
-          unawaited(notifier.loadInitial());
-        }
-      });
-
-      return notifier;
-    });
+    NotifierProvider<PokemonListNotifier, PokemonListState>(
+      PokemonListNotifier.new,
+    );

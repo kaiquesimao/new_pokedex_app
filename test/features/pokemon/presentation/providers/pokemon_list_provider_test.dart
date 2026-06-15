@@ -2,9 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
-import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 
 class _OnlineConnectivity implements ConnectivityService {
@@ -56,26 +57,23 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('loadInitial clears loading flags and exposes summaries', () async {
-    final connectivity = _OnlineConnectivity();
-
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-
-    final notifier = PokemonListNotifier(
-      _FakePokemonRepository(),
-      container.read(pokemonFiltersProvider.notifier),
-      connectivity,
+    final container = ProviderContainer.test(
+      overrides: [
+        connectivityServiceProvider.overrideWithValue(_OnlineConnectivity()),
+        pokemonRepositoryProvider.overrideWithValue(_FakePokemonRepository()),
+      ],
     );
-    addTearDown(notifier.dispose);
 
-    final loadFuture = notifier.loadInitial();
-    await loadFuture;
+    final notifier = container.read(pokemonListProvider.notifier);
+
+    await notifier.loadInitial();
     await Future<void>.delayed(Duration.zero);
 
-    expect(notifier.state.isLoadingIds, isFalse);
-    expect(notifier.state.isLoadingSummaries, isFalse);
-    expect(notifier.state.showFullSkeleton, isFalse);
-    expect(notifier.state.items, hasLength(2));
-    expect(notifier.state.items.first.name, 'pokemon-1');
+    final state = container.read(pokemonListProvider);
+    expect(state.isLoadingIds, isFalse);
+    expect(state.isLoadingSummaries, isFalse);
+    expect(state.showFullSkeleton, isFalse);
+    expect(state.items, hasLength(2));
+    expect(state.items.first.name, 'pokemon-1');
   });
 }

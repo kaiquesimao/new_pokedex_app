@@ -3,32 +3,24 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/regions/data/models/region_models.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
 
-class RegionsNotifier
-    extends StateNotifier<AsyncValue<List<NamedApiResource>>> {
-  RegionsNotifier(this._repository) : super(const AsyncValue.data([]));
+class RegionsNotifier extends AsyncNotifier<List<NamedApiResource>> {
+  RegionRepository get _repository => ref.read(regionRepositoryProvider);
 
-  final RegionRepository _repository;
-  bool _started = false;
+  @override
+  Future<List<NamedApiResource>> build() async => [];
 
   Future<void> loadIfNeeded() async {
-    if (_started) return;
-    _started = true;
-    await _fetch();
+    if (state.hasValue && state.requireValue.isNotEmpty) return;
+    await reload();
   }
 
   Future<void> reload() async {
-    await _fetch();
-  }
-
-  Future<void> _fetch() async {
-    state = const AsyncValue.loading();
+    state = const AsyncLoading();
     state = await AsyncValue.guard(() => _repository.getRegions());
   }
 }
 
 final regionsProvider =
-    StateNotifierProvider<RegionsNotifier, AsyncValue<List<NamedApiResource>>>((
-      ref,
-    ) {
-      return RegionsNotifier(ref.watch(regionRepositoryProvider));
-    });
+    AsyncNotifierProvider<RegionsNotifier, List<NamedApiResource>>(
+      RegionsNotifier.new,
+    );

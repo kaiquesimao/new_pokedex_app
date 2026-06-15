@@ -58,19 +58,31 @@ class RegionalPokedexState {
   }
 }
 
-class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
-  RegionalPokedexNotifier(
-    this._regionRepository,
-    this._pokemonRepository,
-    this._connectivity,
-  ) : super(const RegionalPokedexState());
+class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
+  RegionalPokedexNotifier(this.regionName);
 
-  final RegionRepository _regionRepository;
-  final PokemonRepository _pokemonRepository;
-  final ConnectivityService _connectivity;
+  final String regionName;
+
+  RegionRepository get _regionRepository => ref.read(regionRepositoryProvider);
+  PokemonRepository get _pokemonRepository =>
+      ref.read(pokemonRepositoryProvider);
+  ConnectivityService get _connectivity =>
+      ref.read(connectivityServiceProvider);
 
   static const int _concurrency = 8;
   int _loadGeneration = 0;
+
+  @override
+  RegionalPokedexState build() {
+    ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
+      if (next.value != true) return;
+      if (showingOfflineData) {
+        unawaited(load(regionName));
+      }
+    });
+    Future.microtask(() => load(regionName));
+    return const RegionalPokedexState();
+  }
 
   Future<void> load(String regionName) async {
     await _connectivity.refresh();
@@ -210,28 +222,8 @@ class RegionalPokedexNotifier extends StateNotifier<RegionalPokedexState> {
 }
 
 final regionalPokedexProvider =
-    StateNotifierProvider.family<
+    NotifierProvider.family<
       RegionalPokedexNotifier,
       RegionalPokedexState,
       String
-    >((ref, regionName) {
-      final connectivity = ref.watch(connectivityServiceProvider);
-      final notifier = RegionalPokedexNotifier(
-        ref.watch(regionRepositoryProvider),
-        ref.watch(pokemonRepositoryProvider),
-        connectivity,
-      );
-
-      ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (
-        previous,
-        next,
-      ) {
-        if (next.value != true) return;
-        if (notifier.showingOfflineData) {
-          unawaited(notifier.load(regionName));
-        }
-      });
-
-      Future.microtask(() => notifier.load(regionName));
-      return notifier;
-    });
+    >(RegionalPokedexNotifier.new);

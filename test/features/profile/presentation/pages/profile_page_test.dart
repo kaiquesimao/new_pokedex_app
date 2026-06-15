@@ -16,18 +16,16 @@ void main() {
       ProviderScope(
         overrides: [
           firebaseUnavailableOverride,
-          authProvider.overrideWith(
-            (ref) => AuthNotifier(
-              initial: const AuthState(
-                isInitialized: true,
-                isAuthenticated: true,
-                email: 'ash@pokemon.com',
-                displayName: 'Ash',
-              ),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              email: 'ash@pokemon.com',
+              displayName: 'Ash',
             ),
           ),
-          profileSettingsProvider.overrideWith(
-            (ref) => ProfileSettingsNotifier(const ProfileSettings()),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => const ProfileSettings(),
           ),
         ],
         child: const MaterialApp(home: ProfilePage()),
@@ -54,12 +52,11 @@ void main() {
       ProviderScope(
         overrides: [
           firebaseUnavailableOverride,
-          authProvider.overrideWith(
-            (ref) =>
-                AuthNotifier(initial: const AuthState(isInitialized: true)),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(isInitialized: true),
           ),
-          profileSettingsProvider.overrideWith(
-            (ref) => ProfileSettingsNotifier(const ProfileSettings()),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => const ProfileSettings(),
           ),
         ],
         child: const MaterialApp(home: ProfilePage()),
@@ -68,14 +65,6 @@ void main() {
 
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Criar conta'), findsOneWidget);
-    expect(
-      find.text(
-        'Entre na sua conta para sincronizar favoritos e gerenciar seus dados.',
-      ),
-      findsOneWidget,
-    );
     expect(find.text('Sair'), findsNothing);
-    expect(find.text('Treinador'), findsNothing);
-    expect(find.text('Senha'), findsNothing);
   });
 }

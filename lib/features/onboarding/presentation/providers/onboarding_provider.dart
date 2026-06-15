@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const onboardingCompletedKey = 'onboarding_completed';
@@ -7,8 +8,9 @@ bool readOnboardingCompleted(SharedPreferences prefs) {
   return prefs.getBool(onboardingCompletedKey) ?? false;
 }
 
-class OnboardingNotifier extends StateNotifier<bool> {
-  OnboardingNotifier(super.completed);
+class OnboardingNotifier extends Notifier<bool> {
+  @override
+  bool build() => readOnboardingCompleted(ref.watch(sharedPreferencesProvider));
 
   Future<void> complete() async {
     if (state) return;
@@ -19,7 +21,6 @@ class OnboardingNotifier extends StateNotifier<bool> {
   }
 }
 
-final onboardingProvider =
-    StateNotifierProvider<OnboardingNotifier, bool>((ref) {
-      return OnboardingNotifier(false);
-    });
+final onboardingProvider = NotifierProvider<OnboardingNotifier, bool>(
+  OnboardingNotifier.new,
+);

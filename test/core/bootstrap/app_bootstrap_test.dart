@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/bootstrap/app_bootstrap.dart';
-import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 
 void main() {
   group('resolveInitialLocation', () {
@@ -8,7 +7,7 @@ void main() {
       expect(
         resolveInitialLocation(
           onboardingCompleted: false,
-          auth: const AuthState(isInitialized: true, isAuthenticated: true),
+          isAuthenticated: true,
         ),
         '/onboarding',
       );
@@ -18,7 +17,7 @@ void main() {
       expect(
         resolveInitialLocation(
           onboardingCompleted: true,
-          auth: const AuthState(isInitialized: true, isAuthenticated: true),
+          isAuthenticated: true,
         ),
         '/pokedex',
       );
@@ -28,7 +27,7 @@ void main() {
       expect(
         resolveInitialLocation(
           onboardingCompleted: true,
-          auth: const AuthState(isInitialized: true),
+          isAuthenticated: false,
         ),
         '/welcome',
       );

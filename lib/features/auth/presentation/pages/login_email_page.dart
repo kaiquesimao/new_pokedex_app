@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -52,6 +53,7 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
 
   @override
   Widget build(BuildContext context) {
+    listenPostLoginNavigation(ref);
     return Scaffold(
       appBar: AppBar(title: const Text('Entrar')),
       body: Stack(

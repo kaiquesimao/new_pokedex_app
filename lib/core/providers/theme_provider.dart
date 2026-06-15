@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const themeModeStorageKey = 'theme_mode';
@@ -12,8 +13,10 @@ ThemeMode readStoredThemeMode(SharedPreferences prefs) {
   return ThemeMode.system;
 }
 
-class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier(super.initial);
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() =>
+      readStoredThemeMode(ref.watch(sharedPreferencesProvider));
 
   Future<void> setThemeMode(ThemeMode mode) async {
     state = mode;
@@ -22,8 +25,5 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   }
 }
 
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((
-  ref,
-) {
-  return ThemeModeNotifier(ThemeMode.system);
-});
+final themeModeProvider =
+    NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);

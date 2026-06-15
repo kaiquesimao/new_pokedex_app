@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 
 /// Firebase / Google Sign-In constants from `google-services.json`.
@@ -20,7 +21,10 @@ abstract final class FirebaseAuthConfig {
     final completer = Completer<void>();
     _googleSignInInit = completer;
     GoogleSignIn.instance
-        .initialize(serverClientId: googleWebClientId)
+        .initialize(
+          clientId: kIsWeb ? googleWebClientId : null,
+          serverClientId: kIsWeb ? null : googleWebClientId,
+        )
         .then(completer.complete)
         .catchError((Object error, StackTrace stack) {
           _googleSignInInit = null;

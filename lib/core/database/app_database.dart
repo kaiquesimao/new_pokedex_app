@@ -36,7 +36,11 @@ class CachedRegionalPokedexEntries extends Table {
 }
 
 @DriftDatabase(
-  tables: [CachedPokemonEntries, PokemonNameIndex, CachedRegionalPokedexEntries],
+  tables: [
+    CachedPokemonEntries,
+    PokemonNameIndex,
+    CachedRegionalPokedexEntries,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
@@ -132,9 +136,9 @@ class AppDatabase extends _$AppDatabase {
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) return Future.value([]);
 
-    return (select(cachedPokemonEntries)
-          ..where((t) => t.name.lower().like('%$normalized%')))
-        .get();
+    return (select(
+      cachedPokemonEntries,
+    )..where((t) => t.name.lower().like('%$normalized%'))).get();
   }
 
   Future<List<int>> getAllCachedEntryIds() async {
@@ -202,14 +206,18 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<CachedRegionalPokedexEntry?> getRegionalPokedex(String regionName) {
-    return (select(cachedRegionalPokedexEntries)
-          ..where((t) => t.regionName.equals(regionName)))
-        .getSingleOrNull();
+    return (select(
+      cachedRegionalPokedexEntries,
+    )..where((t) => t.regionName.equals(regionName))).getSingleOrNull();
   }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'pokedex_cache',
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
       ),

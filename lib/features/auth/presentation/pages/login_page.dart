@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_layout.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_action_button.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
@@ -12,6 +14,7 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    listenPostLoginNavigation(ref);
     final loading = ref.watch(socialSignInLoadingProvider);
 
     return Stack(
@@ -27,10 +30,7 @@ class LoginPage extends ConsumerWidget {
               provider: SocialAuthProvider.apple,
               onPressed: () => handleAppleSignIn(context, ref),
             ),
-            SocialAuthButton(
-              provider: SocialAuthProvider.google,
-              onPressed: () => handleGoogleSignIn(context, ref),
-            ),
+            const GoogleSignInActionButton(),
             SocialAuthButton(
               provider: SocialAuthProvider.email,
               onPressed: () => context.push('/login/email'),

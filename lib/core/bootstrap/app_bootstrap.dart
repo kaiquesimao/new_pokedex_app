@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/firebase/firebase_bootstrap.dart';
@@ -11,21 +10,17 @@ import 'package:pokedex_app/core/network/offline_http_overrides.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
-import 'package:pokedex_app/core/providers/theme_provider.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
-import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import 'package:pokedex_app/features/profile/presentation/providers/profile_provider.dart';
-import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String resolveInitialLocation({
   required bool onboardingCompleted,
-  required AuthState auth,
+  required bool isAuthenticated,
 }) {
   if (!onboardingCompleted) return '/onboarding';
-  if (auth.isAuthenticated) return '/pokedex';
+  if (isAuthenticated) return '/pokedex';
   return '/welcome';
 }
 
@@ -59,25 +54,10 @@ Future<ColdStartResult> runColdStart() async {
     HttpOverrides.global = OfflineHttpOverrides(connectivityService);
   }
 
-  final initialThemeMode = readStoredThemeMode(prefs);
-  final initialAvatarSlug = readStoredAvatarSlug(prefs);
-  final initialAuth = readStoredAuthState(prefs);
-  final initialOnboardingCompleted = readOnboardingCompleted(prefs);
-  final initialProfileSettings = readStoredProfileSettings(prefs);
-
   final networkCoordinator = NetworkAccessCoordinator(
     connectivity: connectivityService,
     firebaseAvailable: bootstrapResult.isAvailable,
   );
-
-  AuthNotifier? firebaseAuthNotifier;
-  if (bootstrapResult.isAvailable) {
-    firebaseAuthNotifier = AuthNotifier(
-      firebaseAuth: FirebaseAuth.instance,
-      googleSignInEnabled: true,
-      connectivity: connectivityService,
-    );
-  }
 
   final initialLocationHolder = AppInitialLocation('/welcome');
 
@@ -87,27 +67,6 @@ Future<ColdStartResult> runColdStart() async {
       sharedPreferencesProvider.overrideWithValue(prefs),
       firebaseBootstrapProvider.overrideWithValue(bootstrapResult),
       appInitialLocationHolderProvider.overrideWithValue(initialLocationHolder),
-      if (firebaseAuthNotifier != null)
-        authProvider.overrideWith((ref) => firebaseAuthNotifier!)
-      else
-        authProvider.overrideWith(
-          (ref) => AuthNotifier(
-            initial: initialAuth,
-            connectivity: connectivityService,
-          ),
-        ),
-      onboardingProvider.overrideWith(
-        (ref) => OnboardingNotifier(initialOnboardingCompleted),
-      ),
-      themeModeProvider.overrideWith(
-        (ref) => ThemeModeNotifier(initialThemeMode),
-      ),
-      profileAvatarProvider.overrideWith(
-        (ref) => ProfileNotifier(initialAvatarSlug),
-      ),
-      profileSettingsProvider.overrideWith(
-        (ref) => ProfileSettingsNotifier(initialProfileSettings),
-      ),
     ],
   );
 
@@ -121,7 +80,7 @@ Future<ColdStartResult> runColdStart() async {
 
   initialLocationHolder.value = resolveInitialLocation(
     onboardingCompleted: container.read(onboardingProvider),
-    auth: container.read(authProvider),
+    isAuthenticated: container.read(authProvider).isAuthenticated,
   );
 
   return ColdStartResult(

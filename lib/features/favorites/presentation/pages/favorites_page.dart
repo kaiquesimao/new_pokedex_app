@@ -127,14 +127,7 @@ class _DismissibleFavoriteCard extends ConsumerWidget {
           color: Colors.red,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Image.asset(
-          AppAssets.iconTrash,
-          width: 28,
-          height: 28,
-          color: Colors.white,
-          errorBuilder: (_, _, _) =>
-              const Icon(Icons.delete_outline, color: Colors.white, size: 28),
-        ),
+        child: Icon(Icons.delete_outline, color: Colors.white, size: 28),
       ),
       onDismissed: (_) {
         ref.read(favoritesProvider.notifier).toggle(pokemon.id);

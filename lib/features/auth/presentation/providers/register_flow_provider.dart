@@ -1,11 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RegisterDraft {
-  const RegisterDraft({
-    this.email = '',
-    this.password = '',
-    this.name = '',
-  });
+  const RegisterDraft({this.email = '', this.password = '', this.name = ''});
 
   final String email;
   final String password;
@@ -23,8 +19,9 @@ class RegisterDraft {
   }
 }
 
-class RegisterFlowNotifier extends StateNotifier<RegisterDraft> {
-  RegisterFlowNotifier() : super(const RegisterDraft());
+class RegisterFlowNotifier extends Notifier<RegisterDraft> {
+  @override
+  RegisterDraft build() => const RegisterDraft();
 
   void setEmail(String email) {
     state = state.copyWith(email: email.trim());
@@ -44,6 +41,6 @@ class RegisterFlowNotifier extends StateNotifier<RegisterDraft> {
 }
 
 final registerFlowProvider =
-    StateNotifierProvider<RegisterFlowNotifier, RegisterDraft>((ref) {
-      return RegisterFlowNotifier();
-    });
+    NotifierProvider<RegisterFlowNotifier, RegisterDraft>(
+      RegisterFlowNotifier.new,
+    );

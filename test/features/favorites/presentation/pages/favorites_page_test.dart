@@ -13,9 +13,8 @@ void main() {
       ProviderScope(
         overrides: [
           firebaseUnavailableOverride,
-          authProvider.overrideWith(
-            (ref) =>
-                AuthNotifier(initial: const AuthState(isInitialized: true)),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(isInitialized: true),
           ),
         ],
         child: const MaterialApp(home: FavoritesPage()),

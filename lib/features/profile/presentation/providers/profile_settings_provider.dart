@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,8 +21,10 @@ ProfileSettings readStoredProfileSettings(SharedPreferences prefs) {
   );
 }
 
-class ProfileSettingsNotifier extends StateNotifier<ProfileSettings> {
-  ProfileSettingsNotifier(super.initial);
+class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
+  @override
+  ProfileSettings build() =>
+      readStoredProfileSettings(ref.watch(sharedPreferencesProvider));
 
   Future<void> _persist(ProfileSettings settings) async {
     final prefs = await SharedPreferences.getInstance();
@@ -66,7 +69,5 @@ class ProfileSettingsNotifier extends StateNotifier<ProfileSettings> {
   }
 }
 
-final profileSettingsProvider =
-    StateNotifierProvider<ProfileSettingsNotifier, ProfileSettings>((ref) {
-      return ProfileSettingsNotifier(const ProfileSettings());
-    });
+final profileSettingsProvider = NotifierProvider<ProfileSettingsNotifier,
+    ProfileSettings>(ProfileSettingsNotifier.new);

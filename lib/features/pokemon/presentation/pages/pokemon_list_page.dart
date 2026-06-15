@@ -61,6 +61,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(pokemonListProvider);
     final filters = ref.watch(pokemonFiltersProvider);
+    final favorites = ref.watch(favoritesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -115,7 +116,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                     .read(pokemonFiltersProvider.notifier)
                     .setGeneration(null),
               ),
-            Expanded(child: _buildBody(state)),
+            Expanded(child: _buildBody(state, favorites)),
           ],
         ),
       ),
@@ -139,7 +140,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         .label;
   }
 
-  Widget _buildBody(PokemonListState state) {
+  Widget _buildBody(PokemonListState state, Set<int> favorites) {
     if (state.showFullSkeleton) {
       return const PokemonListSkeleton();
     }
@@ -175,8 +176,6 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
             (state.isLoadingSummaries || state.isLoadingMore)
         ? 2
         : 0;
-
-    final favorites = ref.watch(favoritesProvider);
 
     return RefreshIndicator(
       onRefresh: () => ref.read(pokemonListProvider.notifier).loadInitial(),

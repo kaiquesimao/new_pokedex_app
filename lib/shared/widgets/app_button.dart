@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 
 enum AppButtonVariant { filled, outline, disabled }
 
@@ -38,7 +40,7 @@ class AppButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: kIsWeb ? AuthWebActionMetrics.buttonHeight : 52,
       child: ElevatedButton(
         onPressed: isDisabled || isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -49,7 +51,7 @@ class AppButton extends StatelessWidget {
               ? BorderSide(color: theme.colorScheme.primary, width: 2)
               : null,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(kIsWeb ? 24 : 12),
           ),
         ),
         child: isLoading
@@ -60,8 +62,8 @@ class AppButton extends StatelessWidget {
               )
             : Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: kIsWeb ? 14 : 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),

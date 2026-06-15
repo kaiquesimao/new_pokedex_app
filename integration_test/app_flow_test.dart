@@ -35,25 +35,22 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           firebaseUnavailableOverride,
-          authProvider.overrideWith(
-            (ref) => AuthNotifier(
-              initial: const AuthState(
-                isInitialized: true,
-                isAuthenticated: true,
-                email: 'test@pokemon.com',
-                displayName: 'Test',
-              ),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              email: 'test@pokemon.com',
+              displayName: 'Test',
             ),
           ),
-          onboardingProvider.overrideWith((ref) => OnboardingNotifier(true)),
-          themeModeProvider.overrideWith(
-            (ref) => ThemeModeNotifier(ThemeMode.light),
+          themeModeProvider.overrideWithBuild(
+            (ref, notifier) => ThemeMode.light,
           ),
-          profileAvatarProvider.overrideWith(
-            (ref) => ProfileNotifier(TrainerAvatars.defaultSlug),
+          profileAvatarProvider.overrideWithBuild(
+            (ref, notifier) => TrainerAvatars.defaultSlug,
           ),
-          profileSettingsProvider.overrideWith(
-            (ref) => ProfileSettingsNotifier(const ProfileSettings()),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => const ProfileSettings(),
           ),
           appInitialLocationHolderProvider.overrideWithValue(
             AppInitialLocation('/pokedex'),

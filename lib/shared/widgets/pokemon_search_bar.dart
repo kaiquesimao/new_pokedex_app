@@ -48,15 +48,7 @@ class _PokemonSearchBarState extends State<PokemonSearchBar> {
       onChanged: _onChanged,
       decoration: InputDecoration(
         hintText: 'Buscar Pokémon...',
-        prefixIcon: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Image.asset(
-            AppAssets.iconSearch,
-            width: 20,
-            height: 20,
-            errorBuilder: (_, _, _) => const Icon(Icons.search, size: 20),
-          ),
-        ),
+        prefixIcon: Icon(Icons.search, size: 20),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: _controller,
           builder: (context, value, _) {

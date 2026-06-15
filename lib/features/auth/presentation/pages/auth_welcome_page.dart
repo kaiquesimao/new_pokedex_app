@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -77,14 +79,24 @@ class AuthWelcomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppButton(
-                    label: 'Criar conta',
-                    onPressed: () => context.push('/register'),
+                  AuthHubActionFrame(
+                    child: AppButton(
+                      label: 'Criar conta',
+                      onPressed: () => context.push('/register'),
+                    ),
                   ),
                   const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () => context.push('/login'),
-                    child: const Text('Já tenho uma conta'),
+                  AuthHubLinkFrame(
+                    child: TextButton(
+                      onPressed: () => context.push('/login'),
+                      child: Text(
+                        'Já tenho uma conta',
+                        style: TextStyle(
+                          fontSize: kIsWeb ? 14 : null,
+                          fontWeight: kIsWeb ? FontWeight.w600 : null,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

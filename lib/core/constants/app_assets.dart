@@ -28,6 +28,7 @@ abstract final class AppAssets {
       '${componentsBase}icon_back_chevron.png';
   static const String iconBackArrow = '${componentsBase}icon_back_arrow.png';
   static const String iconTrash = '${componentsBase}icon_trash.png';
+  static const String iconGoogle = '${componentsBase}icon_google.svg';
 
   // Password visibility toggle
   static const String passwordEyeOpen =
