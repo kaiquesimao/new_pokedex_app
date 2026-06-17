@@ -6,11 +6,6 @@ class GenerationResponse {
     required this.name,
     required this.pokemonSpecies,
   });
-
-  final int id;
-  final String name;
-  final List<NamedApiResource> pokemonSpecies;
-
   factory GenerationResponse.fromJson(Map<String, dynamic> json) {
     return GenerationResponse(
       id: json['id'] as int? ?? 0,
@@ -20,13 +15,14 @@ class GenerationResponse {
           .toList(),
     );
   }
+
+  final int id;
+  final String name;
+  final List<NamedApiResource> pokemonSpecies;
 }
 
 class TypeDamageRelations {
   const TypeDamageRelations({required this.doubleDamageTo});
-
-  final List<String> doubleDamageTo;
-
   factory TypeDamageRelations.fromJson(Map<String, dynamic> json) {
     final to = json['double_damage_to'] as List<dynamic>? ?? [];
     return TypeDamageRelations(
@@ -36,6 +32,8 @@ class TypeDamageRelations {
           .toList(),
     );
   }
+
+  final List<String> doubleDamageTo;
 }
 
 class TypeResponse {
@@ -45,12 +43,6 @@ class TypeResponse {
     required this.pokemon,
     required this.damageRelations,
   });
-
-  final int id;
-  final String name;
-  final List<NamedApiResource> pokemon;
-  final TypeDamageRelations damageRelations;
-
   factory TypeResponse.fromJson(Map<String, dynamic> json) {
     return TypeResponse(
       id: json['id'] as int? ?? 0,
@@ -68,4 +60,9 @@ class TypeResponse {
       ),
     );
   }
+
+  final int id;
+  final String name;
+  final List<NamedApiResource> pokemon;
+  final TypeDamageRelations damageRelations;
 }

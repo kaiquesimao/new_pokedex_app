@@ -2,10 +2,6 @@ import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 
 class EvolutionChainResponse {
   const EvolutionChainResponse({required this.id, required this.chain});
-
-  final int id;
-  final ChainLinkResponse chain;
-
   factory EvolutionChainResponse.fromJson(Map<String, dynamic> json) {
     return EvolutionChainResponse(
       id: json['id'] as int? ?? 0,
@@ -14,6 +10,9 @@ class EvolutionChainResponse {
       ),
     );
   }
+
+  final int id;
+  final ChainLinkResponse chain;
 }
 
 class ChainLinkResponse {
@@ -22,11 +21,6 @@ class ChainLinkResponse {
     required this.evolvesTo,
     required this.evolutionDetails,
   });
-
-  final NamedApiResource species;
-  final List<ChainLinkResponse> evolvesTo;
-  final List<EvolutionDetailResponse> evolutionDetails;
-
   factory ChainLinkResponse.fromJson(Map<String, dynamic> json) {
     return ChainLinkResponse(
       species: NamedApiResource.fromJson(
@@ -42,6 +36,10 @@ class ChainLinkResponse {
           .toList(),
     );
   }
+
+  final NamedApiResource species;
+  final List<ChainLinkResponse> evolvesTo;
+  final List<EvolutionDetailResponse> evolutionDetails;
 }
 
 class EvolutionDetailResponse {
@@ -52,13 +50,6 @@ class EvolutionDetailResponse {
     this.timeOfDay,
     this.heldItem,
   });
-
-  final int? minLevel;
-  final NamedApiResource? trigger;
-  final NamedApiResource? item;
-  final String? timeOfDay;
-  final NamedApiResource? heldItem;
-
   factory EvolutionDetailResponse.fromJson(Map<String, dynamic> json) {
     return EvolutionDetailResponse(
       minLevel: json['min_level'] as int?,
@@ -76,4 +67,10 @@ class EvolutionDetailResponse {
             ),
     );
   }
+
+  final int? minLevel;
+  final NamedApiResource? trigger;
+  final NamedApiResource? item;
+  final String? timeOfDay;
+  final NamedApiResource? heldItem;
 }

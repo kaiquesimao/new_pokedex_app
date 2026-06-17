@@ -35,12 +35,14 @@ void main() {
       ],
     );
 
-    container.read(authSessionEffectsProvider);
-    container.read(registerFlowProvider.notifier).setEmail('draft@pokemon.com');
+    final localFavorites = container.read(localFavoritesRepositoryProvider);
+    container
+      ..read(authSessionEffectsProvider)
+      ..read(registerFlowProvider.notifier).setEmail('draft@pokemon.com');
 
-    await container.read(localFavoritesRepositoryProvider).toggleFavorite(25);
+    await localFavorites.toggleFavorite(25);
     expect(
-      await container.read(localFavoritesRepositoryProvider).getFavoriteIds(),
+      await localFavorites.getFavoriteIds(),
       {25},
     );
 
@@ -48,7 +50,7 @@ void main() {
     await Future<void>.delayed(Duration.zero);
 
     expect(
-      await container.read(localFavoritesRepositoryProvider).getFavoriteIds(),
+      await localFavorites.getFavoriteIds(),
       isEmpty,
     );
     expect(container.read(registerFlowProvider).email, isEmpty);

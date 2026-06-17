@@ -9,6 +9,7 @@ import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_reposit
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokemon.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
+import 'package:riverpod/misc.dart';
 
 class RegionalPokedexState {
   const RegionalPokedexState({
@@ -50,9 +51,9 @@ class RegionalPokedexState {
       isLoadingSummaries: isLoadingSummaries ?? this.isLoadingSummaries,
       totalCount: totalCount ?? this.totalCount,
       error: clearError ? null : (error ?? this.error),
-      errorIsConnectivityFailure: clearError
-          ? false
-          : (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
+      errorIsConnectivityFailure:
+          !clearError &&
+          (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
     );
   }
@@ -80,7 +81,7 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
         unawaited(load(regionName));
       }
     });
-    Future.microtask(() => load(regionName));
+    unawaited(Future.microtask(() => load(regionName)));
     return const RegionalPokedexState();
   }
 
@@ -117,7 +118,7 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
         generation,
         isOfflineMode: isOfflineMode,
       );
-    } catch (error) {
+    } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
       state = RegionalPokedexState(
@@ -179,7 +180,7 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
             types: summary.types,
             spriteUrl: summary.spriteUrl,
           );
-        } catch (_) {
+        } on Object catch (_) {
           loaded[entry.entryNumber] = RegionalPokemon(
             regionalNumber: entry.entryNumber,
             pokemonId: entry.speciesId,
@@ -221,7 +222,12 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
   bool get showingOfflineData => state.isOfflineMode;
 }
 
-final regionalPokedexProvider =
+final NotifierProviderFamily<
+  RegionalPokedexNotifier,
+  RegionalPokedexState,
+  String
+>
+regionalPokedexProvider =
     NotifierProvider.family<
       RegionalPokedexNotifier,
       RegionalPokedexState,

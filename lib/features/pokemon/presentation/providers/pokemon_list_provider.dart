@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
-import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -74,9 +74,9 @@ class PokemonListState {
       lockedItemCount: lockedItemCount ?? this.lockedItemCount,
       batchTarget: batchTarget ?? this.batchTarget,
       error: clearError ? null : (error ?? this.error),
-      errorIsConnectivityFailure: clearError
-          ? false
-          : (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
+      errorIsConnectivityFailure:
+          !clearError &&
+          (errorIsConnectivityFailure ?? this.errorIsConnectivityFailure),
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
       catalogIds: catalogIds ?? this.catalogIds,
       catalogCursor: catalogCursor ?? this.catalogCursor,
@@ -89,7 +89,6 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
   ConnectivityService get _connectivity =>
       ref.read(connectivityServiceProvider);
 
-  static const int _pageSize = 20;
   static const int _catalogBatchSize = 20;
   static const int _concurrency = 8;
 
@@ -99,17 +98,18 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
 
   @override
   PokemonListState build() {
-    ref.listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
-      if (previous == next) return;
-      reloadForFilters(next);
-    });
-    ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
-      final online = next.value;
-      if (online != true) return;
-      if (showingOfflineData) {
-        unawaited(loadInitial());
-      }
-    });
+    ref
+      ..listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
+        if (previous == next) return;
+        unawaited(reloadForFilters(next));
+      })
+      ..listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
+        final online = next.value;
+        if (online != true) return;
+        if (showingOfflineData) {
+          unawaited(loadInitial());
+        }
+      });
     return const PokemonListState();
   }
 
@@ -130,7 +130,7 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
       } else {
         await _loadPaginatedInitial(generation);
       }
-    } catch (error) {
+    } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
       state = PokemonListState(
@@ -163,7 +163,7 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
       } else {
         await _loadPaginatedMore(generation);
       }
-    } catch (error) {
+    } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
       state = state.copyWith(
@@ -186,7 +186,6 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
   Future<void> _loadPaginatedInitial(int generation) async {
     final slice = await _repository.getPokemonListSlice(
       offset: 0,
-      limit: _pageSize,
     );
 
     if (generation != _loadGeneration) return;
@@ -208,7 +207,6 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
   Future<void> _loadPaginatedMore(int generation) async {
     final slice = await _repository.getPokemonListSlice(
       offset: state.nextOffset,
-      limit: _pageSize,
     );
 
     if (generation != _loadGeneration) return;
@@ -426,7 +424,7 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
           } else {
             processed[id] = summary;
           }
-        } catch (_) {
+        } on Object catch (_) {
           processed[id] = null;
         }
 
@@ -534,8 +532,8 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
     }
 
     _weakToTypesFor = filters.weakness;
-    _weakToTypesCache = await _repository.getTypesWeakTo(filters.weakness!);
-    return _weakToTypesCache;
+    return _weakToTypesCache =
+        await _repository.getTypesWeakTo(filters.weakness!);
   }
 }
 

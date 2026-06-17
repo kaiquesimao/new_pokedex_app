@@ -56,7 +56,7 @@ void main() {
   test(
     'getPokemonListSlice falls back to cached summaries when offline',
     () async {
-      final slice = await repository.getPokemonListSlice(offset: 0, limit: 20);
+      final slice = await repository.getPokemonListSlice(offset: 0);
 
       expect(slice.fromCache, isTrue);
       expect(slice.ids, [25]);
@@ -69,7 +69,7 @@ void main() {
     await db.delete(db.cachedPokemonEntries).go();
 
     expect(
-      () => repository.getPokemonListSlice(offset: 0, limit: 20),
+      () => repository.getPokemonListSlice(offset: 0),
       throwsA(isA<OfflineEmptyCacheException>()),
     );
   });

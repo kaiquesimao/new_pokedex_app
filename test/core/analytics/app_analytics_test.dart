@@ -12,11 +12,12 @@ void main() {
     test('exposes all event methods without throwing', () {
       expect(
         () {
-          analytics.pokemonViewed(pokemonId: 1, name: 'Bulbasaur');
-          analytics.filterType(typeName: 'Grama');
-          analytics.sortChanged(sortLabel: 'A-Z');
-          analytics.favoriteToggled(pokemonId: 1, isFavorite: true);
-          analytics.regionOpened(regionName: 'Kanto');
+          analytics
+            ..pokemonViewed(pokemonId: 1, name: 'Bulbasaur')
+            ..filterType(typeName: 'Grama')
+            ..sortChanged(sortLabel: 'A-Z')
+            ..favoriteToggled(pokemonId: 1, isFavorite: true)
+            ..regionOpened(regionName: 'Kanto');
         },
         returnsNormally,
       );

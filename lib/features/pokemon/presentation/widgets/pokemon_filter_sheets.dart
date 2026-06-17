@@ -61,51 +61,51 @@ class _PokemonTypeSheet extends ConsumerWidget {
         return Semantics(
           label: 'Filtro de tipos de Pokémon',
           child: ListView(
-          controller: scrollController,
-          padding: const EdgeInsets.only(bottom: 24),
-          children: [
-            BottomSheetHeader(
-              title: 'Tipos',
-              onClear: () {
-                notifier.setTypeFilter(null);
-                ref.read(appAnalyticsProvider).filterType();
-                Navigator.pop(context);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _AllTypesChip(
-                    selected: filters.typeFilter == null,
-                    onTap: () {
-                      notifier.setTypeFilter(null);
-                      ref.read(appAnalyticsProvider).filterType();
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ...PokemonType.values.map((type) {
-                    final selected = filters.typeFilter == type;
-                    return PokemonTypeChip(
-                      type: type,
-                      selected: selected,
+            controller: scrollController,
+            padding: const EdgeInsets.only(bottom: 24),
+            children: [
+              BottomSheetHeader(
+                title: 'Tipos',
+                onClear: () {
+                  notifier.setTypeFilter(null);
+                  ref.read(appAnalyticsProvider).filterType();
+                  Navigator.pop(context);
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _AllTypesChip(
+                      selected: filters.typeFilter == null,
                       onTap: () {
-                        final next = selected ? null : type;
-                        notifier.setTypeFilter(next);
-                        ref
-                            .read(appAnalyticsProvider)
-                            .filterType(typeName: next?.labelPt);
+                        notifier.setTypeFilter(null);
+                        ref.read(appAnalyticsProvider).filterType();
                         Navigator.pop(context);
                       },
-                    );
-                  }),
-                ],
+                    ),
+                    ...PokemonType.values.map((type) {
+                      final selected = filters.typeFilter == type;
+                      return PokemonTypeChip(
+                        type: type,
+                        selected: selected,
+                        onTap: () {
+                          final next = selected ? null : type;
+                          notifier.setTypeFilter(next);
+                          ref
+                              .read(appAnalyticsProvider)
+                              .filterType(typeName: next?.labelPt);
+                          Navigator.pop(context);
+                        },
+                      );
+                    }),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         );
       },
     );
@@ -174,7 +174,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
                 Navigator.pop(context);
               },
             ),
-            _SectionTitle(title: 'Fraqueza'),
+            const _SectionTitle(title: 'Fraqueza'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -191,7 +191,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            _SectionTitle(title: 'Altura'),
+            const _SectionTitle(title: 'Altura'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -209,7 +209,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            _SectionTitle(title: 'Peso'),
+            const _SectionTitle(title: 'Peso'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -244,34 +244,37 @@ class _PokemonSortSheet extends ConsumerWidget {
     return Semantics(
       label: 'Ordenação da lista de Pokémon',
       child: Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const BottomSheetHeader(title: 'Ordem'),
-          ...PokemonSortOption.values.map((option) {
-            final selected = filters.sort == option;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: SizedBox(
-                width: double.infinity,
-                child: _SortPill(
-                  label: option.label,
-                  selected: selected,
-                  onTap: () {
-                    notifier.setSort(option);
-                    ref
-                        .read(appAnalyticsProvider)
-                        .sortChanged(sortLabel: option.label);
-                    Navigator.pop(context);
-                  },
+        padding: const EdgeInsets.only(bottom: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BottomSheetHeader(title: 'Ordem'),
+            ...PokemonSortOption.values.map((option) {
+              final selected = filters.sort == option;
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
                 ),
-              ),
-            );
-          }),
-        ],
+                child: SizedBox(
+                  width: double.infinity,
+                  child: _SortPill(
+                    label: option.label,
+                    selected: selected,
+                    onTap: () {
+                      notifier.setSort(option);
+                      ref
+                          .read(appAnalyticsProvider)
+                          .sortChanged(sortLabel: option.label);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

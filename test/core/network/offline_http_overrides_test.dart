@@ -5,7 +5,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_http_overrides.dart';
 
 class _FakeConnectivityService extends ConnectivityService {
-  _FakeConnectivityService(this._isOnline);
+  _FakeConnectivityService({required this._isOnline});
 
   final bool _isOnline;
 
@@ -26,7 +26,7 @@ void main() {
 
   test('HttpOverrides blocks socket connections when offline', () async {
     HttpOverrides.global = OfflineHttpOverrides(
-      _FakeConnectivityService(false),
+      _FakeConnectivityService(isOnline: false),
     );
     final client = HttpClient();
 
@@ -36,7 +36,7 @@ void main() {
         Uri.parse('https://pokeapi.co/api/v2/pokemon/1'),
       );
       await request.close();
-    } catch (error) {
+    } on Object catch (error) {
       caught = error;
     }
 
@@ -52,7 +52,7 @@ void main() {
     'HttpOverrides does not block with offline message when online',
     () async {
       HttpOverrides.global = OfflineHttpOverrides(
-        _FakeConnectivityService(true),
+        _FakeConnectivityService(isOnline: true),
       );
       final client = HttpClient();
 

@@ -37,14 +37,15 @@ class RegionLocalDataSource {
     if (!allowStale && !_db.isFresh(row.cachedAt)) return null;
 
     final decoded = jsonDecode(row.entriesJson) as List<dynamic>;
-    return decoded
-        .map(
-          (item) => RegionalPokedexEntry(
-            entryNumber: item['entryNumber'] as int,
-            speciesId: item['speciesId'] as int,
-            speciesName: item['speciesName'] as String,
-          ),
-        )
-        .toList();
+    return decoded.map(
+      (item) {
+        final map = item as Map<String, dynamic>;
+        return RegionalPokedexEntry(
+          entryNumber: map['entryNumber'] as int,
+          speciesId: map['speciesId'] as int,
+          speciesName: map['speciesName'] as String,
+        );
+      },
+    ).toList();
   }
 }

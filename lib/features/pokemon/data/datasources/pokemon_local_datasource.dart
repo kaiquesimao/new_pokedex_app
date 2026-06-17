@@ -124,7 +124,7 @@ class PokemonLocalDataSource {
       id: entry.id,
       name: entry.name,
       types: types
-          .map((name) => PokemonType.fromApiName(name))
+          .map(PokemonType.fromApiName)
           .whereType<PokemonType>()
           .toList(),
       spriteUrl: spriteUrl,

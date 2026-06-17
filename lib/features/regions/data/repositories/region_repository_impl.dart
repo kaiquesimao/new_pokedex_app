@@ -83,7 +83,7 @@ class RegionRepositoryImpl implements RegionRepository {
 
     final pokedex = await _client.getPokedex(pokedexId);
 
-    final entries = pokedex.pokemonEntries
+    return pokedex.pokemonEntries
         .map((entry) {
           final speciesId = entry.pokemonSpecies.id;
           if (speciesId == null) return null;
@@ -95,9 +95,7 @@ class RegionRepositoryImpl implements RegionRepository {
           );
         })
         .whereType<RegionalPokedexEntry>()
-        .toList();
-
-    entries.sort((a, b) => a.entryNumber.compareTo(b.entryNumber));
-    return entries;
+        .toList()
+      ..sort((a, b) => a.entryNumber.compareTo(b.entryNumber));
   }
 }

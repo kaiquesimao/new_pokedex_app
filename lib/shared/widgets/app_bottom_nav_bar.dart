@@ -4,9 +4,9 @@ import 'package:pokedex_app/core/constants/app_assets.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
-    super.key,
     required this.currentIndex,
     required this.onTap,
+    super.key,
   });
 
   final int currentIndex;

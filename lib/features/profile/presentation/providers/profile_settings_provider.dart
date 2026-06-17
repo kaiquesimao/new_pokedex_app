@@ -36,22 +36,22 @@ class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
     await prefs.setString(gameInfoLanguageKey, settings.gameInfoLanguage);
   }
 
-  Future<void> setShowMegaEvolutions(bool value) async {
+  Future<void> setShowMegaEvolutions({required bool value}) async {
     state = state.copyWith(showMegaEvolutions: value);
     await _persist(state);
   }
 
-  Future<void> setShowOtherForms(bool value) async {
+  Future<void> setShowOtherForms({required bool value}) async {
     state = state.copyWith(showOtherForms: value);
     await _persist(state);
   }
 
-  Future<void> setNotifyNewPokemon(bool value) async {
+  Future<void> setNotifyNewPokemon({required bool value}) async {
     state = state.copyWith(notifyNewPokemon: value);
     await _persist(state);
   }
 
-  Future<void> setNotifyAppUpdates(bool value) async {
+  Future<void> setNotifyAppUpdates({required bool value}) async {
     state = state.copyWith(notifyAppUpdates: value);
     await _persist(state);
   }

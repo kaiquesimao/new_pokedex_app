@@ -14,7 +14,7 @@ Future<FirebaseBootstrapResult> bootstrapFirebase() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     return const FirebaseBootstrapResult(isAvailable: true);
-  } catch (_) {
+  } on Object catch (_) {
     return const FirebaseBootstrapResult(isAvailable: false);
   }
 }

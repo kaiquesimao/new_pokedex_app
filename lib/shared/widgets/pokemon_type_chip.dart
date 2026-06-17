@@ -5,8 +5,8 @@ import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class PokemonTypeChip extends StatelessWidget {
   const PokemonTypeChip({
-    super.key,
     required this.type,
+    super.key,
     this.selected = false,
     this.onTap,
     this.showLabel = true,
@@ -38,7 +38,7 @@ class PokemonTypeChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PokemonTypeIcon(assetPath: type.assetPath, size: 18),
+            PokemonTypeIcon(assetPath: type.assetPath),
             if (showLabel) ...[
               const SizedBox(width: 6),
               Text(

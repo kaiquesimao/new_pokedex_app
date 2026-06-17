@@ -1,14 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-/// Animated container for [StatefulShellRoute] branch navigators.
+/// Animated container for StatefulShellRoute branch navigators.
 ///
-/// Uses [IndexedStack] (same as go_router's default shell container) so branch
-/// navigators stay mounted and [goBranch] can restore prior locations.
+/// Uses IndexedStack (same as go_router's default shell container) so branch
+/// navigators stay mounted and goBranch can restore prior locations.
 class AnimatedBranchContainer extends StatefulWidget {
   const AnimatedBranchContainer({
-    super.key,
     required this.currentIndex,
     required this.children,
+    super.key,
   });
 
   final int currentIndex;
@@ -41,7 +43,7 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentIndex != widget.currentIndex) {
       _previousIndex = oldWidget.currentIndex;
-      _controller.forward(from: 0);
+      unawaited(_controller.forward(from: 0));
     }
   }
 

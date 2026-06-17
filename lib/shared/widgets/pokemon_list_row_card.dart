@@ -3,16 +3,16 @@ import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class PokemonListRowCard extends StatelessWidget {
   const PokemonListRowCard({
-    super.key,
     required this.number,
     required this.name,
     required this.types,
+    super.key,
     this.spriteUrl,
     this.isFavorite = false,
     this.heroShellTabIndex,

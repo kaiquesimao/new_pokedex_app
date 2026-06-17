@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +66,7 @@ class FirebaseAppAnalytics implements AppAnalytics {
 
   void _logEvent({required String name, Map<String, Object>? parameters}) {
     if (!_connectivity.isOnline) return;
-    _analytics.logEvent(name: name, parameters: parameters);
+    unawaited(_analytics.logEvent(name: name, parameters: parameters));
   }
 
   @override

@@ -50,8 +50,8 @@ class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
 
 class PokemonSpriteImage extends StatefulWidget {
   const PokemonSpriteImage({
-    super.key,
     required this.imageUrl,
+    super.key,
     this.fallbackImageUrl,
     this.width,
     this.height,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PokemonTypeIcon extends StatelessWidget {
-  const PokemonTypeIcon({super.key, required this.assetPath, this.size = 18});
+  const PokemonTypeIcon({required this.assetPath, super.key, this.size = 18});
 
   final String assetPath;
   final double size;

@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
+
 /// Computes the physical pixel size to use for [CachedNetworkImage] memory cache.
 ///
 /// Returns `null` when [logicalSize] is not positive.

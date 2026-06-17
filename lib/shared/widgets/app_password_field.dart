@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppPasswordField extends StatefulWidget {
   const AppPasswordField({
-    super.key,
     required this.label,
+    super.key,
     this.controller,
     this.errorText,
   });

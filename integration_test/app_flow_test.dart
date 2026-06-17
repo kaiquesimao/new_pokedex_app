@@ -4,10 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:pokedex_app/app.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
-import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
-import '../test/helpers/firebase_test_overrides.dart';
 import 'package:pokedex_app/core/providers/theme_provider.dart';
+import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -16,6 +15,8 @@ import 'package:pokedex_app/features/profile/presentation/providers/profile_prov
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../test/helpers/firebase_test_overrides.dart';
 
 /// User journey: cold start (onboarding já concluído) → lista Pokédex → tap no
 /// primeiro card, se a lista carregar.

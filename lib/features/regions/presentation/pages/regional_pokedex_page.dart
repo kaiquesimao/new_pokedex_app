@@ -6,18 +6,18 @@ import 'package:pokedex_app/core/constants/region_labels.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/regions/domain/utils/regional_pokemon_filter_utils.dart';
-import 'package:pokedex_app/features/regions/presentation/widgets/regional_filter_sheets.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_provider.dart';
+import 'package:pokedex_app/features/regions/presentation/widgets/regional_filter_sheets.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
-import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class RegionalPokedexPage extends ConsumerWidget {
-  const RegionalPokedexPage({super.key, required this.regionName});
+  const RegionalPokedexPage({required this.regionName, super.key});
 
   final String regionName;
 

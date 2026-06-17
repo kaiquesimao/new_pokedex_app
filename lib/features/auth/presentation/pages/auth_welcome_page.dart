@@ -89,7 +89,7 @@ class AuthWelcomePage extends StatelessWidget {
                   AuthHubLinkFrame(
                     child: TextButton(
                       onPressed: () => context.push('/login'),
-                      child: Text(
+                      child: const Text(
                         'Já tenho uma conta',
                         style: TextStyle(
                           fontSize: kIsWeb ? 14 : null,

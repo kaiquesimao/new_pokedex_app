@@ -3,7 +3,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 
 class PokemonDetailAboutSection extends StatelessWidget {
-  const PokemonDetailAboutSection({super.key, required this.pokemon});
+  const PokemonDetailAboutSection({required this.pokemon, super.key});
 
   final PokemonDetail pokemon;
 

@@ -1,8 +1,5 @@
 class RegionListResponse {
   const RegionListResponse({required this.results});
-
-  final List<NamedApiResource> results;
-
   factory RegionListResponse.fromJson(Map<String, dynamic> json) {
     return RegionListResponse(
       results: (json['results'] as List<dynamic>? ?? [])
@@ -10,6 +7,8 @@ class RegionListResponse {
           .toList(),
     );
   }
+
+  final List<NamedApiResource> results;
 }
 
 class RegionDetailResponse {
@@ -18,11 +17,6 @@ class RegionDetailResponse {
     required this.name,
     required this.pokedexes,
   });
-
-  final int id;
-  final String name;
-  final List<NamedApiResource> pokedexes;
-
   factory RegionDetailResponse.fromJson(Map<String, dynamic> json) {
     return RegionDetailResponse(
       id: json['id'] as int? ?? 0,
@@ -32,6 +26,10 @@ class RegionDetailResponse {
           .toList(),
     );
   }
+
+  final int id;
+  final String name;
+  final List<NamedApiResource> pokedexes;
 }
 
 class PokedexResponse {
@@ -40,11 +38,6 @@ class PokedexResponse {
     required this.name,
     required this.pokemonEntries,
   });
-
-  final int id;
-  final String name;
-  final List<PokedexEntryResponse> pokemonEntries;
-
   factory PokedexResponse.fromJson(Map<String, dynamic> json) {
     return PokedexResponse(
       id: json['id'] as int? ?? 0,
@@ -54,6 +47,10 @@ class PokedexResponse {
           .toList(),
     );
   }
+
+  final int id;
+  final String name;
+  final List<PokedexEntryResponse> pokemonEntries;
 }
 
 class PokedexEntryResponse {
@@ -61,10 +58,6 @@ class PokedexEntryResponse {
     required this.entryNumber,
     required this.pokemonSpecies,
   });
-
-  final int entryNumber;
-  final NamedApiResource pokemonSpecies;
-
   factory PokedexEntryResponse.fromJson(Map<String, dynamic> json) {
     return PokedexEntryResponse(
       entryNumber: json['entry_number'] as int? ?? 0,
@@ -73,20 +66,22 @@ class PokedexEntryResponse {
       ),
     );
   }
+
+  final int entryNumber;
+  final NamedApiResource pokemonSpecies;
 }
 
 class NamedApiResource {
   const NamedApiResource({required this.name, required this.url});
-
-  final String name;
-  final String url;
-
   factory NamedApiResource.fromJson(Map<String, dynamic> json) {
     return NamedApiResource(
       name: json['name'] as String? ?? '',
       url: json['url'] as String? ?? '',
     );
   }
+
+  final String name;
+  final String url;
 
   int? get id {
     final match = RegExp(r'/(\d+)/?$').firstMatch(url);

@@ -37,7 +37,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       if (!_usesFirebase) {
         try {
           await ref.read(authProvider.notifier).sendOtp(email: draft.email);
-        } catch (e) {
+        } on Object catch (e) {
           if (mounted) setState(() => _error = formatAuthException(e));
         }
       }
@@ -75,7 +75,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
 
       ref.read(registerFlowProvider.notifier).reset();
       if (mounted) context.go('/register/success');
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -98,7 +98,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
           ),
         );
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     }
   }

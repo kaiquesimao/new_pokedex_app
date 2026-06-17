@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 
 /// Centers auth actions on web with a shared fixed size.
 class AuthHubActionFrame extends StatelessWidget {
-  const AuthHubActionFrame({super.key, required this.child});
+  const AuthHubActionFrame({required this.child, super.key});
 
   final Widget child;
 
@@ -13,7 +13,6 @@ class AuthHubActionFrame extends StatelessWidget {
     if (!kIsWeb) return child;
 
     return Align(
-      alignment: Alignment.center,
       child: SizedBox(
         width: AuthWebActionMetrics.buttonWidth,
         height: AuthWebActionMetrics.buttonHeight,
@@ -25,13 +24,13 @@ class AuthHubActionFrame extends StatelessWidget {
 
 /// Centers secondary auth links on web without forcing button height.
 class AuthHubLinkFrame extends StatelessWidget {
-  const AuthHubLinkFrame({super.key, required this.child});
+  const AuthHubLinkFrame({required this.child, super.key});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     if (!kIsWeb) return child;
-    return Align(alignment: Alignment.center, child: child);
+    return Align(child: child);
   }
 }

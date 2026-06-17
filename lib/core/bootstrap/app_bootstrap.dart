@@ -41,14 +41,14 @@ Future<ColdStartResult> runColdStart() async {
   final connectivityService = ConnectivityService();
 
   // Wave 1: independent I/O
-  final results = await Future.wait([
-    connectivityService.initialize(),
-    bootstrapFirebase(),
-    SharedPreferences.getInstance(),
-  ]);
+  late final FirebaseBootstrapResult bootstrapResult;
+  late final SharedPreferences prefs;
 
-  final bootstrapResult = results[1] as FirebaseBootstrapResult;
-  final prefs = results[2] as SharedPreferences;
+  await Future.wait<void>([
+    connectivityService.initialize(),
+    bootstrapFirebase().then((result) => bootstrapResult = result),
+    SharedPreferences.getInstance().then((instance) => prefs = instance),
+  ]);
 
   if (!kIsWeb) {
     HttpOverrides.global = OfflineHttpOverrides(connectivityService);

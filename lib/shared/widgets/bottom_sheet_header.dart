@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BottomSheetHeader extends StatelessWidget {
-  const BottomSheetHeader({super.key, required this.title, this.onClear});
+  const BottomSheetHeader({required this.title, super.key, this.onClear});
 
   final String title;
   final VoidCallback? onClear;

@@ -6,8 +6,8 @@ enum AppButtonVariant { filled, outline, disabled }
 
 class AppButton extends StatelessWidget {
   const AppButton({
-    super.key,
     required this.label,
+    super.key,
     this.onPressed,
     this.variant = AppButtonVariant.filled,
     this.isLoading = false,
@@ -62,7 +62,7 @@ class AppButton extends StatelessWidget {
               )
             : Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: kIsWeb ? 14 : 16,
                   fontWeight: FontWeight.w600,
                 ),

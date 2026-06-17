@@ -46,28 +46,28 @@ class ProfilePage extends ConsumerWidget {
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
-                    .setShowMegaEvolutions(value),
+                    .setShowMegaEvolutions(value: value),
               ),
               onToggleOtherForms: (value) => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
-                    .setShowOtherForms(value),
+                    .setShowOtherForms(value: value),
               ),
               onToggleNotifyNew: (value) => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
-                    .setNotifyNewPokemon(value),
+                    .setNotifyNewPokemon(value: value),
               ),
               onToggleNotifyUpdates: (value) => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
-                    .setNotifyAppUpdates(value),
+                    .setNotifyAppUpdates(value: value),
               ),
               onToggleInterfaceLanguage: () => _saveSetting(
                 context,
@@ -287,7 +287,7 @@ class _SettingsSections extends StatelessWidget {
         _SettingsGroup(
           title: 'Geral',
           children: [
-            _ChevronRow(
+            const _ChevronRow(
               label: 'Versão',
               value: ProfileSettings.appVersion,
               showChevron: false,

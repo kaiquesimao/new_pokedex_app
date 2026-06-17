@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -43,7 +45,6 @@ class _GuestFavoritesBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateIllustration(
       imageAsset: TrainerAvatars.assetPathFor('rhydon_costume'),
-      imageHeight: 180,
       title: 'Você precisa entrar em uma conta para fazer isso.',
       subtitle:
           'Para acessar essa funcionalidade, é necessário fazer login ou '
@@ -62,7 +63,7 @@ class _EmptyFavoritesBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyStateIllustration(
+    return const EmptyStateIllustration(
       imageAsset: AppAssets.patternMagikarp,
       imageHeight: 200,
       title: 'Você não favoritou nenhum Pokémon :(',
@@ -127,10 +128,10 @@ class _DismissibleFavoriteCard extends ConsumerWidget {
           color: Colors.red,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(Icons.delete_outline, color: Colors.white, size: 28),
+        child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
       ),
       onDismissed: (_) {
-        ref.read(favoritesProvider.notifier).toggle(pokemon.id);
+        unawaited(ref.read(favoritesProvider.notifier).toggle(pokemon.id));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${pokemon.displayName} removido dos favoritos'),

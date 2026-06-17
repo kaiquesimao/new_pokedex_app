@@ -6,11 +6,11 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class AuthHubLayout extends StatelessWidget {
   const AuthHubLayout({
-    super.key,
     required this.appBarTitle,
     required this.headline,
     required this.subtitle,
     required this.actions,
+    super.key,
     this.illustrationAsset = AppAssets.trainerAsh,
     this.footer,
     this.showBackButton = true,

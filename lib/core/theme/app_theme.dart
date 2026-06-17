@@ -137,7 +137,7 @@ abstract final class AppTheme {
           }),
         ),
       ),
-      tabBarTheme: TabBarThemeData(
+      tabBarTheme: const TabBarThemeData(
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white70,
         indicatorColor: Colors.white,

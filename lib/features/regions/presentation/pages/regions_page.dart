@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +28,7 @@ class RegionsPage extends ConsumerWidget {
                 ref
                     .read(appAnalyticsProvider)
                     .regionOpened(regionName: card.displayName);
-                context.push('/regions/${card.apiName}');
+                unawaited(context.push('/regions/${card.apiName}'));
               },
             );
           },

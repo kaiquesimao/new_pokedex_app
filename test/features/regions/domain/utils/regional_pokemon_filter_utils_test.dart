@@ -33,7 +33,7 @@ void main() {
   test('sorts by regional number ascending', () {
     final result = RegionalPokemonFilterUtils.apply(
       items: items,
-      filters: const PokemonListFilters(sort: PokemonSortOption.numberAsc),
+      filters: const PokemonListFilters(),
     );
 
     expect(result.map((e) => e.regionalNumber), [1, 2]);

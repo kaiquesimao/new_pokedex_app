@@ -4,7 +4,7 @@ import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 
 class MainShellPage extends StatelessWidget {
-  const MainShellPage({super.key, required this.navigationShell});
+  const MainShellPage({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 

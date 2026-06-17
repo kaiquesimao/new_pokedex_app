@@ -9,9 +9,9 @@ enum SocialAuthProvider { apple, google, email }
 
 class SocialAuthButton extends StatelessWidget {
   const SocialAuthButton({
-    super.key,
     required this.provider,
     required this.onPressed,
+    super.key,
   });
 
   final SocialAuthProvider provider;
@@ -23,11 +23,11 @@ class SocialAuthButton extends StatelessWidget {
   static const _webFontSize = 14.0;
   static const _webIconSize = 20.0;
 
-  static const _socialButtonBackground = Colors.white;
+  static const Color _socialButtonBackground = Colors.white;
   static const _socialButtonForeground = Color(0xFF1D1D1D);
   static const _socialButtonBorder = Color(0xFFD9D9D9);
-  static const _emailButtonBackground = AppColorsLight.primary;
-  static const _emailButtonForeground = Colors.white;
+  static const Color _emailButtonBackground = AppColorsLight.primary;
+  static const Color _emailButtonForeground = Colors.white;
 
   double get _buttonHeight =>
       kIsWeb ? AuthWebActionMetrics.buttonHeight : _height;
@@ -42,12 +42,12 @@ class SocialAuthButton extends StatelessWidget {
       child: switch (provider) {
         SocialAuthProvider.apple => OutlinedButton.icon(
           onPressed: onPressed,
-          icon: Icon(
+          icon: const Icon(
             Icons.apple,
             size: kIsWeb ? _webIconSize : 22,
             color: _socialButtonForeground,
           ),
-          label: Text(
+          label: const Text(
             'Continuar com a Apple',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -78,11 +78,11 @@ class SocialAuthButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(_pillRadiusValue),
             ),
           ),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _GoogleGlyph(size: kIsWeb ? _webIconSize : 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Flexible(
                 child: Text(
                   'Continuar com o Google',
@@ -109,7 +109,7 @@ class SocialAuthButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(_pillRadiusValue),
             ),
           ),
-          child: Text(
+          child: const Text(
             'Continuar com um e-mail',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

@@ -10,11 +10,11 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
-        home: Scaffold(
+        home: const Scaffold(
           body: PokemonListRowCard(
             number: 4,
             name: 'Charmander',
-            types: const [PokemonType.fire],
+            types: [PokemonType.fire],
           ),
         ),
       ),
@@ -29,11 +29,11 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
-        home: Scaffold(
+        home: const Scaffold(
           body: PokemonListRowCard(
             number: 1,
             name: 'Bulbasaur',
-            types: const [PokemonType.grass, PokemonType.poison],
+            types: [PokemonType.grass, PokemonType.poison],
           ),
         ),
       ),

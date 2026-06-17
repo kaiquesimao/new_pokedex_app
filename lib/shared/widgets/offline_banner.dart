@@ -47,7 +47,7 @@ class OfflineBanner extends StatelessWidget {
 
 /// Wraps the entire app so the offline banner stays fixed above all routes.
 class AppOfflineShell extends ConsumerWidget {
-  const AppOfflineShell({super.key, required this.child});
+  const AppOfflineShell({required this.child, super.key});
 
   final Widget? child;
 
@@ -88,9 +88,9 @@ class ConnectivityOfflineBanner extends ConsumerWidget {
 
 class OfflineEmptyState extends StatelessWidget {
   const OfflineEmptyState({
-    super.key,
     required this.message,
     required this.onRetry,
+    super.key,
     this.isConnectivityFailure = true,
   });
 

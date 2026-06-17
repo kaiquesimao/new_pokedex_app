@@ -13,7 +13,9 @@ class SocialSignInLoadingNotifier extends Notifier<bool> {
   @override
   bool build() => false;
 
-  void setLoading(bool value) => state = value;
+  bool get loading => state;
+
+  set loading(bool value) => state = value;
 }
 
 final socialSignInLoadingProvider =
@@ -25,7 +27,9 @@ class GoogleSignInUiErrorNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
-  void report(String? message) => state = message;
+  String? get report => state;
+
+  set report(String? message) => state = message;
 
   void clear() => state = null;
 }
@@ -35,7 +39,7 @@ final googleSignInUiErrorProvider =
       GoogleSignInUiErrorNotifier.new,
     );
 
-/// Wires GIS [renderButton] sign-in events to Firebase Auth on web.
+/// Wires GIS renderButton sign-in events to Firebase Auth on web.
 final googleWebSignInSetupProvider = Provider<void>((ref) {
   if (!kIsWeb) return;
 
@@ -46,21 +50,19 @@ final googleWebSignInSetupProvider = Provider<void>((ref) {
     (event) async {
       if (event is! GoogleSignInAuthenticationEventSignIn) return;
 
-      ref.read(socialSignInLoadingProvider.notifier).setLoading(true);
+      ref.read(socialSignInLoadingProvider.notifier).loading = true;
       try {
         await authNotifier.signInWithGoogleAccount(event.user);
-      } catch (e) {
-        ref
-            .read(googleSignInUiErrorProvider.notifier)
-            .report(formatAuthException(e));
+      } on Object catch (e) {
+        ref.read(googleSignInUiErrorProvider.notifier).report =
+            formatAuthException(e);
       } finally {
-        ref.read(socialSignInLoadingProvider.notifier).setLoading(false);
+        ref.read(socialSignInLoadingProvider.notifier).loading = false;
       }
     },
     onError: (Object error) {
-      ref
-          .read(googleSignInUiErrorProvider.notifier)
-          .report(formatAuthException(error));
+      ref.read(googleSignInUiErrorProvider.notifier).report =
+          formatAuthException(error);
     },
   );
 
@@ -98,17 +100,17 @@ Future<void> _runSocialSignIn({
     return;
   }
 
-  ref.read(socialSignInLoadingProvider.notifier).setLoading(true);
+  ref.read(socialSignInLoadingProvider.notifier).loading = true;
 
   try {
     await action();
-  } catch (e) {
+  } on Object catch (e) {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(formatAuthException(e))));
     }
   } finally {
-    ref.read(socialSignInLoadingProvider.notifier).setLoading(false);
+    ref.read(socialSignInLoadingProvider.notifier).loading = false;
   }
 }

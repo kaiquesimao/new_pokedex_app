@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,13 +47,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   void _next() {
     if (_currentPage < _pages.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
+      unawaited(
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+        ),
       );
       return;
     }
-    _finish();
+    unawaited(_finish());
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -57,7 +59,8 @@ class _PokeballSpinnerState extends State<_PokeballSpinner>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..repeat();
+    );
+    unawaited(_controller.repeat());
   }
 
   @override

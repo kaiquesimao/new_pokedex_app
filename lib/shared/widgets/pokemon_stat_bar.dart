@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class PokemonStatBar extends StatelessWidget {
   const PokemonStatBar({
-    super.key,
     required this.label,
     required this.value,
     required this.maxValue,
+    super.key,
     this.color,
   });
 

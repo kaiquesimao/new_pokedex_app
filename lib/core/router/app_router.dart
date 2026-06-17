@@ -1,53 +1,29 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:go_router/go_router.dart';
-
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
+import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/login_email_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/login_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/login_success_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/register_email_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/register_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/register_success_page.dart';
-
 import 'package:pokedex_app/features/auth/presentation/pages/verify_email_page.dart';
-
-import 'package:pokedex_app/features/auth/domain/auth_state.dart';
-
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
-
 import 'package:pokedex_app/features/favorites/presentation/pages/favorites_page.dart';
-
 import 'package:pokedex_app/features/onboarding/presentation/pages/onboarding_page.dart';
-
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart';
-
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
-
 import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
-
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
-
 import 'package:pokedex_app/features/regions/presentation/pages/regional_pokedex_page.dart';
-
 import 'package:pokedex_app/features/regions/presentation/pages/regions_page.dart';
-
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart';
-
 import 'package:pokedex_app/features/shell/presentation/widgets/animated_branch_container.dart';
-
 import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -68,7 +44,7 @@ bool _isGuestShellRoute(String path) {
       path.startsWith('/pokemon/');
 }
 
-/// Notifies [GoRouter] when auth-related state changes so [redirect] re-runs.
+/// Notifies GoRouter when auth-related state changes so redirect re-runs.
 class GoRouterRefreshNotifier extends ChangeNotifier {
   void notifyRouter() => notifyListeners();
 }
@@ -77,9 +53,10 @@ final goRouterRefreshNotifierProvider = Provider<GoRouterRefreshNotifier>((
   ref,
 ) {
   final notifier = GoRouterRefreshNotifier();
-  ref.listen<AuthState>(authProvider, (_, _) => notifier.notifyRouter());
-  ref.listen<bool>(onboardingProvider, (_, _) => notifier.notifyRouter());
-  ref.onDispose(notifier.dispose);
+  ref
+    ..listen<AuthState>(authProvider, (_, _) => notifier.notifyRouter())
+    ..listen<bool>(onboardingProvider, (_, _) => notifier.notifyRouter())
+    ..onDispose(notifier.dispose);
   return notifier;
 });
 
@@ -209,8 +186,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             key: state.pageKey,
 
             transitionDuration: const Duration(milliseconds: 350),
-
-            reverseTransitionDuration: const Duration(milliseconds: 300),
 
             child: PokemonDetailPage(pokemonId: id),
 

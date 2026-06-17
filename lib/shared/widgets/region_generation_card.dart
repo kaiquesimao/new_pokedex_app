@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 class RegionGenerationCard extends StatelessWidget {
-  const RegionGenerationCard({super.key, required this.data, this.onTap});
+  const RegionGenerationCard({required this.data, super.key, this.onTap});
 
   final RegionCardData data;
   final VoidCallback? onTap;
@@ -21,8 +21,6 @@ class RegionGenerationCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
               colors: [data.gradientStart, data.gradientEnd],
             ),
           ),
@@ -40,8 +38,6 @@ class RegionGenerationCard extends StatelessWidget {
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
                       colors: [
                         Colors.black.withValues(alpha: 0.55),
                         Colors.black.withValues(alpha: 0.15),

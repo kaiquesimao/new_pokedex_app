@@ -20,7 +20,7 @@ Dio createDio({required ConnectivityService connectivity}) {
 
   if (kDebugMode) {
     dio.interceptors.add(
-      LogInterceptor(requestBody: false, responseBody: false),
+      LogInterceptor(),
     );
   }
 

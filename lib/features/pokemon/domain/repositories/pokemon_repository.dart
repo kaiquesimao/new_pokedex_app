@@ -1,8 +1,8 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
-import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 
 abstract class PokemonRepository {
   Future<PokemonPage> getPokemonPage({required int offset, int limit = 20});

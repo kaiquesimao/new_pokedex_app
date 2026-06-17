@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:riverpod/misc.dart';
 
 class RegionalPokedexFiltersNotifier extends Notifier<PokemonListFilters> {
   RegionalPokedexFiltersNotifier(this.regionName);
@@ -16,7 +17,12 @@ class RegionalPokedexFiltersNotifier extends Notifier<PokemonListFilters> {
   }
 }
 
-final regionalPokedexFiltersProvider =
+final NotifierProviderFamily<
+  RegionalPokedexFiltersNotifier,
+  PokemonListFilters,
+  String
+>
+regionalPokedexFiltersProvider =
     NotifierProvider.family<
       RegionalPokedexFiltersNotifier,
       PokemonListFilters,

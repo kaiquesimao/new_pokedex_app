@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class EmptyStateIllustration extends StatelessWidget {
   const EmptyStateIllustration({
-    super.key,
     required this.imageAsset,
     required this.title,
+    super.key,
     this.subtitle,
     this.action,
     this.imageHeight = 180,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -59,7 +61,7 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
                 label: 'Entrar',
                 onPressed: () {
                   Navigator.of(context).pop();
-                  context.push('/login');
+                  unawaited(context.push('/login'));
                 },
               ),
             ),
@@ -72,7 +74,7 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
                 variant: AppButtonVariant.outline,
                 onPressed: () {
                   Navigator.of(context).pop();
-                  context.push('/register');
+                  unawaited(context.push('/register'));
                 },
               ),
             ),

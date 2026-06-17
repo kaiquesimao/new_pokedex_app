@@ -7,10 +7,10 @@ import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonListCard extends StatelessWidget {
   const PokemonListCard({
-    super.key,
     required this.number,
     required this.name,
     required this.types,
+    super.key,
     this.spriteUrl,
     this.onTap,
   });

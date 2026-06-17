@@ -20,16 +20,18 @@ abstract final class FirebaseAuthConfig {
 
     final completer = Completer<void>();
     _googleSignInInit = completer;
-    GoogleSignIn.instance
-        .initialize(
-          clientId: kIsWeb ? googleWebClientId : null,
-          serverClientId: kIsWeb ? null : googleWebClientId,
-        )
-        .then(completer.complete)
-        .catchError((Object error, StackTrace stack) {
-          _googleSignInInit = null;
-          completer.completeError(error, stack);
-        });
+    unawaited(
+      GoogleSignIn.instance
+          .initialize(
+            clientId: kIsWeb ? googleWebClientId : null,
+            serverClientId: kIsWeb ? null : googleWebClientId,
+          )
+          .then(completer.complete)
+          .onError<Object>((error, stack) {
+            _googleSignInInit = null;
+            completer.completeError(error, stack);
+          }),
+    );
     return completer.future;
   }
 }

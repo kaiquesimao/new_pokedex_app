@@ -62,7 +62,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         await ref.read(authProvider.notifier).sendOtp(email: email);
         if (mounted) setState(() => _step = _ForgotPasswordStep.otp);
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -131,7 +131,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             newPassword: password,
           );
       if (mounted) setState(() => _step = _ForgotPasswordStep.success);
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);

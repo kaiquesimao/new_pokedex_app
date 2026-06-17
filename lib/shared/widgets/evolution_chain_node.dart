@@ -5,9 +5,9 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 class EvolutionChainNodeCard extends StatelessWidget {
   const EvolutionChainNodeCard({
-    super.key,
     required this.node,
     required this.isCurrent,
+    super.key,
     this.onTap,
   });
 
@@ -109,9 +109,9 @@ class EvolutionChainConnector extends StatelessWidget {
 
 class EvolutionChainTree extends StatelessWidget {
   const EvolutionChainTree({
-    super.key,
     required this.root,
     required this.currentPokemonId,
+    super.key,
     this.onNodeTap,
     this.embedded = false,
   });

@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 class SortOptionChip extends StatelessWidget {
   const SortOptionChip({
-    super.key,
-    required this.label,
-    required this.selected,
-    required this.onTap,
+    required this.label, required this.selected, required this.onTap, super.key,
   });
 
   final String label;

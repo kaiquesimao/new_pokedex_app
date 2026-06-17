@@ -1,6 +1,6 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 
-/// Static type chart: types that deal double damage to [defender].
+/// Static type chart: types that deal double damage to the defender type.
 const Map<PokemonType, Set<PokemonType>> kTypeWeaknesses = {
   PokemonType.normal: {PokemonType.fighting},
   PokemonType.fire: {PokemonType.water, PokemonType.ground, PokemonType.rock},

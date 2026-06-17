@@ -5,11 +5,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 class _FakeConnectivity implements Connectivity {
   _FakeConnectivity(this._results);
 
-  List<ConnectivityResult> _results;
-
-  void setResults(List<ConnectivityResult> results) {
-    _results = results;
-  }
+  final List<ConnectivityResult> _results;
 
   @override
   Future<List<ConnectivityResult>> checkConnectivity() async => _results;

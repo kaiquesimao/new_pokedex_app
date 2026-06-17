@@ -45,7 +45,7 @@ class NetworkAccessCoordinator {
       } else {
         await firestore.disableNetwork();
       }
-    } catch (_) {
+    } on Object catch (_) {
       // Firebase may not be ready on some platforms during tests.
     }
   }

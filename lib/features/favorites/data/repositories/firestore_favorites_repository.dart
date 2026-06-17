@@ -52,7 +52,7 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
           'addedAt': FieldValue.serverTimestamp(),
         });
       }
-    } catch (_) {
+    } on Object catch (_) {
       // Offline: local cache already updated.
     }
   }
@@ -84,7 +84,7 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
 
         yield merged;
       }
-    } catch (_) {
+    } on Object catch (_) {
       yield* localCache.watchFavoriteIds();
     }
   }
@@ -111,7 +111,7 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
           'addedAt': FieldValue.serverTimestamp(),
         });
       }
-    } catch (_) {
+    } on Object catch (_) {
       // Offline: keep local cache.
     }
   }

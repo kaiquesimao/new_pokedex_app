@@ -4,11 +4,6 @@ class PokemonListResponse {
     required this.results,
     this.next,
   });
-
-  final int count;
-  final String? next;
-  final List<NamedApiResource> results;
-
   factory PokemonListResponse.fromJson(Map<String, dynamic> json) {
     final results = (json['results'] as List<dynamic>? ?? [])
         .map((e) => NamedApiResource.fromJson(e as Map<String, dynamic>))
@@ -20,20 +15,23 @@ class PokemonListResponse {
       results: results,
     );
   }
+
+  final int count;
+  final String? next;
+  final List<NamedApiResource> results;
 }
 
 class NamedApiResource {
   const NamedApiResource({required this.name, required this.url});
-
-  final String name;
-  final String url;
-
   factory NamedApiResource.fromJson(Map<String, dynamic> json) {
     return NamedApiResource(
       name: json['name'] as String? ?? '',
       url: json['url'] as String? ?? '',
     );
   }
+
+  final String name;
+  final String url;
 
   int? get id {
     final match = RegExp(r'/(\d+)/?$').firstMatch(url);
@@ -53,17 +51,6 @@ class PokemonResponse {
     required this.spriteUrl,
     required this.listSpriteUrl,
   });
-
-  final int id;
-  final String name;
-  final int height;
-  final int weight;
-  final List<PokemonTypeSlot> types;
-  final List<PokemonStatSlot> stats;
-  final List<PokemonAbilitySlot> abilities;
-  final String? spriteUrl;
-  final String? listSpriteUrl;
-
   factory PokemonResponse.fromJson(Map<String, dynamic> json) {
     final sprites = json['sprites'] as Map<String, dynamic>? ?? {};
     final other = sprites['other'] as Map<String, dynamic>? ?? {};
@@ -88,14 +75,20 @@ class PokemonResponse {
       listSpriteUrl: frontDefault ?? artwork['front_default'] as String?,
     );
   }
+
+  final int id;
+  final String name;
+  final int height;
+  final int weight;
+  final List<PokemonTypeSlot> types;
+  final List<PokemonStatSlot> stats;
+  final List<PokemonAbilitySlot> abilities;
+  final String? spriteUrl;
+  final String? listSpriteUrl;
 }
 
 class PokemonTypeSlot {
   const PokemonTypeSlot({required this.slot, required this.name});
-
-  final int slot;
-  final String name;
-
   factory PokemonTypeSlot.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as Map<String, dynamic>? ?? {};
     return PokemonTypeSlot(
@@ -103,14 +96,13 @@ class PokemonTypeSlot {
       name: type['name'] as String? ?? '',
     );
   }
+
+  final int slot;
+  final String name;
 }
 
 class PokemonStatSlot {
   const PokemonStatSlot({required this.name, required this.baseStat});
-
-  final String name;
-  final int baseStat;
-
   factory PokemonStatSlot.fromJson(Map<String, dynamic> json) {
     final stat = json['stat'] as Map<String, dynamic>? ?? {};
     return PokemonStatSlot(
@@ -118,14 +110,13 @@ class PokemonStatSlot {
       baseStat: json['base_stat'] as int? ?? 0,
     );
   }
+
+  final String name;
+  final int baseStat;
 }
 
 class PokemonAbilitySlot {
   const PokemonAbilitySlot({required this.name, required this.isHidden});
-
-  final String name;
-  final bool isHidden;
-
   factory PokemonAbilitySlot.fromJson(Map<String, dynamic> json) {
     final ability = json['ability'] as Map<String, dynamic>? ?? {};
     return PokemonAbilitySlot(
@@ -133,6 +124,9 @@ class PokemonAbilitySlot {
       isHidden: json['is_hidden'] as bool? ?? false,
     );
   }
+
+  final String name;
+  final bool isHidden;
 }
 
 class PokemonSpeciesResponse {
@@ -146,16 +140,6 @@ class PokemonSpeciesResponse {
     required this.eggGroups,
     required this.evolutionChainUrl,
   });
-
-  final int id;
-  final String? flavorText;
-  final int genderRate;
-  final int captureRate;
-  final int baseHappiness;
-  final int hatchCounter;
-  final List<String> eggGroups;
-  final String? evolutionChainUrl;
-
   factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
     final entries = json['flavor_text_entries'] as List<dynamic>? ?? [];
     String? flavorText;
@@ -187,4 +171,13 @@ class PokemonSpeciesResponse {
           (json['evolution_chain'] as Map<String, dynamic>?)?['url'] as String?,
     );
   }
+
+  final int id;
+  final String? flavorText;
+  final int genderRate;
+  final int captureRate;
+  final int baseHappiness;
+  final int hatchCounter;
+  final List<String> eggGroups;
+  final String? evolutionChainUrl;
 }

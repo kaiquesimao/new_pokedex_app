@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class PokemonSearchBar extends StatefulWidget {
   const PokemonSearchBar({
-    super.key,
     required this.onChanged,
+    super.key,
     this.initialValue = '',
   });
 
@@ -47,7 +47,7 @@ class _PokemonSearchBarState extends State<PokemonSearchBar> {
       onChanged: _onChanged,
       decoration: InputDecoration(
         hintText: 'Buscar Pokémon...',
-        prefixIcon: Icon(Icons.search, size: 20),
+        prefixIcon: const Icon(Icons.search, size: 20),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: _controller,
           builder: (context, value, _) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart'
+    show MainShellPage;
 
 /// Wraps a [Scaffold] body with [SafeArea] insets.
 ///
@@ -7,8 +9,8 @@ import 'package:flutter/material.dart';
 /// pages inside [MainShellPage] (bottom inset handled by the navigation bar).
 class SafePageBody extends StatelessWidget {
   const SafePageBody({
-    super.key,
     required this.child,
+    super.key,
     this.top = true,
     this.bottom = true,
     this.left = true,
@@ -16,16 +18,16 @@ class SafePageBody extends StatelessWidget {
   });
 
   const SafePageBody.belowAppBar({
-    super.key,
     required this.child,
+    super.key,
     this.bottom = true,
     this.left = true,
     this.right = true,
   }) : top = false;
 
   const SafePageBody.inTabShell({
-    super.key,
     required this.child,
+    super.key,
     this.left = true,
     this.right = true,
   }) : top = false,

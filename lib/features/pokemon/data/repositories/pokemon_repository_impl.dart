@@ -5,11 +5,11 @@ import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_data
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/mappers/evolution_mapper.dart';
 import 'package:pokedex_app/features/pokemon/data/mappers/pokemon_mapper.dart';
-import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
-import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
@@ -214,7 +214,6 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
     try {
       final listResponse = await _remote.fetchPokemonList(
-        offset: 0,
         limit: 2000,
       );
       _allPokemonRefsCache = listResponse.results;
@@ -294,7 +293,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
     if (!await isNameIndexReady()) {
       try {
         await warmPokemonNameIndex();
-      } catch (_) {
+      } on Object catch (_) {
         // Fall back to cached summaries below.
       }
     }

@@ -38,27 +38,27 @@ class FavoritesNotifier extends Notifier<Set<int>> {
 
   @override
   Set<int> build() {
-    ref.onDispose(() {
-      unawaited(_subscription?.cancel());
-    });
-
-    ref.listen(authProvider, (previous, next) {
-      if (previous?.uid == next.uid &&
-          previous?.isAuthenticated == next.isAuthenticated) {
-        return;
-      }
-      unawaited(_attachRepository());
-    });
+    ref
+      ..onDispose(() {
+        unawaited(_subscription?.cancel());
+      })
+      ..listen(authProvider, (previous, next) {
+        if (previous?.uid == next.uid &&
+            previous?.isAuthenticated == next.isAuthenticated) {
+          return;
+        }
+        unawaited(_attachRepository());
+      });
 
     // Defer repository wiring so auth-driven provider rebuilds do not run
     // while a widget (e.g. PokemonListPage) is still building.
-    Future.microtask(_attachRepository);
+    unawaited(Future.microtask(_attachRepository));
 
     return {};
   }
 
   Future<void> _attachRepository() async {
-    _subscription?.cancel();
+    await _subscription?.cancel();
     final repository = ref.read(favoritesRepositoryProvider);
     _subscription = repository.watchFavoriteIds().listen((ids) {
       state = ids;

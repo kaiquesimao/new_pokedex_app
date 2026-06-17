@@ -98,7 +98,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
       if (mounted) {
         setState(() => _step = _ChangePasswordStep.success);
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);

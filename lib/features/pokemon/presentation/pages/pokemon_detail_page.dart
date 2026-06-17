@@ -1,30 +1,32 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
+import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
-import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
-import 'package:pokedex_app/shared/widgets/offline_banner.dart';
-import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
-import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
+import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class PokemonDetailPage extends ConsumerWidget {
-  const PokemonDetailPage({super.key, required this.pokemonId});
+  const PokemonDetailPage({required this.pokemonId, super.key});
 
   final int pokemonId;
 
@@ -179,14 +181,14 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
 
   void _toggleFavorite(BuildContext context) {
     if (!ref.read(authProvider).isAuthenticated) {
-      showLoginRequiredBottomSheet(context);
+      unawaited(showLoginRequiredBottomSheet(context));
       return;
     }
 
     final willFavorite = !ref
         .read(favoritesProvider)
         .contains(widget.pokemonId);
-    ref.read(favoritesProvider.notifier).toggle(widget.pokemonId);
+    unawaited(ref.read(favoritesProvider.notifier).toggle(widget.pokemonId));
     ref
         .read(appAnalyticsProvider)
         .favoriteToggled(pokemonId: widget.pokemonId, isFavorite: willFavorite);
@@ -274,9 +276,9 @@ class _HeroSection extends StatelessWidget {
                         )
                       : Hero(
                           tag: PokemonHeroTags.sprite(pokemonId),
-                          child: Material(
+                          child: const Material(
                             color: Colors.transparent,
-                            child: const Icon(
+                            child: Icon(
                               Icons.catching_pokemon,
                               size: 96,
                               color: Colors.white,
@@ -331,7 +333,7 @@ class _EvolutionSection extends StatelessWidget {
               embedded: true,
               onNodeTap: (id) {
                 if (id == pokemonId) return;
-                context.push('/pokemon/$id');
+                unawaited(context.push('/pokemon/$id'));
               },
             ),
         ],

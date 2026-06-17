@@ -44,7 +44,7 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
             password: _passwordController.text,
           );
       if (!mounted) return;
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);

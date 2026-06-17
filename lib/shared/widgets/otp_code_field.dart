@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 class OtpCodeField extends StatefulWidget {
   const OtpCodeField({
-    super.key,
     required this.onCompleted,
+    super.key,
     this.onChanged,
     this.length = 6,
     this.errorText,

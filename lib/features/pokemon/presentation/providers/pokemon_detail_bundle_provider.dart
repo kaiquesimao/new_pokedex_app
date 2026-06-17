@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:riverpod/misc.dart';
 
 class PokemonDetailBundle {
   const PokemonDetailBundle({
@@ -15,8 +16,11 @@ class PokemonDetailBundle {
   final bool isOfflineMode;
 }
 
-final pokemonDetailBundleProvider =
-    FutureProvider.family<PokemonDetailBundle, int>((ref, pokemonId) async {
+final FutureProviderFamily<PokemonDetailBundle, int> pokemonDetailBundleProvider =
+    FutureProvider.family<PokemonDetailBundle, int>((
+      ref,
+      pokemonId,
+    ) async {
       final repo = ref.watch(pokemonRepositoryProvider);
       final detail = await repo.getPokemonDetail(pokemonId);
       final offlineFromDetail = repo.takeOfflineFallbackUsed();

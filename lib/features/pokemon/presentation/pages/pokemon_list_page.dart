@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,11 +14,11 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filt
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_filter_sheets.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
-import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
+import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class PokemonListPage extends ConsumerStatefulWidget {
   const PokemonListPage({super.key});
@@ -39,7 +41,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
       if (state.items.isEmpty &&
           !state.isLoadingIds &&
           !state.isLoadingSummaries) {
-        ref.read(pokemonListProvider.notifier).loadInitial();
+        unawaited(ref.read(pokemonListProvider.notifier).loadInitial());
       }
     });
   }
@@ -53,7 +55,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(pokemonListProvider.notifier).loadMore();
+      unawaited(ref.read(pokemonListProvider.notifier).loadMore());
     }
   }
 
@@ -213,13 +215,13 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
 
   void _toggleFavorite(BuildContext context, int pokemonId) {
     if (!ref.read(authProvider).isAuthenticated) {
-      showLoginRequiredBottomSheet(context);
+      unawaited(showLoginRequiredBottomSheet(context));
       return;
     }
 
     final favorites = ref.read(favoritesProvider);
     final willFavorite = !favorites.contains(pokemonId);
-    ref.read(favoritesProvider.notifier).toggle(pokemonId);
+    unawaited(ref.read(favoritesProvider.notifier).toggle(pokemonId));
     ref
         .read(appAnalyticsProvider)
         .favoriteToggled(pokemonId: pokemonId, isFavorite: willFavorite);

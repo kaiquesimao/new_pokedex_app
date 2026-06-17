@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,10 +7,10 @@ import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
-import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
+import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 enum _RegisterStep { email, password, name }
@@ -96,7 +98,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
           _step = _RegisterStep.name;
         });
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -124,8 +126,8 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
             .read(authProvider.notifier)
             .completePendingRegistration(name: draft.name);
       }
-      if (mounted) context.push('/register/verify-email');
-    } catch (e) {
+      if (mounted) await context.push('/register/verify-email');
+    } on Object catch (e) {
       if (mounted) setState(() => _error = formatAuthException(e));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -145,7 +147,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
             if (_step == _RegisterStep.email) {
               context.pop();
             } else {
-              _goBackStep();
+              unawaited(_goBackStep());
             }
           },
         ),

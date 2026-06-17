@@ -5,7 +5,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dar
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
 void main() {
-  final bulbasaur = PokemonSummary(
+  const bulbasaur = PokemonSummary(
     id: 1,
     name: 'bulbasaur',
     types: [PokemonType.grass, PokemonType.poison],
@@ -13,7 +13,7 @@ void main() {
     weight: 69,
   );
 
-  final charmander = PokemonSummary(
+  const charmander = PokemonSummary(
     id: 4,
     name: 'charmander',
     types: [PokemonType.fire],

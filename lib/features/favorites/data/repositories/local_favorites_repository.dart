@@ -58,6 +58,6 @@ class LocalFavoritesRepository implements FavoritesRepository {
   Stream<Set<int>> watchFavoriteIds() => _controller.stream;
 
   void dispose() {
-    _controller.close();
+    unawaited(_controller.close());
   }
 }

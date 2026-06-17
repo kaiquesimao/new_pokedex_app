@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class ShellTabScope extends InheritedWidget {
   const ShellTabScope({
-    super.key,
     required this.currentIndex,
     required super.child,
+    super.key,
   });
 
   final int currentIndex;
@@ -23,7 +23,7 @@ class ShellTabScope extends InheritedWidget {
 
 /// Defers building [child] until its tab is visited for the first time.
 class LazyShellTab extends StatefulWidget {
-  const LazyShellTab({super.key, required this.tabIndex, required this.child});
+  const LazyShellTab({required this.tabIndex, required this.child, super.key});
 
   final int tabIndex;
   final Widget child;

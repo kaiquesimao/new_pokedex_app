@@ -3,9 +3,7 @@ import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 
 class TrainerAvatarImage extends StatelessWidget {
   const TrainerAvatarImage({
-    super.key,
-    required this.slug,
-    required this.size,
+    required this.slug, required this.size, super.key,
     this.fit = BoxFit.contain,
   });
 

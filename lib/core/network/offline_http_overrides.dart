@@ -16,10 +16,9 @@ class OfflineHttpOverrides extends HttpOverrides {
       return super.createHttpClient(context);
     }
 
-    final client = super.createHttpClient(context);
-    client.connectionFactory = (Uri url, String? proxyHost, int? proxyPort) {
-      throw const SocketException(offlineMessage);
-    };
-    return client;
+    return super.createHttpClient(context)
+      ..connectionFactory = (url, proxyHost, proxyPort) {
+        throw const SocketException(offlineMessage);
+      };
   }
 }
