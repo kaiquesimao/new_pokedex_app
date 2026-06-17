@@ -118,10 +118,7 @@ class PokemonLocalDataSource {
       weight = detail['weight'] as int?;
     }
 
-    final spriteUrl =
-        PokemonSpriteUrls.isLowResolutionSpriteUrl(entry.spriteUrl)
-        ? PokemonSpriteUrls.officialArtwork(entry.id)
-        : entry.spriteUrl;
+    final spriteUrl = PokemonSpriteUrls.homeArtwork(pokemonId: entry.id);
 
     return PokemonSummary(
       id: entry.id,
@@ -145,6 +142,10 @@ class PokemonLocalDataSource {
       'sprites': {
         'front_default': response.spriteUrl,
         'other': {
+          'home': {
+            'front_default': response.spriteUrl,
+            'back_default': response.spriteUrl,
+          },
           'official-artwork': {'front_default': response.spriteUrl},
         },
       },

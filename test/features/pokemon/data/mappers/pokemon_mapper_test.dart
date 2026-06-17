@@ -20,6 +20,6 @@ void main() {
     expect(summary.id, 1);
     expect(summary.name, 'bulbasaur');
     expect(summary.types, [PokemonType.grass, PokemonType.poison]);
-    expect(summary.spriteUrl, contains('official-artwork'));
+    expect(summary.spriteUrl, contains('other/home'));
   });
 }

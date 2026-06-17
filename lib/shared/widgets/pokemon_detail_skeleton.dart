@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PokemonDetailSkeleton extends StatelessWidget {
@@ -15,7 +16,7 @@ class PokemonDetailSkeleton extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 280,
+            height: PokemonSpriteLayoutSizes.detailHeaderHeight,
             width: double.infinity,
             color: base,
           ),

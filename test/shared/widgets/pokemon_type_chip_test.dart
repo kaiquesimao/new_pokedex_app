@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_theme.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 void main() {
   testWidgets('PokemonTypeChip shows selected state', (tester) async {
@@ -16,6 +17,6 @@ void main() {
     );
 
     expect(find.text('Fogo'), findsOneWidget);
-    expect(find.byType(Image), findsOneWidget);
+    expect(find.byType(PokemonTypeIcon), findsOneWidget);
   });
 }

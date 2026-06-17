@@ -25,7 +25,7 @@ class RegionCardData {
 
 abstract final class RegionCardAssets {
   static String starterSpriteUrl(int pokemonId) =>
-      PokemonSpriteUrls.officialArtwork(pokemonId);
+      PokemonSpriteUrls.homeArtwork(pokemonId: pokemonId);
 
   static const List<RegionCardData> curated = [
     RegionCardData(

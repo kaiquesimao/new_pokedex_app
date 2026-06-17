@@ -107,10 +107,10 @@ class _StarterSprites extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4),
             child: PokemonSpriteImage(
               imageUrl: RegionCardAssets.starterSpriteUrl(id),
-              width: 48,
-              height: 48,
+              width: PokemonSpriteDisplaySizes.regionStarter,
+              height: PokemonSpriteDisplaySizes.regionStarter,
               maxCachePixels: PokemonSpriteCachePresets.compact,
-              errorIconSize: 32,
+              errorIconSize: 36,
             ),
           ),
       ],

@@ -62,7 +62,7 @@ class PokemonListRowCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: SizedBox(
-              height: 110,
+              height: PokemonSpriteLayoutSizes.listRowHeight,
               child: Row(
                 children: [
                   Expanded(
@@ -156,7 +156,7 @@ class _TypePanel extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.horizontal(right: Radius.circular(16)),
       child: SizedBox(
-        width: 120,
+        width: PokemonSpriteLayoutSizes.listRowPanelWidth,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -168,7 +168,7 @@ class _TypePanel extends StatelessWidget {
                 opacity: 0.2,
                 child: PokemonTypeIcon(
                   assetPath: primaryType.assetPath,
-                  size: 72,
+                  size: 88,
                 ),
               ),
             ),
@@ -176,7 +176,7 @@ class _TypePanel extends StatelessWidget {
               child: spriteUrl != null
                   ? PokemonSpriteImage(
                       imageUrl: spriteUrl!,
-                      height: 72,
+                      height: PokemonSpriteDisplaySizes.listRow,
                       maxCachePixels: PokemonSpriteCachePresets.listRow,
                       heroTag: PokemonHeroTags.listSpriteHeroTag(
                         context,
@@ -188,7 +188,7 @@ class _TypePanel extends StatelessWidget {
                     )
                   : const Icon(
                       Icons.catching_pokemon,
-                      size: 48,
+                      size: 56,
                       color: Colors.white70,
                     ),
             ),

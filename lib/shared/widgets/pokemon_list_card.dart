@@ -45,11 +45,11 @@ class PokemonListCard extends StatelessWidget {
                   child: spriteUrl != null
                       ? PokemonSpriteImage(
                           imageUrl: spriteUrl!,
-                          height: 72,
+                          height: PokemonSpriteDisplaySizes.listCard,
                           maxCachePixels: PokemonSpriteCachePresets.listRow,
                           heroTag: PokemonHeroTags.sprite(number),
                         )
-                      : const Icon(Icons.catching_pokemon, size: 48),
+                      : const Icon(Icons.catching_pokemon, size: 56),
                 ),
               ),
               Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PokemonListRowSkeleton extends StatelessWidget {
@@ -13,7 +14,7 @@ class PokemonListRowSkeleton extends StatelessWidget {
       baseColor: base,
       highlightColor: highlight,
       child: Container(
-        height: 110,
+        height: PokemonSpriteLayoutSizes.listRowHeight,
         decoration: BoxDecoration(
           color: base,
           borderRadius: BorderRadius.circular(16),

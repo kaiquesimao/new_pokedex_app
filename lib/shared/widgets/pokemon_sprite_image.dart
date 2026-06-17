@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 
 /// Lightweight native loading indicator sized for [PokemonSpriteImage] slots.
@@ -47,10 +48,11 @@ class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
   }
 }
 
-class PokemonSpriteImage extends StatelessWidget {
+class PokemonSpriteImage extends StatefulWidget {
   const PokemonSpriteImage({
     super.key,
     required this.imageUrl,
+    this.fallbackImageUrl,
     this.width,
     this.height,
     this.maxCachePixels = 256,
@@ -64,6 +66,7 @@ class PokemonSpriteImage extends StatelessWidget {
   });
 
   final String imageUrl;
+  final String? fallbackImageUrl;
   final double? width;
   final double? height;
   final int maxCachePixels;
@@ -76,6 +79,34 @@ class PokemonSpriteImage extends StatelessWidget {
   final Duration fadeInDuration;
 
   @override
+  State<PokemonSpriteImage> createState() => _PokemonSpriteImageState();
+}
+
+class _PokemonSpriteImageState extends State<PokemonSpriteImage> {
+  late String _currentUrl;
+  var _usedFallback = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUrl = widget.imageUrl;
+  }
+
+  @override
+  void didUpdateWidget(covariant PokemonSpriteImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl ||
+        oldWidget.fallbackImageUrl != widget.fallbackImageUrl) {
+      _currentUrl = widget.imageUrl;
+      _usedFallback = false;
+    }
+  }
+
+  String? get _fallbackUrl =>
+      widget.fallbackImageUrl ??
+      PokemonSpriteUrls.officialArtworkFallbackFor(widget.imageUrl);
+
+  @override
   Widget build(BuildContext context) {
     final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     final logicalSize = _logicalCacheSize();
@@ -84,52 +115,67 @@ class PokemonSpriteImage extends StatelessWidget {
         : cachePixelSize(
             logicalSize,
             devicePixelRatio,
-            maxPixels: maxCachePixels,
+            maxPixels: widget.maxCachePixels,
           );
 
     Widget buildLoadingIndicator(BuildContext context) {
       return PokemonSpriteLoadingPlaceholder(
-        width: width,
-        height: height,
-        indicatorColor: errorIconColor?.withValues(alpha: 0.7),
+        width: widget.width,
+        height: widget.height,
+        indicatorColor: widget.errorIconColor?.withValues(alpha: 0.7),
+      );
+    }
+
+    Widget buildErrorWidget(BuildContext context) {
+      final fallback = _fallbackUrl;
+      if (!_usedFallback && fallback != null && fallback != _currentUrl) {
+        _usedFallback = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() => _currentUrl = fallback);
+        });
+        return buildLoadingIndicator(context);
+      }
+
+      return Icon(
+        Icons.catching_pokemon,
+        size: widget.errorIconSize,
+        color: widget.errorIconColor,
       );
     }
 
     Widget image = CachedNetworkImage(
-      imageUrl: imageUrl,
-      width: width,
-      height: height,
-      fit: fit,
-      filterQuality: filterQuality,
-      fadeInDuration: fadeInDuration,
+      key: ValueKey(_currentUrl),
+      imageUrl: _currentUrl,
+      width: widget.width,
+      height: widget.height,
+      fit: widget.fit,
+      filterQuality: widget.filterQuality,
+      fadeInDuration: widget.fadeInDuration,
       memCacheWidth: cacheSize,
       memCacheHeight: cacheSize,
       progressIndicatorBuilder: (_, _, _) => buildLoadingIndicator(context),
-      errorWidget: (_, _, _) => Icon(
-        Icons.catching_pokemon,
-        size: errorIconSize,
-        color: errorIconColor,
-      ),
+      errorWidget: (_, _, _) => buildErrorWidget(context),
     );
 
-    if (heroTag != null) {
+    if (widget.heroTag != null) {
       image = Hero(
-        tag: heroTag!,
+        tag: widget.heroTag!,
         child: Material(color: Colors.transparent, child: image),
       );
     }
 
-    if (semanticLabel != null) {
-      image = Semantics(label: semanticLabel, image: true, child: image);
+    if (widget.semanticLabel != null) {
+      image = Semantics(label: widget.semanticLabel, image: true, child: image);
     }
 
     return image;
   }
 
   double? _logicalCacheSize() {
-    if (width != null && height != null) {
-      return width! > height! ? width! : height!;
+    if (widget.width != null && widget.height != null) {
+      return widget.width! > widget.height! ? widget.width! : widget.height!;
     }
-    return width ?? height;
+    return widget.width ?? widget.height;
   }
 }

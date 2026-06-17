@@ -26,7 +26,7 @@ class EvolutionChainNodeCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          width: 120,
+          width: PokemonSpriteLayoutSizes.evolutionCardWidth,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isCurrent
@@ -44,11 +44,11 @@ class EvolutionChainNodeCard extends StatelessWidget {
               if (node.spriteUrl != null)
                 PokemonSpriteImage(
                   imageUrl: node.spriteUrl!,
-                  height: 72,
+                  height: PokemonSpriteDisplaySizes.evolution,
                   maxCachePixels: PokemonSpriteCachePresets.evolution,
                 )
               else
-                const Icon(Icons.catching_pokemon, size: 48),
+                const Icon(Icons.catching_pokemon, size: 56),
               const SizedBox(height: 8),
               Text(
                 node.displayName,

@@ -211,7 +211,7 @@ class _HeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 280,
+      height: PokemonSpriteLayoutSizes.detailHeaderHeight,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -254,8 +254,8 @@ class _HeroSection extends StatelessWidget {
             right: 0,
             child: Center(
               child: Container(
-                width: 200,
-                height: 200,
+                width: PokemonSpriteLayoutSizes.detailCircleSize,
+                height: PokemonSpriteLayoutSizes.detailCircleSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -266,7 +266,7 @@ class _HeroSection extends StatelessWidget {
                   child: pokemon.spriteUrl != null
                       ? PokemonSpriteImage(
                           imageUrl: pokemon.spriteUrl!,
-                          height: 140,
+                          height: PokemonSpriteDisplaySizes.detail,
                           maxCachePixels: PokemonSpriteCachePresets.detail,
                           heroTag: PokemonHeroTags.sprite(pokemonId),
                           errorIconColor: Colors.white,

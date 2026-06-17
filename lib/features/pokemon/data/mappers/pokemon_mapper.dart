@@ -1,3 +1,4 @@
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -15,7 +16,7 @@ class PokemonMapper {
       id: response.id,
       name: response.name,
       types: mapTypes(response.types),
-      spriteUrl: response.spriteUrl ?? response.listSpriteUrl,
+      spriteUrl: PokemonSpriteUrls.homeArtwork(pokemonId: response.id),
       height: response.height,
       weight: response.weight,
     );
@@ -37,7 +38,7 @@ class PokemonMapper {
       abilities: response.abilities
           .map((a) => PokemonAbility(name: a.name, isHidden: a.isHidden))
           .toList(),
-      spriteUrl: response.spriteUrl,
+      spriteUrl: PokemonSpriteUrls.homeArtwork(pokemonId: response.id),
       flavorText: species?.flavorText,
       genderRate: species?.genderRate ?? -1,
       captureRate: species?.captureRate ?? 0,
