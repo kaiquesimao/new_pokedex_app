@@ -44,7 +44,7 @@ class _GuestFavoritesBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateIllustration(
-      imageAsset: TrainerAvatars.assetPathFor('rhydon_costume'),
+      imageAsset: TrainerAvatars.assetPathFor('pokemaniac'),
       title: 'Você precisa entrar em uma conta para fazer isso.',
       subtitle:
           'Para acessar essa funcionalidade, é necessário fazer login ou '

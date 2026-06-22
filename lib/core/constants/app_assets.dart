@@ -28,6 +28,9 @@ abstract final class AppAssets {
   // Decorative / reference sheets (layout guides from Figma — not used as UI)
   static const String patternMagikarp = '${componentsBase}pattern_magikarp.png';
 
-  // Trainer sprites (see TrainerAvatars for the full curated list)
-  static const String trainerAsh = '${charactersBase}ash.png';
+  // Character sprites (see TrainerAvatars for the full curated list)
+  static const String characterBugcatcher = '${charactersBase}bugcatcher.png';
+  static const String characterBirch = '${charactersBase}birch.png';
+  static const String characterHilda = '${charactersBase}hilda.png';
+  static const String characterHilbert = '${charactersBase}hilbert.png';
 }

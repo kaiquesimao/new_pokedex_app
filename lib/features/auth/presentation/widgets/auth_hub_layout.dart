@@ -11,7 +11,7 @@ class AuthHubLayout extends StatelessWidget {
     required this.subtitle,
     required this.actions,
     super.key,
-    this.illustrationAsset = AppAssets.trainerAsh,
+    this.illustrationAsset = AppAssets.characterHilbert,
     this.footer,
     this.showBackButton = true,
   });

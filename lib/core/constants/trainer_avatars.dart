@@ -1,15 +1,15 @@
 abstract final class TrainerAvatars {
-  static const String defaultSlug = 'ash';
+  static const String defaultSlug = 'hilbert';
   static const String assetsBase = 'assets/images/characters/';
 
   static const List<TrainerAvatarOption> curated = [
-    TrainerAvatarOption(slug: 'ash', label: 'Ash', fileName: 'ash.png'),
-    TrainerAvatarOption(slug: 'hilda', label: 'Hilda', fileName: 'hilda.png'),
     TrainerAvatarOption(
       slug: 'hilbert',
       label: 'Hilbert',
       fileName: 'hilbert.png',
     ),
+    TrainerAvatarOption(slug: 'hilda', label: 'Hilda', fileName: 'hilda.png'),
+    TrainerAvatarOption(slug: 'blue', label: 'Blue', fileName: 'blue.png'),
     TrainerAvatarOption(
       slug: 'cynthia',
       label: 'Cynthia',
@@ -21,41 +21,36 @@ abstract final class TrainerAvatars {
       fileName: 'wallace.png',
     ),
     TrainerAvatarOption(
+      slug: 'wallace_gen6',
+      label: 'Wallace',
+      fileName: 'wallace-gen6.png',
+    ),
+    TrainerAvatarOption(
       slug: 'lucian',
       label: 'Lucian',
       fileName: 'lucian.png',
     ),
-    TrainerAvatarOption(slug: 'volo', label: 'Volo', fileName: 'volo.png'),
     TrainerAvatarOption(
-      slug: 'professor_birch',
+      slug: 'victor',
+      label: 'Victor',
+      fileName: 'victor.png',
+    ),
+    TrainerAvatarOption(
+      slug: 'birch',
       label: 'Prof. Birch',
-      fileName: 'professor_birch.png',
+      fileName: 'birch.png',
     ),
     TrainerAvatarOption(
-      slug: 'bug_catcher',
+      slug: 'bugcatcher',
       label: 'Caçador de Insetos',
-      fileName: 'bug_catcher.png',
+      fileName: 'bugcatcher.png',
     ),
     TrainerAvatarOption(
-      slug: 'trainer_red',
-      label: 'Treinador',
-      fileName: 'trainer_red.png',
+      slug: 'pokemaniac',
+      label: 'Pokémaníaco',
+      fileName: 'pokemaniac.png',
     ),
-    TrainerAvatarOption(
-      slug: 'trainer_silver',
-      label: 'Treinador',
-      fileName: 'trainer_silver.png',
-    ),
-    TrainerAvatarOption(
-      slug: 'rhydon_costume',
-      label: 'Fantasia Rhydon',
-      fileName: 'rhydon_costume.png',
-    ),
-    TrainerAvatarOption(
-      slug: 'miku_trainer',
-      label: 'Miku',
-      fileName: 'miku_trainer.png',
-    ),
+    TrainerAvatarOption(slug: 'miku', label: 'Miku', fileName: 'miku.png'),
   ];
 
   static String assetPathFor(String slug) {

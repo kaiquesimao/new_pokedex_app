@@ -36,7 +36,7 @@ class AuthWelcomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          TrainerAvatars.assetPathFor('miku_trainer'),
+                          TrainerAvatars.assetPathFor('miku'),
                           height: 160,
                           fit: BoxFit.contain,
                           errorBuilder: (_, _, _) => const SizedBox.shrink(),

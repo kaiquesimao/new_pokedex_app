@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -21,16 +21,22 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   static const _pages = [
     _OnboardingSlide(
-      imageAsset: AppAssets.trainerAsh,
-      title: 'Bem-vindo à Pokédex',
+      imageAssets: [
+        AppAssets.characterBugcatcher,
+        AppAssets.characterBirch,
+      ],
+      title: 'Todos os Pokémons em um só Lugar',
       subtitle:
-          'Explore todos os Pokémon, descubra tipos, evoluções e muito mais.',
+          'Acesse uma vasta lista de Pokémon de todas as gerações já '
+          'feitas pela Nintendo',
     ),
     _OnboardingSlide(
-      imageAsset: AppAssets.patternMagikarp,
-      title: 'Salve seus favoritos',
+      imageAssets: [AppAssets.characterHilda],
+      title: 'Mantenha sua Pokédex atualizada',
       subtitle:
-          'Crie uma conta para guardar seus Pokémon favoritos e sincronizar entre dispositivos.',
+          'Cadastre-se e mantenha seu perfil, pokémon favoritos, '
+          'configurações e muito mais, salvos no aplicativo, mesmo sem '
+          'conexão com a internet.',
     ),
   ];
 
@@ -64,6 +70,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     final isLastPage = _currentPage == _pages.length - 1;
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       body: SafePageBody(
         child: Column(
           children: [
@@ -77,23 +84,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          slide.imageAsset,
-                          height: 220,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, _, _) => Icon(
-                            Icons.catching_pokemon,
-                            size: 120,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 48),
+                        const Spacer(flex: 3),
+                        _CharacterIllustration(imageAssets: slide.imageAssets),
+                        const SizedBox(height: 40),
                         Text(
                           slide.title,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w700,
+                            color: AppColorsLight.textPrimary,
+                            height: 1.25,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -101,12 +101,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                         Text(
                           slide.subtitle,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.6,
-                            ),
+                            color: AppColorsLight.textSecondary,
+                            height: 1.4,
                           ),
                           textAlign: TextAlign.center,
                         ),
+                        const Spacer(flex: 2),
                       ],
                     ),
                   );
@@ -116,7 +116,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             _PageDots(count: _pages.length, current: _currentPage),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-              child: AppButton(
+              child: _OnboardingButton(
                 label: isLastPage ? 'Vamos começar!' : 'Continuar',
                 onPressed: _next,
               ),
@@ -130,14 +130,68 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
 class _OnboardingSlide {
   const _OnboardingSlide({
-    required this.imageAsset,
+    required this.imageAssets,
     required this.title,
     required this.subtitle,
   });
 
-  final String imageAsset;
+  final List<String> imageAssets;
   final String title;
   final String subtitle;
+}
+
+class _CharacterIllustration extends StatelessWidget {
+  const _CharacterIllustration({required this.imageAssets});
+
+  final List<String> imageAssets;
+
+  @override
+  Widget build(BuildContext context) {
+    final shadowWidth = imageAssets.length > 1 ? 200.0 : 120.0;
+
+    return SizedBox(
+      height: 220,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: shadowWidth,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < imageAssets.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Image.asset(
+                    imageAssets[i],
+                    height: 200,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, _, _) => Icon(
+                      Icons.catching_pokemon,
+                      size: 120,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _PageDots extends StatelessWidget {
@@ -148,8 +202,8 @@ class _PageDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = Theme.of(context).colorScheme.primary;
-    final inactiveColor = Theme.of(context).dividerColor;
+    const activeColor = AppColorsLight.primary;
+    final inactiveColor = AppColorsLight.primary.withValues(alpha: 0.25);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -166,6 +220,36 @@ class _PageDots extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+}
+
+class _OnboardingButton extends StatelessWidget {
+  const _OnboardingButton({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColorsLight.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        child: Text(label),
+      ),
     );
   }
 }
