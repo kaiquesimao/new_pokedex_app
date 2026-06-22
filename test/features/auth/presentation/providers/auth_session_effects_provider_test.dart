@@ -38,7 +38,7 @@ void main() {
     final localFavorites = container.read(localFavoritesRepositoryProvider);
     container
       ..read(authSessionEffectsProvider)
-      ..read(registerFlowProvider.notifier).setEmail('draft@pokemon.com');
+      ..read(registerFlowProvider.notifier).submitEmail('draft@pokemon.com');
 
     await localFavorites.toggleFavorite(25);
     expect(

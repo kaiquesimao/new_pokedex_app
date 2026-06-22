@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
-import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
-import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/change_password_flow_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
-
-enum _ChangePasswordStep { current, newPassword, confirm, success }
 
 class ChangePasswordPage extends ConsumerStatefulWidget {
   const ChangePasswordPage({super.key});
@@ -23,10 +20,6 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   final _newController = TextEditingController();
   final _confirmController = TextEditingController();
 
-  _ChangePasswordStep _step = _ChangePasswordStep.current;
-  String? _error;
-  bool _loading = false;
-
   @override
   void dispose() {
     _currentController.dispose();
@@ -36,99 +29,43 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   }
 
   Future<void> _submitCurrent() async {
-    final value = _currentController.text;
-    if (value.isEmpty) {
-      setState(() => _error = 'Informe sua senha atual');
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      final valid = await ref
-          .read(authProvider.notifier)
-          .verifyCurrentPassword(value);
-      if (!valid) {
-        setState(() => _error = 'Senha atual incorreta');
-        return;
-      }
-      setState(() => _step = _ChangePasswordStep.newPassword);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref
+        .read(changePasswordFlowProvider.notifier)
+        .submitCurrent(_currentController.text);
   }
 
   void _submitNew() {
-    final value = _newController.text;
-    final passwordError = PasswordPolicy.validate(value);
-    if (passwordError != null) {
-      setState(() => _error = passwordError);
-      return;
-    }
-    setState(() {
-      _error = null;
-      _step = _ChangePasswordStep.confirm;
-    });
+    ref
+        .read(changePasswordFlowProvider.notifier)
+        .submitNew(_newController.text);
   }
 
   Future<void> _submitConfirm() async {
-    final newPassword = _newController.text;
-    final confirm = _confirmController.text;
-
-    if (confirm != newPassword) {
-      setState(() => _error = 'As senhas não coincidem');
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      await ref
-          .read(authProvider.notifier)
-          .changePassword(
-            currentPassword: _currentController.text,
-            newPassword: newPassword,
-          );
-      if (mounted) {
-        setState(() => _step = _ChangePasswordStep.success);
-      }
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref.read(changePasswordFlowProvider.notifier).submitConfirm(
+          newPassword: _newController.text,
+          confirmPassword: _confirmController.text,
+        );
   }
 
   void _goBackStep() {
-    setState(() {
-      _error = null;
-      _step = switch (_step) {
-        _ChangePasswordStep.newPassword => _ChangePasswordStep.current,
-        _ChangePasswordStep.confirm => _ChangePasswordStep.newPassword,
-        _ => _step,
-      };
-    });
+    ref.read(changePasswordFlowProvider.notifier).goBackStep();
   }
 
   @override
   Widget build(BuildContext context) {
+    final flow = ref.watch(changePasswordFlowProvider);
+    final step = flow.step;
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle),
-        leading: _step == _ChangePasswordStep.success
+        title: Text(_appBarTitle(step)),
+        leading: step == ChangePasswordStep.success
             ? null
             : IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  if (_step == _ChangePasswordStep.current) {
+                  if (step == ChangePasswordStep.current) {
                     context.pop();
                   } else {
                     _goBackStep();
@@ -142,41 +79,41 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (_step != _ChangePasswordStep.success) ...[
-                _StepIndicator(current: _stepIndex, total: 3),
+              if (step != ChangePasswordStep.success) ...[
+                _StepIndicator(current: _stepIndex(step), total: 3),
                 const SizedBox(height: 32),
                 Text(
-                  _headline,
+                  _headline(step),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _subtitle,
+                  _subtitle(step),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 32),
               ],
-              switch (_step) {
-                _ChangePasswordStep.current => AppPasswordField(
+              switch (step) {
+                ChangePasswordStep.current => AppPasswordField(
                   label: 'Senha atual',
                   controller: _currentController,
-                  errorText: _error,
+                  errorText: flow.error,
                 ),
-                _ChangePasswordStep.newPassword => AppPasswordField(
+                ChangePasswordStep.newPassword => AppPasswordField(
                   label: 'Nova senha',
                   controller: _newController,
-                  errorText: _error,
+                  errorText: flow.error,
                 ),
-                _ChangePasswordStep.confirm => AppPasswordField(
+                ChangePasswordStep.confirm => AppPasswordField(
                   label: 'Confirmar nova senha',
                   controller: _confirmController,
-                  errorText: _error,
+                  errorText: flow.error,
                 ),
-                _ChangePasswordStep.success => _SuccessBody(
+                ChangePasswordStep.success => _SuccessBody(
                   onDone: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -188,12 +125,12 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                   },
                 ),
               },
-              if (_step != _ChangePasswordStep.success) ...[
+              if (step != ChangePasswordStep.success) ...[
                 const SizedBox(height: 32),
                 AppButton(
-                  label: _primaryButtonLabel,
-                  isLoading: _loading,
-                  onPressed: _loading ? null : _onPrimaryPressed,
+                  label: _primaryButtonLabel(step),
+                  isLoading: flow.loading,
+                  onPressed: flow.loading ? null : _onPrimaryPressed(step),
                 ),
               ],
             ],
@@ -203,47 +140,47 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
     );
   }
 
-  int get _stepIndex => switch (_step) {
-    _ChangePasswordStep.current => 1,
-    _ChangePasswordStep.newPassword => 2,
-    _ChangePasswordStep.confirm => 3,
-    _ChangePasswordStep.success => 3,
-  };
+  int _stepIndex(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.current => 1,
+        ChangePasswordStep.newPassword => 2,
+        ChangePasswordStep.confirm => 3,
+        ChangePasswordStep.success => 3,
+      };
 
-  String get _appBarTitle => switch (_step) {
-    _ChangePasswordStep.success => 'Senha alterada',
-    _ => 'Trocar senha',
-  };
+  String _appBarTitle(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.success => 'Senha alterada',
+        _ => 'Trocar senha',
+      };
 
-  String get _headline => switch (_step) {
-    _ChangePasswordStep.current => 'Qual é sua senha atual?',
-    _ChangePasswordStep.newPassword => 'Crie uma nova senha',
-    _ChangePasswordStep.confirm => 'Confirme a nova senha',
-    _ChangePasswordStep.success => '',
-  };
+  String _headline(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.current => 'Qual é sua senha atual?',
+        ChangePasswordStep.newPassword => 'Crie uma nova senha',
+        ChangePasswordStep.confirm => 'Confirme a nova senha',
+        ChangePasswordStep.success => '',
+      };
 
-  String get _subtitle => switch (_step) {
-    _ChangePasswordStep.current =>
-      'Por segurança, confirme sua senha antes de continuar.',
-    _ChangePasswordStep.newPassword => PasswordPolicy.requirementsHint,
-    _ChangePasswordStep.confirm =>
-      'Digite novamente a nova senha para confirmar.',
-    _ChangePasswordStep.success => '',
-  };
+  String _subtitle(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.current =>
+          'Por segurança, confirme sua senha antes de continuar.',
+        ChangePasswordStep.newPassword => PasswordPolicy.requirementsHint,
+        ChangePasswordStep.confirm =>
+          'Digite novamente a nova senha para confirmar.',
+        ChangePasswordStep.success => '',
+      };
 
-  String get _primaryButtonLabel => switch (_step) {
-    _ChangePasswordStep.current => 'Continuar',
-    _ChangePasswordStep.newPassword => 'Continuar',
-    _ChangePasswordStep.confirm => 'Salvar senha',
-    _ChangePasswordStep.success => 'Concluir',
-  };
+  String _primaryButtonLabel(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.current => 'Continuar',
+        ChangePasswordStep.newPassword => 'Continuar',
+        ChangePasswordStep.confirm => 'Salvar senha',
+        ChangePasswordStep.success => 'Concluir',
+      };
 
-  VoidCallback? get _onPrimaryPressed => switch (_step) {
-    _ChangePasswordStep.current => _submitCurrent,
-    _ChangePasswordStep.newPassword => _submitNew,
-    _ChangePasswordStep.confirm => _submitConfirm,
-    _ChangePasswordStep.success => null,
-  };
+  VoidCallback? _onPrimaryPressed(ChangePasswordStep step) => switch (step) {
+        ChangePasswordStep.current => _submitCurrent,
+        ChangePasswordStep.newPassword => _submitNew,
+        ChangePasswordStep.confirm => _submitConfirm,
+        ChangePasswordStep.success => null,
+      };
 }
 
 class _StepIndicator extends StatelessWidget {

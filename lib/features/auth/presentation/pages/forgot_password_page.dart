@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_app/core/providers/firebase_providers.dart';
-import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
-import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/forgot_password_flow_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
-
-enum _ForgotPasswordStep { email, otp, newPassword, success, emailSent }
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -26,11 +22,6 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
 
-  _ForgotPasswordStep _step = _ForgotPasswordStep.email;
-  String? _error;
-  bool _loading = false;
-  var _resent = false;
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -40,130 +31,51 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   }
 
   Future<void> _submitEmail() async {
-    final email = _emailController.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      setState(() => _error = 'Informe um e-mail válido');
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      final usesFirebase = ref.read(firebaseBootstrapProvider).isAvailable;
-      if (usesFirebase) {
-        await ref
-            .read(authProvider.notifier)
-            .sendPasswordResetEmail(email: email);
-        if (mounted) setState(() => _step = _ForgotPasswordStep.emailSent);
-      } else {
-        await ref.read(authProvider.notifier).sendOtp(email: email);
-        if (mounted) setState(() => _step = _ForgotPasswordStep.otp);
-      }
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref
+        .read(forgotPasswordFlowProvider.notifier)
+        .submitEmail(_emailController.text);
   }
 
   Future<void> _verifyOtp(String code) async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      final valid = await ref
-          .read(authProvider.notifier)
-          .verifyOtp(email: _emailController.text.trim(), code: code);
-
-      if (!valid) {
-        setState(() => _error = 'Código inválido. Tente novamente.');
-        return;
-      }
-
-      if (mounted) setState(() => _step = _ForgotPasswordStep.newPassword);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref.read(forgotPasswordFlowProvider.notifier).verifyOtp(code);
   }
 
   Future<void> _resendOtp() async {
-    await ref
-        .read(authProvider.notifier)
-        .sendOtp(email: _emailController.text.trim());
+    await ref.read(forgotPasswordFlowProvider.notifier).resendOtp();
     if (mounted) {
-      setState(() => _resent = true);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Código reenviado (mock)')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Código reenviado (mock)')),
+      );
     }
   }
 
   Future<void> _submitNewPassword() async {
-    final password = _passwordController.text;
-    final confirm = _confirmController.text;
-
-    final passwordError = PasswordPolicy.validate(password);
-    if (passwordError != null) {
-      setState(() => _error = passwordError);
-      return;
-    }
-
-    if (password != confirm) {
-      setState(() => _error = 'As senhas não coincidem');
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      await ref
-          .read(authProvider.notifier)
-          .resetPassword(
-            email: _emailController.text.trim(),
-            newPassword: password,
-          );
-      if (mounted) setState(() => _step = _ForgotPasswordStep.success);
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref.read(forgotPasswordFlowProvider.notifier).submitNewPassword(
+          password: _passwordController.text,
+          confirm: _confirmController.text,
+        );
   }
 
   void _goBackStep() {
-    setState(() {
-      _error = null;
-      _step = switch (_step) {
-        _ForgotPasswordStep.otp => _ForgotPasswordStep.email,
-        _ForgotPasswordStep.newPassword => _ForgotPasswordStep.otp,
-        _ => _step,
-      };
-    });
+    ref.read(forgotPasswordFlowProvider.notifier).goBackStep();
   }
 
   @override
   Widget build(BuildContext context) {
+    final flow = ref.watch(forgotPasswordFlowProvider);
+    final step = flow.step;
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle),
-        leading:
-            _step == _ForgotPasswordStep.success ||
-                _step == _ForgotPasswordStep.emailSent
+        title: Text(_appBarTitle(step)),
+        leading: step == ForgotPasswordStep.success ||
+                step == ForgotPasswordStep.emailSent
             ? null
             : IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  if (_step == _ForgotPasswordStep.email) {
+                  if (step == ForgotPasswordStep.email) {
                     context.pop();
                   } else {
                     _goBackStep();
@@ -179,21 +91,21 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_step != _ForgotPasswordStep.success &&
-                      _step != _ForgotPasswordStep.emailSent) ...[
-                    if (_step != _ForgotPasswordStep.otp)
-                      _StepIndicator(current: _stepIndex, total: 3),
-                    if (_step != _ForgotPasswordStep.otp)
+                  if (step != ForgotPasswordStep.success &&
+                      step != ForgotPasswordStep.emailSent) ...[
+                    if (step != ForgotPasswordStep.otp)
+                      _StepIndicator(current: _stepIndex(step), total: 3),
+                    if (step != ForgotPasswordStep.otp)
                       const SizedBox(height: 32),
                     Text(
-                      _headline,
+                      _headline(step),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _subtitle,
+                      _subtitle(step, flow.email),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.6,
@@ -202,24 +114,24 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     ),
                     const SizedBox(height: 32),
                   ],
-                  switch (_step) {
-                    _ForgotPasswordStep.email => AppTextField(
+                  switch (step) {
+                    ForgotPasswordStep.email => AppTextField(
                       label: 'E-mail',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      errorText: _error,
+                      errorText: flow.error,
                     ),
-                    _ForgotPasswordStep.otp => OtpCodeField(
-                      errorText: _error,
+                    ForgotPasswordStep.otp => OtpCodeField(
+                      errorText: flow.error,
                       onCompleted: _verifyOtp,
                       onResend: _resendOtp,
                     ),
-                    _ForgotPasswordStep.newPassword => Column(
+                    ForgotPasswordStep.newPassword => Column(
                       children: [
                         AppPasswordField(
                           label: 'Nova senha',
                           controller: _passwordController,
-                          errorText: _error,
+                          errorText: flow.error,
                         ),
                         const SizedBox(height: 16),
                         AppPasswordField(
@@ -228,15 +140,15 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         ),
                       ],
                     ),
-                    _ForgotPasswordStep.success => _SuccessBody(
+                    ForgotPasswordStep.success => _SuccessBody(
                       onDone: () => context.go('/login/email'),
                     ),
-                    _ForgotPasswordStep.emailSent => _EmailSentBody(
-                      email: _emailController.text.trim(),
+                    ForgotPasswordStep.emailSent => _EmailSentBody(
+                      email: flow.email,
                       onDone: () => context.go('/login/email'),
                     ),
                   },
-                  if (_step == _ForgotPasswordStep.otp && _resent) ...[
+                  if (step == ForgotPasswordStep.otp && flow.resent) ...[
                     const SizedBox(height: 8),
                     Text(
                       'Um novo código foi enviado.',
@@ -246,69 +158,69 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       textAlign: TextAlign.center,
                     ),
                   ],
-                  if (_step == _ForgotPasswordStep.email ||
-                      _step == _ForgotPasswordStep.newPassword) ...[
+                  if (step == ForgotPasswordStep.email ||
+                      step == ForgotPasswordStep.newPassword) ...[
                     const SizedBox(height: 32),
                     AppButton(
-                      label: _primaryButtonLabel,
-                      isLoading: _loading,
-                      onPressed: _loading ? null : _onPrimaryPressed,
+                      label: _primaryButtonLabel(step),
+                      isLoading: flow.loading,
+                      onPressed: flow.loading ? null : _onPrimaryPressed(step),
                     ),
                   ],
                 ],
               ),
             ),
           ),
-          if (_loading &&
-              _step != _ForgotPasswordStep.success &&
-              _step != _ForgotPasswordStep.emailSent)
+          if (flow.loading &&
+              step != ForgotPasswordStep.success &&
+              step != ForgotPasswordStep.emailSent)
             const AuthLoadingOverlay(message: 'Processando...'),
         ],
       ),
     );
   }
 
-  int get _stepIndex => switch (_step) {
-    _ForgotPasswordStep.email => 1,
-    _ForgotPasswordStep.otp => 2,
-    _ForgotPasswordStep.newPassword => 3,
-    _ForgotPasswordStep.success => 3,
-    _ForgotPasswordStep.emailSent => 3,
+  int _stepIndex(ForgotPasswordStep step) => switch (step) {
+    ForgotPasswordStep.email => 1,
+    ForgotPasswordStep.otp => 2,
+    ForgotPasswordStep.newPassword => 3,
+    ForgotPasswordStep.success => 3,
+    ForgotPasswordStep.emailSent => 3,
   };
 
-  String get _appBarTitle => switch (_step) {
-    _ForgotPasswordStep.success => 'Senha redefinida',
-    _ForgotPasswordStep.emailSent => 'E-mail enviado',
+  String _appBarTitle(ForgotPasswordStep step) => switch (step) {
+    ForgotPasswordStep.success => 'Senha redefinida',
+    ForgotPasswordStep.emailSent => 'E-mail enviado',
     _ => 'Recuperar senha',
   };
 
-  String get _headline => switch (_step) {
-    _ForgotPasswordStep.email => 'Esqueceu sua senha?',
-    _ForgotPasswordStep.otp => 'Confirme o código',
-    _ForgotPasswordStep.newPassword => 'Crie uma nova senha',
-    _ForgotPasswordStep.success => '',
-    _ForgotPasswordStep.emailSent => '',
+  String _headline(ForgotPasswordStep step) => switch (step) {
+    ForgotPasswordStep.email => 'Esqueceu sua senha?',
+    ForgotPasswordStep.otp => 'Confirme o código',
+    ForgotPasswordStep.newPassword => 'Crie uma nova senha',
+    ForgotPasswordStep.success => '',
+    ForgotPasswordStep.emailSent => '',
   };
 
-  String get _subtitle => switch (_step) {
-    _ForgotPasswordStep.email =>
+  String _subtitle(ForgotPasswordStep step, String email) => switch (step) {
+    ForgotPasswordStep.email =>
       'Informe seu e-mail para receber um código de verificação.',
-    _ForgotPasswordStep.otp =>
-      'Digite o código de 6 dígitos enviado para ${_emailController.text.trim()}.',
-    _ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHint,
-    _ForgotPasswordStep.success => '',
-    _ForgotPasswordStep.emailSent => '',
+    ForgotPasswordStep.otp =>
+      'Digite o código de 6 dígitos enviado para $email.',
+    ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHint,
+    ForgotPasswordStep.success => '',
+    ForgotPasswordStep.emailSent => '',
   };
 
-  String get _primaryButtonLabel => switch (_step) {
-    _ForgotPasswordStep.email => 'Enviar código',
-    _ForgotPasswordStep.newPassword => 'Salvar nova senha',
+  String _primaryButtonLabel(ForgotPasswordStep step) => switch (step) {
+    ForgotPasswordStep.email => 'Enviar código',
+    ForgotPasswordStep.newPassword => 'Salvar nova senha',
     _ => '',
   };
 
-  VoidCallback? get _onPrimaryPressed => switch (_step) {
-    _ForgotPasswordStep.email => _submitEmail,
-    _ForgotPasswordStep.newPassword => _submitNewPassword,
+  VoidCallback? _onPrimaryPressed(ForgotPasswordStep step) => switch (step) {
+    ForgotPasswordStep.email => _submitEmail,
+    ForgotPasswordStep.newPassword => _submitNewPassword,
     _ => null,
   };
 }

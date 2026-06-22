@@ -3,17 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
-import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
-
-enum _RegisterStep { email, password, name }
 
 class RegisterEmailPage extends ConsumerStatefulWidget {
   const RegisterEmailPage({super.key});
@@ -27,10 +23,6 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
-  _RegisterStep _step = _RegisterStep.email;
-  String? _error;
-  bool _loading = false;
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -40,102 +32,35 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   }
 
   Future<void> _goBackStep() async {
-    if (_step == _RegisterStep.password &&
-        ref.read(authProvider).needsEmailVerification) {
-      await ref.read(authProvider.notifier).signOut();
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _error = null;
-      _step = switch (_step) {
-        _RegisterStep.password => _RegisterStep.email,
-        _RegisterStep.name => _RegisterStep.password,
-        _ => _step,
-      };
-    });
+    await ref.read(registerFlowProvider.notifier).goBackStep();
   }
 
   void _submitEmail() {
-    final email = _emailController.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      setState(() => _error = 'Informe um e-mail válido');
-      return;
-    }
-    ref.read(registerFlowProvider.notifier).setEmail(email);
-    setState(() {
-      _error = null;
-      _step = _RegisterStep.password;
-    });
+    ref
+        .read(registerFlowProvider.notifier)
+        .submitEmail(_emailController.text);
   }
 
   Future<void> _submitPassword() async {
-    final password = _passwordController.text;
-    final passwordError = PasswordPolicy.validate(password);
-    if (passwordError != null) {
-      setState(() => _error = passwordError);
-      return;
-    }
-
-    final draft = ref.read(registerFlowProvider);
-    ref.read(registerFlowProvider.notifier).setPassword(password);
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      if (ref.read(authProvider.notifier).usesFirebase) {
-        await ref
-            .read(authProvider.notifier)
-            .createPendingAccount(email: draft.email, password: password);
-      }
-      if (mounted) {
-        setState(() {
-          _error = null;
-          _step = _RegisterStep.name;
-        });
-      }
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref
+        .read(registerFlowProvider.notifier)
+        .submitPassword(_passwordController.text);
   }
 
   Future<void> _submitName() async {
-    final name = _nameController.text.trim();
-    if (name.isEmpty) {
-      setState(() => _error = 'Informe seu nome');
-      return;
-    }
-
-    ref.read(registerFlowProvider.notifier).setName(name);
-    final draft = ref.read(registerFlowProvider);
-
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      if (ref.read(authProvider.notifier).usesFirebase) {
-        await ref
-            .read(authProvider.notifier)
-            .completePendingRegistration(name: draft.name);
-      }
-      if (mounted) await context.push('/register/verify-email');
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    await ref
+        .read(registerFlowProvider.notifier)
+        .submitName(_nameController.text);
+    if (!mounted) return;
+    final flow = ref.read(registerFlowProvider);
+    if (flow.error == null && !flow.loading) {
+      await context.push('/register/verify-email');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final flow = ref.watch(registerFlowProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -144,7 +69,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            if (_step == _RegisterStep.email) {
+            if (flow.step == RegisterStep.email) {
               context.pop();
             } else {
               unawaited(_goBackStep());
@@ -160,84 +85,84 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _StepIndicator(current: _stepIndex, total: 3),
+                  _StepIndicator(current: _stepIndex(flow.step), total: 3),
                   const SizedBox(height: 32),
                   Text(
-                    _headline,
+                    _headline(flow.step),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _subtitle,
+                    _subtitle(flow.step),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 32),
-                  switch (_step) {
-                    _RegisterStep.email => AppTextField(
+                  switch (flow.step) {
+                    RegisterStep.email => AppTextField(
                       label: 'E-mail',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      errorText: _error,
+                      errorText: flow.error,
                     ),
-                    _RegisterStep.password => AppPasswordField(
+                    RegisterStep.password => AppPasswordField(
                       label: 'Senha',
                       controller: _passwordController,
-                      errorText: _error,
+                      errorText: flow.error,
                     ),
-                    _RegisterStep.name => AppTextField(
+                    RegisterStep.name => AppTextField(
                       label: 'Nome',
                       controller: _nameController,
-                      errorText: _error,
+                      errorText: flow.error,
                     ),
                   },
                   const SizedBox(height: 32),
                   AppButton(
                     label: 'Continuar',
-                    isLoading: _loading,
-                    onPressed: _loading ? null : _onPrimaryPressed,
+                    isLoading: flow.loading,
+                    onPressed: flow.loading ? null : _onPrimaryPressed(flow.step),
                   ),
                 ],
               ),
             ),
           ),
-          if (_loading) AuthLoadingOverlay(message: _loadingMessage),
+          if (flow.loading) AuthLoadingOverlay(message: _loadingMessage(flow.step)),
         ],
       ),
     );
   }
 
-  int get _stepIndex => switch (_step) {
-    _RegisterStep.email => 1,
-    _RegisterStep.password => 2,
-    _RegisterStep.name => 3,
+  int _stepIndex(RegisterStep step) => switch (step) {
+    RegisterStep.email => 1,
+    RegisterStep.password => 2,
+    RegisterStep.name => 3,
   };
 
-  String get _headline => switch (_step) {
-    _RegisterStep.email => 'Qual é o seu e-mail?',
-    _RegisterStep.password => 'Crie uma senha',
-    _RegisterStep.name => 'Como podemos te chamar?',
+  String _headline(RegisterStep step) => switch (step) {
+    RegisterStep.email => 'Qual é o seu e-mail?',
+    RegisterStep.password => 'Crie uma senha',
+    RegisterStep.name => 'Como podemos te chamar?',
   };
 
-  String get _subtitle => switch (_step) {
-    _RegisterStep.email => 'Usaremos este e-mail para acessar sua conta.',
-    _RegisterStep.password => PasswordPolicy.requirementsHint,
-    _RegisterStep.name => 'Este nome aparecerá no seu perfil de treinador.',
+  String _subtitle(RegisterStep step) => switch (step) {
+    RegisterStep.email => 'Usaremos este e-mail para acessar sua conta.',
+    RegisterStep.password => PasswordPolicy.requirementsHint,
+    RegisterStep.name => 'Este nome aparecerá no seu perfil de treinador.',
   };
 
-  VoidCallback get _onPrimaryPressed => switch (_step) {
-    _RegisterStep.email => _submitEmail,
-    _RegisterStep.password => _submitPassword,
-    _RegisterStep.name => _submitName,
+  VoidCallback _onPrimaryPressed(RegisterStep step) => switch (step) {
+    RegisterStep.email => _submitEmail,
+    RegisterStep.password => _submitPassword,
+    RegisterStep.name => _submitName,
   };
 
-  String get _loadingMessage => switch (_step) {
-    _RegisterStep.password => 'Criando conta...',
-    _RegisterStep.name => 'Finalizando cadastro...',
-    _ => 'Aguarde...',
+  String _loadingMessage(RegisterStep step) => switch (step) {
+    RegisterStep.password => 'Criando conta...',
+    RegisterStep.name => 'Finalizando cadastro...',
+    RegisterStep.email => 'Aguarde...',
   };
 }
 

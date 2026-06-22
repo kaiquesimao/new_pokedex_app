@@ -1,3 +1,8 @@
+---
+description: 
+alwaysApply: false
+---
+
 # AGENTS.md
 
 ## Cursor Cloud specific instructions

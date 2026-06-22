@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
-import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/login_email_form_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
@@ -20,8 +19,6 @@ class LoginEmailPage extends ConsumerStatefulWidget {
 class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String? _error;
-  bool _loading = false;
 
   @override
   void dispose() {
@@ -31,28 +28,15 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
   }
 
   Future<void> _submit() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      await ref
-          .read(authProvider.notifier)
-          .signIn(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          );
-      if (!mounted) return;
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = formatAuthException(e));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    await ref.read(loginEmailFormProvider.notifier).submit(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
+    final form = ref.watch(loginEmailFormProvider);
     listenPostLoginNavigation(ref);
     return Scaffold(
       appBar: AppBar(title: const Text('Entrar')),
@@ -90,7 +74,7 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                   AppPasswordField(
                     label: 'Senha',
                     controller: _passwordController,
-                    errorText: _error,
+                    errorText: form.error,
                   ),
                   const SizedBox(height: 12),
                   Align(
@@ -103,14 +87,14 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                   const SizedBox(height: 24),
                   AppButton(
                     label: 'Entrar',
-                    isLoading: _loading,
+                    isLoading: form.loading,
                     onPressed: _submit,
                   ),
                 ],
               ),
             ),
           ),
-          if (_loading) const AuthLoadingOverlay(message: 'Entrando...'),
+          if (form.loading) const AuthLoadingOverlay(message: 'Entrando...'),
         ],
       ),
     );
