@@ -38,9 +38,11 @@ class AppButton extends StatelessWidget {
       ),
     };
 
+    const buttonHeight = kIsWeb ? AuthWebActionMetrics.buttonHeight : 52.0;
+
     return SizedBox(
       width: double.infinity,
-      height: kIsWeb ? AuthWebActionMetrics.buttonHeight : 52,
+      height: buttonHeight,
       child: ElevatedButton(
         onPressed: isDisabled || isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -51,7 +53,7 @@ class AppButton extends StatelessWidget {
               ? BorderSide(color: theme.colorScheme.primary, width: 2)
               : null,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kIsWeb ? 24 : 12),
+            borderRadius: BorderRadius.circular(buttonHeight / 2),
           ),
         ),
         child: isLoading

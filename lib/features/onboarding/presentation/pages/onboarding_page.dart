@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
-import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -92,7 +91,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           slide.title,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: AppColorsLight.textPrimary,
                             height: 1.25,
                           ),
                           textAlign: TextAlign.center,
@@ -101,7 +99,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                         Text(
                           slide.subtitle,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: AppColorsLight.textSecondary,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.55,
+                            ),
                             height: 1.4,
                           ),
                           textAlign: TextAlign.center,
@@ -147,49 +147,66 @@ class _CharacterIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shadowWidth = imageAssets.length > 1 ? 200.0 : 120.0;
+    final theme = Theme.of(context);
 
-    return SizedBox(
-      height: 220,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: shadowWidth,
-              height: 16,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(50),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var i = 0; i < imageAssets.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 8),
-                  Image.asset(
-                    imageAssets[i],
-                    height: 200,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, _, _) => Icon(
-                      Icons.catching_pokemon,
-                      size: 120,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDual = imageAssets.length > 1;
+        const imageHeight = 200.0;
+        final slotWidth = isDual
+            ? constraints.maxWidth / imageAssets.length
+            : constraints.maxWidth;
+        final shadowWidth = isDual ? constraints.maxWidth * 0.7 : 120.0;
+
+        return SizedBox(
+          height: 220,
+          width: constraints.maxWidth,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  width: shadowWidth,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                ],
-              ],
-            ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < imageAssets.length; i++)
+                      SizedBox(
+                        width: slotWidth,
+                        height: imageHeight,
+                        child: Image.asset(
+                          imageAssets[i],
+                          fit: BoxFit.contain,
+                          alignment: isDual
+                              ? (i == 0
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft)
+                              : Alignment.center,
+                          errorBuilder: (_, _, _) => Icon(
+                            Icons.catching_pokemon,
+                            size: 120,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -202,8 +219,8 @@ class _PageDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const activeColor = AppColorsLight.primary;
-    final inactiveColor = AppColorsLight.primary.withValues(alpha: 0.25);
+    final primary = Theme.of(context).colorScheme.primary;
+    final inactiveColor = primary.withValues(alpha: 0.25);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +232,7 @@ class _PageDots extends StatelessWidget {
           height: 8,
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
-            color: active ? activeColor : inactiveColor,
+            color: active ? primary : inactiveColor,
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -232,14 +249,16 @@ class _OnboardingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: AppColorsLight.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
           ),

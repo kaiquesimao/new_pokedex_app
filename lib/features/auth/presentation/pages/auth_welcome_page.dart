@@ -27,50 +27,15 @@ class AuthWelcomePage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          TrainerAvatars.assetPathFor('miku'),
-                          height: 160,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
-                        ),
-                        const SizedBox(width: 8),
-                        Image.asset(
-                          TrainerAvatars.assetPathFor('hilbert'),
-                          height: 160,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      'Está pronto para essa aventura?',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        height: 1.25,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Basta criar uma conta e começar a explorar o mundo dos Pokémon hoje!',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.55,
-                        ),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                child: Center(
+                  child: _WelcomeCharacterIllustration(
+                    imageAssets: [
+                      TrainerAvatars.assetPathFor('miku'),
+                      TrainerAvatars.assetPathFor('hilbert'),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -79,6 +44,26 @@ class AuthWelcomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Text(
+                    'Está pronto para essa aventura?',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      height: 1.25,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Basta criar uma conta e começar a explorar o mundo dos Pokémon hoje!',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.55,
+                      ),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
                   AuthHubActionFrame(
                     child: AppButton(
                       label: 'Criar conta',
@@ -104,6 +89,68 @@ class AuthWelcomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _WelcomeCharacterIllustration extends StatelessWidget {
+  const _WelcomeCharacterIllustration({required this.imageAssets});
+
+  final List<String> imageAssets;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imageHeight = (constraints.maxHeight * 0.9).clamp(200.0, 300.0);
+        final slotWidth = constraints.maxWidth / imageAssets.length;
+        final shadowWidth = kIsWeb ? 500.0 : constraints.maxWidth * 0.7;
+
+        return SizedBox(
+          height: imageHeight + 20,
+          width: constraints.maxWidth,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                bottom: kIsWeb ? -10 : 50,
+                child: Container(
+                  width: shadowWidth,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < imageAssets.length; i++)
+                      SizedBox(
+                        width: slotWidth,
+                        height: imageHeight,
+                        child: Image.asset(
+                          imageAssets[i],
+                          fit: BoxFit.contain,
+                          alignment: i == 0
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
