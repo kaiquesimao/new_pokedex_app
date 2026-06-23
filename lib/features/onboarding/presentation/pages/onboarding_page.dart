@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -85,7 +86,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     child: Column(
                       children: [
                         const Spacer(flex: 3),
-                        _CharacterIllustration(imageAssets: slide.imageAssets),
+                        TrainerIllustrationGroup(
+                          imageAssets: slide.imageAssets,
+                          errorBuilder: (_, _, _) => Icon(
+                            Icons.catching_pokemon,
+                            size: 120,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
                         const SizedBox(height: 40),
                         Text(
                           slide.title,
@@ -138,77 +146,6 @@ class _OnboardingSlide {
   final List<String> imageAssets;
   final String title;
   final String subtitle;
-}
-
-class _CharacterIllustration extends StatelessWidget {
-  const _CharacterIllustration({required this.imageAssets});
-
-  final List<String> imageAssets;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isDual = imageAssets.length > 1;
-        const imageHeight = 200.0;
-        final slotWidth = isDual
-            ? constraints.maxWidth / imageAssets.length
-            : constraints.maxWidth;
-        final shadowWidth = isDual ? constraints.maxWidth * 0.7 : 120.0;
-
-        return SizedBox(
-          height: 220,
-          width: constraints.maxWidth,
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                bottom: 0,
-                child: Container(
-                  width: shadowWidth,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < imageAssets.length; i++)
-                      SizedBox(
-                        width: slotWidth,
-                        height: imageHeight,
-                        child: Image.asset(
-                          imageAssets[i],
-                          fit: BoxFit.contain,
-                          alignment: isDual
-                              ? (i == 0
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft)
-                              : Alignment.center,
-                          errorBuilder: (_, _, _) => Icon(
-                            Icons.catching_pokemon,
-                            size: 120,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
 class _PageDots extends StatelessWidget {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class AuthHubLayout extends StatelessWidget {
   const AuthHubLayout({
@@ -57,10 +59,9 @@ class AuthHubLayout extends StatelessWidget {
             children: [
               const SizedBox(height: 8),
               Center(
-                child: Image.asset(
-                  illustrationAsset,
-                  height: 200,
-                  fit: BoxFit.contain,
+                child: TrainerIllustrationSlot(
+                  assetPath: illustrationAsset,
+                  slotSize: TrainerAvatars.illustrationSlotSizeSingle,
                   errorBuilder: (_, _, _) => Icon(
                     Icons.catching_pokemon,
                     size: 100,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/trainer_avatars.dart';
+import 'package:pokedex_app/shared/widgets/trainer_avatar_image.dart';
+import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class EmptyStateIllustration extends StatelessWidget {
   const EmptyStateIllustration({
@@ -7,7 +10,8 @@ class EmptyStateIllustration extends StatelessWidget {
     super.key,
     this.subtitle,
     this.action,
-    this.imageHeight = 180,
+    this.imageHeight = TrainerAvatars.illustrationSlotSizeSingle,
+    this.pixelArt = false,
   });
 
   final String imageAsset;
@@ -15,6 +19,7 @@ class EmptyStateIllustration extends StatelessWidget {
   final String? subtitle;
   final Widget? action;
   final double imageHeight;
+  final bool pixelArt;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +30,19 @@ class EmptyStateIllustration extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imageAsset,
-            height: imageHeight,
-            fit: BoxFit.contain,
-            errorBuilder: (_, _, _) => Icon(
-              Icons.image_not_supported_outlined,
-              size: imageHeight * 0.5,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+          if (pixelArt)
+            TrainerIllustrationSlot(
+              assetPath: imageAsset,
+              slotSize: imageHeight,
+              errorBuilder: _errorBuilder(theme),
+            )
+          else
+            TrainerAvatarImage(
+              assetPath: imageAsset,
+              height: imageHeight,
+              pixelArt: false,
+              errorBuilder: _errorBuilder(theme),
             ),
-          ),
           const SizedBox(height: 24),
           Text(
             title,
@@ -56,6 +64,14 @@ class EmptyStateIllustration extends StatelessWidget {
           if (action != null) ...[const SizedBox(height: 24), action!],
         ],
       ),
+    );
+  }
+
+  ImageErrorWidgetBuilder _errorBuilder(ThemeData theme) {
+    return (_, _, _) => Icon(
+      Icons.image_not_supported_outlined,
+      size: imageHeight * 0.5,
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
     );
   }
 }

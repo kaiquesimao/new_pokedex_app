@@ -1,6 +1,28 @@
+import 'package:flutter/foundation.dart';
+
 abstract final class TrainerAvatars {
   static const String defaultSlug = 'hilbert';
   static const String assetsBase = 'assets/images/characters/';
+
+  /// Sprite size after 4x nearest-neighbor upscale (original art was 80px).
+  static const double sourceSpriteSize = 320;
+
+  /// Fixed square slot when two or more trainers are shown side by side.
+  static const double illustrationSlotSizeDual = 240;
+
+  /// Fixed square slot when a single trainer is shown alone.
+  static const double illustrationSlotSizeSingle = 224;
+
+  static double illustrationSlotSize({required bool dual}) {
+    return dual ? illustrationSlotSizeDual : illustrationSlotSizeSingle;
+  }
+
+  static double illustrationScaleFor(String assetPath) {
+    for (final option in curated) {
+      if (assetPath == option.assetPath) return option.illustrationScale;
+    }
+    return 1;
+  }
 
   static const List<TrainerAvatarOption> curated = [
     TrainerAvatarOption(
@@ -50,7 +72,13 @@ abstract final class TrainerAvatars {
       label: 'Pokémaníaco',
       fileName: 'pokemaniac.png',
     ),
-    TrainerAvatarOption(slug: 'miku', label: 'Miku', fileName: 'miku.png'),
+    TrainerAvatarOption(
+      slug: 'miku',
+      label: 'Miku',
+      fileName: 'miku.png',
+      // Portrait asset fills the frame; standard sprites have padding.
+      illustrationScale: kIsWeb ? 1 : 0.80,
+    ),
   ];
 
   static String assetPathFor(String slug) {
@@ -71,11 +99,15 @@ class TrainerAvatarOption {
     required this.slug,
     required this.label,
     required this.fileName,
+    this.illustrationScale = 1,
   });
 
   final String slug;
   final String label;
   final String fileName;
+
+  /// Visual scale for character normalization (1 = default sprite framing).
+  final double illustrationScale;
 
   String get assetPath => '${TrainerAvatars.assetsBase}$fileName';
 }

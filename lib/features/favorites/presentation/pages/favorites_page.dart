@@ -45,6 +45,7 @@ class _GuestFavoritesBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateIllustration(
       imageAsset: TrainerAvatars.assetPathFor('pokemaniac'),
+      pixelArt: true,
       title: 'Você precisa entrar em uma conta para fazer isso.',
       subtitle:
           'Para acessar essa funcionalidade, é necessário fazer login ou '
@@ -65,7 +66,6 @@ class _EmptyFavoritesBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return const EmptyStateIllustration(
       imageAsset: AppAssets.patternMagikarp,
-      imageHeight: 200,
       title: 'Você não favoritou nenhum Pokémon :(',
       subtitle:
           'Clique no ícone de coração dos seus pokémons favoritos e eles '
