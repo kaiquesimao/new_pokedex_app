@@ -81,6 +81,7 @@ class AuthWelcomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: kIsWeb ? 14 : null,
                           fontWeight: kIsWeb ? FontWeight.w600 : null,
+                          color: Color(0xFF1D3B74),
                         ),
                       ),
                     ),

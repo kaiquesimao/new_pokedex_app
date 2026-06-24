@@ -34,6 +34,9 @@ class SocialAuthButton extends StatelessWidget {
 
   double get _pillRadiusValue => kIsWeb ? _webPillRadius : _pillRadius;
 
+  double get _appleIconSize => kIsWeb ? _webIconSize : 40;
+  double get _googleIconSize => kIsWeb ? _webIconSize : 30;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -42,9 +45,9 @@ class SocialAuthButton extends StatelessWidget {
       child: switch (provider) {
         SocialAuthProvider.apple => OutlinedButton.icon(
           onPressed: onPressed,
-          icon: const Icon(
+          icon: Icon(
             Icons.apple,
-            size: kIsWeb ? _webIconSize : 22,
+            size: _appleIconSize,
             color: _socialButtonForeground,
           ),
           label: const Text(
@@ -67,8 +70,19 @@ class SocialAuthButton extends StatelessWidget {
             ),
           ),
         ),
-        SocialAuthProvider.google => OutlinedButton(
+        SocialAuthProvider.google => OutlinedButton.icon(
           onPressed: onPressed,
+          icon: _GoogleGlyph(size: _googleIconSize),
+          label: const Text(
+            'Continuar com o Google',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: kIsWeb ? _webFontSize : 15,
+              fontWeight: FontWeight.w600,
+              color: _socialButtonForeground,
+            ),
+          ),
           style: OutlinedButton.styleFrom(
             backgroundColor: _socialButtonBackground,
             foregroundColor: _socialButtonForeground,
@@ -77,25 +91,6 @@ class SocialAuthButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(_pillRadiusValue),
             ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _GoogleGlyph(size: kIsWeb ? _webIconSize : 20),
-              SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  'Continuar com o Google',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: kIsWeb ? _webFontSize : 15,
-                    fontWeight: FontWeight.w600,
-                    color: _socialButtonForeground,
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
         SocialAuthProvider.email => ElevatedButton(

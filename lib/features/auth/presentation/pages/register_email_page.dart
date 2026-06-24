@@ -36,9 +36,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   }
 
   void _submitEmail() {
-    ref
-        .read(registerFlowProvider.notifier)
-        .submitEmail(_emailController.text);
+    ref.read(registerFlowProvider.notifier).submitEmail(_emailController.text);
   }
 
   Future<void> _submitPassword() async {
@@ -123,13 +121,16 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
                   AppButton(
                     label: 'Continuar',
                     isLoading: flow.loading,
-                    onPressed: flow.loading ? null : _onPrimaryPressed(flow.step),
+                    onPressed: flow.loading
+                        ? null
+                        : _onPrimaryPressed(flow.step),
                   ),
                 ],
               ),
             ),
           ),
-          if (flow.loading) AuthLoadingOverlay(message: _loadingMessage(flow.step)),
+          if (flow.loading)
+            AuthLoadingOverlay(message: _loadingMessage(flow.step)),
         ],
       ),
     );
@@ -148,7 +149,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   };
 
   String _subtitle(RegisterStep step) => switch (step) {
-    RegisterStep.email => 'Usaremos este e-mail para acessar sua conta.',
+    RegisterStep.email => 'Use um endereço de e-mail válido.',
     RegisterStep.password => PasswordPolicy.requirementsHint,
     RegisterStep.name => 'Este nome aparecerá no seu perfil de treinador.',
   };

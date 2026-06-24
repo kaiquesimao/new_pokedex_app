@@ -17,7 +17,7 @@ abstract final class AppColorsDark {
   static const Color surface = Color(0xFF1E1E1E);
   static const Color textPrimary = Color(0xFFF5F5F5);
   static const Color textSecondary = Color(0xFFB0B0B0);
-  static const Color primary = Color(0xFFA0BAFF);
+  static const Color primary = Color(0xFF1D3B74);
 }
 
 abstract final class PokemonTypeColors {

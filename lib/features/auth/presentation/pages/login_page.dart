@@ -22,7 +22,7 @@ class LoginPage extends ConsumerWidget {
       children: [
         AuthHubLayout(
           appBarTitle: 'Entrar',
-          illustrationAsset: TrainerAvatars.assetPathFor('hilbert'),
+          illustrationAsset: TrainerAvatars.assetPathFor('victor'),
           headline: 'Que bom te ver aqui novamente!',
           subtitle: 'Como deseja se conectar?',
           actions: [

@@ -23,7 +23,7 @@ class RegisterPage extends ConsumerWidget {
       children: [
         AuthHubLayout(
           appBarTitle: 'Criar conta',
-          illustrationAsset: TrainerAvatars.assetPathFor('wallace'),
+          illustrationAsset: TrainerAvatars.assetPathFor('wallace_gen6'),
           headline: 'Falta pouco para explorar esse mundo!',
           subtitle: 'Como deseja se conectar?',
           actions: [
