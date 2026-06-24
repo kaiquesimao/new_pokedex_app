@@ -35,31 +35,12 @@ class LoginSuccessPage extends ConsumerWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      clipBehavior: Clip.none,
-                      children: [
-                        Positioned(
-                          bottom: 8,
-                          child: Container(
-                            width: 220,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                          ),
-                        ),
-                        TrainerIllustrationGroup(
-                          imageAssets: [
-                            TrainerAvatars.assetPathFor('blue'),
-                            TrainerAvatars.assetPathFor('cynthia'),
-                          ],
-                          layout: TrainerIllustrationLayout.dual,
-                        ),
-                      ],
-                    ),
+                  child: TrainerIllustrationGroup(
+                    imageAssets: [
+                      TrainerAvatars.assetPathFor('blue'),
+                      TrainerAvatars.assetPathFor('cynthia'),
+                    ],
+                    layout: TrainerIllustrationLayout.dual,
                   ),
                 ),
               ),

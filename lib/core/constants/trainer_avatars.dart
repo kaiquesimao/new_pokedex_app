@@ -7,14 +7,40 @@ abstract final class TrainerAvatars {
   /// Sprite size after 4x nearest-neighbor upscale (original art was 80px).
   static const double sourceSpriteSize = 320;
 
-  /// Fixed square slot when two or more trainers are shown side by side.
-  static const double illustrationSlotSizeDual = 240;
+  /// Lower bounds when space is tight (e.g. small phones).
+  static const double illustrationSlotMinDual = 300;
+  static const double illustrationSlotMinSingle = 260;
 
-  /// Fixed square slot when a single trainer is shown alone.
-  static const double illustrationSlotSizeSingle = 224;
+  /// Upper bounds on very large screens.
+  static const double illustrationSlotMaxDual = 520;
+  static const double illustrationSlotMaxSingle = 400;
+
+  /// Fraction of available height used per layout (dual fills more).
+  static const double illustrationHeightFactorDual = 0.95;
+  static const double illustrationHeightFactorSingle = 0.82;
+
+  /// Fraction of slot width used as the square size cap.
+  static const double illustrationWidthFactorDual = 1;
+  static const double illustrationWidthFactorSingle = 0.72;
+
+  /// Fallback when parent height is unbounded (scroll views, columns).
+  static const double illustrationViewportFallbackDual = 0.45;
+  static const double illustrationViewportFallbackSingle = 0.40;
+
+  /// How far each dual sprite shifts toward the center (fraction of slot size).
+  static const double illustrationDualCenterShift = 0.30;
+
+  /// Approx. opaque width of sprite assets used for horizontal fit budgeting.
+  static const double illustrationDualOpaqueWidthFraction = 0.55;
+
+  /// Horizontal inset so dual sprites do not clip at screen edges.
+  static const double illustrationDualEdgePadding = 8;
+
+  /// Global scale applied to dual illustration size (1 = default).
+  static const double illustrationDualSizeScale = 0.95;
 
   static double illustrationSlotSize({required bool dual}) {
-    return dual ? illustrationSlotSizeDual : illustrationSlotSizeSingle;
+    return dual ? illustrationSlotMinDual : illustrationSlotMinSingle;
   }
 
   static double illustrationScaleFor(String assetPath) {
@@ -77,7 +103,7 @@ abstract final class TrainerAvatars {
       label: 'Miku',
       fileName: 'miku.png',
       // Portrait asset fills the frame; standard sprites have padding.
-      illustrationScale: kIsWeb ? 1 : 0.80,
+      illustrationScale: kIsWeb ? 1 : 0.90,
     ),
   ];
 

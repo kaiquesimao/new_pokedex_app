@@ -30,14 +30,12 @@ class AuthWelcomePage extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Center(
-                  child: TrainerIllustrationGroup(
-                    imageAssets: [
-                      TrainerAvatars.assetPathFor('miku'),
-                      TrainerAvatars.assetPathFor('hilbert'),
-                    ],
-                    layout: TrainerIllustrationLayout.dual,
-                  ),
+                child: TrainerIllustrationGroup(
+                  imageAssets: [
+                    TrainerAvatars.assetPathFor('miku'),
+                    TrainerAvatars.assetPathFor('hilbert'),
+                  ],
+                  layout: TrainerIllustrationLayout.dual,
                 ),
               ),
             ),
@@ -76,12 +74,12 @@ class AuthWelcomePage extends StatelessWidget {
                   AuthHubLinkFrame(
                     child: TextButton(
                       onPressed: () => context.push('/login'),
-                      child: const Text(
+                      child: Text(
                         'Já tenho uma conta',
                         style: TextStyle(
                           fontSize: kIsWeb ? 14 : null,
                           fontWeight: kIsWeb ? FontWeight.w600 : null,
-                          color: Color(0xFF1D3B74),
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),

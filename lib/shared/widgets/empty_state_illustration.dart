@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/shared/widgets/trainer_avatar_image.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
@@ -10,7 +9,6 @@ class EmptyStateIllustration extends StatelessWidget {
     super.key,
     this.subtitle,
     this.action,
-    this.imageHeight = TrainerAvatars.illustrationSlotSizeSingle,
     this.pixelArt = false,
   });
 
@@ -18,7 +16,6 @@ class EmptyStateIllustration extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget? action;
-  final double imageHeight;
   final bool pixelArt;
 
   @override
@@ -31,17 +28,18 @@ class EmptyStateIllustration extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (pixelArt)
-            TrainerIllustrationSlot(
-              assetPath: imageAsset,
-              slotSize: imageHeight,
-              errorBuilder: _errorBuilder(theme),
+            Expanded(
+              child: TrainerIllustrationSlot(
+                assetPath: imageAsset,
+                errorBuilder: _errorBuilder(theme, 120),
+              ),
             )
           else
             TrainerAvatarImage(
               assetPath: imageAsset,
-              height: imageHeight,
+              height: 200,
               pixelArt: false,
-              errorBuilder: _errorBuilder(theme),
+              errorBuilder: _errorBuilder(theme, 100),
             ),
           const SizedBox(height: 24),
           Text(
@@ -67,10 +65,10 @@ class EmptyStateIllustration extends StatelessWidget {
     );
   }
 
-  ImageErrorWidgetBuilder _errorBuilder(ThemeData theme) {
+  ImageErrorWidgetBuilder _errorBuilder(ThemeData theme, double iconSize) {
     return (_, _, _) => Icon(
       Icons.image_not_supported_outlined,
-      size: imageHeight * 0.5,
+      size: iconSize,
       color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
@@ -85,16 +86,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Column(
                       children: [
-                        const Spacer(flex: 3),
-                        TrainerIllustrationGroup(
-                          imageAssets: slide.imageAssets,
-                          errorBuilder: (_, _, _) => Icon(
-                            Icons.catching_pokemon,
-                            size: 120,
-                            color: theme.colorScheme.primary,
+                        Expanded(
+                          child: TrainerIllustrationGroup(
+                            imageAssets: slide.imageAssets,
+                            errorBuilder: (_, _, _) => Icon(
+                              Icons.catching_pokemon,
+                              size: 120,
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 32),
                         Text(
                           slide.title,
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -114,7 +116,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const Spacer(flex: 2),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   );
@@ -124,7 +126,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             _PageDots(count: _pages.length, current: _currentPage),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-              child: _OnboardingButton(
+              child: AppButton(
                 label: isLastPage ? 'Vamos começar!' : 'Continuar',
                 onPressed: _next,
               ),
@@ -174,38 +176,6 @@ class _PageDots extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class _OnboardingButton extends StatelessWidget {
-  const _OnboardingButton({required this.label, required this.onPressed});
-
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: FilledButton(
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.onPrimary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        child: Text(label),
-      ),
     );
   }
 }
