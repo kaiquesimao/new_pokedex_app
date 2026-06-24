@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class RegisterSuccessPage extends ConsumerWidget {
+class RegisterSuccessPage extends ConsumerStatefulWidget {
   const RegisterSuccessPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RegisterSuccessPage> createState() =>
+      _RegisterSuccessPageState();
+}
+
+class _RegisterSuccessPageState extends ConsumerState<RegisterSuccessPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(registerFlowProvider.notifier).reset();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final theme = Theme.of(context);
 
     if (!auth.isAuthenticated) {
       return const Scaffold(body: SizedBox.shrink());
     }
-
-    final name = auth.displayName ?? 'Treinador';
 
     return PopScope(
       canPop: false,
@@ -27,40 +43,55 @@ class RegisterSuccessPage extends ConsumerWidget {
       },
       child: Scaffold(
         body: SafePageBody(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Icon(
-                  Icons.celebration_outlined,
-                  size: 80,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Conta criada!',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: TrainerIllustrationGroup(
+                    imageAssets: [
+                      TrainerAvatars.assetPathFor('wallace'),
+                      TrainerAvatars.assetPathFor('lucian'),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Parabéns, $name! Sua jornada como treinador começa agora.',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                  textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Sua conta foi criada com Sucesso!',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        height: 1.25,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Seja bem-vindo, treinador! Estamos animados para '
+                      'acompanhar sua jornada.',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.55,
+                        ),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    AuthHubActionFrame(
+                      child: AppButton(
+                        label: 'Continuar',
+                        onPressed: () => context.go('/pokedex'),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 48),
-                AppButton(
-                  label: 'Explorar Pokédex',
-                  onPressed: () => context.go('/pokedex'),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

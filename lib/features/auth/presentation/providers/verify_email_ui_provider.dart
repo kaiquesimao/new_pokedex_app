@@ -68,15 +68,16 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
         return false;
       }
 
-      await ref.read(authProvider.notifier).signUp(
-            email: flow.email,
-            password: flow.password,
-            name: flow.name,
-          );
+      final auth = ref.read(authProvider.notifier);
+      await auth.signUp(
+        email: flow.email,
+        password: flow.password,
+        name: flow.name,
+      );
+      auth.acknowledgeEmailVerification();
 
       if (!ref.mounted) return false;
 
-      ref.read(registerFlowProvider.notifier).reset();
       state = state.copyWith(loading: false);
       return true;
     } on Object catch (e) {
@@ -99,7 +100,7 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
 }
 
 final NotifierProvider<VerifyEmailUiNotifier, VerifyEmailUiState>
-    verifyEmailUiProvider =
+verifyEmailUiProvider =
     NotifierProvider.autoDispose<VerifyEmailUiNotifier, VerifyEmailUiState>(
-  VerifyEmailUiNotifier.new,
-);
+      VerifyEmailUiNotifier.new,
+    );

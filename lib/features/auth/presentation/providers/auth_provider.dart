@@ -82,7 +82,9 @@ class AuthNotifier extends Notifier<AuthState> {
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth != null) {
       _authSubscription = firebaseAuth.authStateChanges().listen((user) {
-        state = _authStateFromFirebaseUser(user);
+        final next = _authStateFromFirebaseUser(user);
+        final preserveVerified = state.emailVerified && !next.emailVerified;
+        state = preserveVerified ? next.copyWith(emailVerified: true) : next;
       });
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       return;
@@ -160,9 +162,14 @@ class AuthNotifier extends Notifier<AuthState> {
       _requireOnline();
       final user = firebaseAuth.currentUser;
       if (user != null && user.email == email) {
+        final wasVerified = state.emailVerified;
         await user.updateDisplayName(name);
         await user.reload();
-        state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
+        final refreshed = firebaseAuth.currentUser;
+        final next = _authStateFromFirebaseUser(refreshed);
+        state = wasVerified && !next.emailVerified
+            ? next.copyWith(emailVerified: true)
+            : next;
         return;
       }
 
@@ -334,6 +341,13 @@ class AuthNotifier extends Notifier<AuthState> {
     }
 
     await Future<void>.delayed(_mockOtpDelay);
+  }
+
+  /// Keeps [AuthState.emailVerified] in sync after registration verification.
+  void acknowledgeEmailVerification() {
+    if (state.isAuthenticated && !state.emailVerified) {
+      state = state.copyWith(emailVerified: true);
+    }
   }
 
   Future<bool> verifyOtp({required String email, required String code}) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
+import 'package:pokedex_app/core/router/auth_redirect.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
@@ -27,22 +28,6 @@ import 'package:pokedex_app/features/shell/presentation/widgets/animated_branch_
 import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-
-bool _isPublicAuthRoute(String path) {
-  return path == '/onboarding' ||
-      path == '/welcome' ||
-      path.startsWith('/login') ||
-      path.startsWith('/register') ||
-      path == '/forgot-password';
-}
-
-bool _isGuestShellRoute(String path) {
-  return path == '/pokedex' ||
-      path.startsWith('/regions') ||
-      path == '/favorites' ||
-      path == '/profile' ||
-      path.startsWith('/pokemon/');
-}
 
 /// Notifies GoRouter when auth-related state changes so redirect re-runs.
 class GoRouterRefreshNotifier extends ChangeNotifier {
@@ -71,58 +56,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: refreshListenable,
 
     redirect: (context, state) {
-      final auth = ref.read(authProvider);
-
-      final onboardingCompleted = ref.read(onboardingProvider);
-
-      final path = state.uri.path;
-
-      if (!onboardingCompleted) {
-        return path == '/onboarding' ? null : '/onboarding';
-      }
-
-      if (path == '/onboarding') {
-        return auth.isAuthenticated ? '/pokedex' : '/welcome';
-      }
-
-      if (!auth.isAuthenticated) {
-        if (path == '/login/success' || path == '/register/success') {
-          return '/welcome';
-        }
-        if (_isPublicAuthRoute(path) || _isGuestShellRoute(path)) {
-          return null;
-        }
-        return '/welcome';
-      }
-
-      if (auth.needsEmailVerification) {
-        const pendingVerificationRoutes = {
-          '/register/verify-email',
-          '/register/email',
-        };
-        if (pendingVerificationRoutes.contains(path)) return null;
-        if (path == '/register/success') return '/register/verify-email';
-        return '/register/verify-email';
-      }
-
-      if (path == '/welcome') {
-        return '/pokedex';
-      }
-
-      if (path == '/login/success' || path == '/register/success') {
-        return null;
-      }
-
-      if (_isPublicAuthRoute(path)) {
-        return switch (path) {
-          '/login' || '/login/email' => '/login/success',
-          '/register' => '/register/success',
-          '/register/verify-email' => null,
-          _ => '/pokedex',
-        };
-      }
-
-      return null;
+      return resolveAuthRedirect(
+        auth: ref.read(authProvider),
+        onboardingCompleted: ref.read(onboardingProvider),
+        path: state.uri.path,
+      );
     },
 
     routes: [

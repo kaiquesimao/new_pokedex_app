@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_layout.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_action_button.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
@@ -16,6 +17,7 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    listenPostLoginNavigation(ref, postLoginRoute: '/register/success');
     final loading = ref.watch(socialSignInLoadingProvider);
 
     return Stack(

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/verify_email_ui_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +52,31 @@ void main() {
         final state = container.read(verifyEmailUiProvider);
         expect(state.error, 'Código inválido. Tente novamente.');
         expect(state.loading, isFalse);
+      },
+    );
+
+    test(
+      'completeRegistration authenticates and marks email verified on success',
+      () async {
+        await seedCompleteRegisterFlow();
+        final sub = container.listen(
+          verifyEmailUiProvider,
+          (_, _) {},
+          fireImmediately: true,
+        );
+        addTearDown(sub.close);
+
+        final notifier = container.read(verifyEmailUiProvider.notifier);
+        final success = await notifier.completeRegistration(
+          otpCode: '123456',
+        );
+
+        expect(success, isTrue);
+        final auth = container.read(authProvider);
+        expect(auth.isAuthenticated, isTrue);
+        expect(auth.emailVerified, isTrue);
+        expect(auth.displayName, 'Ash');
+        expect(container.read(registerFlowProvider).isComplete, isTrue);
       },
     );
   });

@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/router/app_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 
-/// Navigates to [postLoginRoute] when the user becomes authenticated on a login screen.
+/// Navigates to [postLoginRoute] when the user becomes authenticated on an auth screen.
 void listenPostLoginNavigation(
   WidgetRef ref, {
   String postLoginRoute = '/login/success',
