@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
@@ -35,7 +36,7 @@ class PokemonListCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '#${number.toString().padLeft(3, '0')}',
+                PokemonFormatters.displayNumber(number),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),

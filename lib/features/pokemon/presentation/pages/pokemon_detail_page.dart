@@ -8,6 +8,7 @@ import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
@@ -130,7 +131,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '#${pokemon.id.toString().padLeft(3, '0')}',
+                      PokemonFormatters.displayNumber(pokemon.id),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(
                           context,

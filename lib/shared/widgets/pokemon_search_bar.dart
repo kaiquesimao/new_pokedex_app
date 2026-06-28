@@ -46,7 +46,7 @@ class _PokemonSearchBarState extends State<PokemonSearchBar> {
       controller: _controller,
       onChanged: _onChanged,
       decoration: InputDecoration(
-        hintText: 'Buscar Pokémon...',
+        hintText: 'Procurar Pokémon...',
         prefixIcon: const Icon(Icons.search, size: 20),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: _controller,

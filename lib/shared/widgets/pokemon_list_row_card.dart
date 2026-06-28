@@ -3,6 +3,7 @@ import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
@@ -46,7 +47,7 @@ class PokemonListRowCard extends StatelessWidget {
     final primaryType = types.isNotEmpty ? types.first : PokemonType.normal;
     final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
 
-    final semanticsLabel = '$name, número ${number.toString().padLeft(3, '0')}';
+    final semanticsLabel = '$name, ${PokemonFormatters.displayNumber(number)}';
 
     return Semantics(
       label: semanticsLabel,
@@ -73,7 +74,7 @@ class PokemonListRowCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '#${number.toString().padLeft(3, '0')}',
+                            PokemonFormatters.displayNumber(number),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withValues(
                                 alpha: 0.6,
