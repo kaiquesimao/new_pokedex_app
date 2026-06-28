@@ -20,8 +20,9 @@ void main() {
       ),
     );
 
-    expect(find.text('#004'), findsOneWidget);
+    expect(find.text('Nº004'), findsOneWidget);
     expect(find.text('Charmander'), findsOneWidget);
+    expect(find.text('Fogo'), findsOneWidget);
     expect(find.byType(PokemonTypeChip), findsOneWidget);
   });
 
@@ -40,6 +41,32 @@ void main() {
     );
 
     expect(find.text('Bulbasaur'), findsOneWidget);
+    expect(find.text('Grama'), findsOneWidget);
+    expect(find.text('Veneno'), findsOneWidget);
     expect(find.byType(PokemonTypeChip), findsNWidgets(2));
+  });
+
+  testWidgets('PokemonListRowCard avoids overflow on narrow screens', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const Scaffold(
+          body: PokemonListRowCard(
+            number: 26,
+            name: 'Raichu',
+            types: [PokemonType.electric, PokemonType.psychic],
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Elétrico'), findsOneWidget);
+    expect(find.text('Psíquico'), findsOneWidget);
   });
 }

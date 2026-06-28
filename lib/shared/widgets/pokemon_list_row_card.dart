@@ -47,7 +47,10 @@ class PokemonListRowCard extends StatelessWidget {
     final primaryType = types.isNotEmpty ? types.first : PokemonType.normal;
     final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
 
-    final semanticsLabel = '$name, ${PokemonFormatters.displayNumber(number)}';
+    final typeLabels = types.map((t) => t.labelPt).join(', ');
+    final semanticsLabel =
+        '$name, ${PokemonFormatters.displayNumber(number)}'
+        '${typeLabels.isEmpty ? '' : ', $typeLabels'}';
 
     return Semantics(
       label: semanticsLabel,
@@ -93,15 +96,10 @@ class PokemonListRowCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Wrap(
-                            spacing: 4,
+                            spacing: 6,
                             runSpacing: 4,
                             children: types
-                                .map(
-                                  (type) => PokemonTypeChip(
-                                    type: type,
-                                    showLabel: false,
-                                  ),
-                                )
+                                .map((type) => PokemonTypeChip(type: type))
                                 .toList(),
                           ),
                         ],

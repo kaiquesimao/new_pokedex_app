@@ -65,7 +65,9 @@ class PokemonListCard extends StatelessWidget {
                 runSpacing: 4,
                 children: types
                     .map(
-                      (type) => PokemonTypeChip(type: type, showLabel: false),
+                      (type) => PokemonTypeChip(
+                        type: type,
+                      ),
                     )
                     .toList(),
               ),

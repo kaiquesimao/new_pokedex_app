@@ -33,8 +33,8 @@ abstract final class PokemonSpriteDisplaySizes {
 
 /// Layout dimensions that frame Pokémon sprite images.
 abstract final class PokemonSpriteLayoutSizes {
-  static const double listRowHeight = 128;
-  static const double listRowPanelWidth = 148;
+  static const double listRowHeight = 150;
+  static const double listRowPanelWidth = 120;
   static const double detailHeaderHeight = 320;
   static const double detailCircleSize = 240;
   static const double evolutionCardWidth = 136;
