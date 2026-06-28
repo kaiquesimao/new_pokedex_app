@@ -47,6 +47,7 @@ flutter:
     - assets/images/elements/
     - assets/images/components/
     - assets/images/characters/
+    - assets/images/regions/
   fonts:
     - family: Poppins
       fonts:

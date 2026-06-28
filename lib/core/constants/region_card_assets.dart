@@ -24,6 +24,8 @@ class RegionCardData {
 }
 
 abstract final class RegionCardAssets {
+  static const _landscapePath = 'assets/images/regions';
+
   static String starterSpriteUrl(int pokemonId) =>
       PokemonSpriteUrls.homeArtwork(pokemonId: pokemonId);
 
@@ -35,6 +37,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF5B8C3E),
       gradientEnd: Color(0xFF2D4A22),
       starterIds: [1, 4, 7],
+      landscapeAsset: '$_landscapePath/kanto.webp',
     ),
     RegionCardData(
       apiName: 'johto',
@@ -43,6 +46,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF8B6914),
       gradientEnd: Color(0xFF4A3A0F),
       starterIds: [152, 155, 158],
+      landscapeAsset: '$_landscapePath/johto.webp',
     ),
     RegionCardData(
       apiName: 'hoenn',
@@ -51,6 +55,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF2E8B57),
       gradientEnd: Color(0xFF1A4D32),
       starterIds: [252, 255, 258],
+      landscapeAsset: '$_landscapePath/hoenn.webp',
     ),
     RegionCardData(
       apiName: 'sinnoh',
@@ -59,6 +64,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF6B8CAE),
       gradientEnd: Color(0xFF3A4F66),
       starterIds: [387, 390, 393],
+      landscapeAsset: '$_landscapePath/sinnoh.webp',
     ),
     RegionCardData(
       apiName: 'unova',
@@ -67,6 +73,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF7B68EE),
       gradientEnd: Color(0xFF3D3477),
       starterIds: [495, 498, 501],
+      landscapeAsset: '$_landscapePath/unova.webp',
     ),
     RegionCardData(
       apiName: 'kalos',
@@ -75,6 +82,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFFC71585),
       gradientEnd: Color(0xFF6B0F4A),
       starterIds: [650, 653, 656],
+      landscapeAsset: '$_landscapePath/kalos.webp',
     ),
     RegionCardData(
       apiName: 'alola',
@@ -83,6 +91,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFFFF8C00),
       gradientEnd: Color(0xFF994F00),
       starterIds: [722, 725, 728],
+      landscapeAsset: '$_landscapePath/alola.webp',
     ),
     RegionCardData(
       apiName: 'galar',
@@ -91,6 +100,7 @@ abstract final class RegionCardAssets {
       gradientStart: Color(0xFF4169E1),
       gradientEnd: Color(0xFF1E3A8A),
       starterIds: [810, 813, 816],
+      landscapeAsset: '$_landscapePath/galar.webp',
     ),
   ];
 

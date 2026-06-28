@@ -26,7 +26,8 @@ abstract final class AppAssets {
   static const String iconGoogle = '${componentsBase}icon_google.svg';
 
   // Decorative / reference sheets (layout guides from Figma — not used as UI)
-  static const String patternMagikarp = '${componentsBase}pattern_magikarp.png';
+  static const String patternMagikarp =
+      '${componentsBase}pattern_magikarp.webp';
 
   // Character sprites (see TrainerAvatars for the full curated list)
   static const String characterBugcatcher = '${charactersBase}bugcatcher.png';
