@@ -4,6 +4,7 @@ import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
+import 'package:pokedex_app/shared/widgets/all_types_chip.dart';
 import 'package:pokedex_app/shared/widgets/bottom_sheet_header.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
@@ -61,7 +62,7 @@ class _RegionalTypeSheet extends ConsumerWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _AllTypesChip(
+                  AllTypesChip(
                     selected: filters.typeFilter == null,
                     onTap: () {
                       notifier.update(
@@ -92,43 +93,6 @@ class _RegionalTypeSheet extends ConsumerWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class _AllTypesChip extends StatelessWidget {
-  const _AllTypesChip({required this.selected, required this.onTap});
-
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColorsLight.sortPillDark
-              : AppColorsLight.sortPillDark.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(21),
-          border: Border.all(
-            color: AppColorsLight.sortPillDark.withValues(
-              alpha: selected ? 1 : 0.4,
-            ),
-          ),
-        ),
-        child: Text(
-          'Todos os tipos',
-          style: TextStyle(
-            color: selected ? Colors.white : AppColorsLight.sortPillDark,
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-          ),
-        ),
-      ),
     );
   }
 }

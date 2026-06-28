@@ -4,3 +4,6 @@
 !docs/design
 !docs/superpowers
 !tool/
+!prototype/
+!dart_tool/
+!skills-lock.json
