@@ -16,7 +16,11 @@ void main() {
   test('genderLabel handles common gender rates', () {
     expect(PokemonDetailFormatters.genderLabel(-1), 'Sem gênero');
     expect(PokemonDetailFormatters.genderLabel(0), 'Somente macho');
+    expect(PokemonDetailFormatters.genderLabel(8), 'Somente fêmea');
     expect(PokemonDetailFormatters.genderLabel(254), 'Somente fêmea');
+    expect(PokemonDetailFormatters.genderLabel(1), '12,5% fêmea');
+    expect(PokemonDetailFormatters.femalePercent(1), 12.5);
+    expect(PokemonDetailFormatters.malePercent(1), 87.5);
   });
 
   test('abilityLabel formats hidden abilities', () {

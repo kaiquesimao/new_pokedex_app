@@ -7,6 +7,7 @@ abstract final class AppColorsLight {
   static const Color textPrimary = Color(0xFF1D1D1D);
   static const Color textSecondary = Color(0xFF666666);
   static const Color primary = Color(0xFF173EA5);
+  static const Color genderFemale = Color(0xFFE94B7B);
   static const Color splashNavy = Color(0xFF0D1B2A);
   static const Color sortPillDark = Color(0xFF1A1A1A);
   static const Color pokedexRed = Color(0xFFE3350D);

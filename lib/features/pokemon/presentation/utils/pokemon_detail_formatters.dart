@@ -19,12 +19,20 @@ abstract final class PokemonDetailFormatters {
     return isHidden ? '$name (oculta)' : name;
   }
 
+  /// PokeAPI `gender_rate` uses steps of 12.5% (0–8), not 0–255.
+  static double femalePercent(int genderRate) {
+    if (genderRate <= 0) return 0;
+    if (genderRate >= 8 || genderRate == 254) return 100;
+    return genderRate * 12.5;
+  }
+
+  static double malePercent(int genderRate) => 100 - femalePercent(genderRate);
+
   static String genderLabel(int genderRate) {
     if (genderRate < 0) return 'Sem gênero';
     if (genderRate == 0) return 'Somente macho';
-    if (genderRate == 254) return 'Somente fêmea';
-    final femalePercent = (genderRate / 255 * 100).toStringAsFixed(1);
-    return '$femalePercent% fêmea';
+    if (genderRate >= 8 || genderRate == 254) return 'Somente fêmea';
+    return '${decimal(femalePercent(genderRate))}% fêmea';
   }
 
   static String eggGroupsLabel(List<String> eggGroups) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 
@@ -25,7 +26,7 @@ class PokemonDetailAboutSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (pokemon.flavorText != null) ...[
             Text(
@@ -146,12 +147,11 @@ class _GenderBar extends StatelessWidget {
 
   final int genderRate;
 
-  static const _maleColor = Color(0xFF4A90D9);
-  static const _femaleColor = Color(0xFFE85D8A);
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final maleColor = theme.colorScheme.primary;
+    const femaleColor = AppColorsLight.genderFemale;
     final labelColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
     final labelStyle = theme.textTheme.labelSmall?.copyWith(
       color: labelColor,
@@ -173,54 +173,89 @@ class _GenderBar extends StatelessWidget {
       );
     }
 
-    final femalePercent = genderRate / 255 * 100;
-    final malePercent = 100 - femalePercent;
+    final femalePercent = PokemonDetailFormatters.femalePercent(genderRate);
+    final malePercent = PokemonDetailFormatters.malePercent(genderRate);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('GÊNERO', style: labelStyle),
+        Text('GÊNERO', style: labelStyle, textAlign: TextAlign.center),
         const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(999),
-          child: SizedBox(
-            height: 10,
-            child: Row(
-              children: [
-                if (malePercent > 0)
-                  Expanded(
-                    flex: malePercent.round().clamp(1, 100),
-                    child: const ColoredBox(color: _maleColor),
-                  ),
-                if (femalePercent > 0)
-                  Expanded(
-                    flex: femalePercent.round().clamp(1, 100),
-                    child: const ColoredBox(color: _femaleColor),
-                  ),
-              ],
-            ),
-          ),
+        _GenderBarTrack(
+          malePercent: malePercent,
+          femalePercent: femalePercent,
+          maleColor: maleColor,
+          femaleColor: femaleColor,
         ),
         const SizedBox(height: 6),
         Row(
           children: [
             Text(
               '♂ ${PokemonDetailFormatters.decimal(malePercent)}%',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: _maleColor,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: maleColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const Spacer(),
             Text(
               '♀ ${PokemonDetailFormatters.decimal(femalePercent)}%',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: _femaleColor,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: femaleColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _GenderBarTrack extends StatelessWidget {
+  const _GenderBarTrack({
+    required this.malePercent,
+    required this.femalePercent,
+    required this.maleColor,
+    required this.femaleColor,
+  });
+
+  final double malePercent;
+  final double femalePercent;
+  final Color maleColor;
+  final Color femaleColor;
+  static const _height = 12.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final maleFraction = (malePercent / 100).clamp(0.0, 1.0);
+
+    final BoxDecoration decoration;
+    if (maleFraction <= 0) {
+      decoration = BoxDecoration(
+        color: femaleColor,
+        borderRadius: BorderRadius.circular(999),
+      );
+    } else if (maleFraction >= 1) {
+      decoration = BoxDecoration(
+        color: maleColor,
+        borderRadius: BorderRadius.circular(999),
+      );
+    } else {
+      decoration = BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        gradient: LinearGradient(
+          colors: [maleColor, maleColor, femaleColor, femaleColor],
+          stops: [0, maleFraction, maleFraction, 1],
+        ),
+      );
+    }
+
+    return Container(
+      key: const Key('gender_bar_track'),
+      height: _height,
+      width: double.infinity,
+      decoration: decoration,
     );
   }
 }
