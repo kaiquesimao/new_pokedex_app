@@ -44,13 +44,15 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     await ref.read(forgotPasswordFlowProvider.notifier).resendOtp();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Código reenviado (mock)')),
+        const SnackBar(content: Text('Código reenviado.')),
       );
     }
   }
 
   Future<void> _submitNewPassword() async {
-    await ref.read(forgotPasswordFlowProvider.notifier).submitNewPassword(
+    await ref
+        .read(forgotPasswordFlowProvider.notifier)
+        .submitNewPassword(
           password: _passwordController.text,
           confirm: _confirmController.text,
         );
@@ -69,7 +71,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitle(step)),
-        leading: step == ForgotPasswordStep.success ||
+        leading:
+            step == ForgotPasswordStep.success ||
                 step == ForgotPasswordStep.emailSent
             ? null
             : IconButton(

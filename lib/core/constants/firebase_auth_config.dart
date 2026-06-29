@@ -1,14 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
+import 'package:pokedex_app/core/env/env.dart' show Env;
 
-/// Firebase / Google Sign-In constants from `google-services.json`.
+/// Google Sign-In setup using compile-time env (`FIREBASE_GOOGLE_WEB_CLIENT_ID`).
 abstract final class FirebaseAuthConfig {
-  /// Web client ID (`client_type: 3`) — required on Android for Firebase Auth idToken.
-  static const String googleWebClientId =
-      '1067718010231-qtat7muck82ubmv8dig0jomsg7i00j3a.apps.googleusercontent.com';
-
   static Completer<void>? _googleSignInInit;
 
   /// Lazily initializes [GoogleSignIn.instance] before the first OAuth flow.
@@ -23,8 +20,8 @@ abstract final class FirebaseAuthConfig {
     unawaited(
       GoogleSignIn.instance
           .initialize(
-            clientId: kIsWeb ? googleWebClientId : null,
-            serverClientId: kIsWeb ? null : googleWebClientId,
+            clientId: kIsWeb ? Env.googleWebClientId : null,
+            serverClientId: kIsWeb ? null : Env.googleWebClientId,
           )
           .then(completer.complete)
           .onError<Object>((error, stack) {

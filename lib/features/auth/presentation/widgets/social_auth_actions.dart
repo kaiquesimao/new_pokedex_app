@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_app/core/constants/firebase_auth_config.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_layout.dart';
 
 class SocialSignInLoadingNotifier extends Notifier<bool> {
   @override
@@ -96,7 +95,6 @@ Future<void> _runSocialSignIn({
 }) async {
   final notifier = ref.read(authProvider.notifier);
   if (!notifier.usesFirebase) {
-    showSocialAuthStubSnackBar(context, providerName);
     return;
   }
 

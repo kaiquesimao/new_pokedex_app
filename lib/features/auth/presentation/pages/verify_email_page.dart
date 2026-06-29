@@ -44,14 +44,13 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
 
     final ui = ref.read(verifyEmailUiProvider);
     if (ui.resent) {
-      final usesFirebase =
-          ref.read(firebaseBootstrapProvider).isAvailable;
+      final usesFirebase = ref.read(firebaseBootstrapProvider).isAvailable;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             usesFirebase
-                ? 'E-mail de verificação reenviado'
-                : 'Código reenviado (mock)',
+                ? 'E-mail de verificação reenviado.'
+                : 'Código reenviado.',
           ),
         ),
       );

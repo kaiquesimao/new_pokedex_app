@@ -15,8 +15,6 @@ class ProfileSettings {
   final String interfaceLanguage;
   final String gameInfoLanguage;
 
-  static const appVersion = '0.8.12';
-
   ProfileSettings copyWith({
     bool? showMegaEvolutions,
     bool? showOtherForms,

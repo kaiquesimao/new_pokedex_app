@@ -9,6 +9,9 @@ class FirebaseBootstrapResult {
 }
 
 Future<FirebaseBootstrapResult> bootstrapFirebase() async {
+  if (!DefaultFirebaseOptions.isConfigured) {
+    return const FirebaseBootstrapResult(isAvailable: false);
+  }
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

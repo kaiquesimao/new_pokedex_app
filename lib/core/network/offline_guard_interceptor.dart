@@ -6,7 +6,7 @@ class OfflineGuardInterceptor extends Interceptor {
 
   final ConnectivityService _connectivity;
 
-  static const offlineMessage = 'Device is offline';
+  static const offlineMessage = 'Sem conexão com a internet.';
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

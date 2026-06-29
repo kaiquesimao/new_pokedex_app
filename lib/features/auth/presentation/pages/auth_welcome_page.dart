@@ -24,7 +24,7 @@ class AuthWelcomePage extends StatelessWidget {
                 onPressed: () => context.go('/pokedex'),
                 icon: const Icon(Icons.arrow_forward, size: 18),
                 iconAlignment: IconAlignment.end,
-                label: const Text('Pular'),
+                label: const Text('Explorar sem conta'),
               ),
             ),
             Expanded(

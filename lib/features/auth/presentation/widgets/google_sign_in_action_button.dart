@@ -17,12 +17,18 @@ class GoogleSignInActionButton extends ConsumerWidget {
       ..watch(googleWebSignInSetupProvider)
       ..listen(googleSignInUiErrorProvider, (previous, next) {
         if (next == null || !context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(next)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next)));
         ref.read(googleSignInUiErrorProvider.notifier).clear();
       });
 
     final usesFirebase = ref.watch(authProvider.notifier).usesFirebase;
-    if (kIsWeb && usesFirebase) {
+    if (!usesFirebase) {
+      return const SizedBox.shrink();
+    }
+
+    if (kIsWeb) {
       return buildGoogleSignInRenderButton(
         width: AuthWebActionMetrics.buttonWidth,
       );

@@ -102,9 +102,3 @@ class AuthHubLayout extends StatelessWidget {
     );
   }
 }
-
-void showSocialAuthStubSnackBar(BuildContext context, String provider) {
-  ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text('Login com $provider em breve')));
-}

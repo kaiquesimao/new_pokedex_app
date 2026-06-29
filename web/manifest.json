@@ -1,11 +1,11 @@
 {
-    "name": "pokedex_app",
-    "short_name": "pokedex_app",
+    "name": "Pokédex",
+    "short_name": "Pokédex",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0D1B2A",
     "theme_color": "#0D1B2A",
-    "description": "A new Flutter project.",
+    "description": "Explore todos os Pokémon, regiões e favoritos — sua Pokédex completa.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

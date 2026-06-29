@@ -7,7 +7,10 @@
         {
             "name": "pokedex_app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define-from-file=dart_defines.json"
+            ]
         },
         {
             "name": "pokedex_app (Chrome :5000)",
@@ -16,19 +19,28 @@
             "deviceId": "chrome",
             "args": [
                 "--web-port=5000"
+            ],
+            "toolArgs": [
+                "--dart-define-from-file=dart_defines.json"
             ]
         },
         {
             "name": "pokedex_app (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--dart-define-from-file=dart_defines.json"
+            ]
         },
         {
             "name": "pokedex_app (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "toolArgs": [
+                "--dart-define-from-file=dart_defines.json"
+            ]
         }
     ]
 }

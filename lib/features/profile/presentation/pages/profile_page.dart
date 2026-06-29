@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
@@ -16,6 +17,13 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
     final settings = ref.watch(profileSettingsProvider);
+    final packageInfo = ref.watch(packageInfoProvider);
+
+    final versionLabel = packageInfo.when(
+      data: (info) => '${info.version} (${info.buildNumber})',
+      loading: () => '…',
+      error: (_, _) => '—',
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Conta')),
@@ -27,8 +35,6 @@ class ProfilePage extends ConsumerWidget {
               _AccountSection(
                 name: auth.displayName ?? 'Treinador',
                 email: auth.email ?? '',
-                onEditName: () => _showPlaceholderEdit(context, 'Nome'),
-                onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
                 onChangePassword: () =>
                     context.push('/profile/change-password'),
               ),
@@ -41,6 +47,7 @@ class ProfilePage extends ConsumerWidget {
             const SizedBox(height: 24),
             _SettingsSections(
               settings: settings,
+              versionLabel: versionLabel,
               onToggleMega: (value) => _saveSetting(
                 context,
                 ref,
@@ -83,8 +90,6 @@ class ProfilePage extends ConsumerWidget {
                     .read(profileSettingsProvider.notifier)
                     .toggleGameInfoLanguage(),
               ),
-              onPlaceholderLink: (label) =>
-                  _showPlaceholderLink(context, label),
             ),
             if (auth.isAuthenticated) ...[
               const SizedBox(height: 32),
@@ -116,18 +121,6 @@ class ProfilePage extends ConsumerWidget {
         duration: Duration(seconds: 2),
       ),
     );
-  }
-
-  static void _showPlaceholderEdit(BuildContext context, String field) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Edição de $field em breve')));
-  }
-
-  static void _showPlaceholderLink(BuildContext context, String label) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$label — em breve')));
   }
 
   static Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
@@ -186,15 +179,11 @@ class _AccountSection extends StatelessWidget {
   const _AccountSection({
     required this.name,
     required this.email,
-    required this.onEditName,
-    required this.onEditEmail,
     required this.onChangePassword,
   });
 
   final String name;
   final String email;
-  final VoidCallback onEditName;
-  final VoidCallback onEditEmail;
   final VoidCallback onChangePassword;
 
   @override
@@ -202,8 +191,8 @@ class _AccountSection extends StatelessWidget {
     return _SettingsGroup(
       title: 'Conta',
       children: [
-        _ChevronRow(label: 'Nome', value: name, onTap: onEditName),
-        _ChevronRow(label: 'E-mail', value: email, onTap: onEditEmail),
+        _ChevronRow(label: 'Nome', value: name, showChevron: false),
+        _ChevronRow(label: 'E-mail', value: email, showChevron: false),
         _ChevronRow(label: 'Senha', value: '••••••••', onTap: onChangePassword),
       ],
     );
@@ -213,23 +202,23 @@ class _AccountSection extends StatelessWidget {
 class _SettingsSections extends StatelessWidget {
   const _SettingsSections({
     required this.settings,
+    required this.versionLabel,
     required this.onToggleMega,
     required this.onToggleOtherForms,
     required this.onToggleNotifyNew,
     required this.onToggleNotifyUpdates,
     required this.onToggleInterfaceLanguage,
     required this.onToggleGameInfoLanguage,
-    required this.onPlaceholderLink,
   });
 
   final ProfileSettings settings;
+  final String versionLabel;
   final ValueChanged<bool> onToggleMega;
   final ValueChanged<bool> onToggleOtherForms;
   final ValueChanged<bool> onToggleNotifyNew;
   final ValueChanged<bool> onToggleNotifyUpdates;
   final VoidCallback onToggleInterfaceLanguage;
   final VoidCallback onToggleGameInfoLanguage;
-  final ValueChanged<String> onPlaceholderLink;
 
   @override
   Widget build(BuildContext context) {
@@ -287,22 +276,10 @@ class _SettingsSections extends StatelessWidget {
         _SettingsGroup(
           title: 'Geral',
           children: [
-            const _ChevronRow(
+            _ChevronRow(
               label: 'Versão',
-              value: ProfileSettings.appVersion,
+              value: versionLabel,
               showChevron: false,
-            ),
-            _ChevronRow(
-              label: 'Termos de uso',
-              onTap: () => onPlaceholderLink('Termos de uso'),
-            ),
-            _ChevronRow(
-              label: 'Ajuda',
-              onTap: () => onPlaceholderLink('Ajuda'),
-            ),
-            _ChevronRow(
-              label: 'Sobre',
-              onTap: () => onPlaceholderLink('Sobre'),
             ),
           ],
         ),

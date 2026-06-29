@@ -60,12 +60,25 @@ class AuthNotifier extends Notifier<AuthState> {
 
   bool get usesFirebase => _firebaseAuth != null;
 
+  bool get _allowLocalAuth => !kReleaseMode;
+
+  void _requireLocalAuth() {
+    if (!_allowLocalAuth) {
+      throw AuthException(
+        'Serviço indisponível. Tente novamente mais tarde.',
+      );
+    }
+  }
+
   @override
   AuthState build() {
     ref.onDispose(() => _authSubscription?.cancel());
     final bootstrap = ref.watch(firebaseBootstrapProvider);
     if (bootstrap.isAvailable) {
       return const AuthState();
+    }
+    if (!_allowLocalAuth) {
+      return const AuthState(isInitialized: true);
     }
     return readStoredAuthState(ref.watch(sharedPreferencesProvider));
   }
@@ -89,6 +102,8 @@ class AuthNotifier extends Notifier<AuthState> {
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       return;
     }
+
+    _requireLocalAuth();
 
     final prefs = await SharedPreferences.getInstance();
     final isAuthenticated = prefs.getBool(_authKey) ?? false;
@@ -125,6 +140,8 @@ class AuthNotifier extends Notifier<AuthState> {
       }
       return;
     }
+
+    _requireLocalAuth();
 
     final prefs = await SharedPreferences.getInstance();
     final name = email.split('@').first;
@@ -191,6 +208,8 @@ class AuthNotifier extends Notifier<AuthState> {
       }
       return;
     }
+
+    _requireLocalAuth();
 
     await signIn(email: email, password: password);
     final prefs = await SharedPreferences.getInstance();
@@ -271,6 +290,8 @@ class AuthNotifier extends Notifier<AuthState> {
       return;
     }
 
+    _requireLocalAuth();
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_authKey);
     await prefs.remove(_emailKey);
@@ -299,6 +320,8 @@ class AuthNotifier extends Notifier<AuthState> {
       }
     }
 
+    _requireLocalAuth();
+
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_passwordKey);
     if (stored == null || stored.isEmpty) return password.isNotEmpty;
@@ -321,6 +344,7 @@ class AuthNotifier extends Notifier<AuthState> {
       throw AuthException('Crie a conta antes de verificar o e-mail');
     }
 
+    _requireLocalAuth();
     await Future<void>.delayed(_mockOtpDelay);
   }
 
@@ -340,6 +364,7 @@ class AuthNotifier extends Notifier<AuthState> {
       return;
     }
 
+    _requireLocalAuth();
     await Future<void>.delayed(_mockOtpDelay);
   }
 
@@ -366,6 +391,7 @@ class AuthNotifier extends Notifier<AuthState> {
       return refreshed?.emailVerified ?? false;
     }
 
+    _requireLocalAuth();
     await Future<void>.delayed(_mockOtpDelay);
     return code.length == 6 && RegExp(r'^\d{6}$').hasMatch(code);
   }
@@ -382,6 +408,7 @@ class AuthNotifier extends Notifier<AuthState> {
       );
     }
 
+    _requireLocalAuth();
     await Future<void>.delayed(_mockOtpDelay);
 
     final prefs = await SharedPreferences.getInstance();
@@ -422,6 +449,8 @@ class AuthNotifier extends Notifier<AuthState> {
       }
       return;
     }
+
+    _requireLocalAuth();
 
     final valid = await verifyCurrentPassword(currentPassword);
     if (!valid) {

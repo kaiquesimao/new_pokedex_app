@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/env/env.dart';
 import 'package:pokedex_app/core/firebase/firebase_bootstrap.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_access_coordinator.dart';
@@ -29,11 +30,13 @@ class ColdStartResult {
     required this.container,
     required this.initialLocationHolder,
     required this.networkCoordinator,
+    required this.firebaseConfigError,
   });
 
   final ProviderContainer container;
   final AppInitialLocation initialLocationHolder;
   final NetworkAccessCoordinator networkCoordinator;
+  final bool firebaseConfigError;
 }
 
 /// Runs the full cold-start pipeline with parallel waves where safe.
@@ -58,6 +61,15 @@ Future<ColdStartResult> runColdStart() async {
     connectivity: connectivityService,
     firebaseAvailable: bootstrapResult.isAvailable,
   );
+
+  if (kReleaseMode && !Env.isFirebaseConfigured) {
+    return ColdStartResult(
+      container: ProviderContainer(),
+      initialLocationHolder: AppInitialLocation('/welcome'),
+      networkCoordinator: networkCoordinator,
+      firebaseConfigError: true,
+    );
+  }
 
   final initialLocationHolder = AppInitialLocation('/welcome');
 
@@ -87,6 +99,7 @@ Future<ColdStartResult> runColdStart() async {
     container: container,
     initialLocationHolder: initialLocationHolder,
     networkCoordinator: networkCoordinator,
+    firebaseConfigError: false,
   );
 }
 

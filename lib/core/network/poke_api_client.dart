@@ -21,7 +21,10 @@ class PokeApiClient {
       );
       return PokemonListResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load pokemon list');
+      mapDioException(
+        e,
+        fallback: 'Não foi possível carregar a lista de Pokémon',
+      );
     }
   }
 
@@ -30,7 +33,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/pokemon/$id');
       return PokemonResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load pokemon');
+      mapDioException(e, fallback: 'Não foi possível carregar o Pokémon');
     }
   }
 
@@ -39,7 +42,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/region');
       return RegionListResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load regions');
+      mapDioException(e, fallback: 'Não foi possível carregar as regiões');
     }
   }
 
@@ -48,7 +51,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/region/$name');
       return RegionDetailResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load region');
+      mapDioException(e, fallback: 'Não foi possível carregar a região');
     }
   }
 
@@ -57,7 +60,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/pokedex/$id');
       return PokedexResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load pokedex');
+      mapDioException(e, fallback: 'Não foi possível carregar a Pokédex');
     }
   }
 
@@ -66,7 +69,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/generation/$id');
       return GenerationResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load generation');
+      mapDioException(e, fallback: 'Não foi possível carregar a geração');
     }
   }
 
@@ -75,7 +78,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/type/$name');
       return TypeResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load type');
+      mapDioException(e, fallback: 'Não foi possível carregar o tipo');
     }
   }
 
@@ -86,7 +89,10 @@ class PokeApiClient {
       );
       return EvolutionChainResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load evolution chain');
+      mapDioException(
+        e,
+        fallback: 'Não foi possível carregar a cadeia evolutiva',
+      );
     }
   }
 
@@ -97,7 +103,7 @@ class PokeApiClient {
       );
       return PokemonSpeciesResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Failed to load pokemon species');
+      mapDioException(e, fallback: 'Não foi possível carregar a espécie');
     }
   }
 }
