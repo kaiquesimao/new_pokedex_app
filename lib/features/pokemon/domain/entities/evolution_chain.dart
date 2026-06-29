@@ -1,3 +1,5 @@
+import 'package:pokedex_app/core/constants/pokemon_types.dart';
+
 class EvolutionTriggerInfo {
   const EvolutionTriggerInfo({
     this.minLevel,
@@ -15,7 +17,7 @@ class EvolutionTriggerInfo {
 
   String get displayLabel {
     if (minLevel != null && minLevel! > 0) {
-      return 'Nv. $minLevel';
+      return 'Nível $minLevel';
     }
     if (item != null && item!.isNotEmpty) {
       return _formatName(item!);
@@ -49,6 +51,7 @@ class EvolutionChainNode {
     required this.speciesId,
     required this.speciesName,
     this.spriteUrl,
+    this.types = const [],
     this.trigger,
     this.evolvesTo = const [],
   });
@@ -56,6 +59,7 @@ class EvolutionChainNode {
   final int? speciesId;
   final String speciesName;
   final String? spriteUrl;
+  final List<PokemonType> types;
   final EvolutionTriggerInfo? trigger;
   final List<EvolutionChainNode> evolvesTo;
 

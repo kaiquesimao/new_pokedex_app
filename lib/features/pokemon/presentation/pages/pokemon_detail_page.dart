@@ -338,39 +338,57 @@ class _EvolutionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final borderColor = isDark
+        ? theme.dividerColor
+        : AppColorsLight.textSecondary.withValues(alpha: 0.25);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Evolução',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            'Evoluções',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 12),
-          if (evolution.isSingleStage)
-            Column(
-              children: [
-                EvolutionChainNodeCard(node: evolution.root, isCurrent: true),
-                const SizedBox(height: 12),
-                Text(
-                  'Este Pokémon não evolui.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            )
-          else
-            EvolutionChainTree(
-              root: evolution.root,
-              currentPokemonId: evolution.currentPokemonId,
-              embedded: true,
-              onNodeTap: (id) {
-                if (id == pokemonId) return;
-                unawaited(context.push('/pokemon/$id'));
-              },
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: borderColor),
             ),
+            child: evolution.isSingleStage
+                ? Column(
+                    children: [
+                      EvolutionChainNodeCard(
+                        node: evolution.root,
+                        isCurrent: true,
+                        isFinalStage: true,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Este Pokémon não evolui.',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ],
+                  )
+                : EvolutionChainTree(
+                    root: evolution.root,
+                    currentPokemonId: evolution.currentPokemonId,
+                    embedded: true,
+                    onNodeTap: (id) {
+                      if (id == pokemonId) return;
+                      unawaited(context.push('/pokemon/$id'));
+                    },
+                  ),
+          ),
         ],
       ),
     );

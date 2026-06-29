@@ -1,67 +1,162 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class EvolutionChainNodeCard extends StatelessWidget {
   const EvolutionChainNodeCard({
     required this.node,
     required this.isCurrent,
     super.key,
+    this.isFinalStage = false,
     this.onTap,
   });
 
   final EvolutionChainNode node;
   final bool isCurrent;
+  final bool isFinalStage;
   final VoidCallback? onTap;
+
+  static const double _cardHeight = 96;
+  static const double _spritePanelWidth = 108;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryType = node.types.isNotEmpty
+        ? node.types.first
+        : PokemonType.normal;
+    final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
+    final spriteHeight = isFinalStage ? 108.0 : 72.0;
+    final ovalWidth = isFinalStage ? 96.0 : 84.0;
+    final ovalHeight = isFinalStage ? 88.0 : 72.0;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          width: PokemonSpriteLayoutSizes.evolutionCardWidth,
-          padding: const EdgeInsets.all(12),
+        borderRadius: BorderRadius.circular(999),
+        child: Ink(
+          height: _cardHeight,
           decoration: BoxDecoration(
-            color: isCurrent
-                ? primary.withValues(alpha: 0.12)
-                : theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: isCurrent ? primary : theme.dividerColor,
-              width: isCurrent ? 2 : 1,
+              color: isDark
+                  ? theme.dividerColor
+                  : AppColorsLight.textSecondary.withValues(alpha: 0.25),
             ),
           ),
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (node.spriteUrl != null)
-                PokemonSpriteImage(
-                  imageUrl: node.spriteUrl!,
-                  height: PokemonSpriteDisplaySizes.evolution,
-                  maxCachePixels: PokemonSpriteCachePresets.evolution,
-                )
-              else
-                const Icon(Icons.catching_pokemon, size: 56),
-              const SizedBox(height: 8),
-              Text(
-                node.displayName,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
+              SizedBox(
+                width: _spritePanelWidth,
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: ovalWidth,
+                      height: ovalHeight,
+                      decoration: BoxDecoration(
+                        color: typeColor,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Center(
+                        child: PokemonPrimaryTypeBackdrop(
+                          type: primaryType,
+                          size: isFinalStage ? 72 : 56,
+                        ),
+                      ),
+                    ),
+                    if (node.spriteUrl != null)
+                      PokemonSpriteImage(
+                        imageUrl: node.spriteUrl!,
+                        height: spriteHeight,
+                        maxCachePixels: PokemonSpriteCachePresets.evolution,
+                        errorIconColor: Colors.white70,
+                      )
+                    else
+                      Icon(
+                        Icons.catching_pokemon,
+                        size: isFinalStage ? 64 : 48,
+                        color: Colors.white70,
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 20, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      node.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (node.speciesId != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        PokemonFormatters.displayNumber(node.speciesId!),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColorsLight.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                    if (node.types.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: node.types
+                            .map((type) => _EvolutionTypeBadge(type: type))
+                            .toList(),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _EvolutionTypeBadge extends StatelessWidget {
+  const _EvolutionTypeBadge({required this.type});
+
+  final PokemonType type;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = PokemonTypeColors.forType(type, isDark: isDark);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: ColorFiltered(
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        child: PokemonTypeIcon(assetPath: type.assetPath, size: 14),
       ),
     );
   }
@@ -74,30 +169,24 @@ class EvolutionChainConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.arrow_downward_rounded,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            color: AppColorsLight.primary,
+            size: 28,
           ),
           if (label != null && label!.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                label!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.primary,
-                ),
+            const SizedBox(width: 8),
+            Text(
+              label!,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColorsLight.primary,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -123,7 +212,7 @@ class EvolutionChainTree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Center(child: _buildNode(context, root));
+    final content = _buildNode(context, root);
     if (embedded) return content;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -133,6 +222,7 @@ class EvolutionChainTree extends StatelessWidget {
 
   Widget _buildNode(BuildContext context, EvolutionChainNode node) {
     final children = node.evolvesTo;
+    final isFinalStage = children.isEmpty;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -140,6 +230,7 @@ class EvolutionChainTree extends StatelessWidget {
         EvolutionChainNodeCard(
           node: node,
           isCurrent: node.speciesId == currentPokemonId,
+          isFinalStage: isFinalStage,
           onTap: node.speciesId == null
               ? null
               : () => onNodeTap?.call(node.speciesId!),
@@ -163,8 +254,11 @@ class EvolutionChainTree extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Text(
                             child.trigger!.displayLabel,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(fontWeight: FontWeight.w600),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: AppColorsLight.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                       _buildNode(context, child),

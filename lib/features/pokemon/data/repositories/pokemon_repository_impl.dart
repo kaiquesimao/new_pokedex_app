@@ -142,6 +142,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         speciesId: current.id,
         speciesName: current.name,
         spriteUrl: current.spriteUrl,
+        types: current.types,
       ),
       currentPokemonId: pokemonId,
     );
@@ -420,8 +421,9 @@ class PokemonRepositoryImpl implements PokemonRepository {
     final summaries = await _loadSummariesForIds(ids);
     final spriteById = {for (final s in summaries) s.id: s.spriteUrl};
     final nameById = {for (final s in summaries) s.id: s.name};
+    final typesById = {for (final s in summaries) s.id: s.types};
 
-    return _applySprites(node, spriteById, nameById);
+    return _applySprites(node, spriteById, nameById, typesById);
   }
 
   List<int> _collectSpeciesIds(EvolutionChainNode node) {
@@ -437,6 +439,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
     EvolutionChainNode node,
     Map<int, String?> spriteById,
     Map<int, String> nameById,
+    Map<int, List<PokemonType>> typesById,
   ) {
     final id = node.speciesId;
     return EvolutionChainNode(
@@ -445,9 +448,10 @@ class PokemonRepositoryImpl implements PokemonRepository {
           ? (nameById[id] ?? node.speciesName)
           : node.speciesName,
       spriteUrl: id != null ? spriteById[id] : null,
+      types: id != null ? (typesById[id] ?? node.types) : node.types,
       trigger: node.trigger,
       evolvesTo: node.evolvesTo
-          .map((child) => _applySprites(child, spriteById, nameById))
+          .map((child) => _applySprites(child, spriteById, nameById, typesById))
           .toList(),
     );
   }

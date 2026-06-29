@@ -23,7 +23,7 @@ void main() {
     final ivysaur = root.evolvesTo.first;
     expect(ivysaur.speciesName, 'ivysaur');
     expect(ivysaur.trigger?.minLevel, 16);
-    expect(ivysaur.trigger?.displayLabel, 'Nv. 16');
+    expect(ivysaur.trigger?.displayLabel, 'Nível 16');
 
     final venusaur = ivysaur.evolvesTo.first;
     expect(venusaur.speciesName, 'venusaur');
