@@ -41,20 +41,29 @@ class PokemonDetailAboutSection extends StatelessWidget {
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
+            mainAxisSpacing: 16,
             crossAxisSpacing: 12,
-            childAspectRatio: 2.4,
+            childAspectRatio: 2.1,
             children: [
               _InfoTile(
+                icon: Icons.monitor_weight_outlined,
                 label: 'Peso',
-                value: '${pokemon.weightKg.toStringAsFixed(1)} kg',
+                value:
+                    '${PokemonDetailFormatters.decimal(pokemon.weightKg)} kg',
               ),
               _InfoTile(
+                icon: Icons.height,
                 label: 'Altura',
-                value: '${pokemon.heightMeters.toStringAsFixed(1)} m',
+                value:
+                    '${PokemonDetailFormatters.decimal(pokemon.heightMeters)} m',
               ),
-              _InfoTile(label: 'Categoria', value: category),
               _InfoTile(
+                icon: Icons.grid_view_rounded,
+                label: 'Categoria',
+                value: category,
+              ),
+              _InfoTile(
+                icon: Icons.catching_pokemon,
                 label: 'Habilidade',
                 value: primaryAbility == null
                     ? '—'
@@ -74,46 +83,60 @@ class PokemonDetailAboutSection extends StatelessWidget {
 }
 
 class _InfoTile extends StatelessWidget {
-  const _InfoTile({required this.label, required this.value});
+  const _InfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
+  final IconData icon;
   final String label;
   final String value;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final labelColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.5),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: labelColor),
+            const SizedBox(width: 6),
+            Text(
+              label.toUpperCase(),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: labelColor,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.4,
+              ),
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: theme.dividerColor.withValues(alpha: 0.5),
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
+          child: Text(
             value,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),
+            textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -123,24 +146,28 @@ class _GenderBar extends StatelessWidget {
 
   final int genderRate;
 
+  static const _maleColor = Color(0xFF4A90D9);
+  static const _femaleColor = Color(0xFFE85D8A);
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final labelColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final labelStyle = theme.textTheme.labelSmall?.copyWith(
+      color: labelColor,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.4,
+    );
 
     if (genderRate < 0) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Gênero',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          Text('GÊNERO', style: labelStyle),
           const SizedBox(height: 8),
           Text(
             'Sem gênero',
             style: theme.textTheme.bodyMedium,
+            textAlign: TextAlign.center,
           ),
         ],
       );
@@ -150,30 +177,24 @@ class _GenderBar extends StatelessWidget {
     final malePercent = 100 - femalePercent;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Gênero',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text('GÊNERO', style: labelStyle),
         const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(999),
           child: SizedBox(
-            height: 12,
+            height: 10,
             child: Row(
               children: [
                 if (malePercent > 0)
                   Expanded(
                     flex: malePercent.round().clamp(1, 100),
-                    child: const ColoredBox(color: Color(0xFF4A90D9)),
+                    child: const ColoredBox(color: _maleColor),
                   ),
                 if (femalePercent > 0)
                   Expanded(
                     flex: femalePercent.round().clamp(1, 100),
-                    child: const ColoredBox(color: Color(0xFFE85D8A)),
+                    child: const ColoredBox(color: _femaleColor),
                   ),
               ],
             ),
@@ -183,17 +204,17 @@ class _GenderBar extends StatelessWidget {
         Row(
           children: [
             Text(
-              '♂ ${malePercent.toStringAsFixed(1)}%',
+              '♂ ${PokemonDetailFormatters.decimal(malePercent)}%',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF4A90D9),
+                color: _maleColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const Spacer(),
             Text(
-              '♀ ${femalePercent.toStringAsFixed(1)}%',
+              '♀ ${PokemonDetailFormatters.decimal(femalePercent)}%',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFFE85D8A),
+                color: _femaleColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

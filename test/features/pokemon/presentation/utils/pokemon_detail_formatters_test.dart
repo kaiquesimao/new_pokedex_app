@@ -2,6 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 
 void main() {
+  test('decimal uses comma as decimal separator', () {
+    expect(PokemonDetailFormatters.decimal(6.9), '6,9');
+    expect(PokemonDetailFormatters.decimal(87.5), '87,5');
+  });
+
   test('statLabel maps api names to display labels', () {
     expect(PokemonDetailFormatters.statLabel('hp'), 'HP');
     expect(PokemonDetailFormatters.statLabel('special-attack'), 'Atq. Esp.');

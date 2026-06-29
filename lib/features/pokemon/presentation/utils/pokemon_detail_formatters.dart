@@ -1,4 +1,7 @@
 abstract final class PokemonDetailFormatters {
+  static String decimal(double value) =>
+      value.toStringAsFixed(1).replaceAll('.', ',');
+
   static String statLabel(String apiName) {
     return switch (apiName) {
       'hp' => 'HP',
