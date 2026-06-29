@@ -36,6 +36,18 @@ abstract final class PokemonSpriteLayoutSizes {
   static const double listRowHeight = 150;
   static const double listRowPanelWidth = 120;
   static const double detailHeaderHeight = 320;
-  static const double detailCircleSize = 240;
+  static const double detailHeroTopInset = 48;
+  static const double detailHeaderCircleDiameter = 320;
+
+  /// Type icon occupies this fraction of the header circle diameter.
+  static const double detailTypeIconScale = 0.54;
+
+  static double detailTypeIconSize(double circleDiameter) =>
+      circleDiameter * detailTypeIconScale;
+
+  /// Top offset that vertically centers the header circle in the sprite area.
+  static double detailHeaderCircleTop(double headerHeight) =>
+      detailHeroTopInset +
+      (headerHeight - detailHeroTopInset - detailHeaderCircleDiameter) / 2;
   static const double evolutionCardWidth = 136;
 }

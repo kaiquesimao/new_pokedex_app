@@ -4,9 +4,9 @@ import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class PokemonListRowCard extends StatelessWidget {
   const PokemonListRowCard({
@@ -160,17 +160,7 @@ class _TypePanel extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             ColoredBox(color: typeColor),
-            Positioned(
-              right: -8,
-              bottom: -8,
-              child: Opacity(
-                opacity: 0.2,
-                child: PokemonTypeIcon(
-                  assetPath: primaryType.assetPath,
-                  size: 88,
-                ),
-              ),
-            ),
+            Center(child: PokemonPrimaryTypeBackdrop(type: primaryType)),
             Center(
               child: spriteUrl != null
                   ? PokemonSpriteImage(

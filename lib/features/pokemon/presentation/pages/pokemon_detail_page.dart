@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
+import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
@@ -21,6 +22,7 @@ import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakne
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
@@ -113,6 +115,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
               child: _HeroSection(
                 pokemonId: widget.pokemonId,
                 pokemon: pokemon,
+                primaryType: primaryType,
                 headerColor: headerColor,
                 isFavorite: isFavorite,
                 onFavoriteTap: () => _toggleFavorite(context),
@@ -200,6 +203,7 @@ class _HeroSection extends StatelessWidget {
   const _HeroSection({
     required this.pokemonId,
     required this.pokemon,
+    required this.primaryType,
     required this.headerColor,
     required this.isFavorite,
     required this.onFavoriteTap,
@@ -207,35 +211,104 @@ class _HeroSection extends StatelessWidget {
 
   final int pokemonId;
   final PokemonDetail pokemon;
+  final PokemonType? primaryType;
   final Color headerColor;
   final bool isFavorite;
   final VoidCallback onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final surfaceColor = colorScheme.surface;
+    final headerActionColor = colorScheme.onSurface;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const headerHeight = PokemonSpriteLayoutSizes.detailHeaderHeight;
+    const circleSize = PokemonSpriteLayoutSizes.detailHeaderCircleDiameter;
+    final typeIconSize = PokemonSpriteLayoutSizes.detailTypeIconSize(
+      circleSize,
+    );
+    final circleTop = PokemonSpriteLayoutSizes.detailHeaderCircleTop(
+      headerHeight,
+    );
+    final circleLeft = (MediaQuery.sizeOf(context).width - circleSize) / 2;
+    final circleGradientColors = isDark
+        ? [
+            headerColor.withValues(alpha: 0.55),
+            headerColor.withValues(alpha: 0.18),
+          ]
+        : [
+            headerColor,
+            Color.lerp(headerColor, Colors.white, 0.28)!,
+          ];
+
     return SizedBox(
-      height: PokemonSpriteLayoutSizes.detailHeaderHeight,
+      height: headerHeight,
       child: Stack(
         fit: StackFit.expand,
+        clipBehavior: Clip.none,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  headerColor.withValues(alpha: 0.35),
-                  headerColor.withValues(alpha: 0.08),
-                  Theme.of(context).colorScheme.surface,
-                ],
-                radius: 0.85,
-                center: Alignment.topCenter,
-              ),
+          ColoredBox(color: surfaceColor),
+          Positioned(
+            top: circleTop,
+            left: circleLeft,
+            width: circleSize,
+            height: circleSize,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: circleSize,
+                  height: circleSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: circleGradientColors,
+                    ),
+                  ),
+                ),
+                if (primaryType != null)
+                  PokemonPrimaryTypeBackdrop(
+                    type: primaryType!,
+                    size: typeIconSize,
+                    opacity: isDark
+                        ? PokemonPrimaryTypeBackdrop.detailOpacity
+                        : PokemonPrimaryTypeBackdrop.detailLightOpacity,
+                  ),
+                if (pokemon.spriteUrl != null)
+                  PokemonSpriteImage(
+                    imageUrl: pokemon.spriteUrl!,
+                    height: PokemonSpriteDisplaySizes.detail,
+                    maxCachePixels: PokemonSpriteCachePresets.detail,
+                    heroTag: PokemonHeroTags.sprite(pokemonId),
+                    errorIconColor: Colors.white,
+                    errorIconSize: 96,
+                  )
+                else
+                  Hero(
+                    tag: PokemonHeroTags.sprite(pokemonId),
+                    child: const Material(
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.catching_pokemon,
+                        size: 96,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
           Positioned(
             top: 4,
             left: 4,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: headerActionColor,
+              ),
               onPressed: () => context.pop(),
             ),
           ),
@@ -245,49 +318,10 @@ class _HeroSection extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: Colors.white,
+                color: isFavorite ? Colors.red : headerActionColor,
                 size: 28,
               ),
               onPressed: onFavoriteTap,
-            ),
-          ),
-          Positioned(
-            top: 48,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                width: PokemonSpriteLayoutSizes.detailCircleSize,
-                height: PokemonSpriteLayoutSizes.detailCircleSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [headerColor, headerColor.withValues(alpha: 0.7)],
-                  ),
-                ),
-                child: Center(
-                  child: pokemon.spriteUrl != null
-                      ? PokemonSpriteImage(
-                          imageUrl: pokemon.spriteUrl!,
-                          height: PokemonSpriteDisplaySizes.detail,
-                          maxCachePixels: PokemonSpriteCachePresets.detail,
-                          heroTag: PokemonHeroTags.sprite(pokemonId),
-                          errorIconColor: Colors.white,
-                          errorIconSize: 96,
-                        )
-                      : Hero(
-                          tag: PokemonHeroTags.sprite(pokemonId),
-                          child: const Material(
-                            color: Colors.transparent,
-                            child: Icon(
-                              Icons.catching_pokemon,
-                              size: 96,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                ),
-              ),
             ),
           ),
         ],
