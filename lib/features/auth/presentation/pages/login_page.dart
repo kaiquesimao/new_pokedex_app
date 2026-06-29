@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,11 +20,11 @@ class LoginPage extends ConsumerWidget {
     final usesFirebase = ref.watch(authProvider.notifier).usesFirebase;
 
     final actions = <Widget>[
-      if (usesFirebase && defaultTargetPlatform == TargetPlatform.iOS)
-        SocialAuthButton(
-          provider: SocialAuthProvider.apple,
-          onPressed: () => handleAppleSignIn(context, ref),
-        ),
+      // Apple Sign-In — enable when iOS ships
+      // SocialAuthButton(
+      //   provider: SocialAuthProvider.apple,
+      //   onPressed: () => handleAppleSignIn(context, ref),
+      // ),
       if (usesFirebase) const GoogleSignInActionButton(),
       SocialAuthButton(
         provider: SocialAuthProvider.email,

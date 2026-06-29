@@ -35,6 +35,8 @@ class ProfilePage extends ConsumerWidget {
               _AccountSection(
                 name: auth.displayName ?? 'Treinador',
                 email: auth.email ?? '',
+                // onEditName: () => _showPlaceholderEdit(context, 'Nome'),
+                // onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
                 onChangePassword: () =>
                     context.push('/profile/change-password'),
               ),
@@ -90,6 +92,8 @@ class ProfilePage extends ConsumerWidget {
                     .read(profileSettingsProvider.notifier)
                     .toggleGameInfoLanguage(),
               ),
+              // onPlaceholderLink: (label) =>
+              //     _showPlaceholderLink(context, label),
             ),
             if (auth.isAuthenticated) ...[
               const SizedBox(height: 32),
@@ -122,6 +126,19 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
+
+  // Future: profile field edit placeholders
+  // static void _showPlaceholderEdit(BuildContext context, String field) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text('Edição de $field em breve')),
+  //   );
+  // }
+  //
+  // static void _showPlaceholderLink(BuildContext context, String label) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text('$label — em breve')),
+  //   );
+  // }
 
   static Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
     final confirmed = await showLogoutBottomSheet(context);
@@ -179,11 +196,15 @@ class _AccountSection extends StatelessWidget {
   const _AccountSection({
     required this.name,
     required this.email,
+    // required this.onEditName,
+    // required this.onEditEmail,
     required this.onChangePassword,
   });
 
   final String name;
   final String email;
+  // final VoidCallback onEditName;
+  // final VoidCallback onEditEmail;
   final VoidCallback onChangePassword;
 
   @override
@@ -193,6 +214,8 @@ class _AccountSection extends StatelessWidget {
       children: [
         _ChevronRow(label: 'Nome', value: name, showChevron: false),
         _ChevronRow(label: 'E-mail', value: email, showChevron: false),
+        // _ChevronRow(label: 'Nome', value: name, onTap: onEditName),
+        // _ChevronRow(label: 'E-mail', value: email, onTap: onEditEmail),
         _ChevronRow(label: 'Senha', value: '••••••••', onTap: onChangePassword),
       ],
     );
@@ -209,6 +232,7 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleNotifyUpdates,
     required this.onToggleInterfaceLanguage,
     required this.onToggleGameInfoLanguage,
+    // required this.onPlaceholderLink,
   });
 
   final ProfileSettings settings;
@@ -219,6 +243,7 @@ class _SettingsSections extends StatelessWidget {
   final ValueChanged<bool> onToggleNotifyUpdates;
   final VoidCallback onToggleInterfaceLanguage;
   final VoidCallback onToggleGameInfoLanguage;
+  // final ValueChanged<String> onPlaceholderLink;
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +306,18 @@ class _SettingsSections extends StatelessWidget {
               value: versionLabel,
               showChevron: false,
             ),
+            // _ChevronRow(
+            //   label: 'Termos de uso',
+            //   onTap: () => onPlaceholderLink('Termos de uso'),
+            // ),
+            // _ChevronRow(
+            //   label: 'Ajuda',
+            //   onTap: () => onPlaceholderLink('Ajuda'),
+            // ),
+            // _ChevronRow(
+            //   label: 'Sobre',
+            //   onTap: () => onPlaceholderLink('Sobre'),
+            // ),
           ],
         ),
       ],
