@@ -59,7 +59,7 @@ tool/
 
 # Firebase secrets (copy from *.example.* or flutterfire configure)
 dart_defines.json
-# android/app/google-services.json
+android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 android/key.properties
 **/*.jks
