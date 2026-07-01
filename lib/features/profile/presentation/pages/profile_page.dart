@@ -251,7 +251,7 @@ class _SettingsSections extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SettingsGroup(
-          title: 'Pokédex',
+          title: 'PokeData',
           children: [
             _ToggleRow(
               label: 'Mega evoluções',

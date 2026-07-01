@@ -60,7 +60,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/pokedex/$id');
       return PokedexResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a Pokédex');
+      mapDioException(e, fallback: 'Não foi possível carregar a PokeData');
     }
   }
 

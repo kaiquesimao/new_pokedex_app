@@ -1,11 +1,11 @@
 {
-    "name": "Pokédex",
-    "short_name": "Pokédex",
+    "name": "PokeData",
+    "short_name": "PokeData",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0D1B2A",
     "theme_color": "#0D1B2A",
-    "description": "Explore todos os Pokémon, regiões e favoritos — sua Pokédex completa.",
+    "description": "Pokedéx para fãs",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

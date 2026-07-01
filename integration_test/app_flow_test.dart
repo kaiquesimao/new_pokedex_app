@@ -65,7 +65,7 @@ void main() {
       await tester.pumpWidget(buildTestApp());
       await tester.pumpAndSettle(const Duration(seconds: 8));
 
-      expect(find.widgetWithText(AppBar, 'Pokédex'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, 'PokeData'), findsOneWidget);
     });
 
     testWidgets('pokedex list card opens detail when data is available', (
@@ -74,7 +74,7 @@ void main() {
       await tester.pumpWidget(buildTestApp());
       await tester.pumpAndSettle(const Duration(seconds: 10));
 
-      expect(find.widgetWithText(AppBar, 'Pokédex'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, 'PokeData'), findsOneWidget);
 
       final cards = find.byType(PokemonListRowCard);
       if (cards.evaluate().isEmpty) {

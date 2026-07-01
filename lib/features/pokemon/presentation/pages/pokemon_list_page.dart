@@ -67,7 +67,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pokédex'),
+        title: const Text('PokeData'),
         actions: [
           IconButton(
             tooltip: 'Filtros avançados',

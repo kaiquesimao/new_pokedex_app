@@ -62,7 +62,7 @@ class RegionRepositoryImpl implements RegionRepository {
       );
       if (cached == null || cached.isEmpty) {
         throw OfflineEmptyCacheException(
-          'A Pokédex de ${RegionCardAssets.forApiName(regionName)?.displayName ?? regionName} '
+          'A PokeData da região de ${RegionCardAssets.forApiName(regionName)?.displayName ?? regionName} '
           'não está salva no dispositivo.\n'
           'Abra esta região online pelo menos uma vez.',
         );

@@ -29,6 +29,6 @@ final class OfflineEmptyCacheException extends AppException {
   const OfflineEmptyCacheException([
     super.message =
         'Sem conexão e nenhum Pokémon salvo no dispositivo.\n'
-        'Conecte-se uma vez para baixar a Pokédex.',
+        'Conecte-se uma vez para baixar a PokeData.',
   ]);
 }

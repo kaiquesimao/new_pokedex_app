@@ -12,7 +12,7 @@ class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  static const _labels = ['Pokédex', 'Regiões', 'Favoritos', 'Conta'];
+  static const _labels = ['PokeData', 'Regiões', 'Favoritos', 'Conta'];
 
   @override
   Widget build(BuildContext context) {

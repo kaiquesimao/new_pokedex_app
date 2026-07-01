@@ -7,7 +7,7 @@ class FirebaseConfigErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pokédex',
+      title: 'PokeData',
       home: Scaffold(
         body: SafeArea(
           child: Padding(

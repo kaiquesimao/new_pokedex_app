@@ -26,16 +26,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         AppAssets.characterBugcatcher,
         AppAssets.characterBirch,
       ],
-      title: 'Todos os Pokémons em um só Lugar',
+      title: 'Todos os Pokémon em um só Lugar',
       subtitle:
           'Acesse uma vasta lista de Pokémon de todas as gerações já '
           'feitas pela Nintendo',
     ),
     _OnboardingSlide(
       imageAssets: [AppAssets.characterHilda],
-      title: 'Mantenha sua Pokédex atualizada',
+      title: 'Mantenha sua PokeData atualizada',
       subtitle:
-          'Cadastre-se e mantenha seu perfil, pokémon favoritos, '
+          'Cadastre-se e mantenha seu perfil, Pokémon favoritos, '
           'configurações e muito mais, salvos no aplicativo, mesmo sem '
           'conexão com a internet.',
     ),

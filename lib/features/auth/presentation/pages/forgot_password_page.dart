@@ -283,7 +283,7 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Use sua nova senha para entrar na Pokédex.',
+          'Use sua nova senha para entrar na PokeData.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
