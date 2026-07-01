@@ -35,10 +35,12 @@ In this Linux cloud VM the testable target is the **web** build (Chrome is insta
 - **Codegen is committed.** drift/`build_runner` outputs (`*.g.dart`, e.g.
   `lib/core/database/app_database.g.dart`) are tracked and up to date. Only re-run
   `dart run build_runner build` after changing drift schemas/models.
-- **Pre-existing stale test:** `test/shared/widgets/pokemon_type_chip_test.dart` expects an
-  `Image` widget, but the type icon now renders SVG via `SvgPicture.asset`
-  (`lib/shared/widgets/pokemon_type_icon.dart`). This single test fails independently of setup;
-  the other ~101 tests pass.
+- **Full test suite passes:** `flutter test` runs ~131 tests and all pass (verified in the cloud
+ VM). The type chip renders its icon as SVG via `SvgPicture.asset`
+ (`lib/shared/widgets/pokemon_type_icon.dart`).
+- **Favorites require auth:** guest mode ("Explorar sem conta"/"Pular") allows full browsing and
+ Pokémon detail pages, but tapping the heart to favorite prompts a sign-in dialog — favoriting
+ and the Favorites tab are gated behind an account.
 - **Web layout / stability gotchas:** detail-page weight/height cards stretch on wide desktop
   viewports (the layout is mobile-first) — use a narrow/mobile viewport for accurate layout. In
   this constrained browser VM the Flutter web tab can reload (Flutter loading spinner) after
