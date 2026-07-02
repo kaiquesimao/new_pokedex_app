@@ -418,6 +418,15 @@ class PokemonRepositoryImpl implements PokemonRepository {
   }
 
   @override
+  Future<int> resolvePokemonIdForRegionalSpecies(
+    int speciesId,
+    String regionalFormKey,
+  ) async {
+    final species = await _getCachedSpecies(speciesId);
+    return _pickFormVarietyPokemonId(species, regionalFormKey) ?? speciesId;
+  }
+
+  @override
   Future<List<PokemonSummary>> getSummariesByIds(
     List<int> ids, {
     PokemonListFilters? filters,

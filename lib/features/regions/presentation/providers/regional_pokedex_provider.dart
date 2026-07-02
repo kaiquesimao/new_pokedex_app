@@ -6,6 +6,7 @@ import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokemon.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
@@ -162,6 +163,10 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
       );
     }
 
+    final regionalFormKey = PokemonFormVisibility.regionalFormKeyForRegion(
+      regionName,
+    );
+
     Future<void> worker() async {
       while (true) {
         final index = nextIndex++;
@@ -169,13 +174,17 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
 
         final entry = entries[index];
         try {
-          final summary = await _pokemonRepository.getSummaryById(
-            entry.speciesId,
-          );
+          final pokemonId = regionalFormKey != null
+              ? await _pokemonRepository.resolvePokemonIdForRegionalSpecies(
+                  entry.speciesId,
+                  regionalFormKey,
+                )
+              : entry.speciesId;
+          final summary = await _pokemonRepository.getSummaryById(pokemonId);
 
           loaded[entry.entryNumber] = RegionalPokemon(
             regionalNumber: entry.entryNumber,
-            pokemonId: entry.speciesId,
+            pokemonId: pokemonId,
             name: summary.name,
             types: summary.types,
             spriteUrl: summary.spriteUrl,

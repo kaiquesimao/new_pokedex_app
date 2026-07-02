@@ -84,6 +84,12 @@ class PokemonFormVisibility {
   static bool isRegionalForm(String apiName) =>
       regionalFormKey(apiName) != null;
 
+  /// PokeAPI region name when it maps to a regional variety suffix (`hisui` → `*-hisui`).
+  static String? regionalFormKeyForRegion(String regionApiName) {
+    if (regionalFormSuffixes.contains(regionApiName)) return regionApiName;
+    return null;
+  }
+
   /// ponytail: name fallback when `is_default` / `is_mega` are not cached yet.
   static bool isAlternateForm(String apiName) {
     if (isMegaForm(apiName)) return false;

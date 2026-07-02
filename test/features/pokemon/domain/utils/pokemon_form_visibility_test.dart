@@ -130,5 +130,11 @@ void main() {
       expect(PokemonFormVisibility.isRegionalForm('grimer-alola'), isTrue);
       expect(PokemonFormVisibility.isRegionalForm('grimer'), isFalse);
     });
+
+    test('regionalFormKeyForRegion maps curated regional dexes', () {
+      expect(PokemonFormVisibility.regionalFormKeyForRegion('hisui'), 'hisui');
+      expect(PokemonFormVisibility.regionalFormKeyForRegion('alola'), 'alola');
+      expect(PokemonFormVisibility.regionalFormKeyForRegion('kanto'), isNull);
+    });
   });
 }

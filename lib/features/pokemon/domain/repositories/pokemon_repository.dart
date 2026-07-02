@@ -34,6 +34,12 @@ abstract class PokemonRepository {
 
   Future<PokemonSummary> getSummaryById(int id);
 
+  /// Resolves the regional variety Pokémon id for a species, or [speciesId].
+  Future<int> resolvePokemonIdForRegionalSpecies(
+    int speciesId,
+    String regionalFormKey,
+  );
+
   Future<List<PokemonSummary>> getSummariesByIds(
     List<int> ids, {
     PokemonListFilters? filters,

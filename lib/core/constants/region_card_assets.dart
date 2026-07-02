@@ -102,6 +102,25 @@ abstract final class RegionCardAssets {
       starterIds: [810, 813, 816],
       landscapeAsset: '$_landscapePath/galar.webp',
     ),
+    RegionCardData(
+      apiName: 'hisui',
+      displayName: 'Hisui',
+      generationNumber: 8,
+      gradientStart: Color(0xFF7D9D9C),
+      gradientEnd: Color(0xFF2F4F4F),
+      // PLA starters share default sprites; use Hisuian final evolutions.
+      starterIds: [10244, 10233, 10236],
+      landscapeAsset: '$_landscapePath/hisui.webp',
+    ),
+    RegionCardData(
+      apiName: 'paldea',
+      displayName: 'Paldea',
+      generationNumber: 9,
+      gradientStart: Color(0xFFE85D04),
+      gradientEnd: Color(0xFF6B21A8),
+      starterIds: [906, 909, 912],
+      landscapeAsset: '$_landscapePath/paldea.webp',
+    ),
   ];
 
   static RegionCardData? forApiName(String apiName) {
@@ -120,5 +139,7 @@ abstract final class RegionCardAssets {
     'kalos',
     'alola',
     'galar',
+    'hisui',
+    'paldea',
   };
 }

@@ -176,6 +176,31 @@ void main() {
     },
   );
 
+  test(
+    'resolvePokemonIdForRegionalSpecies maps species to regional variety',
+    () async {
+      final db = AppDatabase(NativeDatabase.memory());
+      addTearDown(db.close);
+
+      final local = PokemonLocalDataSource(db);
+      final remote = _GrimerAlolaRemote();
+      final repository = PokemonRepositoryImpl(remote: remote, local: local);
+
+      expect(
+        await repository.resolvePokemonIdForRegionalSpecies(88, 'alola'),
+        10112,
+      );
+      expect(
+        await repository.resolvePokemonIdForRegionalSpecies(89, 'alola'),
+        10113,
+      );
+      expect(
+        await repository.resolvePokemonIdForRegionalSpecies(88, 'hisui'),
+        88,
+      );
+    },
+  );
+
   test('getEvolutionChain resolves regional forms across the chain', () async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
