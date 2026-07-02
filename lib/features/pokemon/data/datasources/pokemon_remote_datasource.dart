@@ -23,6 +23,10 @@ class PokemonRemoteDataSource {
     return _client.getPokemonSpecies(id);
   }
 
+  Future<PokemonFormResponse> fetchPokemonForm(int id) {
+    return _client.getPokemonForm(id);
+  }
+
   Future<GenerationResponse> fetchGeneration(int id) {
     return _client.getGeneration(id);
   }

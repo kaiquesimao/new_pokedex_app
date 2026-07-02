@@ -381,11 +381,11 @@ class _EvolutionSection extends StatelessWidget {
                   )
                 : EvolutionChainTree(
                     root: evolution.root,
-                    currentPokemonId: evolution.currentPokemonId,
+                    currentSpeciesId: evolution.currentSpeciesId,
                     embedded: true,
-                    onNodeTap: (id) {
-                      if (id == pokemonId) return;
-                      unawaited(context.push('/pokemon/$id'));
+                    onNodeTap: (targetPokemonId) {
+                      if (targetPokemonId == pokemonId) return;
+                      unawaited(context.push('/pokemon/$targetPokemonId'));
                     },
                   ),
           ),

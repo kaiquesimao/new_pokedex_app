@@ -11,6 +11,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
 class PokemonRepositoryImpl implements PokemonRepository {
@@ -22,6 +23,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
   List<NamedApiResource>? _allPokemonRefsCache;
   Future<void>? _warmNameIndexFuture;
   bool _usedOfflineFallback = false;
+  final Map<int, bool> _formMegaCache = {};
 
   @override
   bool takeOfflineFallbackUsed() {
@@ -105,7 +107,8 @@ class PokemonRepositoryImpl implements PokemonRepository {
   @override
   Future<EvolutionChain> getEvolutionChain(int pokemonId) async {
     try {
-      final species = await _remote.fetchPokemonSpecies(pokemonId);
+      final speciesId = await _resolveSpeciesId(pokemonId);
+      final species = await _remote.fetchPokemonSpecies(speciesId);
       final chainUrl = species.evolutionChainUrl;
       if (chainUrl == null) {
         return _singleNodeEvolutionChain(pokemonId);
@@ -118,9 +121,17 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
       final chainResponse = await _remote.fetchEvolutionChain(chainId);
       final root = EvolutionMapper.toNode(chainResponse.chain);
-      final enrichedRoot = await _enrichEvolutionSprites(root);
+      final enrichedRoot = await _enrichEvolutionSprites(
+        root,
+        viewingPokemonId: pokemonId,
+        viewingSpeciesId: speciesId,
+      );
 
-      return EvolutionChain(root: enrichedRoot, currentPokemonId: pokemonId);
+      return EvolutionChain(
+        root: enrichedRoot,
+        currentPokemonId: pokemonId,
+        currentSpeciesId: speciesId,
+      );
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();
@@ -137,31 +148,44 @@ class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     final current = summaries.first;
+    final speciesId = await _resolveSpeciesIdOfflineSafe(pokemonId);
     return EvolutionChain(
       root: EvolutionChainNode(
-        speciesId: current.id,
+        speciesId: speciesId,
+        pokemonId: pokemonId,
         speciesName: current.name,
         spriteUrl: current.spriteUrl,
         types: current.types,
       ),
       currentPokemonId: pokemonId,
+      currentSpeciesId: speciesId,
     );
   }
 
   @override
   Future<PokemonDetail> getPokemonDetail(int id) async {
-    final cachedResponse = await _local.getPokemonResponse(
+    var cachedResponse = await _local.getPokemonResponse(
       id,
       allowStale: true,
     );
 
     if (cachedResponse != null) {
+      cachedResponse = await _enrichWithFormMetadata(cachedResponse);
       PokemonSpeciesResponse? species;
       try {
-        species = await _remote.fetchPokemonSpecies(id);
+        final speciesId = await _resolveSpeciesId(
+          id,
+          pokemon: cachedResponse,
+        );
+        species = await _remote.fetchPokemonSpecies(speciesId);
       } catch (error) {
-        if (!isNetworkError(error)) rethrow;
-        _markOfflineFallback();
+        if (error is NotFoundException) {
+          species = null;
+        } else if (!isNetworkError(error)) {
+          rethrow;
+        } else {
+          _markOfflineFallback();
+        }
       }
 
       final detail = PokemonMapper.toDetail(cachedResponse, species: species);
@@ -175,12 +199,11 @@ class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     try {
-      final results = await Future.wait([
-        _remote.fetchPokemon(id),
-        _remote.fetchPokemonSpecies(id),
-      ]);
-      final response = results[0] as PokemonResponse;
-      final species = results[1] as PokemonSpeciesResponse;
+      final response = await _enrichWithFormMetadata(
+        await _remote.fetchPokemon(id),
+      );
+      final speciesId = await _resolveSpeciesId(id, pokemon: response);
+      final species = await _remote.fetchPokemonSpecies(speciesId);
       final detail = PokemonMapper.toDetail(response, species: species);
 
       await _local.saveSummary(PokemonMapper.toSummary(response));
@@ -415,15 +438,81 @@ class PokemonRepositoryImpl implements PokemonRepository {
   }
 
   Future<EvolutionChainNode> _enrichEvolutionSprites(
-    EvolutionChainNode node,
-  ) async {
-    final ids = _collectSpeciesIds(node);
-    final summaries = await _loadSummariesForIds(ids);
-    final spriteById = {for (final s in summaries) s.id: s.spriteUrl};
-    final nameById = {for (final s in summaries) s.id: s.name};
-    final typesById = {for (final s in summaries) s.id: s.types};
+    EvolutionChainNode node, {
+    int? viewingPokemonId,
+    int? viewingSpeciesId,
+  }) async {
+    final speciesIds = _collectSpeciesIds(node);
 
-    return _applySprites(node, spriteById, nameById, typesById);
+    PokemonSummary? viewingSummary;
+    String? viewingName;
+    if (viewingPokemonId != null) {
+      final cachedDetail = await _local.getPokemonResponse(
+        viewingPokemonId,
+        allowStale: true,
+      );
+      if (cachedDetail != null && cachedDetail.name.isNotEmpty) {
+        viewingSummary = PokemonMapper.toSummary(cachedDetail);
+        viewingName = cachedDetail.name;
+      } else {
+        final loaded = await _loadSummariesForIds([viewingPokemonId]);
+        if (loaded.isNotEmpty) {
+          viewingSummary = loaded.first;
+          viewingName = viewingSummary.name;
+        }
+      }
+    }
+
+    final regionalFormKey = viewingName != null
+        ? PokemonFormVisibility.regionalFormKey(viewingName)
+        : null;
+    final pokemonIdBySpeciesId = regionalFormKey != null
+        ? await _resolvePokemonIdsForFormLine(speciesIds, regionalFormKey)
+        : {for (final id in speciesIds) id: id};
+
+    final pokemonIdsToLoad = pokemonIdBySpeciesId.values.toSet().toList();
+    final summaries = await _loadSummariesForIds(pokemonIdsToLoad);
+    final summaryByPokemonId = {for (final s in summaries) s.id: s};
+
+    return _applySprites(
+      node,
+      summaryByPokemonId,
+      pokemonIdBySpeciesId,
+      viewingSpeciesId: viewingSpeciesId,
+      viewingSummary:
+          viewingName != null && PokemonFormVisibility.isMegaForm(viewingName)
+          ? viewingSummary
+          : null,
+    );
+  }
+
+  Future<Map<int, int>> _resolvePokemonIdsForFormLine(
+    List<int> speciesIds,
+    String formKey,
+  ) async {
+    final mapping = <int, int>{for (final id in speciesIds) id: id};
+
+    for (final speciesId in speciesIds.toSet()) {
+      final species = await _remote.fetchPokemonSpecies(speciesId);
+      final formPokemonId = _pickFormVarietyPokemonId(species, formKey);
+      if (formPokemonId != null) {
+        mapping[speciesId] = formPokemonId;
+      }
+    }
+
+    return mapping;
+  }
+
+  int? _pickFormVarietyPokemonId(
+    PokemonSpeciesResponse species,
+    String formKey,
+  ) {
+    for (final variety in species.varieties) {
+      if (variety.pokemonName.endsWith('-$formKey')) {
+        return variety.pokemonId;
+      }
+    }
+    return null;
   }
 
   List<int> _collectSpeciesIds(EvolutionChainNode node) {
@@ -437,21 +526,41 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   EvolutionChainNode _applySprites(
     EvolutionChainNode node,
-    Map<int, String?> spriteById,
-    Map<int, String> nameById,
-    Map<int, List<PokemonType>> typesById,
-  ) {
-    final id = node.speciesId;
+    Map<int, PokemonSummary> summaryByPokemonId,
+    Map<int, int> pokemonIdBySpeciesId, {
+    int? viewingSpeciesId,
+    PokemonSummary? viewingSummary,
+  }) {
+    final speciesId = node.speciesId;
+    final pokemonId = speciesId != null
+        ? pokemonIdBySpeciesId[speciesId]
+        : null;
+
+    final isMegaViewingStage =
+        speciesId != null &&
+        viewingSpeciesId == speciesId &&
+        viewingSummary != null;
+    final summary = isMegaViewingStage
+        ? viewingSummary
+        : (pokemonId != null ? summaryByPokemonId[pokemonId] : null);
+
     return EvolutionChainNode(
-      speciesId: id,
-      speciesName: id != null
-          ? (nameById[id] ?? node.speciesName)
-          : node.speciesName,
-      spriteUrl: id != null ? spriteById[id] : null,
-      types: id != null ? (typesById[id] ?? node.types) : node.types,
+      speciesId: speciesId,
+      pokemonId: summary?.id ?? pokemonId,
+      speciesName: summary?.name ?? node.speciesName,
+      spriteUrl: summary?.spriteUrl,
+      types: summary?.types ?? node.types,
       trigger: node.trigger,
       evolvesTo: node.evolvesTo
-          .map((child) => _applySprites(child, spriteById, nameById, typesById))
+          .map(
+            (child) => _applySprites(
+              child,
+              summaryByPokemonId,
+              pokemonIdBySpeciesId,
+              viewingSpeciesId: viewingSpeciesId,
+              viewingSummary: viewingSummary,
+            ),
+          )
           .toList(),
     );
   }
@@ -474,16 +583,17 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
         final id = ids[index];
         final cachedSummary = cachedById[id];
-        if (cachedSummary != null) {
+        if (cachedSummary != null && cachedSummary.name.isNotEmpty) {
           results[index] = cachedSummary;
           continue;
         }
 
         try {
           final response = await _remote.fetchPokemon(id);
-          final summary = PokemonMapper.toSummary(response);
+          final enriched = await _enrichWithFormMetadata(response);
+          final summary = PokemonMapper.toSummary(enriched);
           await _local.saveSummary(summary);
-          await _local.savePokemonResponse(response);
+          await _local.savePokemonResponse(enriched);
           results[index] = summary;
         } catch (error) {
           if (!isNetworkError(error)) rethrow;
@@ -496,5 +606,74 @@ class PokemonRepositoryImpl implements PokemonRepository {
     const concurrency = 8;
     await Future.wait(List.generate(concurrency, (_) => worker()));
     return results.whereType<PokemonSummary>().toList();
+  }
+
+  Future<int> _resolveSpeciesId(
+    int pokemonId, {
+    PokemonResponse? pokemon,
+  }) async {
+    final cached =
+        pokemon ?? await _local.getPokemonResponse(pokemonId, allowStale: true);
+    final cachedSpeciesId = cached?.speciesId;
+    if (cachedSpeciesId != null &&
+        !_isStaleSpeciesId(pokemonId, cachedSpeciesId)) {
+      return cachedSpeciesId;
+    }
+
+    final response = await _remote.fetchPokemon(pokemonId);
+    if (response.speciesId != null) {
+      await _local.savePokemonResponse(response);
+      return response.speciesId!;
+    }
+
+    return pokemonId;
+  }
+
+  /// Alternate forms (id > 10000) may have stale cache with species_id == id.
+  bool _isStaleSpeciesId(int pokemonId, int speciesId) {
+    return speciesId == pokemonId && pokemonId > 10000;
+  }
+
+  Future<int> _resolveSpeciesIdOfflineSafe(int pokemonId) async {
+    final cached = await _local.getPokemonResponse(pokemonId, allowStale: true);
+    final cachedSpeciesId = cached?.speciesId;
+    if (cachedSpeciesId != null &&
+        !_isStaleSpeciesId(pokemonId, cachedSpeciesId)) {
+      return cachedSpeciesId;
+    }
+    return pokemonId;
+  }
+
+  Future<PokemonResponse> _enrichWithFormMetadata(
+    PokemonResponse response,
+  ) async {
+    if (response.isDefault) {
+      return response.isMega == false
+          ? response
+          : response.copyWith(isMega: false);
+    }
+
+    if (response.isMega != null) return response;
+
+    final isMega = await _resolveIsMega(response);
+    return response.copyWith(isMega: isMega);
+  }
+
+  Future<bool> _resolveIsMega(PokemonResponse response) async {
+    final formId = response.primaryFormId;
+    if (formId == null) {
+      return PokemonFormVisibility.isMegaForm(response.name);
+    }
+
+    final cached = _formMegaCache[formId];
+    if (cached != null) return cached;
+
+    try {
+      final form = await _remote.fetchPokemonForm(formId);
+      _formMegaCache[formId] = form.isMega;
+      return form.isMega;
+    } on Object catch (_) {
+      return PokemonFormVisibility.isMegaForm(response.name);
+    }
   }
 }

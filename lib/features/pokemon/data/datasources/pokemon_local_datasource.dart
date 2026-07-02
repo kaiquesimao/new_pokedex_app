@@ -112,10 +112,14 @@ class PokemonLocalDataSource {
 
     int? height;
     int? weight;
+    bool? isDefault;
+    var isMega = false;
     if (entry.detailJson != null) {
       final detail = jsonDecode(entry.detailJson!) as Map<String, dynamic>;
       height = detail['height'] as int?;
       weight = detail['weight'] as int?;
+      isDefault = detail['is_default'] as bool?;
+      isMega = detail['is_mega'] as bool? ?? false;
     }
 
     final spriteUrl = PokemonSpriteUrls.homeArtwork(pokemonId: entry.id);
@@ -130,6 +134,8 @@ class PokemonLocalDataSource {
       spriteUrl: spriteUrl,
       height: height,
       weight: weight,
+      isDefault: isDefault,
+      isMega: isMega,
     );
   }
 
@@ -139,6 +145,9 @@ class PokemonLocalDataSource {
       'name': response.name,
       'height': response.height,
       'weight': response.weight,
+      'is_default': response.isDefault,
+      'is_mega': response.isMega ?? false,
+      if (response.speciesId != null) 'species_id': response.speciesId,
       'sprites': {
         'front_default': response.spriteUrl,
         'other': {

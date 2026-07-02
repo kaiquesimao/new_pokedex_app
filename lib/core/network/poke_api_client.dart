@@ -106,4 +106,15 @@ class PokeApiClient {
       mapDioException(e, fallback: 'Não foi possível carregar a espécie');
     }
   }
+
+  Future<PokemonFormResponse> getPokemonForm(int id) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/pokemon-form/$id',
+      );
+      return PokemonFormResponse.fromJson(response.data ?? {});
+    } on DioException catch (e) {
+      mapDioException(e, fallback: 'Não foi possível carregar a forma');
+    }
+  }
 }

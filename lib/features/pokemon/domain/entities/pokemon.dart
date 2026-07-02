@@ -8,6 +8,8 @@ class PokemonSummary {
     this.spriteUrl,
     this.height,
     this.weight,
+    this.isDefault,
+    this.isMega = false,
   });
 
   final int id;
@@ -16,6 +18,12 @@ class PokemonSummary {
   final String? spriteUrl;
   final int? height;
   final int? weight;
+
+  /// From PokeAPI `pokemon.is_default`; null when cache predates metadata.
+  final bool? isDefault;
+
+  /// From PokeAPI `pokemon-form.is_mega` when [isDefault] is false.
+  final bool isMega;
 
   String get displayName =>
       name.isEmpty ? '' : name[0].toUpperCase() + name.substring(1);

@@ -9,8 +9,11 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
+import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
+import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 
 class PokemonListState {
   const PokemonListState({
@@ -96,12 +99,28 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
   Set<PokemonType>? _weakToTypesCache;
   PokemonType? _weakToTypesFor;
 
+  PokemonFormVisibility get _formVisibility {
+    final settings = ref.read(profileSettingsProvider);
+    return PokemonFormVisibility(
+      showMegaEvolutions: settings.showMegaEvolutions,
+      showOtherForms: settings.showOtherForms,
+    );
+  }
+
   @override
   PokemonListState build() {
     ref
       ..listen<PokemonListFilters>(pokemonFiltersProvider, (previous, next) {
         if (previous == next) return;
         unawaited(reloadForFilters(next));
+      })
+      ..listen<ProfileSettings>(profileSettingsProvider, (previous, next) {
+        if (previous == null) return;
+        if (previous.showMegaEvolutions == next.showMegaEvolutions &&
+            previous.showOtherForms == next.showOtherForms) {
+          return;
+        }
+        unawaited(reloadForFilters(ref.read(pokemonFiltersProvider)));
       })
       ..listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
         final online = next.value;
@@ -190,8 +209,11 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
 
     if (generation != _loadGeneration) return;
 
+    final nameById = await _nameByIdMap();
+    final ids = _filterIdsByForm(slice.ids, nameById);
+
     await _loadBatchProgressive(
-      ids: slice.ids,
+      ids: ids,
       generation: generation,
       lockedItems: const [],
       hasMore: slice.hasMore,
@@ -211,8 +233,11 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
 
     if (generation != _loadGeneration) return;
 
+    final nameById = await _nameByIdMap();
+    final ids = _filterIdsByForm(slice.ids, nameById);
+
     await _loadBatchProgressive(
-      ids: slice.ids,
+      ids: ids,
       generation: generation,
       lockedItems: state.items,
       hasMore: slice.hasMore,
@@ -414,12 +439,13 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
         final id = ids[index];
         try {
           final summary = await _repository.getSummaryById(id);
-          if (filters != null &&
-              !PokemonListFilterUtils.apply(
-                items: [summary],
-                filters: filters,
-                weakToTypes: weakToTypes,
-              ).contains(summary)) {
+          if (!_formVisibility.includesSummary(summary) ||
+              (filters != null &&
+                  !PokemonListFilterUtils.apply(
+                    items: [summary],
+                    filters: filters,
+                    weakToTypes: weakToTypes,
+                  ).contains(summary))) {
             processed[id] = null;
           } else {
             processed[id] = summary;
@@ -472,8 +498,11 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
 
   Future<List<int>> _resolveSearchOnlyIds(PokemonListFilters filters) async {
     final refs = await _repository.searchPokemonRefsByName(filters.searchQuery);
-    final nameById = {for (final ref in refs) ref.id: ref.name};
-    final ids = refs.map((ref) => ref.id).toList();
+    final visibleRefs = refs
+        .where((ref) => _formVisibility.includes(ref.name))
+        .toList();
+    final nameById = {for (final ref in visibleRefs) ref.id: ref.name};
+    final ids = visibleRefs.map((ref) => ref.id).toList();
     return _sortIds(ids, filters.sort, nameById);
   }
 
@@ -498,7 +527,20 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
       ids = ids.where(matchingIds.contains).toList();
     }
 
-    return _sortIds(ids, filters.sort, nameById);
+    return _sortIds(_filterIdsByForm(ids, nameById), filters.sort, nameById);
+  }
+
+  Future<Map<int, String>> _nameByIdMap() async {
+    final refs = await _repository.getAllPokemonRefs();
+    return {for (final ref in refs) ref.id: ref.name};
+  }
+
+  List<int> _filterIdsByForm(List<int> ids, Map<int, String> nameById) {
+    return ids
+        .where(
+          (id) => _formVisibility.includes(nameById[id] ?? ''),
+        )
+        .toList();
   }
 
   List<int> _sortIds(
@@ -532,8 +574,9 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
     }
 
     _weakToTypesFor = filters.weakness;
-    return _weakToTypesCache =
-        await _repository.getTypesWeakTo(filters.weakness!);
+    return _weakToTypesCache = await _repository.getTypesWeakTo(
+      filters.weakness!,
+    );
   }
 }
 

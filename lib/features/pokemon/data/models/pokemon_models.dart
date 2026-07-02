@@ -39,6 +39,16 @@ class NamedApiResource {
   }
 }
 
+class PokemonFormResponse {
+  const PokemonFormResponse({required this.isMega});
+
+  factory PokemonFormResponse.fromJson(Map<String, dynamic> json) {
+    return PokemonFormResponse(isMega: json['is_mega'] as bool? ?? false);
+  }
+
+  final bool isMega;
+}
+
 class PokemonResponse {
   const PokemonResponse({
     required this.id,
@@ -50,11 +60,22 @@ class PokemonResponse {
     required this.abilities,
     required this.spriteUrl,
     required this.listSpriteUrl,
+    this.isDefault = true,
+    this.primaryFormId,
+    this.isMega,
+    this.speciesId,
   });
+
   factory PokemonResponse.fromJson(Map<String, dynamic> json) {
-    final sprites = json['sprites'] as Map<String, dynamic>? ?? {};
-    final other = sprites['other'] as Map<String, dynamic>? ?? {};
-    final artwork = other['official-artwork'] as Map<String, dynamic>? ?? {};
+    final sprites = Map<String, dynamic>.from(
+      json['sprites'] as Map<Object?, Object?>? ?? const {},
+    );
+    final other = Map<String, dynamic>.from(
+      sprites['other'] as Map<Object?, Object?>? ?? const {},
+    );
+    final artwork = Map<String, dynamic>.from(
+      other['official-artwork'] as Map<Object?, Object?>? ?? const {},
+    );
     final frontDefault = sprites['front_default'] as String?;
 
     return PokemonResponse(
@@ -73,6 +94,10 @@ class PokemonResponse {
           .toList(),
       spriteUrl: artwork['front_default'] as String? ?? frontDefault,
       listSpriteUrl: frontDefault ?? artwork['front_default'] as String?,
+      isDefault: json['is_default'] as bool? ?? true,
+      primaryFormId: _primaryFormId(json['forms']),
+      isMega: json['is_mega'] as bool?,
+      speciesId: json['species_id'] as int? ?? _resourceId(json['species']),
     );
   }
 
@@ -85,6 +110,46 @@ class PokemonResponse {
   final List<PokemonAbilitySlot> abilities;
   final String? spriteUrl;
   final String? listSpriteUrl;
+  final bool isDefault;
+  final int? primaryFormId;
+  final bool? isMega;
+
+  /// Species id from `pokemon.species` (differs from [id] for forms/megas).
+  final int? speciesId;
+
+  PokemonResponse copyWith({bool? isMega}) {
+    return PokemonResponse(
+      id: id,
+      name: name,
+      height: height,
+      weight: weight,
+      types: types,
+      stats: stats,
+      abilities: abilities,
+      spriteUrl: spriteUrl,
+      listSpriteUrl: listSpriteUrl,
+      isDefault: isDefault,
+      primaryFormId: primaryFormId,
+      isMega: isMega ?? this.isMega,
+      speciesId: speciesId,
+    );
+  }
+
+  static int? _resourceId(dynamic resource) {
+    if (resource is! Map) return null;
+    final url = resource['url'] as String? ?? '';
+    final match = RegExp(r'/(\d+)/?$').firstMatch(url);
+    return match == null ? null : int.tryParse(match.group(1)!);
+  }
+
+  static int? _primaryFormId(dynamic forms) {
+    if (forms is! List<dynamic> || forms.isEmpty) return null;
+    final first = forms.first;
+    if (first is! Map) return null;
+    final url = first['url'] as String? ?? '';
+    final match = RegExp(r'/(\d+)/?$').firstMatch(url);
+    return match == null ? null : int.tryParse(match.group(1)!);
+  }
 }
 
 class PokemonTypeSlot {
@@ -129,6 +194,29 @@ class PokemonAbilitySlot {
   final bool isHidden;
 }
 
+class PokemonSpeciesVariety {
+  const PokemonSpeciesVariety({
+    required this.isDefault,
+    required this.pokemonId,
+    required this.pokemonName,
+  });
+
+  factory PokemonSpeciesVariety.fromJson(Map<String, dynamic> json) {
+    final pokemon = NamedApiResource.fromJson(
+      json['pokemon'] as Map<String, dynamic>? ?? {},
+    );
+    return PokemonSpeciesVariety(
+      isDefault: json['is_default'] as bool? ?? false,
+      pokemonId: pokemon.id ?? 0,
+      pokemonName: pokemon.name,
+    );
+  }
+
+  final bool isDefault;
+  final int pokemonId;
+  final String pokemonName;
+}
+
 class PokemonSpeciesResponse {
   const PokemonSpeciesResponse({
     required this.id,
@@ -139,6 +227,7 @@ class PokemonSpeciesResponse {
     required this.hatchCounter,
     required this.eggGroups,
     required this.evolutionChainUrl,
+    this.varieties = const [],
   });
   factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
     final entries = json['flavor_text_entries'] as List<dynamic>? ?? [];
@@ -169,6 +258,11 @@ class PokemonSpeciesResponse {
           .toList(),
       evolutionChainUrl:
           (json['evolution_chain'] as Map<String, dynamic>?)?['url'] as String?,
+      varieties: (json['varieties'] as List<dynamic>? ?? [])
+          .map(
+            (e) => PokemonSpeciesVariety.fromJson(e as Map<String, dynamic>),
+          )
+          .toList(),
     );
   }
 
@@ -180,4 +274,5 @@ class PokemonSpeciesResponse {
   final int hatchCounter;
   final List<String> eggGroups;
   final String? evolutionChainUrl;
+  final List<PokemonSpeciesVariety> varieties;
 }

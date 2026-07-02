@@ -110,7 +110,9 @@ class EvolutionChainNodeCard extends StatelessWidget {
                     if (node.speciesId != null) ...[
                       const SizedBox(height: 2),
                       Text(
-                        PokemonFormatters.displayNumber(node.speciesId!),
+                        PokemonFormatters.displayNumber(
+                          node.pokemonId ?? node.speciesId!,
+                        ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColorsLight.textSecondary,
                           fontWeight: FontWeight.w500,
@@ -199,14 +201,14 @@ class EvolutionChainConnector extends StatelessWidget {
 class EvolutionChainTree extends StatelessWidget {
   const EvolutionChainTree({
     required this.root,
-    required this.currentPokemonId,
+    required this.currentSpeciesId,
     super.key,
     this.onNodeTap,
     this.embedded = false,
   });
 
   final EvolutionChainNode root;
-  final int currentPokemonId;
+  final int currentSpeciesId;
   final ValueChanged<int>? onNodeTap;
   final bool embedded;
 
@@ -229,11 +231,11 @@ class EvolutionChainTree extends StatelessWidget {
       children: [
         EvolutionChainNodeCard(
           node: node,
-          isCurrent: node.speciesId == currentPokemonId,
+          isCurrent: node.speciesId == currentSpeciesId,
           isFinalStage: isFinalStage,
           onTap: node.speciesId == null
               ? null
-              : () => onNodeTap?.call(node.speciesId!),
+              : () => onNodeTap?.call(node.pokemonId ?? node.speciesId!),
         ),
         if (children.length == 1) ...[
           EvolutionChainConnector(label: children.first.trigger?.displayLabel),

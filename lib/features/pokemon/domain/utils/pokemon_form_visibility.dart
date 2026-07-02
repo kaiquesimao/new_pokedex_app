@@ -1,0 +1,105 @@
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+
+/// Catalog visibility for mega evolutions and alternate Pokémon forms.
+class PokemonFormVisibility {
+  const PokemonFormVisibility({
+    this.showMegaEvolutions = true,
+    this.showOtherForms = true,
+  });
+
+  final bool showMegaEvolutions;
+  final bool showOtherForms;
+
+  bool includesSummary(PokemonSummary summary) => includesSummaryNamed(
+    summary: summary,
+    showMegaEvolutions: showMegaEvolutions,
+    showOtherForms: showOtherForms,
+  );
+
+  bool includes(String apiName) => includesNamed(
+    apiName: apiName,
+    showMegaEvolutions: showMegaEvolutions,
+    showOtherForms: showOtherForms,
+  );
+
+  static bool includesSummaryNamed({
+    required PokemonSummary summary,
+    required bool showMegaEvolutions,
+    required bool showOtherForms,
+  }) {
+    if (summary.isDefault != null) {
+      return includesFlags(
+        isDefault: summary.isDefault!,
+        isMega: summary.isMega,
+        showMegaEvolutions: showMegaEvolutions,
+        showOtherForms: showOtherForms,
+      );
+    }
+
+    return includesNamed(
+      apiName: summary.name,
+      showMegaEvolutions: showMegaEvolutions,
+      showOtherForms: showOtherForms,
+    );
+  }
+
+  static bool includesNamed({
+    required String apiName,
+    required bool showMegaEvolutions,
+    required bool showOtherForms,
+  }) {
+    if (!showMegaEvolutions && isMegaForm(apiName)) return false;
+    if (!showOtherForms && isAlternateForm(apiName)) return false;
+    return true;
+  }
+
+  static bool includesFlags({
+    required bool isDefault,
+    required bool isMega,
+    required bool showMegaEvolutions,
+    required bool showOtherForms,
+  }) {
+    if (isDefault) return true;
+    if (!showMegaEvolutions && isMega) return false;
+    if (!showOtherForms && !isMega) return false;
+    return true;
+  }
+
+  static bool isMegaForm(String apiName) =>
+      RegExp(r'-mega(?:-|$)').hasMatch(apiName);
+
+  /// Regional suffix shared across an evolution line (e.g. `grimer-alola` → `alola`).
+  static String? regionalFormKey(String apiName) {
+    if (isMegaForm(apiName)) return null;
+
+    for (final region in ['alola', 'galar', 'hisui', 'paldea']) {
+      if (apiName.endsWith('-$region')) return region;
+    }
+    return null;
+  }
+
+  /// ponytail: name fallback when `is_default` / `is_mega` are not cached yet.
+  static bool isAlternateForm(String apiName) {
+    if (isMegaForm(apiName)) return false;
+
+    if (apiName.endsWith('-alola') ||
+        apiName.endsWith('-galar') ||
+        apiName.endsWith('-hisui') ||
+        apiName.endsWith('-paldea')) {
+      return true;
+    }
+
+    if (apiName.contains('-gmax') ||
+        apiName.contains('-totem') ||
+        apiName.contains('-battle-bond') ||
+        apiName.contains('-eternamax')) {
+      return true;
+    }
+
+    if (apiName.startsWith('pikachu-') || apiName.startsWith('zygarde-')) {
+      return true;
+    }
+
+    return false;
+  }
+}

@@ -19,6 +19,8 @@ class PokemonMapper {
       spriteUrl: PokemonSpriteUrls.homeArtwork(pokemonId: response.id),
       height: response.height,
       weight: response.weight,
+      isDefault: response.isDefault,
+      isMega: response.isMega ?? false,
     );
   }
 

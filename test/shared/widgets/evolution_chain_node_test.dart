@@ -29,7 +29,7 @@ void main() {
             padding: EdgeInsets.all(16),
             child: EvolutionChainTree(
               root: root,
-              currentPokemonId: 1,
+              currentSpeciesId: 1,
               embedded: true,
             ),
           ),

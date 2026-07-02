@@ -50,6 +50,7 @@ class EvolutionChainNode {
   const EvolutionChainNode({
     required this.speciesId,
     required this.speciesName,
+    this.pokemonId,
     this.spriteUrl,
     this.types = const [],
     this.trigger,
@@ -57,6 +58,9 @@ class EvolutionChainNode {
   });
 
   final int? speciesId;
+
+  /// Pokémon entry id when this stage shows a specific form (e.g. mega).
+  final int? pokemonId;
   final String speciesName;
   final String? spriteUrl;
   final List<PokemonType> types;
@@ -71,10 +75,15 @@ class EvolutionChainNode {
 }
 
 class EvolutionChain {
-  const EvolutionChain({required this.root, required this.currentPokemonId});
+  const EvolutionChain({
+    required this.root,
+    required this.currentPokemonId,
+    required this.currentSpeciesId,
+  });
 
   final EvolutionChainNode root;
   final int currentPokemonId;
+  final int currentSpeciesId;
 
   bool get isSingleStage => !root.hasEvolution;
 }
