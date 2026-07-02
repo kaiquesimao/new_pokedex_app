@@ -125,5 +125,10 @@ void main() {
         isNull,
       );
     });
+
+    test('isRegionalForm delegates to regionalFormKey', () {
+      expect(PokemonFormVisibility.isRegionalForm('grimer-alola'), isTrue);
+      expect(PokemonFormVisibility.isRegionalForm('grimer'), isFalse);
+    });
   });
 }

@@ -196,11 +196,14 @@ void main() {
     final mukNode = _findNodeBySpeciesId(chain.root, 89);
     expect(mukNode?.pokemonId, 10113);
     expect(mukNode?.speciesName, 'muk-alola');
+    expect(remote.speciesFetchCount, 2);
   });
 }
 
 class _GrimerAlolaRemote extends PokemonRemoteDataSource {
   _GrimerAlolaRemote() : super(_RecordingClient());
+
+  int speciesFetchCount = 0;
 
   @override
   Future<PokemonResponse> fetchPokemon(int id) async {
@@ -242,6 +245,7 @@ class _GrimerAlolaRemote extends PokemonRemoteDataSource {
 
   @override
   Future<PokemonSpeciesResponse> fetchPokemonSpecies(int id) async {
+    speciesFetchCount++;
     if (id == 88) {
       return const PokemonSpeciesResponse(
         id: 88,

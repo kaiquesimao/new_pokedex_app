@@ -24,6 +24,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
   Future<void>? _warmNameIndexFuture;
   bool _usedOfflineFallback = false;
   final Map<int, bool> _formMegaCache = {};
+  final Map<int, PokemonSpeciesResponse> _speciesCache = {};
 
   @override
   bool takeOfflineFallbackUsed() {
@@ -108,7 +109,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
   Future<EvolutionChain> getEvolutionChain(int pokemonId) async {
     try {
       final speciesId = await _resolveSpeciesId(pokemonId);
-      final species = await _remote.fetchPokemonSpecies(speciesId);
+      final species = await _getCachedSpecies(speciesId);
       final chainUrl = species.evolutionChainUrl;
       if (chainUrl == null) {
         return _singleNodeEvolutionChain(pokemonId);
@@ -177,7 +178,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
           id,
           pokemon: cachedResponse,
         );
-        species = await _remote.fetchPokemonSpecies(speciesId);
+        species = await _getCachedSpecies(speciesId);
       } catch (error) {
         if (error is NotFoundException) {
           species = null;
@@ -203,7 +204,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         await _remote.fetchPokemon(id),
       );
       final speciesId = await _resolveSpeciesId(id, pokemon: response);
-      final species = await _remote.fetchPokemonSpecies(speciesId);
+      final species = await _getCachedSpecies(speciesId);
       final detail = PokemonMapper.toDetail(response, species: species);
 
       await _local.saveSummary(PokemonMapper.toSummary(response));
@@ -491,9 +492,12 @@ class PokemonRepositoryImpl implements PokemonRepository {
     String formKey,
   ) async {
     final mapping = <int, int>{for (final id in speciesIds) id: id};
+    final uniqueIds = speciesIds.toSet();
 
-    for (final speciesId in speciesIds.toSet()) {
-      final species = await _remote.fetchPokemonSpecies(speciesId);
+    await Future.wait(uniqueIds.map(_getCachedSpecies));
+
+    for (final speciesId in uniqueIds) {
+      final species = _speciesCache[speciesId]!;
       final formPokemonId = _pickFormVarietyPokemonId(species, formKey);
       if (formPokemonId != null) {
         mapping[speciesId] = formPokemonId;
@@ -501,6 +505,15 @@ class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     return mapping;
+  }
+
+  Future<PokemonSpeciesResponse> _getCachedSpecies(int speciesId) async {
+    final cached = _speciesCache[speciesId];
+    if (cached != null) return cached;
+
+    final species = await _remote.fetchPokemonSpecies(speciesId);
+    _speciesCache[speciesId] = species;
+    return species;
   }
 
   int? _pickFormVarietyPokemonId(

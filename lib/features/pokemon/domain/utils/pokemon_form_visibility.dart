@@ -68,26 +68,27 @@ class PokemonFormVisibility {
   static bool isMegaForm(String apiName) =>
       RegExp(r'-mega(?:-|$)').hasMatch(apiName);
 
+  /// Regional suffixes shared across an evolution line (PokeAPI `varieties`).
+  static const regionalFormSuffixes = ['alola', 'galar', 'hisui', 'paldea'];
+
   /// Regional suffix shared across an evolution line (e.g. `grimer-alola` → `alola`).
   static String? regionalFormKey(String apiName) {
     if (isMegaForm(apiName)) return null;
 
-    for (final region in ['alola', 'galar', 'hisui', 'paldea']) {
+    for (final region in regionalFormSuffixes) {
       if (apiName.endsWith('-$region')) return region;
     }
     return null;
   }
 
+  static bool isRegionalForm(String apiName) =>
+      regionalFormKey(apiName) != null;
+
   /// ponytail: name fallback when `is_default` / `is_mega` are not cached yet.
   static bool isAlternateForm(String apiName) {
     if (isMegaForm(apiName)) return false;
 
-    if (apiName.endsWith('-alola') ||
-        apiName.endsWith('-galar') ||
-        apiName.endsWith('-hisui') ||
-        apiName.endsWith('-paldea')) {
-      return true;
-    }
+    if (isRegionalForm(apiName)) return true;
 
     if (apiName.contains('-gmax') ||
         apiName.contains('-totem') ||
