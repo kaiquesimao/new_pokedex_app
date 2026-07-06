@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -69,7 +70,10 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
       decoration: TextDecoration.underline,
     );
 
-    return Row(
+    final label = _LegalLabel(theme: theme, linkStyle: linkStyle);
+
+    final row = Row(
+      mainAxisSize: kIsWeb ? MainAxisSize.min : MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Checkbox(
@@ -78,29 +82,52 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           visualDensity: VisualDensity.compact,
         ),
-        Expanded(
-          child: Padding(
+        if (kIsWeb)
+          Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text('Li e aceito os ', style: theme.textTheme.bodySmall),
-                _LegalLink(
-                  label: 'Termos de uso',
-                  style: linkStyle,
-                  onTap: () => context.push('/legal/terms'),
-                ),
-                Text(' e a ', style: theme.textTheme.bodySmall),
-                _LegalLink(
-                  label: 'Política de privacidade',
-                  style: linkStyle,
-                  onTap: () => context.push('/legal/privacy'),
-                ),
-                Text('.', style: theme.textTheme.bodySmall),
-              ],
+            child: label,
+          )
+        else
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: label,
             ),
           ),
+      ],
+    );
+
+    if (kIsWeb) {
+      return Align(child: row);
+    }
+    return row;
+  }
+}
+
+class _LegalLabel extends StatelessWidget {
+  const _LegalLabel({required this.theme, required this.linkStyle});
+
+  final ThemeData theme;
+  final TextStyle? linkStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text('Li e aceito os ', style: theme.textTheme.bodySmall),
+        _LegalLink(
+          label: 'Termos de uso',
+          style: linkStyle,
+          onTap: () => context.push('/legal/terms'),
         ),
+        Text(' e a ', style: theme.textTheme.bodySmall),
+        _LegalLink(
+          label: 'Política de privacidade',
+          style: linkStyle,
+          onTap: () => context.push('/legal/privacy'),
+        ),
+        Text('.', style: theme.textTheme.bodySmall),
       ],
     );
   }
