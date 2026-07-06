@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -48,6 +49,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   Future<void> _finish() async {
+    if (!await ensureLegalAccepted(context, ref)) return;
+
     await ref.read(onboardingProvider.notifier).complete();
     if (mounted) context.go('/welcome');
   }
@@ -125,7 +128,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             ),
             _PageDots(count: _pages.length, current: _currentPage),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: isLastPage
+                  ? const LegalAcceptanceField()
+                  : const SizedBox.shrink(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
               child: AppButton(
                 label: isLastPage ? 'Vamos começar!' : 'Continuar',
                 onPressed: _next,

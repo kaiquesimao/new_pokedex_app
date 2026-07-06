@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/login_email_form_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -28,7 +29,11 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
   }
 
   Future<void> _submit() async {
-    await ref.read(loginEmailFormProvider.notifier).submit(
+    if (!await ensureLegalAccepted(context, ref)) return;
+
+    await ref
+        .read(loginEmailFormProvider.notifier)
+        .submit(
           email: _emailController.text,
           password: _passwordController.text,
         );
@@ -85,6 +90,8 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
+                  const LegalAcceptanceField(),
+                  const SizedBox(height: 16),
                   AppButton(
                     label: 'Entrar',
                     isLoading: form.loading,

@@ -13,14 +13,17 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String resolveInitialLocation({
   required bool onboardingCompleted,
+  required bool legalTermsAccepted,
   required bool isAuthenticated,
 }) {
   if (!onboardingCompleted) return '/onboarding';
+  if (!legalTermsAccepted) return '/welcome';
   if (isAuthenticated) return '/pokedex';
   return '/welcome';
 }
@@ -92,6 +95,7 @@ Future<ColdStartResult> runColdStart() async {
 
   initialLocationHolder.value = resolveInitialLocation(
     onboardingCompleted: container.read(onboardingProvider),
+    legalTermsAccepted: container.read(legalAcceptanceProvider),
     isAuthenticated: container.read(authProvider).isAuthenticated,
   );
 

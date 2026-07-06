@@ -15,12 +15,15 @@ import 'package:pokedex_app/features/auth/presentation/pages/register_success_pa
 import 'package:pokedex_app/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/presentation/pages/favorites_page.dart';
+import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart';
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
 import 'package:pokedex_app/features/regions/presentation/pages/regional_pokedex_page.dart';
 import 'package:pokedex_app/features/regions/presentation/pages/regions_page.dart';
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart';
@@ -41,6 +44,7 @@ final goRouterRefreshNotifierProvider = Provider<GoRouterRefreshNotifier>((
   ref
     ..listen<AuthState>(authProvider, (_, _) => notifier.notifyRouter())
     ..listen<bool>(onboardingProvider, (_, _) => notifier.notifyRouter())
+    ..listen<bool>(legalAcceptanceProvider, (_, _) => notifier.notifyRouter())
     ..onDispose(notifier.dispose);
   return notifier;
 });
@@ -59,6 +63,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return resolveAuthRedirect(
         auth: ref.read(authProvider),
         onboardingCompleted: ref.read(onboardingProvider),
+        legalTermsAccepted: ref.read(legalAcceptanceProvider),
         path: state.uri.path,
       );
     },
@@ -110,6 +115,38 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
 
         builder: (_, _) => const ChangePasswordPage(),
+      ),
+
+      GoRoute(
+        path: '/profile/terms',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        redirect: (_, _) => '/legal/terms',
+      ),
+
+      GoRoute(
+        path: '/profile/privacy',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        redirect: (_, _) => '/legal/privacy',
+      ),
+
+      GoRoute(
+        path: '/legal/terms',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        builder: (_, _) => const TermsOfUsePage(),
+      ),
+
+      GoRoute(
+        path: '/legal/privacy',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        builder: (_, _) => const PrivacyPolicyPage(),
       ),
 
       GoRoute(

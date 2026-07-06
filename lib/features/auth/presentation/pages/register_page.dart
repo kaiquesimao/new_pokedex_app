@@ -10,6 +10,7 @@ import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_layout.d
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_action_button.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
@@ -21,20 +22,24 @@ class RegisterPage extends ConsumerWidget {
     listenPostLoginNavigation(ref, postLoginRoute: '/register/success');
     final loading = ref.watch(socialSignInLoadingProvider);
     final usesFirebase = ref.watch(authProvider.notifier).usesFirebase;
+    final canProceed = canProceedWithLegal(ref);
 
     final actions = <Widget>[
-      // Apple Sign-In — enable when iOS ships
-      // SocialAuthButton(
-      //   provider: SocialAuthProvider.apple,
-      //   onPressed: () => handleAppleSignIn(context, ref),
-      // ),
-      if (usesFirebase) const GoogleSignInActionButton(),
-      SocialAuthButton(
-        provider: SocialAuthProvider.email,
-        onPressed: () {
-          ref.read(registerFlowProvider.notifier).reset();
-          unawaited(context.push('/register/email'));
-        },
+      if (usesFirebase)
+        _gatedAction(
+          canProceed: canProceed,
+          child: const GoogleSignInActionButton(),
+        ),
+      _gatedAction(
+        canProceed: canProceed,
+        child: SocialAuthButton(
+          provider: SocialAuthProvider.email,
+          onPressed: () async {
+            if (!await ensureLegalAccepted(context, ref)) return;
+            ref.read(registerFlowProvider.notifier).reset();
+            if (context.mounted) unawaited(context.push('/register/email'));
+          },
+        ),
       ),
     ];
 
@@ -46,6 +51,7 @@ class RegisterPage extends ConsumerWidget {
           illustrationAsset: TrainerAvatars.assetPathFor('wallace_gen6'),
           headline: 'Falta pouco para explorar esse mundo!',
           subtitle: 'Como deseja se conectar?',
+          footer: const LegalAcceptanceField(),
           actions: actions,
         ),
         if (loading)
@@ -55,4 +61,14 @@ class RegisterPage extends ConsumerWidget {
       ],
     );
   }
+}
+
+Widget _gatedAction({required bool canProceed, required Widget child}) {
+  return IgnorePointer(
+    ignoring: !canProceed,
+    child: Opacity(
+      opacity: canProceed ? 1 : 0.45,
+      child: child,
+    ),
+  );
 }

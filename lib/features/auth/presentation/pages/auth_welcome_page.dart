@@ -1,17 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class AuthWelcomePage extends StatelessWidget {
+class AuthWelcomePage extends ConsumerWidget {
   const AuthWelcomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -21,7 +23,10 @@ class AuthWelcomePage extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
-                onPressed: () => context.go('/pokedex'),
+                onPressed: () async {
+                  if (!await ensureLegalAccepted(context, ref)) return;
+                  if (context.mounted) context.go('/pokedex');
+                },
                 icon: const Icon(Icons.arrow_forward, size: 18),
                 iconAlignment: IconAlignment.end,
                 label: const Text('Explorar sem conta'),
@@ -63,17 +68,25 @@ class AuthWelcomePage extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
+                  const LegalAcceptanceField(),
+                  const SizedBox(height: 16),
                   AuthHubActionFrame(
                     child: AppButton(
                       label: 'Criar conta',
-                      onPressed: () => context.push('/register'),
+                      onPressed: () async {
+                        if (!await ensureLegalAccepted(context, ref)) return;
+                        if (context.mounted) await context.push('/register');
+                      },
                     ),
                   ),
                   const SizedBox(height: 12),
                   AuthHubLinkFrame(
                     child: TextButton(
-                      onPressed: () => context.push('/login'),
+                      onPressed: () async {
+                        if (!await ensureLegalAccepted(context, ref)) return;
+                        if (context.mounted) await context.push('/login');
+                      },
                       child: Text(
                         'Já tenho uma conta',
                         style: TextStyle(

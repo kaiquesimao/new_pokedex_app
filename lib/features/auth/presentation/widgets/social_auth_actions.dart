@@ -7,6 +7,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_app/core/constants/firebase_auth_config.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
+import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 
 class SocialSignInLoadingNotifier extends Notifier<bool> {
   @override
@@ -48,9 +50,16 @@ final googleWebSignInSetupProvider = Provider<void>((ref) {
   final subscription = GoogleSignIn.instance.authenticationEvents.listen(
     (event) async {
       if (event is! GoogleSignInAuthenticationEventSignIn) return;
+      if (!ref.read(legalAcceptanceProvider) &&
+          !ref.read(legalAcceptanceDraftProvider)) {
+        ref.read(googleSignInUiErrorProvider.notifier).report =
+            'Aceite os Termos de uso e a Política de privacidade para continuar.';
+        return;
+      }
 
       ref.read(socialSignInLoadingProvider.notifier).loading = true;
       try {
+        await ref.read(legalAcceptanceProvider.notifier).accept();
         await authNotifier.signInWithGoogleAccount(event.user);
       } on Object catch (e) {
         ref.read(googleSignInUiErrorProvider.notifier).report =
@@ -70,6 +79,9 @@ final googleWebSignInSetupProvider = Provider<void>((ref) {
 });
 
 Future<void> handleGoogleSignIn(BuildContext context, WidgetRef ref) async {
+  if (!await ensureLegalAccepted(context, ref)) return;
+  if (!context.mounted) return;
+
   await _runSocialSignIn(
     context: context,
     ref: ref,
@@ -79,6 +91,9 @@ Future<void> handleGoogleSignIn(BuildContext context, WidgetRef ref) async {
 }
 
 Future<void> handleAppleSignIn(BuildContext context, WidgetRef ref) async {
+  if (!await ensureLegalAccepted(context, ref)) return;
+  if (!context.mounted) return;
+
   await _runSocialSignIn(
     context: context,
     ref: ref,

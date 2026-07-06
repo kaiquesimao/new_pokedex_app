@@ -7,6 +7,7 @@ import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_layout.d
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_action_button.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
@@ -18,17 +19,23 @@ class LoginPage extends ConsumerWidget {
     listenPostLoginNavigation(ref);
     final loading = ref.watch(socialSignInLoadingProvider);
     final usesFirebase = ref.watch(authProvider.notifier).usesFirebase;
+    final canProceed = canProceedWithLegal(ref);
 
     final actions = <Widget>[
-      // Apple Sign-In — enable when iOS ships
-      // SocialAuthButton(
-      //   provider: SocialAuthProvider.apple,
-      //   onPressed: () => handleAppleSignIn(context, ref),
-      // ),
-      if (usesFirebase) const GoogleSignInActionButton(),
-      SocialAuthButton(
-        provider: SocialAuthProvider.email,
-        onPressed: () => context.push('/login/email'),
+      if (usesFirebase)
+        _gatedAction(
+          canProceed: canProceed,
+          child: const GoogleSignInActionButton(),
+        ),
+      _gatedAction(
+        canProceed: canProceed,
+        child: SocialAuthButton(
+          provider: SocialAuthProvider.email,
+          onPressed: () async {
+            if (!await ensureLegalAccepted(context, ref)) return;
+            if (context.mounted) await context.push('/login/email');
+          },
+        ),
       ),
     ];
 
@@ -40,6 +47,7 @@ class LoginPage extends ConsumerWidget {
           illustrationAsset: TrainerAvatars.assetPathFor('victor'),
           headline: 'Que bom te ver aqui novamente!',
           subtitle: 'Como deseja se conectar?',
+          footer: const LegalAcceptanceField(),
           actions: actions,
         ),
         if (loading)
@@ -49,4 +57,14 @@ class LoginPage extends ConsumerWidget {
       ],
     );
   }
+}
+
+Widget _gatedAction({required bool canProceed, required Widget child}) {
+  return IgnorePointer(
+    ignoring: !canProceed,
+    child: Opacity(
+      opacity: canProceed ? 1 : 0.45,
+      child: child,
+    ),
+  );
 }

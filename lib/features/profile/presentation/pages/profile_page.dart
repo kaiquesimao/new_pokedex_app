@@ -92,8 +92,8 @@ class ProfilePage extends ConsumerWidget {
                     .read(profileSettingsProvider.notifier)
                     .toggleGameInfoLanguage(),
               ),
-              // onPlaceholderLink: (label) =>
-              //     _showPlaceholderLink(context, label),
+              onTermsTap: () => context.push('/legal/terms'),
+              onPrivacyTap: () => context.push('/legal/privacy'),
             ),
             if (auth.isAuthenticated) ...[
               const SizedBox(height: 32),
@@ -232,7 +232,8 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleNotifyUpdates,
     required this.onToggleInterfaceLanguage,
     required this.onToggleGameInfoLanguage,
-    // required this.onPlaceholderLink,
+    required this.onTermsTap,
+    required this.onPrivacyTap,
   });
 
   final ProfileSettings settings;
@@ -243,7 +244,8 @@ class _SettingsSections extends StatelessWidget {
   final ValueChanged<bool> onToggleNotifyUpdates;
   final VoidCallback onToggleInterfaceLanguage;
   final VoidCallback onToggleGameInfoLanguage;
-  // final ValueChanged<String> onPlaceholderLink;
+  final VoidCallback onTermsTap;
+  final VoidCallback onPrivacyTap;
 
   @override
   Widget build(BuildContext context) {
@@ -306,10 +308,14 @@ class _SettingsSections extends StatelessWidget {
               value: versionLabel,
               showChevron: false,
             ),
-            // _ChevronRow(
-            //   label: 'Termos de uso',
-            //   onTap: () => onPlaceholderLink('Termos de uso'),
-            // ),
+            _ChevronRow(
+              label: 'Termos de uso',
+              onTap: onTermsTap,
+            ),
+            _ChevronRow(
+              label: 'Política de privacidade',
+              onTap: onPrivacyTap,
+            ),
             // _ChevronRow(
             //   label: 'Ajuda',
             //   onTap: () => onPlaceholderLink('Ajuda'),

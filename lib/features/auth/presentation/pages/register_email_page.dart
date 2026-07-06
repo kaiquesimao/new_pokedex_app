@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -35,17 +36,20 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
     await ref.read(registerFlowProvider.notifier).goBackStep();
   }
 
-  void _submitEmail() {
+  Future<void> _submitEmail() async {
+    if (!await ensureLegalAccepted(context, ref)) return;
     ref.read(registerFlowProvider.notifier).submitEmail(_emailController.text);
   }
 
   Future<void> _submitPassword() async {
+    if (!await ensureLegalAccepted(context, ref)) return;
     await ref
         .read(registerFlowProvider.notifier)
         .submitPassword(_passwordController.text);
   }
 
   Future<void> _submitName() async {
+    if (!await ensureLegalAccepted(context, ref)) return;
     await ref
         .read(registerFlowProvider.notifier)
         .submitName(_nameController.text);
@@ -117,6 +121,10 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
                       errorText: flow.error,
                     ),
                   },
+                  if (flow.step == RegisterStep.email) ...[
+                    const SizedBox(height: 16),
+                    const LegalAcceptanceField(),
+                  ],
                   const SizedBox(height: 32),
                   AppButton(
                     label: 'Continuar',

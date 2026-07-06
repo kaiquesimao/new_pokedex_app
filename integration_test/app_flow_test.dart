@@ -9,6 +9,7 @@ import 'package:pokedex_app/core/providers/theme_provider.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_provider.dart';
@@ -27,7 +28,10 @@ void main() {
     late SharedPreferences prefs;
 
     setUp(() async {
-      SharedPreferences.setMockInitialValues({onboardingCompletedKey: true});
+      SharedPreferences.setMockInitialValues({
+        onboardingCompletedKey: true,
+        legalTermsAcceptedKey: true,
+      });
       prefs = await SharedPreferences.getInstance();
     });
 
