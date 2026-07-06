@@ -94,6 +94,7 @@ class ProfilePage extends ConsumerWidget {
               ),
               onTermsTap: () => context.push('/legal/terms'),
               onPrivacyTap: () => context.push('/legal/privacy'),
+              onAboutTap: () => context.push('/profile/about'),
             ),
             if (auth.isAuthenticated) ...[
               const SizedBox(height: 32),
@@ -234,6 +235,7 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleGameInfoLanguage,
     required this.onTermsTap,
     required this.onPrivacyTap,
+    required this.onAboutTap,
   });
 
   final ProfileSettings settings;
@@ -246,6 +248,7 @@ class _SettingsSections extends StatelessWidget {
   final VoidCallback onToggleGameInfoLanguage;
   final VoidCallback onTermsTap;
   final VoidCallback onPrivacyTap;
+  final VoidCallback onAboutTap;
 
   @override
   Widget build(BuildContext context) {
@@ -320,10 +323,10 @@ class _SettingsSections extends StatelessWidget {
             //   label: 'Ajuda',
             //   onTap: () => onPlaceholderLink('Ajuda'),
             // ),
-            // _ChevronRow(
-            //   label: 'Sobre',
-            //   onTap: () => onPlaceholderLink('Sobre'),
-            // ),
+            _ChevronRow(
+              label: 'Sobre',
+              onTap: onAboutTap,
+            ),
           ],
         ),
       ],
