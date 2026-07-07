@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -55,8 +57,26 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
         .submitName(_nameController.text);
     if (!mounted) return;
     final flow = ref.read(registerFlowProvider);
-    if (flow.error == null && !flow.loading) {
+    if (flow.error != null || flow.loading) return;
+
+    if (AuthRegistrationConfig.requireEmailVerification) {
       await context.push('/register/verify-email');
+      return;
+    }
+
+    final auth = ref.read(authProvider.notifier);
+    if (!auth.usesFirebase) {
+      await auth.signUp(
+        email: flow.email,
+        password: flow.password,
+        name: flow.name,
+      );
+    } else {
+      auth.acknowledgeEmailVerification();
+    }
+
+    if (mounted) {
+      await context.push('/register/success');
     }
   }
 
@@ -169,9 +189,9 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   };
 
   String _loadingMessage(RegisterStep step) => switch (step) {
-    RegisterStep.password => 'Criando conta...',
     RegisterStep.name => 'Finalizando cadastro...',
     RegisterStep.email => 'Aguarde...',
+    RegisterStep.password => 'Aguarde...',
   };
 }
 

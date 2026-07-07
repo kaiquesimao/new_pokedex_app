@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,11 +12,28 @@ import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ProfilePage extends ConsumerWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        await ref.read(authProvider.notifier).refreshAuthenticatedUser();
+      } on Object {
+        // ponytail: best-effort sync when opening profile
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final settings = ref.watch(profileSettingsProvider);
     final packageInfo = ref.watch(packageInfoProvider);
@@ -36,12 +55,12 @@ class ProfilePage extends ConsumerWidget {
                 name: auth.displayName ?? 'Treinador',
                 email: auth.email ?? '',
                 canEditCredentials: auth.canEditCredentials,
-                // onEditName: auth.canEditCredentials
-                //     ? () => _showPlaceholderEdit(context, 'Nome')
-                //     : null,
-                // onEditEmail: auth.canEditCredentials
-                //     ? () => _showPlaceholderEdit(context, 'E-mail')
-                //     : null,
+                onEditName: auth.canEditCredentials
+                    ? () => context.push('/profile/edit-name')
+                    : null,
+                onEditEmail: auth.canEditCredentials
+                    ? () => context.push('/profile/change-email')
+                    : null,
                 onChangePassword: auth.canEditCredentials
                     ? () => context.push('/profile/change-password')
                     : null,
@@ -136,12 +155,6 @@ class ProfilePage extends ConsumerWidget {
   }
 
   // Future: profile field edit placeholders
-  // static void _showPlaceholderEdit(BuildContext context, String field) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text('Edição de $field em breve')),
-  //   );
-  // }
-  //
   // static void _showPlaceholderLink(BuildContext context, String label) {
   //   ScaffoldMessenger.of(context).showSnackBar(
   //     SnackBar(content: Text('$label — em breve')),
@@ -205,16 +218,16 @@ class _AccountSection extends StatelessWidget {
     required this.name,
     required this.email,
     required this.canEditCredentials,
-    // this.onEditName,
-    // this.onEditEmail,
+    this.onEditName,
+    this.onEditEmail,
     this.onChangePassword,
   });
 
   final String name;
   final String email;
   final bool canEditCredentials;
-  // final VoidCallback? onEditName;
-  // final VoidCallback? onEditEmail;
+  final VoidCallback? onEditName;
+  final VoidCallback? onEditEmail;
   final VoidCallback? onChangePassword;
 
   @override
@@ -222,20 +235,18 @@ class _AccountSection extends StatelessWidget {
     return _SettingsGroup(
       title: 'Conta',
       children: [
-        _ChevronRow(label: 'Nome', value: name, showChevron: false),
-        _ChevronRow(label: 'E-mail', value: email, showChevron: false),
-        // _ChevronRow(
-        //   label: 'Nome',
-        //   value: name,
-        //   onTap: onEditName,
-        //   showChevron: canEditCredentials,
-        // ),
-        // _ChevronRow(
-        //   label: 'E-mail',
-        //   value: email,
-        //   onTap: onEditEmail,
-        //   showChevron: canEditCredentials,
-        // ),
+        _ChevronRow(
+          label: 'Nome',
+          value: name,
+          onTap: onEditName,
+          showChevron: canEditCredentials,
+        ),
+        _ChevronRow(
+          label: 'E-mail',
+          value: email,
+          onTap: onEditEmail,
+          showChevron: canEditCredentials,
+        ),
         if (canEditCredentials)
           _ChevronRow(
             label: 'Senha',

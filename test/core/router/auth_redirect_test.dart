@@ -50,7 +50,7 @@ void main() {
     );
 
     test(
-      'verified user on register email route goes to register success',
+      'verified user on register email route stays on wizard',
       () {
         expect(
           resolveAuthRedirect(
@@ -59,20 +59,20 @@ void main() {
             legalTermsAccepted: termsAccepted,
             path: '/register/email',
           ),
-          '/register/success',
+          isNull,
         );
       },
     );
 
     test(
-      'unverified user stays on verify-email route',
+      'unverified user is not blocked when verification is disabled',
       () {
         expect(
           resolveAuthRedirect(
             auth: authenticated(emailVerified: false),
             onboardingCompleted: onboardingDone,
             legalTermsAccepted: termsAccepted,
-            path: '/register/verify-email',
+            path: '/pokedex',
           ),
           isNull,
         );

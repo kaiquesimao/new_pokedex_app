@@ -1,3 +1,5 @@
+import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
+
 class AuthState {
   const AuthState({
     this.isInitialized = false,
@@ -19,7 +21,10 @@ class AuthState {
   /// Password, email, and display name edits — only for email/password accounts.
   final bool canEditCredentials;
 
-  bool get needsEmailVerification => isAuthenticated && !emailVerified;
+  bool get needsEmailVerification =>
+      AuthRegistrationConfig.requireEmailVerification &&
+      isAuthenticated &&
+      !emailVerified;
 
   AuthState copyWith({
     bool? isInitialized,

@@ -45,6 +45,30 @@ void main() {
       expect(state.email, 'ash@pokemon.com');
     });
 
+    test('submitPassword advances to name step with password stored', () async {
+      final notifier = container.read(registerFlowProvider.notifier)
+        ..submitEmail('ash@pokemon.com');
+      await notifier.submitPassword('senha123');
+
+      final state = container.read(registerFlowProvider);
+      expect(state.error, isNull);
+      expect(state.step, RegisterStep.name);
+      expect(state.password, 'senha123');
+      expect(state.name, isEmpty);
+    });
+
+    test('submitName rejects empty name', () async {
+      final notifier = container.read(registerFlowProvider.notifier)
+        ..submitEmail('ash@pokemon.com')
+        ..submitPassword('senha123');
+      await notifier.submitName('   ');
+
+      final state = container.read(registerFlowProvider);
+      expect(state.error, 'Informe seu nome');
+      expect(state.step, RegisterStep.name);
+      expect(state.name, isEmpty);
+    });
+
     test('goBackStep from password returns to email', () async {
       final notifier = container.read(registerFlowProvider.notifier)
         ..submitEmail('ash@pokemon.com');

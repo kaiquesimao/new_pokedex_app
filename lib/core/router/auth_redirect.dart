@@ -90,9 +90,8 @@ String? resolveAuthRedirect({
   if (isPublicAuthRoute(path)) {
     return switch (path) {
       '/login' || '/login/email' => '/login/success',
-      '/register' ||
-      '/register/email' ||
-      '/register/verify-email' => '/register/success',
+      '/register' || '/register/verify-email' => '/register/success',
+      '/register/email' => null,
       _ => '/pokedex',
     };
   }

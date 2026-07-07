@@ -11,7 +11,9 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
+import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
+import 'package:pokedex_app/features/auth/domain/display_name_policy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -20,6 +22,7 @@ const _authKey = 'mock_auth_session';
 const _emailKey = 'mock_auth_email';
 const _nameKey = 'mock_auth_name';
 const _passwordKey = 'mock_auth_password';
+const _pendingEmailKey = 'mock_auth_pending_email';
 const _mockOtpDelay = Duration(milliseconds: 600);
 
 AuthState readStoredAuthState(SharedPreferences prefs) {
@@ -99,6 +102,50 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> _sendRegistrationVerificationEmail(User user) async {
+    try {
+      await user.sendEmailVerification();
+    } on Object catch (e) {
+      if (AuthRegistrationConfig.requireEmailVerification) {
+        throw AuthException(
+          firebaseAuthErrorMessage(
+            e,
+            context: FirebaseAuthErrorContext.emailSignUp,
+          ),
+        );
+      }
+    }
+  }
+
+  bool _shouldPreserveEmailVerified(User? user, AuthState next) {
+    if (user == null || AuthRegistrationConfig.requireEmailVerification) {
+      return false;
+    }
+    return state.emailVerified &&
+        !next.emailVerified &&
+        state.email == next.email;
+  }
+
+  /// Reloads the Firebase user and syncs [AuthState] (e.g. after e-mail change).
+  Future<bool> refreshAuthenticatedUser() async {
+    final firebaseAuth = _firebaseAuth;
+    if (firebaseAuth == null) return false;
+
+    _requireOnline();
+    final user = firebaseAuth.currentUser;
+    if (user == null) return false;
+
+    try {
+      await user.reload();
+      final refreshed = firebaseAuth.currentUser;
+      if (refreshed == null) return false;
+      state = _authStateFromFirebaseUser(refreshed);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(firebaseAuthErrorMessage(e));
+    }
+  }
+
   Future<void> initialize() async {
     if (state.isInitialized) return;
 
@@ -106,7 +153,7 @@ class AuthNotifier extends Notifier<AuthState> {
     if (firebaseAuth != null) {
       _authSubscription = firebaseAuth.authStateChanges().listen((user) {
         final next = _authStateFromFirebaseUser(user);
-        final preserveVerified = state.emailVerified && !next.emailVerified;
+        final preserveVerified = _shouldPreserveEmailVerified(user, next);
         state = preserveVerified ? next.copyWith(emailVerified: true) : next;
       });
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
@@ -206,8 +253,14 @@ class AuthNotifier extends Notifier<AuthState> {
           password: password,
         );
         await credential.user?.updateDisplayName(name);
-        await credential.user?.sendEmailVerification();
+        final createdUser = credential.user;
+        if (createdUser != null) {
+          await _sendRegistrationVerificationEmail(createdUser);
+        }
         state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
+        if (!AuthRegistrationConfig.requireEmailVerification) {
+          state = state.copyWith(emailVerified: true);
+        }
       } catch (e) {
         throw AuthException(
           firebaseAuthErrorMessage(
@@ -275,9 +328,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
     try {
       await user.updateDisplayName(name);
-      await user.sendEmailVerification();
+      await _sendRegistrationVerificationEmail(user);
       await user.reload();
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
+      if (!AuthRegistrationConfig.requireEmailVerification) {
+        state = state.copyWith(emailVerified: true);
+      }
     } on FirebaseAuthException catch (e) {
       throw AuthException(
         firebaseAuthErrorMessage(
@@ -472,6 +528,131 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_passwordKey, newPassword);
+  }
+
+  Future<void> updateDisplayName(String name) async {
+    if (!state.isAuthenticated) {
+      throw AuthException('Faça login para continuar');
+    }
+    _requirePasswordAccount();
+
+    final trimmed = name.trim();
+    final validationError = DisplayNamePolicy.validate(trimmed);
+    if (validationError != null) {
+      throw AuthException(validationError);
+    }
+
+    final firebaseAuth = _firebaseAuth;
+    if (firebaseAuth != null) {
+      _requireOnline();
+      final user = firebaseAuth.currentUser;
+      if (user == null) {
+        throw AuthException('Sessão inválida');
+      }
+
+      try {
+        await user.updateDisplayName(trimmed);
+        await user.reload();
+        state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
+      } catch (e) {
+        throw AuthException(firebaseAuthErrorMessage(e));
+      }
+      return;
+    }
+
+    _requireLocalAuth();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_nameKey, trimmed);
+    state = state.copyWith(displayName: trimmed);
+  }
+
+  Future<void> requestEmailChange({
+    required String currentPassword,
+    required String newEmail,
+  }) async {
+    if (!state.isAuthenticated) {
+      throw AuthException('Faça login para continuar');
+    }
+    _requirePasswordAccount();
+
+    final trimmedEmail = newEmail.trim();
+    if (trimmedEmail.isEmpty || !trimmedEmail.contains('@')) {
+      throw AuthException('Informe um e-mail válido');
+    }
+    if (trimmedEmail == state.email) {
+      throw AuthException('O novo e-mail deve ser diferente do atual');
+    }
+
+    final firebaseAuth = _firebaseAuth;
+    if (firebaseAuth != null) {
+      _requireOnline();
+      final user = firebaseAuth.currentUser;
+      final currentEmail = user?.email;
+      if (user == null || currentEmail == null || currentEmail.isEmpty) {
+        throw AuthException('Sessão inválida');
+      }
+
+      try {
+        final credential = EmailAuthProvider.credential(
+          email: currentEmail,
+          password: currentPassword,
+        );
+        await user.reauthenticateWithCredential(credential);
+        await user.verifyBeforeUpdateEmail(trimmedEmail);
+      } catch (e) {
+        throw AuthException(
+          firebaseAuthErrorMessage(
+            e,
+            context: FirebaseAuthErrorContext.emailSignUp,
+          ),
+        );
+      }
+      return;
+    }
+
+    _requireLocalAuth();
+
+    final valid = await verifyCurrentPassword(currentPassword);
+    if (!valid) {
+      throw AuthException('Senha atual incorreta');
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_pendingEmailKey, trimmedEmail);
+    await Future<void>.delayed(_mockOtpDelay);
+  }
+
+  Future<bool> completeEmailChangeVerification({
+    required String expectedEmail,
+    String otpCode = '',
+  }) async {
+    final trimmedExpected = expectedEmail.trim();
+
+    final firebaseAuth = _firebaseAuth;
+    if (firebaseAuth != null) {
+      await refreshAuthenticatedUser();
+      final email = state.email;
+      return email != null &&
+          email.toLowerCase() == trimmedExpected.toLowerCase();
+    }
+
+    _requireLocalAuth();
+
+    final prefs = await SharedPreferences.getInstance();
+    final pending = prefs.getString(_pendingEmailKey);
+    if (pending == null ||
+        pending.toLowerCase() != trimmedExpected.toLowerCase()) {
+      return false;
+    }
+
+    final verified = await verifyOtp(email: pending, code: otpCode);
+    if (!verified) return false;
+
+    await prefs.setString(_emailKey, pending);
+    await prefs.remove(_pendingEmailKey);
+    state = state.copyWith(email: pending);
+    return true;
   }
 
   Future<void> signInWithGoogle() async {

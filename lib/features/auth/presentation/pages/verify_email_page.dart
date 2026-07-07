@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
+import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/verify_email_ui_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -48,9 +49,11 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            usesFirebase
-                ? 'E-mail de verificação reenviado.'
-                : 'Código reenviado.',
+            AuthEmailVerificationCopy.withSpamReminder(
+              usesFirebase
+                  ? 'E-mail de verificação reenviado.'
+                  : 'Código reenviado.',
+            ),
           ),
         ),
       );
@@ -82,9 +85,11 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    usesFirebase
-                        ? 'Enviamos um link de verificação para ${flow.email}. Abra o e-mail, confirme o link e volte aqui para continuar.'
-                        : 'Enviamos um código de 6 dígitos para ${flow.email}.',
+                    AuthEmailVerificationCopy.withSpamReminder(
+                      usesFirebase
+                          ? 'Enviamos um link de verificação para ${flow.email}. Abra o e-mail, confirme o link e volte aqui para continuar.'
+                          : 'Enviamos um código de 6 dígitos para ${flow.email}.',
+                    ),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -123,9 +128,11 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                   if (ui.resent) ...[
                     const SizedBox(height: 8),
                     Text(
-                      usesFirebase
-                          ? 'Um novo e-mail foi enviado.'
-                          : 'Um novo código foi enviado.',
+                      AuthEmailVerificationCopy.withSpamReminder(
+                        usesFirebase
+                            ? 'Um novo e-mail foi enviado.'
+                            : 'Um novo código foi enviado.',
+                      ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.primary,
                       ),

@@ -71,27 +71,9 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
 
     state = state.copyWith(
       password: password,
-      loading: true,
+      step: RegisterStep.name,
       clearError: true,
     );
-
-    try {
-      if (ref.read(authProvider.notifier).usesFirebase) {
-        await ref.read(authProvider.notifier).createPendingAccount(
-              email: state.email,
-              password: password,
-            );
-      }
-      state = state.copyWith(
-        step: RegisterStep.name,
-        loading: false,
-      );
-    } on Object catch (e) {
-      state = state.copyWith(
-        loading: false,
-        error: formatAuthException(e),
-      );
-    }
   }
 
   Future<void> submitName(String rawName) async {
@@ -109,7 +91,11 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
 
     try {
       if (ref.read(authProvider.notifier).usesFirebase) {
-        await ref.read(authProvider.notifier).completePendingRegistration(
+        await ref
+            .read(authProvider.notifier)
+            .signUp(
+              email: state.email,
+              password: state.password,
               name: name,
             );
       }

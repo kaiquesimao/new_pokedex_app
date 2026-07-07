@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/forgot_password_flow_provider.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -208,8 +209,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   String _subtitle(ForgotPasswordStep step, String email) => switch (step) {
     ForgotPasswordStep.email =>
       'Informe seu e-mail para receber um código de verificação.',
-    ForgotPasswordStep.otp =>
+    ForgotPasswordStep.otp => AuthEmailVerificationCopy.withSpamReminder(
       'Digite o código de 6 dígitos enviado para $email.',
+    ),
     ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHint,
     ForgotPasswordStep.success => '',
     ForgotPasswordStep.emailSent => '',
@@ -324,7 +326,9 @@ class _EmailSentBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Enviamos um link para redefinir sua senha em $email.',
+          AuthEmailVerificationCopy.withSpamReminder(
+            'Enviamos um link para redefinir sua senha em $email.',
+          ),
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),

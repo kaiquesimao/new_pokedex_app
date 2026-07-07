@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
+import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 
@@ -61,7 +62,7 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
           state = state.copyWith(
             loading: false,
             error: _usesFirebase
-                ? 'E-mail ainda não verificado. Abra o link enviado e tente novamente.'
+                ? AuthEmailVerificationCopy.unverifiedFirebase
                 : 'Código inválido. Tente novamente.',
           );
         }
