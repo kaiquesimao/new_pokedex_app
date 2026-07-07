@@ -35,10 +35,16 @@ class ProfilePage extends ConsumerWidget {
               _AccountSection(
                 name: auth.displayName ?? 'Treinador',
                 email: auth.email ?? '',
-                // onEditName: () => _showPlaceholderEdit(context, 'Nome'),
-                // onEditEmail: () => _showPlaceholderEdit(context, 'E-mail'),
-                onChangePassword: () =>
-                    context.push('/profile/change-password'),
+                canEditCredentials: auth.canEditCredentials,
+                // onEditName: auth.canEditCredentials
+                //     ? () => _showPlaceholderEdit(context, 'Nome')
+                //     : null,
+                // onEditEmail: auth.canEditCredentials
+                //     ? () => _showPlaceholderEdit(context, 'E-mail')
+                //     : null,
+                onChangePassword: auth.canEditCredentials
+                    ? () => context.push('/profile/change-password')
+                    : null,
               ),
             ] else ...[
               _GuestAccountSection(
@@ -198,16 +204,18 @@ class _AccountSection extends StatelessWidget {
   const _AccountSection({
     required this.name,
     required this.email,
-    // required this.onEditName,
-    // required this.onEditEmail,
-    required this.onChangePassword,
+    required this.canEditCredentials,
+    // this.onEditName,
+    // this.onEditEmail,
+    this.onChangePassword,
   });
 
   final String name;
   final String email;
-  // final VoidCallback onEditName;
-  // final VoidCallback onEditEmail;
-  final VoidCallback onChangePassword;
+  final bool canEditCredentials;
+  // final VoidCallback? onEditName;
+  // final VoidCallback? onEditEmail;
+  final VoidCallback? onChangePassword;
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +224,24 @@ class _AccountSection extends StatelessWidget {
       children: [
         _ChevronRow(label: 'Nome', value: name, showChevron: false),
         _ChevronRow(label: 'E-mail', value: email, showChevron: false),
-        // _ChevronRow(label: 'Nome', value: name, onTap: onEditName),
-        // _ChevronRow(label: 'E-mail', value: email, onTap: onEditEmail),
-        _ChevronRow(label: 'Senha', value: '••••••••', onTap: onChangePassword),
+        // _ChevronRow(
+        //   label: 'Nome',
+        //   value: name,
+        //   onTap: onEditName,
+        //   showChevron: canEditCredentials,
+        // ),
+        // _ChevronRow(
+        //   label: 'E-mail',
+        //   value: email,
+        //   onTap: onEditEmail,
+        //   showChevron: canEditCredentials,
+        // ),
+        if (canEditCredentials)
+          _ChevronRow(
+            label: 'Senha',
+            value: '••••••••',
+            onTap: onChangePassword,
+          ),
       ],
     );
   }

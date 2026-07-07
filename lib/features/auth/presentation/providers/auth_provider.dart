@@ -10,6 +10,7 @@ import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
+import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,6 +42,9 @@ AuthState _authStateFromFirebaseUser(User? user) {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName ?? user.email?.split('@').first,
+    canEditCredentials: accountCanEditCredentials(
+      user.providerData.map((provider) => provider.providerId),
+    ),
   );
 }
 
@@ -86,6 +90,12 @@ class AuthNotifier extends Notifier<AuthState> {
   void _requireOnline() {
     if (!_connectivity.isOnline) {
       throw AuthException('Sem conexão com a internet.');
+    }
+  }
+
+  void _requirePasswordAccount() {
+    if (!state.canEditCredentials) {
+      throw AuthException(socialAccountCredentialsMessage);
     }
   }
 
@@ -301,6 +311,8 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<bool> verifyCurrentPassword(String password) async {
+    _requirePasswordAccount();
+
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth != null) {
       _requireOnline();
@@ -425,6 +437,7 @@ class AuthNotifier extends Notifier<AuthState> {
     if (!state.isAuthenticated) {
       throw AuthException('Faça login para alterar a senha');
     }
+    _requirePasswordAccount();
 
     _requireValidPassword(newPassword);
 

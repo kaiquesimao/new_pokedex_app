@@ -6,6 +6,7 @@ class AuthState {
     this.uid,
     this.email,
     this.displayName,
+    this.canEditCredentials = true,
   });
 
   final bool isInitialized;
@@ -14,6 +15,9 @@ class AuthState {
   final String? uid;
   final String? email;
   final String? displayName;
+
+  /// Password, email, and display name edits — only for email/password accounts.
+  final bool canEditCredentials;
 
   bool get needsEmailVerification => isAuthenticated && !emailVerified;
 
@@ -24,6 +28,7 @@ class AuthState {
     String? uid,
     String? email,
     String? displayName,
+    bool? canEditCredentials,
     bool clearUser = false,
   }) {
     return AuthState(
@@ -33,6 +38,8 @@ class AuthState {
       uid: clearUser ? null : (uid ?? this.uid),
       email: clearUser ? null : (email ?? this.email),
       displayName: clearUser ? null : (displayName ?? this.displayName),
+      canEditCredentials:
+          clearUser || (canEditCredentials ?? this.canEditCredentials),
     );
   }
 }
