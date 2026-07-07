@@ -66,26 +66,8 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     final favorites = ref.watch(favoritesProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PokeData'),
-        actions: [
-          IconButton(
-            tooltip: 'Filtros avançados',
-            icon: Badge(
-              isLabelVisible: _advancedFilterCount(filters) > 0,
-              label: Text('${_advancedFilterCount(filters)}'),
-              child: const Icon(Icons.tune),
-            ),
-            onPressed: () => showPokemonFilterSheet(context),
-          ),
-          IconButton(
-            tooltip: 'Geração',
-            icon: const Icon(Icons.layers_outlined),
-            onPressed: () => showPokemonGenerationSheet(context),
-          ),
-        ],
-      ),
-      body: SafePageBody.inTabShell(
+      body: SafePageBody(
+        bottom: false,
         child: Column(
           children: [
             Padding(
@@ -97,18 +79,34 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Row(
-                children: [
-                  _TypeFilterChip(
-                    typeFilter: filters.typeFilter,
-                    onTap: () => showPokemonTypeSheet(context),
-                  ),
-                  const SizedBox(width: 8),
-                  _SortFilterChip(
-                    sort: filters.sort,
-                    onTap: () => showPokemonSortSheet(context),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _TypeFilterChip(
+                      typeFilter: filters.typeFilter,
+                      onTap: () => showPokemonTypeSheet(context),
+                    ),
+                    const SizedBox(width: 8),
+                    _SortFilterChip(
+                      sort: filters.sort,
+                      onTap: () => showPokemonSortSheet(context),
+                    ),
+                    const SizedBox(width: 8),
+                    _FilterPillChip(
+                      label: 'Geração',
+                      icon: Icons.layers_outlined,
+                      onTap: () => showPokemonGenerationSheet(context),
+                    ),
+                    const SizedBox(width: 8),
+                    _FilterPillChip(
+                      label: 'Filtros Avançados',
+                      icon: Icons.tune,
+                      badgeCount: _advancedFilterCount(filters),
+                      onTap: () => showPokemonFilterSheet(context),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (filters.generationId != null)
@@ -310,6 +308,56 @@ class _SortFilterChip extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FilterPillChip extends StatelessWidget {
+  const _FilterPillChip({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.badgeCount = 0,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final int badgeCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final chip = GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColorsLight.sortPillDark,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (badgeCount <= 0) return chip;
+
+    return Badge(
+      label: Text('$badgeCount'),
+      child: chip,
     );
   }
 }
