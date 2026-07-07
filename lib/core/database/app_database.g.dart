@@ -427,8 +427,20 @@ class $PokemonNameIndexTable extends PokemonNameIndex
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _localizedNameMeta = const VerificationMeta(
+    'localizedName',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  late final GeneratedColumn<String> localizedName = GeneratedColumn<String>(
+    'localized_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, localizedName];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -452,6 +464,15 @@ class $PokemonNameIndexTable extends PokemonNameIndex
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('localized_name')) {
+      context.handle(
+        _localizedNameMeta,
+        localizedName.isAcceptableOrUnknown(
+          data['localized_name']!,
+          _localizedNameMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -469,6 +490,10 @@ class $PokemonNameIndexTable extends PokemonNameIndex
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
+      localizedName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}localized_name'],
+      )!,
     );
   }
 
@@ -482,17 +507,27 @@ class PokemonNameIndexData extends DataClass
     implements Insertable<PokemonNameIndexData> {
   final int id;
   final String name;
-  const PokemonNameIndexData({required this.id, required this.name});
+  final String localizedName;
+  const PokemonNameIndexData({
+    required this.id,
+    required this.name,
+    required this.localizedName,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
+    map['localized_name'] = Variable<String>(localizedName);
     return map;
   }
 
   PokemonNameIndexCompanion toCompanion(bool nullToAbsent) {
-    return PokemonNameIndexCompanion(id: Value(id), name: Value(name));
+    return PokemonNameIndexCompanion(
+      id: Value(id),
+      name: Value(name),
+      localizedName: Value(localizedName),
+    );
   }
 
   factory PokemonNameIndexData.fromJson(
@@ -503,6 +538,7 @@ class PokemonNameIndexData extends DataClass
     return PokemonNameIndexData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      localizedName: serializer.fromJson<String>(json['localizedName']),
     );
   }
   @override
@@ -511,15 +547,26 @@ class PokemonNameIndexData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'localizedName': serializer.toJson<String>(localizedName),
     };
   }
 
-  PokemonNameIndexData copyWith({int? id, String? name}) =>
-      PokemonNameIndexData(id: id ?? this.id, name: name ?? this.name);
+  PokemonNameIndexData copyWith({
+    int? id,
+    String? name,
+    String? localizedName,
+  }) => PokemonNameIndexData(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    localizedName: localizedName ?? this.localizedName,
+  );
   PokemonNameIndexData copyWithCompanion(PokemonNameIndexCompanion data) {
     return PokemonNameIndexData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
+      localizedName: data.localizedName.present
+          ? data.localizedName.value
+          : this.localizedName,
     );
   }
 
@@ -527,46 +574,58 @@ class PokemonNameIndexData extends DataClass
   String toString() {
     return (StringBuffer('PokemonNameIndexData(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('localizedName: $localizedName')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name);
+  int get hashCode => Object.hash(id, name, localizedName);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PokemonNameIndexData &&
           other.id == this.id &&
-          other.name == this.name);
+          other.name == this.name &&
+          other.localizedName == this.localizedName);
 }
 
 class PokemonNameIndexCompanion extends UpdateCompanion<PokemonNameIndexData> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String> localizedName;
   const PokemonNameIndexCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.localizedName = const Value.absent(),
   });
   PokemonNameIndexCompanion.insert({
     this.id = const Value.absent(),
     required String name,
+    this.localizedName = const Value.absent(),
   }) : name = Value(name);
   static Insertable<PokemonNameIndexData> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<String>? localizedName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (localizedName != null) 'localized_name': localizedName,
     });
   }
 
-  PokemonNameIndexCompanion copyWith({Value<int>? id, Value<String>? name}) {
+  PokemonNameIndexCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? localizedName,
+  }) {
     return PokemonNameIndexCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      localizedName: localizedName ?? this.localizedName,
     );
   }
 
@@ -579,6 +638,9 @@ class PokemonNameIndexCompanion extends UpdateCompanion<PokemonNameIndexData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (localizedName.present) {
+      map['localized_name'] = Variable<String>(localizedName.value);
+    }
     return map;
   }
 
@@ -586,7 +648,8 @@ class PokemonNameIndexCompanion extends UpdateCompanion<PokemonNameIndexData> {
   String toString() {
     return (StringBuffer('PokemonNameIndexCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('localizedName: $localizedName')
           ..write(')'))
         .toString();
   }
@@ -1132,9 +1195,17 @@ typedef $$CachedPokemonEntriesTableProcessedTableManager =
       PrefetchHooks Function()
     >;
 typedef $$PokemonNameIndexTableCreateCompanionBuilder =
-    PokemonNameIndexCompanion Function({Value<int> id, required String name});
+    PokemonNameIndexCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<String> localizedName,
+    });
 typedef $$PokemonNameIndexTableUpdateCompanionBuilder =
-    PokemonNameIndexCompanion Function({Value<int> id, Value<String> name});
+    PokemonNameIndexCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> localizedName,
+    });
 
 class $$PokemonNameIndexTableFilterComposer
     extends Composer<_$AppDatabase, $PokemonNameIndexTable> {
@@ -1152,6 +1223,11 @@ class $$PokemonNameIndexTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localizedName => $composableBuilder(
+    column: $table.localizedName,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1174,6 +1250,11 @@ class $$PokemonNameIndexTableOrderingComposer
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get localizedName => $composableBuilder(
+    column: $table.localizedName,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$PokemonNameIndexTableAnnotationComposer
@@ -1190,6 +1271,11 @@ class $$PokemonNameIndexTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get localizedName => $composableBuilder(
+    column: $table.localizedName,
+    builder: (column) => column,
+  );
 }
 
 class $$PokemonNameIndexTableTableManager
@@ -1231,10 +1317,22 @@ class $$PokemonNameIndexTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-              }) => PokemonNameIndexCompanion(id: id, name: name),
+                Value<String> localizedName = const Value.absent(),
+              }) => PokemonNameIndexCompanion(
+                id: id,
+                name: name,
+                localizedName: localizedName,
+              ),
           createCompanionCallback:
-              ({Value<int> id = const Value.absent(), required String name}) =>
-                  PokemonNameIndexCompanion.insert(id: id, name: name),
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String> localizedName = const Value.absent(),
+              }) => PokemonNameIndexCompanion.insert(
+                id: id,
+                name: name,
+                localizedName: localizedName,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),

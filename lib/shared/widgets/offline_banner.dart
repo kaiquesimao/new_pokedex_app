@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class OfflineBanner extends StatelessWidget {
   const OfflineBanner({
     super.key,
-    this.message =
-        'Você está offline. Mostrando Pokémon salvos no dispositivo.',
+    this.message,
     this.compact = false,
   });
 
-  final String message;
+  final String? message;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+
+    final l10n = AppLocalizations.of(context);
+    final displayMessage = message ?? l10n.offlineBannerMessage;
 
     return Material(
       color: colors.secondaryContainer.withValues(alpha: 0.95),
@@ -31,7 +34,7 @@ class OfflineBanner extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                message,
+                displayMessage,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colors.onSecondaryContainer,
                   fontWeight: FontWeight.w600,
@@ -65,12 +68,11 @@ class AppOfflineShell extends ConsumerWidget {
 class ConnectivityOfflineBanner extends ConsumerWidget {
   const ConnectivityOfflineBanner({
     super.key,
-    this.message =
-        'Você está offline. Mostrando Pokémon salvos no dispositivo.',
+    this.message,
     this.compact = false,
   });
 
-  final String message;
+  final String? message;
   final bool compact;
 
   @override
@@ -101,7 +103,10 @@ class OfflineEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = isConnectivityFailure ? 'Sem conexão' : 'Erro ao carregar';
+    final l10n = AppLocalizations.of(context);
+    final title = isConnectivityFailure
+        ? l10n.offlineEmptyTitleConnectivity
+        : l10n.offlineEmptyTitleError;
     final icon = isConnectivityFailure
         ? Icons.cloud_off_outlined
         : Icons.error_outline_rounded;
@@ -136,7 +141,7 @@ class OfflineEmptyState extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Tentar novamente'),
+              label: Text(l10n.offlineRetryButton),
             ),
           ],
         ),

@@ -1,24 +1,33 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations_en.dart';
 
 void main() {
-  group('PasswordPolicy', () {
-    test('accepts password within Firebase limits', () {
-      expect(PasswordPolicy.validate('abcdef'), isNull);
-      expect(PasswordPolicy.validate('a' * PasswordPolicy.maxLength), isNull);
-    });
+  final l10n = AppLocalizationsEn();
 
-    test('rejects password shorter than minimum', () {
+  group('PasswordPolicy', () {
+    test('accepts valid lengths', () {
+      expect(PasswordPolicy.validateWithL10n(l10n, 'abcdef'), isNull);
       expect(
-        PasswordPolicy.validate('12345'),
-        'A senha deve ter pelo menos 6 caracteres.',
+        PasswordPolicy.validateWithL10n(l10n, 'a' * PasswordPolicy.maxLength),
+        isNull,
       );
     });
 
-    test('rejects password longer than maximum', () {
+    test('rejects too short passwords', () {
       expect(
-        PasswordPolicy.validate('a' * (PasswordPolicy.maxLength + 1)),
-        'A senha deve ter no máximo 4096 caracteres.',
+        PasswordPolicy.validateWithL10n(l10n, '12345'),
+        l10n.authPasswordTooShort(PasswordPolicy.minLength),
+      );
+    });
+
+    test('rejects too long passwords', () {
+      expect(
+        PasswordPolicy.validateWithL10n(
+          l10n,
+          'a' * (PasswordPolicy.maxLength + 1),
+        ),
+        l10n.authPasswordTooLong(PasswordPolicy.maxLength),
       );
     });
   });

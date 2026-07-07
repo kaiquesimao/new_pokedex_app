@@ -28,9 +28,9 @@ class EvolutionMapper {
     return EvolutionTriggerInfo(
       minLevel: detail.minLevel,
       trigger: detail.trigger?.name,
-      item: detail.item?.name,
+      itemSlug: detail.item?.name,
       timeOfDay: detail.timeOfDay,
-      heldItem: detail.heldItem?.name,
+      heldItemSlug: detail.heldItem?.name,
     );
   }
 }

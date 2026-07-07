@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum ForgotPasswordStep { email, otp, newPassword, success, emailSent }
 
@@ -46,7 +48,10 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
   Future<void> submitEmail(String rawEmail) async {
     final email = rawEmail.trim();
     if (email.isEmpty || !email.contains('@')) {
-      state = state.copyWith(error: 'Informe um e-mail válido');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authInvalidEmail);
       return;
     }
 
@@ -75,9 +80,12 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
       }
     } on Object catch (e) {
       if (ref.mounted) {
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
         state = state.copyWith(
           loading: false,
-          error: formatAuthException(e),
+          error: formatAuthException(l10n, e),
         );
       }
     }
@@ -92,9 +100,12 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
           .verifyOtp(email: state.email, code: code);
 
       if (!valid) {
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
         state = state.copyWith(
           loading: false,
-          error: 'Código inválido. Tente novamente.',
+          error: l10n.authInvalidCodeTryAgain,
         );
         return;
       }
@@ -121,21 +132,29 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
     required String password,
     required String confirm,
   }) async {
-    final passwordError = PasswordPolicy.validate(password);
+    final passwordError = PasswordPolicy.validateWithL10n(
+      lookupAppLocalizations(ref.read(appLocaleProvider).materialLocale),
+      password,
+    );
     if (passwordError != null) {
       state = state.copyWith(error: passwordError);
       return;
     }
 
     if (password != confirm) {
-      state = state.copyWith(error: 'As senhas não coincidem');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authPasswordsDoNotMatch);
       return;
     }
 
     state = state.copyWith(loading: true, clearError: true);
 
     try {
-      await ref.read(authProvider.notifier).resetPassword(
+      await ref
+          .read(authProvider.notifier)
+          .resetPassword(
             email: state.email,
             newPassword: password,
           );
@@ -147,9 +166,12 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
       }
     } on Object catch (e) {
       if (ref.mounted) {
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
         state = state.copyWith(
           loading: false,
-          error: formatAuthException(e),
+          error: formatAuthException(l10n, e),
         );
       }
     }
@@ -168,8 +190,10 @@ class ForgotPasswordFlowNotifier extends Notifier<ForgotPasswordFlowState> {
 }
 
 final NotifierProvider<ForgotPasswordFlowNotifier, ForgotPasswordFlowState>
-    forgotPasswordFlowProvider =
-    NotifierProvider.autoDispose<ForgotPasswordFlowNotifier,
-        ForgotPasswordFlowState>(
-  ForgotPasswordFlowNotifier.new,
-);
+forgotPasswordFlowProvider =
+    NotifierProvider.autoDispose<
+      ForgotPasswordFlowNotifier,
+      ForgotPasswordFlowState
+    >(
+      ForgotPasswordFlowNotifier.new,
+    );

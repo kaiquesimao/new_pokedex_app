@@ -1,20 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/auth/domain/display_name_policy.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations_pt.dart';
 
 void main() {
+  final l10n = AppLocalizationsPt();
+
   group('DisplayNamePolicy', () {
-    test('accepts non-empty trimmed name', () {
-      expect(DisplayNamePolicy.validate('  Ash  '), isNull);
+    test('accepts trimmed valid names', () {
+      expect(DisplayNamePolicy.validateWithL10n(l10n, '  Ash  '), isNull);
     });
 
-    test('rejects empty name', () {
-      expect(DisplayNamePolicy.validate('   '), 'Informe um nome');
-    });
-
-    test('rejects name longer than max length', () {
+    test('rejects empty names', () {
       expect(
-        DisplayNamePolicy.validate('a' * (DisplayNamePolicy.maxLength + 1)),
-        isNotNull,
+        DisplayNamePolicy.validateWithL10n(l10n, '   '),
+        l10n.authEnterYourName,
+      );
+    });
+
+    test('rejects names over max length', () {
+      expect(
+        DisplayNamePolicy.validateWithL10n(
+          l10n,
+          'a' * (DisplayNamePolicy.maxLength + 1),
+        ),
+        l10n.authDisplayNameTooLong(DisplayNamePolicy.maxLength),
       );
     });
   });

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/pokemon/data/mappers/evolution_mapper.dart';
 import 'package:pokedex_app/features/pokemon/data/models/evolution_models.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations_pt.dart';
 
 void main() {
   test('toNode maps bulbasaur evolution chain correctly', () async {
@@ -23,7 +24,7 @@ void main() {
     final ivysaur = root.evolvesTo.first;
     expect(ivysaur.speciesName, 'ivysaur');
     expect(ivysaur.trigger?.minLevel, 16);
-    expect(ivysaur.trigger?.displayLabel, 'Nível 16');
+    expect(ivysaur.trigger?.displayLabel(AppLocalizationsPt()), 'Nível 16');
 
     final venusaur = ivysaur.evolvesTo.first;
     expect(venusaur.speciesName, 'venusaur');

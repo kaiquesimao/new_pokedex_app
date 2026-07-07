@@ -1,48 +1,45 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class EvolutionTriggerInfo {
   const EvolutionTriggerInfo({
     this.minLevel,
     this.trigger,
-    this.item,
+    this.itemSlug,
+    this.itemDisplayName,
     this.timeOfDay,
-    this.heldItem,
+    this.heldItemSlug,
+    this.heldItemDisplayName,
   });
 
   final int? minLevel;
   final String? trigger;
-  final String? item;
+  final String? itemSlug;
+  final String? itemDisplayName;
   final String? timeOfDay;
-  final String? heldItem;
+  final String? heldItemSlug;
+  final String? heldItemDisplayName;
 
-  String get displayLabel {
+  String displayLabel(AppLocalizations l10n) {
     if (minLevel != null && minLevel! > 0) {
-      return 'Nível $minLevel';
+      return l10n.evolutionTriggerLevel(minLevel!);
     }
-    if (item != null && item!.isNotEmpty) {
-      return _formatName(item!);
+    if (itemDisplayName != null && itemDisplayName!.isNotEmpty) {
+      return itemDisplayName!;
     }
-    if (trigger == 'trade') return 'Troca';
-    if (trigger == 'use-item') return 'Usar item';
-    if (trigger == 'level-up') return 'Subir de nível';
-    if (trigger == 'other') return 'Especial';
+    if (trigger == 'trade') return l10n.evolutionTriggerTrade;
+    if (trigger == 'use-item') return l10n.evolutionTriggerUseItem;
+    if (trigger == 'level-up') return l10n.evolutionTriggerLevelUp;
+    if (trigger == 'other') return l10n.evolutionTriggerOther;
     if (timeOfDay != null && timeOfDay!.isNotEmpty) {
-      return timeOfDay == 'day' ? 'Durante o dia' : 'À noite';
+      return timeOfDay == 'day'
+          ? l10n.evolutionTriggerDuringDay
+          : l10n.evolutionTriggerAtNight;
     }
-    if (heldItem != null && heldItem!.isNotEmpty) {
-      return 'Segurando ${_formatName(heldItem!)}';
+    if (heldItemDisplayName != null && heldItemDisplayName!.isNotEmpty) {
+      return l10n.evolutionTriggerHoldingItem(heldItemDisplayName!);
     }
     return '';
-  }
-
-  static String _formatName(String value) {
-    return value
-        .split('-')
-        .map((part) {
-          if (part.isEmpty) return part;
-          return part[0].toUpperCase() + part.substring(1);
-        })
-        .join(' ');
   }
 }
 
@@ -50,6 +47,7 @@ class EvolutionChainNode {
   const EvolutionChainNode({
     required this.speciesId,
     required this.speciesName,
+    this.localizedDisplayName,
     this.pokemonId,
     this.spriteUrl,
     this.types = const [],
@@ -62,14 +60,20 @@ class EvolutionChainNode {
   /// Pokémon entry id when this stage shows a specific form (e.g. mega).
   final int? pokemonId;
   final String speciesName;
+  final String? localizedDisplayName;
   final String? spriteUrl;
   final List<PokemonType> types;
   final EvolutionTriggerInfo? trigger;
   final List<EvolutionChainNode> evolvesTo;
 
-  String get displayName => speciesName.isEmpty
-      ? ''
-      : speciesName[0].toUpperCase() + speciesName.substring(1);
+  String get displayName {
+    if (localizedDisplayName != null && localizedDisplayName!.isNotEmpty) {
+      return localizedDisplayName!;
+    }
+    return speciesName.isEmpty
+        ? ''
+        : speciesName[0].toUpperCase() + speciesName.substring(1);
+  }
 
   bool get hasEvolution => evolvesTo.isNotEmpty;
 }

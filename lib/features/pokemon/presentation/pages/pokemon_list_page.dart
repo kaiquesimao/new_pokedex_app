@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
@@ -13,6 +15,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dar
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_filter_sheets.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
@@ -64,6 +67,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     final state = ref.watch(pokemonListProvider);
     final filters = ref.watch(pokemonFiltersProvider);
     final favorites = ref.watch(favoritesProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafePageBody(
@@ -94,13 +98,13 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                     ),
                     const SizedBox(width: 8),
                     _FilterPillChip(
-                      label: 'Geração',
+                      label: l10n.filterGenerationLabel,
                       icon: Icons.layers_outlined,
                       onTap: () => showPokemonGenerationSheet(context),
                     ),
                     const SizedBox(width: 8),
                     _FilterPillChip(
-                      label: 'Filtros Avançados',
+                      label: l10n.filterAdvancedLabel,
                       icon: Icons.tune,
                       badgeCount: _advancedFilterCount(filters),
                       onTap: () => showPokemonFilterSheet(context),
@@ -111,12 +115,12 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
             ),
             if (filters.generationId != null)
               _ActiveFilterChip(
-                label: _generationLabel(filters.generationId!),
+                label: _generationLabel(l10n, filters.generationId!),
                 onClear: () => ref
                     .read(pokemonFiltersProvider.notifier)
                     .setGeneration(null),
               ),
-            Expanded(child: _buildBody(state, favorites)),
+            Expanded(child: _buildBody(l10n, state, favorites)),
           ],
         ),
       ),
@@ -131,16 +135,18 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     return count;
   }
 
-  String _generationLabel(int id) {
-    return kPokemonGenerations
-        .firstWhere(
-          (generation) => generation.id == id,
-          orElse: () => (id: id, label: 'Geração $id'),
-        )
-        .label;
+  String _generationLabel(AppLocalizations l10n, int id) {
+    if (kPokemonGenerationIds.contains(id)) {
+      return l10n.generationPickerLabel(id);
+    }
+    return l10n.generationFallbackLabel(id);
   }
 
-  Widget _buildBody(PokemonListState state, Set<int> favorites) {
+  Widget _buildBody(
+    AppLocalizations l10n,
+    PokemonListState state,
+    Set<int> favorites,
+  ) {
     if (state.showFullSkeleton) {
       return const PokemonListSkeleton();
     }
@@ -159,13 +165,13 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     if (state.items.isEmpty &&
         !state.isLoadingSummaries &&
         !state.isLoadingIds) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 48),
-            SizedBox(height: 12),
-            Text('Nenhum Pokémon encontrado'),
+            const Icon(Icons.search_off, size: 48),
+            const SizedBox(height: 12),
+            Text(l10n.filterNoPokemonFound),
           ],
         ),
       );
@@ -234,8 +240,9 @@ class _TypeFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final label = typeFilter?.labelPt ?? 'Tipo';
+    final label = typeFilter?.label(l10n) ?? l10n.filterTypeLabel;
     final color = typeFilter != null
         ? PokemonTypeColors.forType(typeFilter!, isDark: isDark)
         : AppColorsLight.sortPillDark;
@@ -280,6 +287,7 @@ class _SortFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -292,7 +300,7 @@ class _SortFilterChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              sort.label,
+              sort.label(l10n),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

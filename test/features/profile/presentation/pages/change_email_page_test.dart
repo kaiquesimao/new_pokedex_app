@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -11,6 +10,7 @@ import 'package:pokedex_app/features/profile/presentation/pages/change_email_pag
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -26,17 +26,16 @@ void main() {
     });
     final prefs = await SharedPreferences.getInstance();
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          authProvider.overrideWithBuild(
-            (ref, notifier) => readStoredAuthState(prefs),
-          ),
-        ],
-        child: const MaterialApp(home: ChangeEmailPage()),
-      ),
+    await pumpLocalizedApp(
+      tester,
+      child: const ChangeEmailPage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => readStoredAuthState(prefs),
+        ),
+      ],
     );
 
     expect(find.text('Qual é sua senha atual?'), findsOneWidget);
@@ -69,20 +68,23 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              canEditCredentials: false,
-            ),
-          ),
-        ],
-        child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            canEditCredentials: false,
+          ),
+        ),
+      ],
     );
 
     unawaited(router.push('/profile/change-email'));

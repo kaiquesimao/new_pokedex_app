@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 
+import '../../helpers/l10n_test_helper.dart';
+
 void main() {
   testWidgets('OtpCodeField renders six digit boxes', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: OtpCodeField(onCompleted: (_) {}),
-        ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: OtpCodeField(onCompleted: _onCompleted),
       ),
     );
 
@@ -17,13 +18,12 @@ void main() {
   });
 
   testWidgets('OtpCodeField shows resend link when provided', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: OtpCodeField(
-            onCompleted: (_) {},
-            onResend: () {},
-          ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: OtpCodeField(
+          onCompleted: _onCompleted,
+          onResend: _onResend,
         ),
       ),
     );
@@ -31,3 +31,7 @@ void main() {
     expect(find.text('Reenviar código'), findsOneWidget);
   });
 }
+
+void _onCompleted(String _) {}
+
+void _onResend() {}

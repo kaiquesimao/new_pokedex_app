@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/constants/region_labels.dart';
+import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/regions/domain/utils/regional_pokemon_filter_utils.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_provider.dart';
 import 'package:pokedex_app/features/regions/presentation/widgets/regional_filter_sheets.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
@@ -76,6 +79,7 @@ class RegionalPokedexPage extends ConsumerWidget {
     RegionalPokedexState state,
     PokemonListFilters filters,
   ) {
+    final l10n = AppLocalizations.of(context);
     if (state.showFullSkeleton) {
       return const PokemonListSkeleton();
     }
@@ -96,7 +100,7 @@ class RegionalPokedexPage extends ConsumerWidget {
     );
 
     if (filtered.isEmpty && !state.isLoadingSummaries) {
-      return const Center(child: Text('Nenhum Pokémon encontrado'));
+      return Center(child: Text(l10n.filterNoPokemonFound));
     }
 
     final skeletonCount = state.items.isNotEmpty && state.isLoadingSummaries
@@ -135,8 +139,9 @@ class _TypeFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final label = typeFilter?.labelPt ?? 'Tipo';
+    final label = typeFilter?.label(l10n) ?? l10n.filterTypeLabel;
     final color = typeFilter != null
         ? PokemonTypeColors.forType(typeFilter!, isDark: isDark)
         : AppColorsLight.sortPillDark;
@@ -181,6 +186,7 @@ class _SortFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -193,7 +199,7 @@ class _SortFilterChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              sort.label,
+              sort.label(l10n),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -29,7 +31,10 @@ void main() {
       container.read(registerFlowProvider.notifier).submitEmail('invalid');
 
       final state = container.read(registerFlowProvider);
-      expect(state.error, 'Informe um e-mail válido');
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
+      expect(state.error, l10n.authInvalidEmail);
       expect(state.step, RegisterStep.email);
       expect(state.email, isEmpty);
     });
@@ -59,12 +64,15 @@ void main() {
 
     test('submitName rejects empty name', () async {
       final notifier = container.read(registerFlowProvider.notifier)
-        ..submitEmail('ash@pokemon.com')
-        ..submitPassword('senha123');
+        ..submitEmail('ash@pokemon.com');
+      await notifier.submitPassword('senha123');
       await notifier.submitName('   ');
 
       final state = container.read(registerFlowProvider);
-      expect(state.error, 'Informe seu nome');
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
+      expect(state.error, l10n.authEnterYourName);
       expect(state.step, RegisterStep.name);
       expect(state.name, isEmpty);
     });

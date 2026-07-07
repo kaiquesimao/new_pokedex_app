@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   testWidgets('gender bar track renders with visible size', (tester) async {
@@ -18,12 +19,11 @@ void main() {
       eggGroups: ['monster'],
     );
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: PokemonDetailAboutSection(pokemon: pokemon),
-          ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: SingleChildScrollView(
+          child: PokemonDetailAboutSection(pokemon: pokemon),
         ),
       ),
     );

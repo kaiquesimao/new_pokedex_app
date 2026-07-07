@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('readStoredProfileSettings returns defaults', () async {
+  test('readStoredProfileSettings uses system locale when empty', () async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
@@ -15,8 +15,16 @@ void main() {
     expect(settings.showOtherForms, isTrue);
     expect(settings.notifyNewPokemon, isTrue);
     expect(settings.notifyAppUpdates, isFalse);
-    expect(settings.interfaceLanguage, 'pt-BR');
-    expect(settings.gameInfoLanguage, 'en-US');
+    expect(settings.appLanguage, anyOf('pt-BR', 'en-US'));
+  });
+
+  test('migrates legacy interfaceLanguageKey', () async {
+    SharedPreferences.setMockInitialValues({
+      interfaceLanguageKey: 'en-US',
+    });
+    final prefs = await SharedPreferences.getInstance();
+
+    expect(readStoredProfileSettings(prefs).appLanguage, 'en-US');
   });
 
   test('readStoredProfileSettings returns persisted values', () async {
@@ -25,8 +33,7 @@ void main() {
       showOtherFormsKey: false,
       notifyNewPokemonKey: false,
       notifyAppUpdatesKey: true,
-      interfaceLanguageKey: 'en-US',
-      gameInfoLanguageKey: 'pt-BR',
+      appLanguageKey: 'pt-BR',
     });
     final prefs = await SharedPreferences.getInstance();
 
@@ -36,7 +43,6 @@ void main() {
     expect(settings.showOtherForms, isFalse);
     expect(settings.notifyNewPokemon, isFalse);
     expect(settings.notifyAppUpdates, isTrue);
-    expect(settings.interfaceLanguage, 'en-US');
-    expect(settings.gameInfoLanguage, 'pt-BR');
+    expect(settings.appLanguage, 'pt-BR');
   });
 }

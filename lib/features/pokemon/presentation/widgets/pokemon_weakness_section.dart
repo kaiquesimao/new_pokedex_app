@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/type_weakness_utils.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonWeaknessSection extends StatelessWidget {
@@ -10,8 +12,9 @@ class PokemonWeaknessSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final weaknesses = weaknessesForTypes(types).toList()
-      ..sort((a, b) => a.labelPt.compareTo(b.labelPt));
+      ..sort((a, b) => a.label(l10n).compareTo(b.label(l10n)));
 
     if (weaknesses.isEmpty) {
       return const SizedBox.shrink();
@@ -23,7 +26,7 @@ class PokemonWeaknessSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Fraquezas',
+            l10n.pokemonDetailWeaknesses,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),

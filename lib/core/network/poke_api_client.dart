@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pokedex_app/core/locale/api_load_target.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/features/pokemon/data/models/evolution_models.dart';
 import 'package:pokedex_app/features/pokemon/data/models/filter_models.dart';
@@ -21,10 +22,7 @@ class PokeApiClient {
       );
       return PokemonListResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(
-        e,
-        fallback: 'Não foi possível carregar a lista de Pokémon',
-      );
+      mapDioException(e, loadTarget: ApiLoadTarget.pokemonList);
     }
   }
 
@@ -33,7 +31,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/pokemon/$id');
       return PokemonResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar o Pokémon');
+      mapDioException(e, loadTarget: ApiLoadTarget.pokemon);
     }
   }
 
@@ -42,7 +40,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/region');
       return RegionListResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar as regiões');
+      mapDioException(e, loadTarget: ApiLoadTarget.regions);
     }
   }
 
@@ -51,7 +49,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/region/$name');
       return RegionDetailResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a região');
+      mapDioException(e, loadTarget: ApiLoadTarget.region);
     }
   }
 
@@ -60,7 +58,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/pokedex/$id');
       return PokedexResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a PokeData');
+      mapDioException(e, loadTarget: ApiLoadTarget.pokedex);
     }
   }
 
@@ -69,7 +67,7 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/generation/$id');
       return GenerationResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a geração');
+      mapDioException(e, loadTarget: ApiLoadTarget.generation);
     }
   }
 
@@ -78,7 +76,36 @@ class PokeApiClient {
       final response = await _dio.get<Map<String, dynamic>>('/type/$name');
       return TypeResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar o tipo');
+      mapDioException(e, loadTarget: ApiLoadTarget.type);
+    }
+  }
+
+  Future<Map<String, dynamic>> getAbility(String name) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/ability/$name');
+      return response.data ?? {};
+    } on DioException catch (e) {
+      mapDioException(e, loadTarget: ApiLoadTarget.ability);
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchEggGroup(String name) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/egg-group/$name',
+      );
+      return response.data!;
+    } on DioException catch (e) {
+      mapDioException(e, loadTarget: ApiLoadTarget.eggGroup);
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchItem(String name) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/item/$name');
+      return response.data!;
+    } on DioException catch (e) {
+      mapDioException(e, loadTarget: ApiLoadTarget.item);
     }
   }
 
@@ -89,10 +116,7 @@ class PokeApiClient {
       );
       return EvolutionChainResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(
-        e,
-        fallback: 'Não foi possível carregar a cadeia evolutiva',
-      );
+      mapDioException(e, loadTarget: ApiLoadTarget.evolutionChain);
     }
   }
 
@@ -103,7 +127,7 @@ class PokeApiClient {
       );
       return PokemonSpeciesResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a espécie');
+      mapDioException(e, loadTarget: ApiLoadTarget.species);
     }
   }
 
@@ -114,7 +138,7 @@ class PokeApiClient {
       );
       return PokemonFormResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
-      mapDioException(e, fallback: 'Não foi possível carregar a forma');
+      mapDioException(e, loadTarget: ApiLoadTarget.form);
     }
   }
 }

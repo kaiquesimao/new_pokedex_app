@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 
 Future<bool?> showLogoutBottomSheet(BuildContext context) {
@@ -15,55 +16,56 @@ class _LogoutBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
-      label: 'Confirmação de saída da conta',
+      label: l10n.profileLogoutConfirmSemantics,
       child: Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.dividerColor,
-                borderRadius: BorderRadius.circular(2),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Tem certeza que deseja sair?',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
+            const SizedBox(height: 24),
+            Text(
+              l10n.profileLogoutConfirmTitle,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Semantics(
-            label: 'Sim, sair da conta',
-            button: true,
-            child: AppButton(
-              label: 'Sim, Sair',
-              onPressed: () => Navigator.of(context).pop(true),
+            const SizedBox(height: 24),
+            Semantics(
+              label: l10n.profileLogoutConfirmYesSemantics,
+              button: true,
+              child: AppButton(
+                label: l10n.profileLogoutConfirmYes,
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Semantics(
-            label: 'Não, cancelar saída',
-            button: true,
-            child: AppButton(
-              label: 'Não, Cancelar',
-              variant: AppButtonVariant.outline,
-              onPressed: () => Navigator.of(context).pop(false),
+            const SizedBox(height: 12),
+            Semantics(
+              label: l10n.profileLogoutConfirmNoSemantics,
+              button: true,
+              child: AppButton(
+                label: l10n.profileLogoutConfirmNo,
+                variant: AppButtonVariant.outline,
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 }

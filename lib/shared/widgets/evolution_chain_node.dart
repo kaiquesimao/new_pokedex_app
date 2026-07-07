@@ -4,6 +4,7 @@ import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
@@ -238,7 +239,11 @@ class EvolutionChainTree extends StatelessWidget {
               : () => onNodeTap?.call(node.pokemonId ?? node.speciesId!),
         ),
         if (children.length == 1) ...[
-          EvolutionChainConnector(label: children.first.trigger?.displayLabel),
+          EvolutionChainConnector(
+            label: children.first.trigger?.displayLabel(
+              AppLocalizations.of(context),
+            ),
+          ),
           _buildNode(context, children.first),
         ] else if (children.length > 1) ...[
           const EvolutionChainConnector(),
@@ -251,11 +256,16 @@ class EvolutionChainTree extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
                     children: [
-                      if (child.trigger?.displayLabel.isNotEmpty ?? false)
+                      if (child.trigger
+                              ?.displayLabel(AppLocalizations.of(context))
+                              .isNotEmpty ??
+                          false)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Text(
-                            child.trigger!.displayLabel,
+                            child.trigger!.displayLabel(
+                              AppLocalizations.of(context),
+                            ),
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: AppColorsLight.primary,

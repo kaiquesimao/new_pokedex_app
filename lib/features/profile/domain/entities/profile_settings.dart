@@ -4,38 +4,30 @@ class ProfileSettings {
     this.showOtherForms = true,
     this.notifyNewPokemon = true,
     this.notifyAppUpdates = false,
-    this.interfaceLanguage = 'pt-BR',
-    this.gameInfoLanguage = 'en-US',
+    this.appLanguage = 'pt-BR',
   });
 
   final bool showMegaEvolutions;
   final bool showOtherForms;
   final bool notifyNewPokemon;
   final bool notifyAppUpdates;
-  final String interfaceLanguage;
-  final String gameInfoLanguage;
+  final String appLanguage;
 
   ProfileSettings copyWith({
     bool? showMegaEvolutions,
     bool? showOtherForms,
     bool? notifyNewPokemon,
     bool? notifyAppUpdates,
-    String? interfaceLanguage,
-    String? gameInfoLanguage,
+    String? appLanguage,
   }) {
     return ProfileSettings(
       showMegaEvolutions: showMegaEvolutions ?? this.showMegaEvolutions,
       showOtherForms: showOtherForms ?? this.showOtherForms,
       notifyNewPokemon: notifyNewPokemon ?? this.notifyNewPokemon,
       notifyAppUpdates: notifyAppUpdates ?? this.notifyAppUpdates,
-      interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
-      gameInfoLanguage: gameInfoLanguage ?? this.gameInfoLanguage,
+      appLanguage: appLanguage ?? this.appLanguage,
     );
   }
 
-  String get interfaceLanguageLabel =>
-      interfaceLanguage == 'pt-BR' ? 'PT-BR' : 'EN-US';
-
-  String get gameInfoLanguageLabel =>
-      gameInfoLanguage == 'pt-BR' ? 'PT-BR' : 'EN-US';
+  String get appLanguageLabel => appLanguage == 'pt-BR' ? 'PT-BR' : 'EN-US';
 }

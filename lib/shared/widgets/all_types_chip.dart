@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class AllTypesChip extends StatelessWidget {
   const AllTypesChip({
@@ -46,7 +47,7 @@ class AllTypesChip extends StatelessWidget {
           border: Border.all(color: borderColor),
         ),
         child: Text(
-          'Todos os tipos',
+          AppLocalizations.of(context).filterAllTypes,
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w600,

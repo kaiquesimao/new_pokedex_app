@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
@@ -30,6 +31,7 @@ class _RegisterSuccessPageState extends ConsumerState<RegisterSuccessPage> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     if (!auth.isAuthenticated) {
       return const Scaffold(body: SizedBox.shrink());
@@ -62,7 +64,7 @@ class _RegisterSuccessPageState extends ConsumerState<RegisterSuccessPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Sua conta foi criada com Sucesso!',
+                      l10n.authRegisterSuccessTitle,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         height: 1.25,
@@ -71,8 +73,7 @@ class _RegisterSuccessPageState extends ConsumerState<RegisterSuccessPage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Seja bem-vindo, treinador! Estamos animados para '
-                      'acompanhar sua jornada.',
+                      l10n.authRegisterSuccessSubtitle,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.55,
@@ -84,7 +85,7 @@ class _RegisterSuccessPageState extends ConsumerState<RegisterSuccessPage> {
                     const SizedBox(height: 28),
                     AuthHubActionFrame(
                       child: AppButton(
-                        label: 'Continuar',
+                        label: l10n.authContinueButton,
                         onPressed: () => context.go('/pokedex'),
                       ),
                     ),

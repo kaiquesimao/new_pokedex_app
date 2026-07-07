@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
@@ -12,22 +13,28 @@ class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  static const _labels = ['PokeData', 'Regiões', 'Favoritos', 'Conta'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final labels = [
+      l10n.navPokedex,
+      l10n.navRegions,
+      l10n.navFavorites,
+      l10n.navAccount,
+    ];
+
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       height: 72,
       indicatorColor: Colors.transparent,
       labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-      destinations: List.generate(_labels.length, (index) {
+      destinations: List.generate(labels.length, (index) {
         final selected = currentIndex == index;
         return NavigationDestination(
           icon: _NavIcon(index: index, selected: selected),
           selectedIcon: _NavIcon(index: index, selected: true),
-          label: _labels[index],
+          label: labels[index],
         );
       }),
     );

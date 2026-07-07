@@ -7,6 +7,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_ut
 void main() {
   const bulbasaur = PokemonSummary(
     id: 1,
+    slug: 'bulbasaur',
     name: 'bulbasaur',
     types: [PokemonType.grass, PokemonType.poison],
     height: 7,
@@ -15,6 +16,7 @@ void main() {
 
   const charmander = PokemonSummary(
     id: 4,
+    slug: 'charmander',
     name: 'charmander',
     types: [PokemonType.fire],
     height: 6,

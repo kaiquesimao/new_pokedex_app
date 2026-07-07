@@ -9,6 +9,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -37,22 +38,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final auth = ref.watch(authProvider);
     final settings = ref.watch(profileSettingsProvider);
     final packageInfo = ref.watch(packageInfoProvider);
+    final l10n = AppLocalizations.of(context);
 
     final versionLabel = packageInfo.when(
       data: (info) => '${info.version} (${info.buildNumber})',
-      loading: () => '…',
-      error: (_, _) => '—',
+      loading: () => l10n.aboutVersionLoading,
+      error: (_, _) => l10n.aboutVersionUnavailable,
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Conta')),
+      appBar: AppBar(title: Text(l10n.navAccount)),
       body: SafePageBody.inTabShell(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
             if (auth.isAuthenticated) ...[
               _AccountSection(
-                name: auth.displayName ?? 'Treinador',
+                name: auth.displayName ?? l10n.authDefaultTrainerName,
                 email: auth.email ?? '',
                 canEditCredentials: auth.canEditCredentials,
                 onEditName: auth.canEditCredentials
@@ -103,19 +105,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     .read(profileSettingsProvider.notifier)
                     .setNotifyAppUpdates(value: value),
               ),
-              onToggleInterfaceLanguage: () => _saveSetting(
+              onToggleAppLanguage: () => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
-                    .toggleInterfaceLanguage(),
-              ),
-              onToggleGameInfoLanguage: () => _saveSetting(
-                context,
-                ref,
-                () => ref
-                    .read(profileSettingsProvider.notifier)
-                    .toggleGameInfoLanguage(),
+                    .toggleAppLanguage(),
               ),
               onTermsTap: () => context.push('/legal/terms'),
               onPrivacyTap: () => context.push('/legal/privacy'),
@@ -125,7 +120,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             if (auth.isAuthenticated) ...[
               const SizedBox(height: 32),
               _LogoutSection(
-                displayName: auth.displayName ?? 'Treinador',
+                displayName: auth.displayName ?? l10n.authDefaultTrainerName,
                 onLogout: () => _handleLogout(context, ref),
               ),
             ],
@@ -146,20 +141,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   static void showProfileSuccessSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ação realizada com sucesso'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).profileActionSuccess),
         backgroundColor: AppColorsLight.primary,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
-
-  // Future: profile field edit placeholders
-  // static void _showPlaceholderLink(BuildContext context, String label) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text('$label — em breve')),
-  //   );
-  // }
 
   static Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
     final confirmed = await showLogoutBottomSheet(context);
@@ -181,14 +169,15 @@ class _GuestAccountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _SettingsGroup(
-      title: 'Conta',
+      title: l10n.navAccount,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
-            'Entre na sua conta para sincronizar favoritos e gerenciar seus dados.',
+            l10n.authLoginRequiredDescription,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
@@ -198,10 +187,13 @@ class _GuestAccountSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
             children: [
-              AppButton(label: 'Entrar', onPressed: onLogin),
+              AppButton(
+                label: l10n.authLoginButtonLabel,
+                onPressed: onLogin,
+              ),
               const SizedBox(height: 12),
               AppButton(
-                label: 'Criar conta',
+                label: l10n.authWelcomeCreateAccount,
                 variant: AppButtonVariant.outline,
                 onPressed: onRegister,
               ),
@@ -232,24 +224,26 @@ class _AccountSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _SettingsGroup(
-      title: 'Conta',
+      title: l10n.navAccount,
       children: [
         _ChevronRow(
-          label: 'Nome',
+          label: l10n.authNameLabel,
           value: name,
           onTap: onEditName,
           showChevron: canEditCredentials,
         ),
         _ChevronRow(
-          label: 'E-mail',
+          label: l10n.authEmailLabel,
           value: email,
           onTap: onEditEmail,
           showChevron: canEditCredentials,
         ),
         if (canEditCredentials)
           _ChevronRow(
-            label: 'Senha',
+            label: l10n.authPasswordLabel,
             value: '••••••••',
             onTap: onChangePassword,
           ),
@@ -266,8 +260,7 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleOtherForms,
     required this.onToggleNotifyNew,
     required this.onToggleNotifyUpdates,
-    required this.onToggleInterfaceLanguage,
-    required this.onToggleGameInfoLanguage,
+    required this.onToggleAppLanguage,
     required this.onTermsTap,
     required this.onPrivacyTap,
     required this.onHelpTap,
@@ -280,8 +273,7 @@ class _SettingsSections extends StatelessWidget {
   final ValueChanged<bool> onToggleOtherForms;
   final ValueChanged<bool> onToggleNotifyNew;
   final ValueChanged<bool> onToggleNotifyUpdates;
-  final VoidCallback onToggleInterfaceLanguage;
-  final VoidCallback onToggleGameInfoLanguage;
+  final VoidCallback onToggleAppLanguage;
   final VoidCallback onTermsTap;
   final VoidCallback onPrivacyTap;
   final VoidCallback onHelpTap;
@@ -289,19 +281,21 @@ class _SettingsSections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SettingsGroup(
-          title: 'PokeData',
+          title: l10n.navPokedex,
           children: [
             _ToggleRow(
-              label: 'Mega evoluções',
+              label: l10n.profileMegaEvolutionsLabel,
               value: settings.showMegaEvolutions,
               onChanged: onToggleMega,
             ),
             _ToggleRow(
-              label: 'Outras formas',
+              label: l10n.profileOtherFormsLabel,
               value: settings.showOtherForms,
               onChanged: onToggleOtherForms,
             ),
@@ -309,15 +303,15 @@ class _SettingsSections extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _SettingsGroup(
-          title: 'Notificações',
+          title: l10n.profileNotificationsTitle,
           children: [
             _ToggleRow(
-              label: 'Novos Pokémon',
+              label: l10n.profileNotifyNewPokemon,
               value: settings.notifyNewPokemon,
               onChanged: onToggleNotifyNew,
             ),
             _ToggleRow(
-              label: 'Atualizações do app',
+              label: l10n.profileNotifyAppUpdates,
               value: settings.notifyAppUpdates,
               onChanged: onToggleNotifyUpdates,
             ),
@@ -325,43 +319,38 @@ class _SettingsSections extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _SettingsGroup(
-          title: 'Idioma',
+          title: l10n.profileLanguageTitle,
           children: [
             _ChevronRow(
-              label: 'Interface do app',
-              value: settings.interfaceLanguageLabel,
-              onTap: onToggleInterfaceLanguage,
-            ),
-            _ChevronRow(
-              label: 'Informações do jogo',
-              value: settings.gameInfoLanguageLabel,
-              onTap: onToggleGameInfoLanguage,
+              label: l10n.profileAppLanguageLabel,
+              value: settings.appLanguageLabel,
+              onTap: onToggleAppLanguage,
             ),
           ],
         ),
         const SizedBox(height: 16),
         _SettingsGroup(
-          title: 'Geral',
+          title: l10n.profileGeneralTitle,
           children: [
             _ChevronRow(
-              label: 'Versão',
+              label: l10n.profileVersionLabel,
               value: versionLabel,
               showChevron: false,
             ),
             _ChevronRow(
-              label: 'Termos de uso',
+              label: l10n.profileTermsLabel,
               onTap: onTermsTap,
             ),
             _ChevronRow(
-              label: 'Política de privacidade',
+              label: l10n.profilePrivacyLabel,
               onTap: onPrivacyTap,
             ),
             _ChevronRow(
-              label: 'Ajuda',
+              label: l10n.profileHelpLabel,
               onTap: onHelpTap,
             ),
             _ChevronRow(
-              label: 'Sobre',
+              label: l10n.profileAboutLabel,
               onTap: onAboutTap,
             ),
           ],
@@ -493,12 +482,13 @@ class _LogoutSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     const logoutRed = Color(0xFFE3350D);
 
     return Column(
       children: [
         Text(
-          'Você entrou como $displayName',
+          l10n.profileLoggedInAs(displayName),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -517,9 +507,9 @@ class _LogoutSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              'Sair',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            child: Text(
+              l10n.profileLogoutButton,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ),

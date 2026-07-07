@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/about_page.dart';
 
+import '../../../../helpers/l10n_test_helper.dart';
+
 void main() {
   testWidgets('about page shows version, credits and disclaimer', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          packageInfoProvider.overrideWith(
-            (ref) async => PackageInfo(
-              appName: 'PokeData',
-              packageName: 'com.example.pokedex',
-              version: '2.0.0',
-              buildNumber: '42',
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const AboutPage(),
+      overrides: [
+        packageInfoProvider.overrideWith(
+          (ref) async => PackageInfo(
+            appName: 'PokeData',
+            packageName: 'com.example.pokedex',
+            version: '2.0.0',
+            buildNumber: '42',
           ),
-        ],
-        child: const MaterialApp(home: AboutPage()),
-      ),
+        ),
+      ],
     );
     await tester.pumpAndSettle();
 

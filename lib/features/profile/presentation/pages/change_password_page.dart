@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/change_password_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -62,7 +63,11 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(socialAccountCredentialsMessage)),
+          SnackBar(
+            content: Text(
+              socialAccountCredentialsMessage(AppLocalizations.of(context)),
+            ),
+          ),
         );
         if (context.canPop()) {
           context.pop();
@@ -76,10 +81,11 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
     final flow = ref.watch(changePasswordFlowProvider);
     final step = flow.step;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle(step)),
+        title: Text(_appBarTitle(step, l10n)),
         leading: step == ChangePasswordStep.success
             ? null
             : IconButton(
@@ -103,14 +109,14 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                 _StepIndicator(current: _stepIndex(step), total: 3),
                 const SizedBox(height: 32),
                 Text(
-                  _headline(step),
+                  _headline(step, l10n),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _subtitle(step),
+                  _subtitle(step, l10n),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -119,25 +125,28 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
               ],
               switch (step) {
                 ChangePasswordStep.current => AppPasswordField(
-                  label: 'Senha atual',
+                  label: l10n.profileCurrentPasswordLabel,
                   controller: _currentController,
                   errorText: flow.error,
                 ),
                 ChangePasswordStep.newPassword => AppPasswordField(
-                  label: 'Nova senha',
+                  label: l10n.authForgotNewPasswordLabel,
                   controller: _newController,
                   errorText: flow.error,
                 ),
                 ChangePasswordStep.confirm => AppPasswordField(
-                  label: 'Confirmar nova senha',
+                  label: l10n.authForgotConfirmNewPasswordLabel,
                   controller: _confirmController,
                   errorText: flow.error,
                 ),
                 ChangePasswordStep.success => _SuccessBody(
+                  l10n: l10n,
                   onDone: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Ação realizada com sucesso'),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).profileActionSuccess,
+                        ),
                         backgroundColor: AppColorsLight.primary,
                       ),
                     );
@@ -148,7 +157,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
               if (step != ChangePasswordStep.success) ...[
                 const SizedBox(height: 32),
                 AppButton(
-                  label: _primaryButtonLabel(step),
+                  label: _primaryButtonLabel(step, l10n),
                   isLoading: flow.loading,
                   onPressed: flow.loading ? null : _onPrimaryPressed(step),
                 ),
@@ -167,33 +176,40 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
     ChangePasswordStep.success => 3,
   };
 
-  String _appBarTitle(ChangePasswordStep step) => switch (step) {
-    ChangePasswordStep.success => 'Senha alterada',
-    _ => 'Trocar senha',
-  };
+  String _appBarTitle(ChangePasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ChangePasswordStep.success => l10n.changePasswordAppBarSuccess,
+        _ => l10n.changePasswordAppBarTitle,
+      };
 
-  String _headline(ChangePasswordStep step) => switch (step) {
-    ChangePasswordStep.current => 'Qual é sua senha atual?',
-    ChangePasswordStep.newPassword => 'Crie uma nova senha',
-    ChangePasswordStep.confirm => 'Confirme a nova senha',
-    ChangePasswordStep.success => '',
-  };
+  String _headline(ChangePasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ChangePasswordStep.current => l10n.changePasswordHeadlineCurrent,
+        ChangePasswordStep.newPassword => l10n.authForgotHeadlineNewPassword,
+        ChangePasswordStep.confirm => l10n.changePasswordHeadlineConfirm,
+        ChangePasswordStep.success => '',
+      };
 
-  String _subtitle(ChangePasswordStep step) => switch (step) {
-    ChangePasswordStep.current =>
-      'Por segurança, confirme sua senha antes de continuar.',
-    ChangePasswordStep.newPassword => PasswordPolicy.requirementsHint,
-    ChangePasswordStep.confirm =>
-      'Digite novamente a nova senha para confirmar.',
-    ChangePasswordStep.success => '',
-  };
+  String _subtitle(ChangePasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ChangePasswordStep.current => l10n.profileSecurityPasswordSubtitle,
+        ChangePasswordStep.newPassword => PasswordPolicy.requirementsHintOf(
+          l10n,
+        ),
+        ChangePasswordStep.confirm => l10n.changePasswordSubtitleConfirm,
+        ChangePasswordStep.success => '',
+      };
 
-  String _primaryButtonLabel(ChangePasswordStep step) => switch (step) {
-    ChangePasswordStep.current => 'Continuar',
-    ChangePasswordStep.newPassword => 'Continuar',
-    ChangePasswordStep.confirm => 'Salvar senha',
-    ChangePasswordStep.success => 'Concluir',
-  };
+  String _primaryButtonLabel(
+    ChangePasswordStep step,
+    AppLocalizations l10n,
+  ) =>
+      switch (step) {
+        ChangePasswordStep.current => l10n.authContinueButton,
+        ChangePasswordStep.newPassword => l10n.authContinueButton,
+        ChangePasswordStep.confirm => l10n.changePasswordSaveButton,
+        ChangePasswordStep.success => l10n.profileFinishButton,
+      };
 
   VoidCallback? _onPrimaryPressed(ChangePasswordStep step) => switch (step) {
     ChangePasswordStep.current => _submitCurrent,
@@ -232,8 +248,9 @@ class _StepIndicator extends StatelessWidget {
 }
 
 class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.onDone});
+  const _SuccessBody({required this.l10n, required this.onDone});
 
+  final AppLocalizations l10n;
   final VoidCallback onDone;
 
   @override
@@ -250,7 +267,7 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Senha alterada com sucesso!',
+          l10n.changePasswordSuccessTitle,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -258,14 +275,14 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Sua nova senha já está ativa. Use-a no próximo login.',
+          l10n.changePasswordSuccessSubtitle,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 48),
-        AppButton(label: 'Voltar à conta', onPressed: onDone),
+        AppButton(label: l10n.profileBackToAccount, onPressed: onDone),
       ],
     );
   }

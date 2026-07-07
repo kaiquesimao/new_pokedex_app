@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/all_types_chip.dart';
 import 'package:pokedex_app/shared/widgets/bottom_sheet_header.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
@@ -36,6 +38,7 @@ class _RegionalTypeSheet extends ConsumerWidget {
     final notifier = ref.read(
       regionalPokedexFiltersProvider(regionName).notifier,
     );
+    final l10n = AppLocalizations.of(context);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -48,7 +51,7 @@ class _RegionalTypeSheet extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 24),
           children: [
             BottomSheetHeader(
-              title: 'Tipos',
+              title: l10n.filterTypesTitle,
               onClear: () {
                 notifier.update(
                   (current) => current.copyWith(clearTypeFilter: true),
@@ -108,13 +111,14 @@ class _RegionalSortSheet extends ConsumerWidget {
     final notifier = ref.read(
       regionalPokedexFiltersProvider(regionName).notifier,
     );
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const BottomSheetHeader(title: 'Ordem'),
+          BottomSheetHeader(title: l10n.filterSortTitle),
           ...PokemonSortOption.values.map((option) {
             final selected = filters.sort == option;
             return Padding(
@@ -122,7 +126,7 @@ class _RegionalSortSheet extends ConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: _SortPill(
-                  label: option.label,
+                  label: option.label(l10n),
                   selected: selected,
                   onTap: () {
                     notifier.update(

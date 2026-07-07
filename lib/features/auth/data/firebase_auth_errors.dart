@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum FirebaseAuthErrorContext { emailSignIn, emailSignUp, oauth, general }
 
@@ -12,67 +13,106 @@ class AuthException implements Exception {
   String toString() => message;
 }
 
-String firebaseAuthErrorMessage(
+String firebaseAuthErrorMessageFromException(
+  AppLocalizations l10n,
   Object error, {
   FirebaseAuthErrorContext context = FirebaseAuthErrorContext.general,
 }) {
   if (error is FirebaseAuthException) {
     return switch (error.code) {
-      'invalid-email' => 'E-mail inválido',
-      'user-disabled' => 'Conta desativada',
+      'invalid-email' => l10n.authInvalidEmail,
+      'user-disabled' => l10n.authUserDisabled,
       'user-not-found' => switch (context) {
-        FirebaseAuthErrorContext.emailSignIn =>
-          'Não encontramos uma conta com este e-mail. Crie uma conta para continuar.',
-        _ => 'Usuário não encontrado',
+        FirebaseAuthErrorContext.emailSignIn => l10n.authUserNotFoundSignIn,
+        _ => l10n.authUserNotFound,
       },
-      'wrong-password' =>
-        'Senha incorreta. Tente novamente ou use "Esqueci minha senha".',
+      'wrong-password' => l10n.authWrongPassword,
       'email-already-in-use' => switch (context) {
-        FirebaseAuthErrorContext.emailSignUp => emailAlreadyInUseMessage(),
-        _ => 'Este e-mail já está em uso',
+        FirebaseAuthErrorContext.emailSignUp => emailAlreadyInUseMessage(l10n),
+        _ => l10n.authEmailAlreadyInUse,
       },
-      'weak-password' => PasswordPolicy.requirementsHint,
-      'too-many-requests' => 'Muitas tentativas. Tente novamente mais tarde',
-      'network-request-failed' => 'Sem conexão. Verifique sua internet',
-      'requires-recent-login' => 'Faça login novamente para continuar',
+      'weak-password' => PasswordPolicy.requirementsHintOf(l10n),
+      'too-many-requests' => l10n.authTooManyRequests,
+      'network-request-failed' => l10n.authNetworkRequestFailed,
+      'requires-recent-login' => l10n.authRequiresRecentLogin,
       'invalid-credential' => switch (context) {
         FirebaseAuthErrorContext.emailSignIn =>
-          'E-mail ou senha incorretos. Se você ainda não tem conta, toque em "Criar conta".',
-        FirebaseAuthErrorContext.oauth =>
-          'Falha ao entrar. Se o problema continuar, verifique SHA-1/SHA-256 no Firebase e baixe o google-services.json novamente.',
-        _ => 'Credenciais inválidas. Tente novamente.',
+          l10n.authInvalidCredentialEmailSignIn,
+        FirebaseAuthErrorContext.oauth => l10n.authInvalidCredentialOauth,
+        _ => l10n.authInvalidCredentialsGeneric,
       },
       'account-exists-with-different-credential' =>
-        'Este e-mail já está cadastrado com outro método de login. Use Google, Apple ou o método original.',
-      'operation-not-allowed' =>
-        'Este método de login não está habilitado no Firebase',
-      _ => error.message ?? 'Erro de autenticação',
+        l10n.authAccountExistsWithDifferentCredential,
+      'operation-not-allowed' => l10n.authOperationNotAllowed,
+      _ => l10n.authGenericError,
     };
   }
-  return error.toString();
+  return l10n.authGenericError;
 }
 
-String emailAlreadyInUseMessage({List<String> signInMethods = const []}) {
+/// New API: map a Firebase error code to a localized message using [l10n].
+String firebaseAuthErrorMessageFromCode(AppLocalizations l10n, String code) {
+  return firebaseAuthErrorMessageLocalized(l10n, code);
+}
+
+/// Required signature per task: firebaseAuthErrorMessage(AppLocalizations, String)
+String firebaseAuthErrorMessage(AppLocalizations l10n, String code) {
+  return firebaseAuthErrorMessageLocalized(l10n, code);
+}
+
+String firebaseAuthErrorMessageLocalized(AppLocalizations l10n, String code) {
+  switch (code) {
+    case 'invalid-email':
+      return l10n.authInvalidEmail;
+    case 'user-disabled':
+      return l10n.authUserDisabled;
+    case 'user-not-found':
+      return l10n.authUserNotFoundSignIn;
+    case 'wrong-password':
+      return l10n.authWrongPassword;
+    case 'email-already-in-use':
+      return l10n.authEmailAlreadyInUse;
+    case 'weak-password':
+      return l10n.authWeakPassword;
+    case 'too-many-requests':
+      return l10n.authTooManyRequests;
+    case 'network-request-failed':
+      return l10n.authNetworkRequestFailed;
+    case 'requires-recent-login':
+      return l10n.authRequiresRecentLogin;
+    case 'invalid-credential':
+      return l10n.authInvalidCredentialEmailSignIn;
+    case 'invalid-credential-oauth':
+      return l10n.authInvalidCredentialOauth;
+    case 'account-exists-with-different-credential':
+      return l10n.authAccountExistsWithDifferentCredential;
+    case 'operation-not-allowed':
+      return l10n.authOperationNotAllowed;
+    default:
+      return l10n.authGenericError;
+  }
+}
+
+String emailAlreadyInUseMessage(
+  AppLocalizations l10n, {
+  List<String> signInMethods = const [],
+}) {
   if (signInMethods.contains('google.com')) {
-    return 'Este e-mail já está em uso com Google. '
-        'Use "Já tenho uma conta" e entre com Google.';
+    return l10n.authEmailAlreadyInUseGoogle;
   }
   if (signInMethods.contains('apple.com')) {
-    return 'Este e-mail já está em uso com Apple. '
-        'Use "Já tenho uma conta" e entre com Apple.';
+    return l10n.authEmailAlreadyInUseApple;
   }
   if (signInMethods.contains('password')) {
-    return 'Este e-mail já está em uso. Use "Já tenho uma conta" para entrar.';
+    return l10n.authEmailAlreadyInUseSignIn;
   }
-  return 'Este e-mail já está em uso. '
-      'Tente entrar com Google ou use "Já tenho uma conta".';
+  return l10n.authEmailAlreadyInUseTrySocial;
 }
 
-String formatAuthException(Object error) {
+String formatAuthException(AppLocalizations l10n, Object error) {
   if (error is AuthException) return error.message;
-  var message = error.toString();
-  while (message.startsWith('Exception: ')) {
-    message = message.substring('Exception: '.length);
+  if (error is FirebaseAuthException) {
+    return firebaseAuthErrorMessageFromException(l10n, error);
   }
-  return message;
+  return l10n.authGenericError;
 }

@@ -16,20 +16,20 @@ class PokemonDetailBundle {
   final bool isOfflineMode;
 }
 
-final FutureProviderFamily<PokemonDetailBundle, int> pokemonDetailBundleProvider =
-    FutureProvider.family<PokemonDetailBundle, int>((
-      ref,
-      pokemonId,
-    ) async {
-      final repo = ref.watch(pokemonRepositoryProvider);
-      final detail = await repo.getPokemonDetail(pokemonId);
-      final offlineFromDetail = repo.takeOfflineFallbackUsed();
-      final evolution = await repo.getEvolutionChain(pokemonId);
-      final offlineFromEvolution = repo.takeOfflineFallbackUsed();
+final FutureProviderFamily<PokemonDetailBundle, int>
+pokemonDetailBundleProvider = FutureProvider.family<PokemonDetailBundle, int>((
+  ref,
+  pokemonId,
+) async {
+  final repo = ref.watch(pokemonRepositoryProvider);
+  final detail = await repo.getPokemonDetail(pokemonId);
+  final offlineFromDetail = repo.takeOfflineFallbackUsed();
+  final evolution = await repo.getEvolutionChain(pokemonId);
+  final offlineFromEvolution = repo.takeOfflineFallbackUsed();
 
-      return PokemonDetailBundle(
-        detail: detail,
-        evolution: evolution,
-        isOfflineMode: offlineFromDetail || offlineFromEvolution,
-      );
-    });
+  return PokemonDetailBundle(
+    detail: detail,
+    evolution: evolution,
+    isOfflineMode: offlineFromDetail || offlineFromEvolution,
+  );
+});

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_app/core/constants/firebase_auth_config.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -15,6 +16,7 @@ import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/domain/display_name_policy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -72,7 +74,9 @@ class AuthNotifier extends Notifier<AuthState> {
   void _requireLocalAuth() {
     if (!_allowLocalAuth) {
       throw AuthException(
-        'Serviço indisponível. Tente novamente mais tarde.',
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authServiceUnavailable,
       );
     }
   }
@@ -92,13 +96,20 @@ class AuthNotifier extends Notifier<AuthState> {
 
   void _requireOnline() {
     if (!_connectivity.isOnline) {
-      throw AuthException('Sem conexão com a internet.');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authNetworkRequestFailed,
+      );
     }
   }
 
+  AppLocalizations get _l10n =>
+      lookupAppLocalizations(ref.read(appLocaleProvider).materialLocale);
+
   void _requirePasswordAccount() {
     if (!state.canEditCredentials) {
-      throw AuthException(socialAccountCredentialsMessage);
+      throw AuthException(socialAccountCredentialsMessage(_l10n));
     }
   }
 
@@ -108,7 +119,8 @@ class AuthNotifier extends Notifier<AuthState> {
     } on Object catch (e) {
       if (AuthRegistrationConfig.requireEmailVerification) {
         throw AuthException(
-          firebaseAuthErrorMessage(
+          firebaseAuthErrorMessageFromException(
+            _l10n,
             e,
             context: FirebaseAuthErrorContext.emailSignUp,
           ),
@@ -142,7 +154,7 @@ class AuthNotifier extends Notifier<AuthState> {
       state = _authStateFromFirebaseUser(refreshed);
       return true;
     } on FirebaseAuthException catch (e) {
-      throw AuthException(firebaseAuthErrorMessage(e));
+      throw AuthException(firebaseAuthErrorMessageFromException(_l10n, e));
     }
   }
 
@@ -175,7 +187,11 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> signIn({required String email, required String password}) async {
     if (email.isEmpty || password.isEmpty) {
-      throw AuthException('Preencha e-mail e senha');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authFillEmailAndPassword,
+      );
     }
 
     final firebaseAuth = _firebaseAuth;
@@ -189,7 +205,8 @@ class AuthNotifier extends Notifier<AuthState> {
         state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       } catch (e) {
         throw AuthException(
-          firebaseAuthErrorMessage(
+          firebaseAuthErrorMessageFromException(
+            _l10n,
             e,
             context: FirebaseAuthErrorContext.emailSignIn,
           ),
@@ -217,7 +234,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void _requireValidPassword(String password) {
-    final error = PasswordPolicy.validate(password);
+    final error = PasswordPolicy.validateWithL10n(_l10n, password);
     if (error != null) throw AuthException(error);
   }
 
@@ -227,7 +244,11 @@ class AuthNotifier extends Notifier<AuthState> {
     required String name,
   }) async {
     if (email.isEmpty || password.isEmpty || name.isEmpty) {
-      throw AuthException('Preencha todos os campos');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authFillAllFields,
+      );
     }
     _requireValidPassword(password);
 
@@ -263,7 +284,8 @@ class AuthNotifier extends Notifier<AuthState> {
         }
       } catch (e) {
         throw AuthException(
-          firebaseAuthErrorMessage(
+          firebaseAuthErrorMessageFromException(
+            _l10n,
             e,
             context: FirebaseAuthErrorContext.emailSignUp,
           ),
@@ -308,7 +330,8 @@ class AuthNotifier extends Notifier<AuthState> {
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
     } on FirebaseAuthException catch (e) {
       throw AuthException(
-        firebaseAuthErrorMessage(
+        firebaseAuthErrorMessageFromException(
+          _l10n,
           e,
           context: FirebaseAuthErrorContext.emailSignUp,
         ),
@@ -323,7 +346,11 @@ class AuthNotifier extends Notifier<AuthState> {
     _requireOnline();
     final user = firebaseAuth.currentUser;
     if (user == null) {
-      throw AuthException('Sessão inválida');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authInvalidSession,
+      );
     }
 
     try {
@@ -336,7 +363,8 @@ class AuthNotifier extends Notifier<AuthState> {
       }
     } on FirebaseAuthException catch (e) {
       throw AuthException(
-        firebaseAuthErrorMessage(
+        firebaseAuthErrorMessageFromException(
+          _l10n,
           e,
           context: FirebaseAuthErrorContext.emailSignUp,
         ),
@@ -398,7 +426,11 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> sendOtp({required String email}) async {
     if (email.isEmpty || !email.contains('@')) {
-      throw AuthException('Informe um e-mail válido');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authInvalidEmail,
+      );
     }
 
     final firebaseAuth = _firebaseAuth;
@@ -409,7 +441,11 @@ class AuthNotifier extends Notifier<AuthState> {
         await user.sendEmailVerification();
         return;
       }
-      throw AuthException('Crie a conta antes de verificar o e-mail');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authCreateAccountBeforeVerifying,
+      );
     }
 
     _requireLocalAuth();
@@ -418,7 +454,11 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> sendPasswordResetEmail({required String email}) async {
     if (email.isEmpty || !email.contains('@')) {
-      throw AuthException('Informe um e-mail válido');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authInvalidEmail,
+      );
     }
 
     final firebaseAuth = _firebaseAuth;
@@ -427,7 +467,7 @@ class AuthNotifier extends Notifier<AuthState> {
       try {
         await firebaseAuth.sendPasswordResetEmail(email: email);
       } catch (e) {
-        throw AuthException(firebaseAuthErrorMessage(e));
+        throw AuthException(firebaseAuthErrorMessageFromException(_l10n, e));
       }
       return;
     }
@@ -472,7 +512,9 @@ class AuthNotifier extends Notifier<AuthState> {
 
     if (_firebaseAuth != null) {
       throw AuthException(
-        'Use o link enviado por e-mail para redefinir a senha',
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authUseLinkToResetPassword,
       );
     }
 
@@ -491,7 +533,11 @@ class AuthNotifier extends Notifier<AuthState> {
     required String newPassword,
   }) async {
     if (!state.isAuthenticated) {
-      throw AuthException('Faça login para alterar a senha');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authSignInToChangePassword,
+      );
     }
     _requirePasswordAccount();
 
@@ -503,7 +549,11 @@ class AuthNotifier extends Notifier<AuthState> {
       final user = firebaseAuth.currentUser;
       final email = user?.email;
       if (user == null || email == null) {
-        throw AuthException('Sessão inválida');
+        throw AuthException(
+          lookupAppLocalizations(
+            ref.read(appLocaleProvider).materialLocale,
+          ).authInvalidSession,
+        );
       }
 
       try {
@@ -514,7 +564,7 @@ class AuthNotifier extends Notifier<AuthState> {
         await user.reauthenticateWithCredential(credential);
         await user.updatePassword(newPassword);
       } catch (e) {
-        throw AuthException(firebaseAuthErrorMessage(e));
+        throw AuthException(firebaseAuthErrorMessageFromException(_l10n, e));
       }
       return;
     }
@@ -523,7 +573,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final valid = await verifyCurrentPassword(currentPassword);
     if (!valid) {
-      throw AuthException('Senha atual incorreta');
+      throw AuthException(_l10n.authCurrentPasswordIncorrect);
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -532,12 +582,16 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> updateDisplayName(String name) async {
     if (!state.isAuthenticated) {
-      throw AuthException('Faça login para continuar');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authSignInToContinue,
+      );
     }
     _requirePasswordAccount();
 
     final trimmed = name.trim();
-    final validationError = DisplayNamePolicy.validate(trimmed);
+    final validationError = DisplayNamePolicy.validateWithL10n(_l10n, trimmed);
     if (validationError != null) {
       throw AuthException(validationError);
     }
@@ -547,7 +601,11 @@ class AuthNotifier extends Notifier<AuthState> {
       _requireOnline();
       final user = firebaseAuth.currentUser;
       if (user == null) {
-        throw AuthException('Sessão inválida');
+        throw AuthException(
+          lookupAppLocalizations(
+            ref.read(appLocaleProvider).materialLocale,
+          ).authInvalidSession,
+        );
       }
 
       try {
@@ -555,7 +613,7 @@ class AuthNotifier extends Notifier<AuthState> {
         await user.reload();
         state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       } catch (e) {
-        throw AuthException(firebaseAuthErrorMessage(e));
+        throw AuthException(firebaseAuthErrorMessageFromException(_l10n, e));
       }
       return;
     }
@@ -572,16 +630,28 @@ class AuthNotifier extends Notifier<AuthState> {
     required String newEmail,
   }) async {
     if (!state.isAuthenticated) {
-      throw AuthException('Faça login para continuar');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authSignInToContinue,
+      );
     }
     _requirePasswordAccount();
 
     final trimmedEmail = newEmail.trim();
     if (trimmedEmail.isEmpty || !trimmedEmail.contains('@')) {
-      throw AuthException('Informe um e-mail válido');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authInvalidEmail,
+      );
     }
     if (trimmedEmail == state.email) {
-      throw AuthException('O novo e-mail deve ser diferente do atual');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authNewEmailDifferentFromCurrent,
+      );
     }
 
     final firebaseAuth = _firebaseAuth;
@@ -590,7 +660,11 @@ class AuthNotifier extends Notifier<AuthState> {
       final user = firebaseAuth.currentUser;
       final currentEmail = user?.email;
       if (user == null || currentEmail == null || currentEmail.isEmpty) {
-        throw AuthException('Sessão inválida');
+        throw AuthException(
+          lookupAppLocalizations(
+            ref.read(appLocaleProvider).materialLocale,
+          ).authInvalidSession,
+        );
       }
 
       try {
@@ -602,7 +676,8 @@ class AuthNotifier extends Notifier<AuthState> {
         await user.verifyBeforeUpdateEmail(trimmedEmail);
       } catch (e) {
         throw AuthException(
-          firebaseAuthErrorMessage(
+          firebaseAuthErrorMessageFromException(
+            _l10n,
             e,
             context: FirebaseAuthErrorContext.emailSignUp,
           ),
@@ -615,7 +690,11 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final valid = await verifyCurrentPassword(currentPassword);
     if (!valid) {
-      throw AuthException('Senha atual incorreta');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authCurrentPasswordIncorrect,
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -658,14 +737,22 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signInWithGoogle() async {
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth == null || !_googleSignInEnabled) {
-      throw AuthException('Login com Google indisponível');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authLoginWithGoogleUnavailable,
+      );
     }
 
     _requireOnline();
     try {
       await FirebaseAuthConfig.ensureGoogleSignInInitialized();
       if (!GoogleSignIn.instance.supportsAuthenticate()) {
-        throw AuthException('Use o botão do Google para entrar');
+        throw AuthException(
+          lookupAppLocalizations(
+            ref.read(appLocaleProvider).materialLocale,
+          ).authUseGoogleButton,
+        );
       }
 
       final googleUser = await GoogleSignIn.instance.authenticate(
@@ -675,11 +762,19 @@ class AuthNotifier extends Notifier<AuthState> {
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) return;
       throw AuthException(
-        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+        firebaseAuthErrorMessageFromException(
+          _l10n,
+          e,
+          context: FirebaseAuthErrorContext.oauth,
+        ),
       );
     } catch (e) {
       throw AuthException(
-        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+        firebaseAuthErrorMessageFromException(
+          _l10n,
+          e,
+          context: FirebaseAuthErrorContext.oauth,
+        ),
       );
     }
   }
@@ -687,7 +782,11 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signInWithGoogleAccount(GoogleSignInAccount googleUser) async {
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth == null || !_googleSignInEnabled) {
-      throw AuthException('Login com Google indisponível');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authLoginWithGoogleUnavailable,
+      );
     }
 
     _requireOnline();
@@ -701,11 +800,19 @@ class AuthNotifier extends Notifier<AuthState> {
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) return;
       throw AuthException(
-        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+        firebaseAuthErrorMessageFromException(
+          _l10n,
+          e,
+          context: FirebaseAuthErrorContext.oauth,
+        ),
       );
     } catch (e) {
       throw AuthException(
-        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+        firebaseAuthErrorMessageFromException(
+          _l10n,
+          e,
+          context: FirebaseAuthErrorContext.oauth,
+        ),
       );
     }
   }
@@ -713,11 +820,19 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signInWithApple() async {
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth == null) {
-      throw AuthException('Login com Apple indisponível');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authLoginWithAppleUnavailable,
+      );
     }
 
     if (defaultTargetPlatform != TargetPlatform.iOS) {
-      throw AuthException('Login com Apple disponível apenas no iOS');
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authLoginWithAppleOnlyOnIOS,
+      );
     }
 
     _requireOnline();
@@ -737,7 +852,11 @@ class AuthNotifier extends Notifier<AuthState> {
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
     } catch (e) {
       throw AuthException(
-        firebaseAuthErrorMessage(e, context: FirebaseAuthErrorContext.oauth),
+        firebaseAuthErrorMessageFromException(
+          _l10n,
+          e,
+          context: FirebaseAuthErrorContext.oauth,
+        ),
       );
     }
   }

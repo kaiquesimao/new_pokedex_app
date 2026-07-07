@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,28 +14,25 @@ class AboutPage extends ConsumerWidget {
   static const _figmaDesignUrl =
       'https://www.figma.com/community/file/1202971127473077147';
 
-  static const _credits = <({String title, String body})>[
-    (
-      title: 'PokéAPI',
-      body: 'Dados de Pokémon, espécies, tipos e evoluções.',
-    ),
-    (
-      title: 'Flutter',
-      body: 'Framework multiplataforma do app.',
-    ),
-    (
-      title: 'Firebase',
-      body: 'Autenticação, favoritos e sincronização em nuvem.',
-    ),
-  ];
+  static List<({String title, String body})> _credits(AppLocalizations l10n) =>
+      [
+        (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
+        (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
+        (
+          title: l10n.aboutCreditFirebaseTitle,
+          body: l10n.aboutCreditFirebaseBody,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final packageInfo = ref.watch(packageInfoProvider);
+    final credits = _credits(l10n);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sobre')),
+      appBar: AppBar(title: Text(l10n.profileAboutLabel)),
       body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
@@ -69,19 +67,19 @@ class AboutPage extends ConsumerWidget {
               const SizedBox(height: 4),
               packageInfo.when(
                 data: (info) => Text(
-                  'Versão ${info.version} (${info.buildNumber})',
+                  l10n.aboutVersion(info.version, info.buildNumber),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 loading: () => Text(
-                  'Versão …',
+                  l10n.aboutVersionLoading,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 error: (_, _) => Text(
-                  'Versão indisponível',
+                  l10n.aboutVersionUnavailable,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -89,8 +87,7 @@ class AboutPage extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Pokedéx feita por fãs para explorar Pokémon, regiões, '
-                'favoritos e detalhes com dados atualizados da PokéAPI.',
+                l10n.aboutTagline,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
               ),
@@ -98,62 +95,51 @@ class AboutPage extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Desenvolvido por',
+                  l10n.aboutDevelopedBy,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              const _AcknowledgmentCard(
-                title: 'Kaique Simão',
-                body: 'Criador e desenvolvedor do PokeData.',
+              _AcknowledgmentCard(
+                title: l10n.aboutKaiqueTitle,
+                body: l10n.aboutKaiqueBody,
                 links: [
-                  (
-                    label: 'Perfil no LinkedIn',
-                    url: _kaiqueLinkedInUrl,
-                  ),
+                  (label: l10n.aboutLinkedInProfile, url: _kaiqueLinkedInUrl),
                 ],
               ),
               const SizedBox(height: 32),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Agradecimentos',
+                  l10n.aboutAcknowledgments,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              const _AcknowledgmentCard(
-                title: 'Junior Saraiva',
-                body:
-                    'Criou o design no Figma Community que serviu de '
-                    'referência visual para este projeto.',
+              _AcknowledgmentCard(
+                title: l10n.aboutJuniorTitle,
+                body: l10n.aboutJuniorBody,
                 links: [
-                  (
-                    label: 'Perfil no LinkedIn',
-                    url: _juniorLinkedInUrl,
-                  ),
-                  (
-                    label: 'Projeto no Figma',
-                    url: _figmaDesignUrl,
-                  ),
+                  (label: l10n.aboutLinkedInProfile, url: _juniorLinkedInUrl),
+                  (label: l10n.aboutFigmaProject, url: _figmaDesignUrl),
                 ],
               ),
               const SizedBox(height: 32),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Créditos',
+                  l10n.aboutCredits,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              ..._credits.map(
+              ...credits.map(
                 (credit) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _CreditTile(
@@ -163,7 +149,7 @@ class AboutPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              _DisclaimerCard(theme: theme),
+              _DisclaimerCard(theme: theme, text: l10n.aboutDisclaimer),
             ],
           ),
         ),
@@ -286,9 +272,10 @@ class _CreditTile extends StatelessWidget {
 }
 
 class _DisclaimerCard extends StatelessWidget {
-  const _DisclaimerCard({required this.theme});
+  const _DisclaimerCard({required this.theme, required this.text});
 
   final ThemeData theme;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -300,10 +287,7 @@ class _DisclaimerCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        'O PokeData é um aplicativo de fãs, não oficial. '
-        'Não é desenvolvido, endossado ou afiliado à Nintendo, '
-        'Creatures Inc., GAME FREAK ou The Pokémon Company. '
-        'Pokémon © Nintendo / Creatures Inc. / GAME FREAK.',
+        text,
         style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
       ),
     );

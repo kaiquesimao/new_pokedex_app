@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/verify_email_ui_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
@@ -46,14 +47,19 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     final ui = ref.read(verifyEmailUiProvider);
     if (ui.resent) {
       final usesFirebase = ref.read(firebaseBootstrapProvider).isAvailable;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AuthEmailVerificationCopy.withSpamReminder(
-              usesFirebase
-                  ? 'E-mail de verificação reenviado.'
-                  : 'Código reenviado.',
-            ),
+            usesFirebase
+                ? AuthEmailVerificationCopy.withSpamReminder(
+                    l10n,
+                    l10n.authVerifyEmailResentEmail,
+                  )
+                : AuthEmailVerificationCopy.withSpamReminder(
+                    l10n,
+                    l10n.authVerifyEmailResentCode,
+                  ),
           ),
         ),
       );
@@ -66,9 +72,10 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     final ui = ref.watch(verifyEmailUiProvider);
     final theme = Theme.of(context);
     final usesFirebase = ref.watch(firebaseBootstrapProvider).isAvailable;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Confirmar e-mail')),
+      appBar: AppBar(title: Text(l10n.authVerifyEmailTitle)),
       body: Stack(
         children: [
           SafePageBody.belowAppBar(
@@ -78,18 +85,22 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Confirme seu e-mail',
+                    l10n.authVerifyEmailHeadline,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    AuthEmailVerificationCopy.withSpamReminder(
-                      usesFirebase
-                          ? 'Enviamos um link de verificação para ${flow.email}. Abra o e-mail, confirme o link e volte aqui para continuar.'
-                          : 'Enviamos um código de 6 dígitos para ${flow.email}.',
-                    ),
+                    usesFirebase
+                        ? AuthEmailVerificationCopy.withSpamReminder(
+                            l10n,
+                            l10n.authVerifyEmailLinkSent(flow.email),
+                          )
+                        : AuthEmailVerificationCopy.withSpamReminder(
+                            l10n,
+                            l10n.authVerifyEmailCodeSent(flow.email),
+                          ),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -97,7 +108,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                   const SizedBox(height: 32),
                   if (usesFirebase) ...[
                     AppButton(
-                      label: 'Já confirmei no e-mail',
+                      label: l10n.authVerifyEmailAlreadyConfirmedButton,
                       isLoading: ui.loading,
                       onPressed: _completeRegistration,
                     ),
@@ -105,7 +116,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                     Center(
                       child: TextButton(
                         onPressed: _resend,
-                        child: const Text('Reenviar e-mail'),
+                        child: Text(l10n.authVerifyEmailResendEmail),
                       ),
                     ),
                   ] else
@@ -128,11 +139,15 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                   if (ui.resent) ...[
                     const SizedBox(height: 8),
                     Text(
-                      AuthEmailVerificationCopy.withSpamReminder(
-                        usesFirebase
-                            ? 'Um novo e-mail foi enviado.'
-                            : 'Um novo código foi enviado.',
-                      ),
+                      usesFirebase
+                          ? AuthEmailVerificationCopy.withSpamReminder(
+                              l10n,
+                              l10n.authVerifyEmailResentEmail,
+                            )
+                          : AuthEmailVerificationCopy.withSpamReminder(
+                              l10n,
+                              l10n.authVerifyEmailResentCode,
+                            ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.primary,
                       ),
@@ -144,9 +159,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
             ),
           ),
           if (ui.loading && !usesFirebase)
-            const AuthLoadingOverlay(message: 'Criando conta...'),
+            AuthLoadingOverlay(message: l10n.authVerifyEmailCreatingAccount),
           if (ui.loading && usesFirebase)
-            const AuthLoadingOverlay(message: 'Verificando...'),
+            AuthLoadingOverlay(message: l10n.authVerifyEmailVerifying),
         ],
       ),
     );

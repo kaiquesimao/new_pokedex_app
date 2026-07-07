@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
@@ -10,6 +11,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibilit
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokemon.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:riverpod/misc.dart';
 
 class RegionalPokedexState {
@@ -122,8 +124,11 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
     } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
       state = RegionalPokedexState(
-        error: friendlyErrorMessage(error),
+        error: friendlyErrorMessage(l10n, error),
         errorIsConnectivityFailure: connectivityFailure,
         isOfflineMode:
             connectivityFailure &&

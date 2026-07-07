@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
@@ -47,7 +49,8 @@ class PokemonListRowCard extends StatelessWidget {
     final primaryType = types.isNotEmpty ? types.first : PokemonType.normal;
     final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
 
-    final typeLabels = types.map((t) => t.labelPt).join(', ');
+    final l10n = AppLocalizations.of(context);
+    final typeLabels = types.map((t) => t.label(l10n)).join(', ');
     final semanticsLabel =
         '$name, ${PokemonFormatters.displayNumber(number)}'
         '${typeLabels.isEmpty ? '' : ', $typeLabels'}';
@@ -152,6 +155,7 @@ class _TypePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: const BorderRadius.horizontal(right: Radius.circular(16)),
       child: SizedBox(
@@ -186,8 +190,8 @@ class _TypePanel extends StatelessWidget {
               right: 4,
               child: Semantics(
                 label: isFavorite
-                    ? 'Remover dos favoritos'
-                    : 'Adicionar aos favoritos',
+                    ? l10n.favoriteRemoveSemantics
+                    : l10n.favoriteAddSemantics,
                 button: true,
                 child: IconButton(
                   visualDensity: VisualDensity.compact,

@@ -1,24 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/presentation/pages/favorites_page.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   testWidgets('favorites page shows login CTA for guests', (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(isInitialized: true),
-          ),
-        ],
-        child: const MaterialApp(home: FavoritesPage()),
-      ),
+    await pumpLocalizedApp(
+      tester,
+      child: const FavoritesPage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+      ],
     );
 
     expect(

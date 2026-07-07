@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum RegisterStep { email, password, name }
 
@@ -52,7 +54,10 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
   void submitEmail(String rawEmail) {
     final email = rawEmail.trim();
     if (email.isEmpty || !email.contains('@')) {
-      state = state.copyWith(error: 'Informe um e-mail válido');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authInvalidEmail);
       return;
     }
     state = state.copyWith(
@@ -63,7 +68,10 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
   }
 
   Future<void> submitPassword(String password) async {
-    final passwordError = PasswordPolicy.validate(password);
+    final passwordError = PasswordPolicy.validateWithL10n(
+      lookupAppLocalizations(ref.read(appLocaleProvider).materialLocale),
+      password,
+    );
     if (passwordError != null) {
       state = state.copyWith(error: passwordError);
       return;
@@ -79,7 +87,10 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
   Future<void> submitName(String rawName) async {
     final name = rawName.trim();
     if (name.isEmpty) {
-      state = state.copyWith(error: 'Informe seu nome');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authEnterYourName);
       return;
     }
 
@@ -101,9 +112,12 @@ class RegisterFlowNotifier extends Notifier<RegisterFlowState> {
       }
       state = state.copyWith(loading: false);
     } on Object catch (e) {
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
       state = state.copyWith(
         loading: false,
-        error: formatAuthException(e),
+        error: formatAuthException(l10n, e),
       );
     }
   }

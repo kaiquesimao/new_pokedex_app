@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum ChangeEmailStep { currentPassword, newEmail, verify, success }
 
@@ -45,7 +47,10 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
 
   Future<void> submitCurrentPassword(String currentPassword) async {
     if (currentPassword.isEmpty) {
-      state = state.copyWith(error: 'Informe sua senha atual');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authEnterYourCurrentPassword);
       return;
     }
 
@@ -55,7 +60,13 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
           .read(authProvider.notifier)
           .verifyCurrentPassword(currentPassword);
       if (!valid) {
-        state = state.copyWith(loading: false, error: 'Senha atual incorreta');
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
+        state = state.copyWith(
+          loading: false,
+          error: l10n.authCurrentPasswordIncorrect,
+        );
         return;
       }
       state = state.copyWith(
@@ -64,14 +75,20 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
         verifiedCurrentPassword: currentPassword,
       );
     } on Object catch (e) {
-      state = state.copyWith(loading: false, error: formatAuthException(e));
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
     }
   }
 
   Future<void> submitNewEmail(String newEmail) async {
     final trimmed = newEmail.trim();
     if (trimmed.isEmpty || !trimmed.contains('@')) {
-      state = state.copyWith(error: 'Informe um e-mail válido');
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: l10n.authInvalidEmail);
       return;
     }
 
@@ -89,7 +106,10 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
         pendingEmail: trimmed,
       );
     } on Object catch (e) {
-      state = state.copyWith(loading: false, error: formatAuthException(e));
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
     }
   }
 
@@ -106,14 +126,23 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
         state = state.copyWith(
           loading: false,
           error: ref.read(authProvider.notifier).usesFirebase
-              ? AuthEmailVerificationCopy.unverifiedFirebase
-              : 'Código inválido. Tente novamente.',
+              ? AuthEmailVerificationCopy.unverifiedFirebase(
+                  lookupAppLocalizations(
+                    ref.read(appLocaleProvider).materialLocale,
+                  ),
+                )
+              : lookupAppLocalizations(
+                  ref.read(appLocaleProvider).materialLocale,
+                ).authInvalidCodeTryAgain,
         );
         return;
       }
       state = state.copyWith(loading: false, step: ChangeEmailStep.success);
     } on Object catch (e) {
-      state = state.copyWith(loading: false, error: formatAuthException(e));
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
     }
   }
 

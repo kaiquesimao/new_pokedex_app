@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -7,54 +8,43 @@ class HelpPage extends StatelessWidget {
 
   static const supportEmail = 'pokedata.app@gmail.com';
 
-  static const _faqItems = <({String question, String answer})>[
+  static List<({String question, String answer})> _faqItems(
+    AppLocalizations l10n,
+  ) => [
     (
-      question: 'Como explorar sem criar conta?',
-      answer:
-          'Na tela de boas-vindas, toque em "Explorar sem conta" para '
-          'navegar pelo Pokédex, regiões e detalhes dos Pokémon sem '
-          'precisar fazer login.',
+      question: l10n.helpExploreGuestQuestion,
+      answer: l10n.helpExploreGuestAnswer,
     ),
     (
-      question: 'Como favoritar Pokémon?',
-      answer:
-          'Toque no ícone de coração na lista ou na página de detalhes. '
-          'É necessário entrar na sua conta para salvar e sincronizar '
-          'favoritos entre dispositivos.',
+      question: l10n.helpFavoriteQuestion,
+      answer: l10n.helpFavoriteAnswer,
     ),
     (
-      question: 'Como filtrar a lista de Pokémon?',
-      answer:
-          'Na aba Pokédex, use a barra de busca e os filtros por tipo e '
-          'geração para refinar os resultados exibidos.',
+      question: l10n.helpFilterQuestion,
+      answer: l10n.helpFilterAnswer,
     ),
     (
-      question: 'Como alterar o idioma?',
-      answer:
-          'Em Conta → Idioma, alterne "Interface do app" e '
-          '"Informações do jogo" entre português e inglês.',
+      question: l10n.profileHelpLanguageQuestion,
+      answer: l10n.profileHelpLanguageAnswer,
     ),
     (
-      question: 'O que são mega evoluções e outras formas?',
-      answer:
-          'Em Conta → PokeData, use os interruptores para exibir ou '
-          'ocultar mega evoluções e formas alternativas na lista.',
+      question: l10n.helpMegaFormsQuestion,
+      answer: l10n.helpMegaFormsAnswer,
     ),
     (
-      question: 'O app funciona offline?',
-      answer:
-          'Dados visitados recentemente podem aparecer a partir do cache '
-          'local. Para buscar novos Pokémon ou atualizar informações, '
-          'é necessária conexão com a internet.',
+      question: l10n.helpOfflineQuestion,
+      answer: l10n.helpOfflineAnswer,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final faqItems = _faqItems(l10n);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Ajuda')),
+      appBar: AppBar(title: Text(l10n.profileHelpLabel)),
       body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
@@ -62,7 +52,7 @@ class HelpPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Perguntas frequentes',
+                l10n.helpFaqTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -74,9 +64,9 @@ class HelpPage extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    for (var i = 0; i < _faqItems.length; i++) ...[
-                      _FaqTile(item: _faqItems[i]),
-                      if (i < _faqItems.length - 1)
+                    for (var i = 0; i < faqItems.length; i++) ...[
+                      _FaqTile(item: faqItems[i]),
+                      if (i < faqItems.length - 1)
                         Divider(
                           height: 1,
                           indent: 16,
@@ -89,7 +79,7 @@ class HelpPage extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Suporte',
+                l10n.helpSupportTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -104,8 +94,7 @@ class HelpPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Não encontrou o que procura? Envie sua dúvida ou '
-                        'relato de problema para nossa equipe.',
+                        l10n.helpSupportBody,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(
                             alpha: 0.7,
@@ -115,7 +104,7 @@ class HelpPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       TextButton.icon(
-                        onPressed: () => _openSupportEmail(context),
+                        onPressed: () => _openSupportEmail(context, l10n),
                         icon: const Icon(Icons.mail_outline, size: 20),
                         label: const Text(HelpPage.supportEmail),
                       ),
@@ -131,19 +120,20 @@ class HelpPage extends StatelessWidget {
   }
 }
 
-Future<void> _openSupportEmail(BuildContext context) async {
+Future<void> _openSupportEmail(
+  BuildContext context,
+  AppLocalizations l10n,
+) async {
   final uri = Uri(
     scheme: 'mailto',
     path: HelpPage.supportEmail,
-    query: 'subject=${Uri.encodeComponent('Suporte PokeData')}',
+    query: 'subject=${Uri.encodeComponent(l10n.helpEmailSubject)}',
   );
 
   if (!await launchUrl(uri)) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Não foi possível abrir o aplicativo de e-mail.'),
-      ),
+      SnackBar(content: Text(l10n.helpEmailOpenError)),
     );
   }
 }

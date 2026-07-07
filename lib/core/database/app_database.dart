@@ -21,6 +21,7 @@ class CachedPokemonEntries extends Table {
 class PokemonNameIndex extends Table {
   IntColumn get id => integer()();
   TextColumn get name => text()();
+  TextColumn get localizedName => text().withDefault(const Constant(''))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -45,8 +46,9 @@ class CachedRegionalPokedexEntries extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
+  // Schema version and migration updated to v4 (adds localizedName).
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -56,6 +58,13 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await migrator.createTable(cachedRegionalPokedexEntries);
+      }
+      if (from < 4) {
+        // Add localizedName column with default empty string.
+        await migrator.addColumn(
+          pokemonNameIndex,
+          pokemonNameIndex.localizedName,
+        );
       }
     },
   );
@@ -147,7 +156,9 @@ class AppDatabase extends _$AppDatabase {
     return ids;
   }
 
-  Future<void> replaceNameIndex(List<({int id, String name})> entries) async {
+  Future<void> replaceNameIndex(
+    List<({int id, String name, String localizedName})> entries,
+  ) async {
     await transaction(() async {
       await delete(pokemonNameIndex).go();
       if (entries.isEmpty) return;
@@ -160,6 +171,7 @@ class AppDatabase extends _$AppDatabase {
                 (entry) => PokemonNameIndexCompanion.insert(
                   id: Value(entry.id),
                   name: entry.name,
+                  localizedName: Value(entry.localizedName),
                 ),
               )
               .toList(),
@@ -180,8 +192,13 @@ class AppDatabase extends _$AppDatabase {
     if (normalized.isEmpty) return Future.value([]);
 
     return (select(
-      pokemonNameIndex,
-    )..where((t) => t.name.lower().like('%$normalized%'))).get();
+          pokemonNameIndex,
+        )..where(
+          (t) =>
+              t.name.lower().like('%$normalized%') |
+              t.localizedName.lower().like('%$normalized%'),
+        ))
+        .get();
   }
 
   Future<List<PokemonNameIndexData>> getAllIndexedRefs() {

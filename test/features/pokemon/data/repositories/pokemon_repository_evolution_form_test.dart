@@ -79,7 +79,7 @@ class _CharizardMegaRemote extends PokemonRemoteDataSource {
   Future<PokemonSpeciesResponse> fetchPokemonSpecies(int id) async {
     return const PokemonSpeciesResponse(
       id: 6,
-      flavorText: null,
+      names: [],
       genderRate: 4,
       captureRate: 45,
       baseHappiness: 70,
@@ -274,7 +274,7 @@ class _GrimerAlolaRemote extends PokemonRemoteDataSource {
     if (id == 88) {
       return const PokemonSpeciesResponse(
         id: 88,
-        flavorText: null,
+        names: [],
         genderRate: 4,
         captureRate: 190,
         baseHappiness: 70,
@@ -298,7 +298,7 @@ class _GrimerAlolaRemote extends PokemonRemoteDataSource {
 
     return const PokemonSpeciesResponse(
       id: 89,
-      flavorText: null,
+      names: [],
       genderRate: 4,
       captureRate: 75,
       baseHappiness: 70,

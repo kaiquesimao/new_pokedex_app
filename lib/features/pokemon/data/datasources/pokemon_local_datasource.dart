@@ -7,6 +7,8 @@ import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 
+typedef PokemonNameIndexRef = ({int id, String name, String localizedName});
+
 class PokemonLocalDataSource {
   PokemonLocalDataSource(this._db);
 
@@ -85,10 +87,24 @@ class PokemonLocalDataSource {
     );
   }
 
-  Future<void> replaceNameIndex(List<PokemonRef> refs) {
-    return _db.replaceNameIndex(
-      refs.map((ref) => (id: ref.id, name: ref.name)).toList(),
-    );
+  Future<void> replaceNameIndex(List<Object> refs) {
+    // Accept either `PokemonRef` instances (tests/legacy) or records with
+    // named fields `(id, name, localizedName)` supplied by the repository.
+    final entries = refs.map((ref) {
+      if (ref is PokemonRef) {
+        return (
+          id: ref.id,
+          name: ref.name,
+          localizedName: ref.name,
+        );
+      }
+      if (ref is PokemonNameIndexRef) {
+        return ref;
+      }
+      throw ArgumentError.value(ref, 'refs', 'Unsupported name index entry');
+    }).toList();
+
+    return _db.replaceNameIndex(entries);
   }
 
   Future<bool> isNameIndexReady() async {
@@ -126,6 +142,7 @@ class PokemonLocalDataSource {
 
     return PokemonSummary(
       id: entry.id,
+      slug: entry.name,
       name: entry.name,
       types: types
           .map(PokemonType.fromApiName)

@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/display_name_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -30,7 +31,11 @@ class _EditNamePageState extends ConsumerState<EditNamePage> {
   }
 
   Future<void> _submit() async {
-    final validationError = DisplayNamePolicy.validate(_controller.text);
+    final l10n = AppLocalizations.of(context);
+    final validationError = DisplayNamePolicy.validateWithL10n(
+      l10n,
+      _controller.text,
+    );
     if (validationError != null) {
       setState(() => _error = validationError);
       return;
@@ -45,15 +50,15 @@ class _EditNamePageState extends ConsumerState<EditNamePage> {
       await ref.read(authProvider.notifier).updateDisplayName(_controller.text);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ação realizada com sucesso'),
+        SnackBar(
+          content: Text(l10n.profileActionSuccess),
           backgroundColor: AppColorsLight.primary,
         ),
       );
       context.go('/profile');
     } on Object catch (e) {
       if (!mounted) return;
-      setState(() => _error = formatAuthException(e));
+      setState(() => _error = formatAuthException(l10n, e));
     } finally {
       if (mounted) {
         setState(() => _loading = false);
@@ -68,7 +73,11 @@ class _EditNamePageState extends ConsumerState<EditNamePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(socialAccountCredentialsMessage)),
+          SnackBar(
+            content: Text(
+              socialAccountCredentialsMessage(AppLocalizations.of(context)),
+            ),
+          ),
         );
         if (context.canPop()) {
           context.pop();
@@ -85,9 +94,10 @@ class _EditNamePageState extends ConsumerState<EditNamePage> {
     }
 
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Editar nome')),
+      appBar: AppBar(title: Text(l10n.profileEditNameTitle)),
       body: SafePageBody.belowAppBar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -95,27 +105,27 @@ class _EditNamePageState extends ConsumerState<EditNamePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Como devemos te chamar?',
+                l10n.authRegisterHeadlineName,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Este nome aparece no perfil e ao entrar na conta.',
+                l10n.profileEditNameSubtitle,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: 32),
               AppTextField(
-                label: 'Nome',
+                label: l10n.authNameLabel,
                 controller: _controller,
                 errorText: _error,
               ),
               const SizedBox(height: 32),
               AppButton(
-                label: 'Salvar',
+                label: l10n.profileSaveButton,
                 isLoading: _loading,
                 onPressed: _loading ? null : _submit,
               ),

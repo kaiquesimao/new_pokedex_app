@@ -10,6 +10,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart'
     show PokemonDetail;
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/empty_state_illustration.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
@@ -22,9 +23,10 @@ class FavoritesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
     final favoriteIds = ref.watch(favoritesProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Favoritos')),
+      appBar: AppBar(title: Text(l10n.navFavorites)),
       body: SafePageBody.inTabShell(
         child: !auth.isAuthenticated
             ? _GuestFavoritesBody(onAuth: () => context.go('/welcome'))
@@ -43,15 +45,14 @@ class _GuestFavoritesBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return EmptyStateIllustration(
       imageAsset: TrainerAvatars.assetPathFor('pokemaniac'),
       pixelArt: true,
-      title: 'Você precisa entrar em uma conta para fazer isso.',
-      subtitle:
-          'Para acessar essa funcionalidade, é necessário fazer login ou '
-          'criar uma conta. Faça isso agora!',
+      title: l10n.favoritesGuestTitle,
+      subtitle: l10n.favoritesGuestSubtitle,
       action: AppButton(
-        label: 'Entre ou Cadastre-se',
+        label: l10n.favoritesGuestAction,
         variant: AppButtonVariant.outline,
         onPressed: onAuth,
       ),
@@ -64,12 +65,11 @@ class _EmptyFavoritesBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyStateIllustration(
+    final l10n = AppLocalizations.of(context);
+    return EmptyStateIllustration(
       imageAsset: AppAssets.patternMagikarp,
-      title: 'Você não favoritou nenhum Pokémon :(',
-      subtitle:
-          'Clique no ícone de coração dos seus pokémons favoritos e eles '
-          'aparecerão aqui.',
+      title: l10n.favoritesEmptyTitle,
+      subtitle: l10n.favoritesEmptySubtitle,
     );
   }
 }
@@ -118,6 +118,7 @@ class _DismissibleFavoriteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Dismissible(
       key: ValueKey('favorite-${pokemon.id}'),
       direction: DismissDirection.endToStart,
@@ -134,7 +135,7 @@ class _DismissibleFavoriteCard extends ConsumerWidget {
         unawaited(ref.read(favoritesProvider.notifier).toggle(pokemon.id));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${pokemon.displayName} removido dos favoritos'),
+            content: Text(l10n.favoritesRemovedSnackbar(pokemon.displayName)),
             duration: const Duration(seconds: 2),
           ),
         );

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
@@ -21,25 +22,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final _pageController = PageController();
   var _currentPage = 0;
 
-  static const _pages = [
-    _OnboardingSlide(
-      imageAssets: [
-        AppAssets.characterBugcatcher,
-        AppAssets.characterBirch,
-      ],
-      title: 'Todos os Pokémon em um só Lugar',
-      subtitle:
-          'Acesse uma vasta lista de Pokémon de todas as gerações já '
-          'feitas pela Nintendo',
-    ),
-    _OnboardingSlide(
-      imageAssets: [AppAssets.characterHilda],
-      title: 'Mantenha sua PokeData atualizada',
-      subtitle:
-          'Cadastre-se e mantenha seu perfil, Pokémon favoritos, '
-          'configurações e muito mais, salvos no aplicativo, mesmo sem '
-          'conexão com a internet.',
-    ),
+  static const List<List<String>> _slideAssets = [
+    [AppAssets.characterBugcatcher, AppAssets.characterBirch],
+    [AppAssets.characterHilda],
   ];
 
   @override
@@ -56,7 +41,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   void _next() {
-    if (_currentPage < _pages.length - 1) {
+    if (_currentPage < _slideAssets.length - 1) {
       unawaited(
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
@@ -71,7 +56,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLastPage = _currentPage == _pages.length - 1;
+    final l10n = AppLocalizations.of(context);
+    final isLastPage = _currentPage == _slideAssets.length - 1;
+    final slides = [
+      (
+        title: l10n.onboardingSlide1Title,
+        subtitle: l10n.onboardingSlide1Subtitle,
+      ),
+      (
+        title: l10n.onboardingSlide2Title,
+        subtitle: l10n.onboardingSlide2Subtitle,
+      ),
+    ];
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -81,17 +77,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: _pages.length,
+                itemCount: slides.length,
                 onPageChanged: (index) => setState(() => _currentPage = index),
                 itemBuilder: (_, index) {
-                  final slide = _pages[index];
+                  final slide = slides[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Column(
                       children: [
                         Expanded(
                           child: TrainerIllustrationGroup(
-                            imageAssets: slide.imageAssets,
+                            imageAssets: _slideAssets[index],
                             errorBuilder: (_, _, _) => Icon(
                               Icons.catching_pokemon,
                               size: 120,
@@ -126,7 +122,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 },
               ),
             ),
-            _PageDots(count: _pages.length, current: _currentPage),
+            _PageDots(count: slides.length, current: _currentPage),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
               child: isLastPage
@@ -136,7 +132,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
               child: AppButton(
-                label: isLastPage ? 'Vamos começar!' : 'Continuar',
+                label: isLastPage
+                    ? l10n.onboardingStartButton
+                    : l10n.onboardingContinueButton,
                 onPressed: _next,
               ),
             ),
@@ -147,18 +145,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 }
 
-class _OnboardingSlide {
-  const _OnboardingSlide({
-    required this.imageAssets,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final List<String> imageAssets;
-  final String title;
-  final String subtitle;
-}
-
 class _PageDots extends StatelessWidget {
   const _PageDots({required this.count, required this.current});
 
@@ -167,20 +153,21 @@ class _PageDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final inactiveColor = primary.withValues(alpha: 0.25);
+    final theme = Theme.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
-        final active = index == current;
+        final isActive = index == current;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: active ? 24 : 8,
-          height: 8,
           margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isActive ? 24 : 8,
+          height: 8,
           decoration: BoxDecoration(
-            color: active ? primary : inactiveColor,
+            color: isActive
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withValues(alpha: 0.35),
             borderRadius: BorderRadius.circular(4),
           ),
         );

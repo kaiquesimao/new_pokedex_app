@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum SocialAuthProvider { apple, google, email }
 
@@ -29,6 +30,25 @@ class SocialAuthButton extends StatelessWidget {
   static const Color _emailButtonBackground = AppColorsLight.primary;
   static const Color _emailButtonForeground = Colors.white;
 
+  static const _webSocialLabelStyle = TextStyle(
+    fontSize: _webFontSize,
+    fontWeight: FontWeight.w600,
+    color: _socialButtonForeground,
+  );
+  static const _mobileSocialLabelStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: _socialButtonForeground,
+  );
+  static const _webEmailLabelStyle = TextStyle(
+    fontSize: _webFontSize,
+    fontWeight: FontWeight.w700,
+  );
+  static const _mobileEmailLabelStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+  );
+
   double get _buttonHeight =>
       kIsWeb ? AuthWebActionMetrics.buttonHeight : _height;
 
@@ -39,6 +59,7 @@ class SocialAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       width: double.infinity,
       height: _buttonHeight,
@@ -50,15 +71,11 @@ class SocialAuthButton extends StatelessWidget {
             size: _appleIconSize,
             color: _socialButtonForeground,
           ),
-          label: const Text(
-            'Continuar com a Apple',
+          label: Text(
+            l10n.authContinueWithApple,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: kIsWeb ? _webFontSize : 15,
-              fontWeight: FontWeight.w600,
-              color: _socialButtonForeground,
-            ),
+            style: kIsWeb ? _webSocialLabelStyle : _mobileSocialLabelStyle,
           ),
           style: OutlinedButton.styleFrom(
             backgroundColor: _socialButtonBackground,
@@ -73,15 +90,11 @@ class SocialAuthButton extends StatelessWidget {
         SocialAuthProvider.google => OutlinedButton.icon(
           onPressed: onPressed,
           icon: _GoogleGlyph(size: _googleIconSize),
-          label: const Text(
-            'Continuar com o Google',
+          label: Text(
+            l10n.authContinueWithGoogle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: kIsWeb ? _webFontSize : 15,
-              fontWeight: FontWeight.w600,
-              color: _socialButtonForeground,
-            ),
+            style: kIsWeb ? _webSocialLabelStyle : _mobileSocialLabelStyle,
           ),
           style: OutlinedButton.styleFrom(
             backgroundColor: _socialButtonBackground,
@@ -104,14 +117,11 @@ class SocialAuthButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(_pillRadiusValue),
             ),
           ),
-          child: const Text(
-            'Continuar com um e-mail',
+          child: Text(
+            l10n.authContinueWithEmail,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: kIsWeb ? _webFontSize : 15,
-              fontWeight: FontWeight.w700,
-            ),
+            style: kIsWeb ? _webEmailLabelStyle : _mobileEmailLabelStyle,
           ),
         ),
       },

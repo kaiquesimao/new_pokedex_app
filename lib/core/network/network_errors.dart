@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/locale/api_load_target.dart';
+
+export 'package:pokedex_app/core/locale/network_error_l10n.dart'
+    show friendlyErrorMessage;
 
 bool isConnectivityFailure(Object error) {
   return error is OfflineEmptyCacheException || isNetworkError(error);
@@ -29,35 +33,22 @@ bool _isDioNetworkFailure(DioException error) {
       (error.type == DioExceptionType.unknown && error.response == null);
 }
 
-Never mapDioException(DioException error, {required String fallback}) {
+Never mapDioException(
+  DioException error, {
+  required ApiLoadTarget loadTarget,
+}) {
   final statusCode = error.response?.statusCode;
   if (statusCode == 404) {
-    throw const NotFoundException('Recurso não encontrado.');
+    throw const NotFoundException();
   }
 
   if (_isDioNetworkFailure(error)) {
-    throw NetworkException(error.message ?? fallback);
+    throw NetworkException(loadTarget: loadTarget);
   }
 
   if (error.type == DioExceptionType.badResponse && statusCode != null) {
-    throw ApiException(
-      'Não foi possível carregar os dados ($statusCode). Tente novamente.',
-      statusCode: statusCode,
-    );
+    throw ApiException(loadTarget: loadTarget, statusCode: statusCode);
   }
 
-  throw ApiException(error.message ?? fallback);
-}
-
-String friendlyErrorMessage(Object error) {
-  if (error is OfflineEmptyCacheException) {
-    return error.message;
-  }
-  if (isNetworkError(error)) {
-    return 'Sem conexão com a internet.';
-  }
-  if (error is AppException) {
-    return error.message;
-  }
-  return 'Algo deu errado. Tente novamente.';
+  throw ApiException(loadTarget: loadTarget);
 }

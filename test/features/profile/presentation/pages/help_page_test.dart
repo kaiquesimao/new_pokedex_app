@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
 
+import '../../../../helpers/l10n_test_helper.dart';
+
 void main() {
   testWidgets('help page shows faq items and support email', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: HelpPage()),
-    );
-    await tester.pumpAndSettle();
+    await pumpLocalizedApp(tester, child: const HelpPage());
 
     expect(find.text('Ajuda'), findsOneWidget);
     expect(find.text('Perguntas frequentes'), findsOneWidget);

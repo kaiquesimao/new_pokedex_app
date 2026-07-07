@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
@@ -15,12 +16,13 @@ class LoginSuccessPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     if (!auth.isAuthenticated) {
       return const Scaffold(body: SizedBox.shrink());
     }
 
-    final name = auth.displayName ?? 'Treinador';
+    final name = auth.displayName ?? l10n.authDefaultTrainerName;
 
     return PopScope(
       canPop: false,
@@ -50,7 +52,7 @@ class LoginSuccessPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Bem-vindo de volta, $name!',
+                      l10n.authLoginSuccessWelcomeBack(name),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         height: 1.25,
@@ -59,8 +61,7 @@ class LoginSuccessPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Esperamos que tenha tido uma longa jornada desde a '
-                      'última vez em que nos visitou.',
+                      l10n.authLoginSuccessMessage,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.55,
@@ -72,7 +73,7 @@ class LoginSuccessPage extends ConsumerWidget {
                     const SizedBox(height: 28),
                     AuthHubActionFrame(
                       child: AppButton(
-                        label: 'Continuar',
+                        label: l10n.authLoginSuccessContinue,
                         onPressed: () => context.go('/pokedex'),
                       ),
                     ),

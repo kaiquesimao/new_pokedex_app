@@ -1,29 +1,11 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 
-enum PokemonSortOption {
-  numberAsc,
-  numberDesc,
-  nameAsc,
-  nameDesc;
-
-  String get label => switch (this) {
-    numberAsc => 'Menor número',
-    numberDesc => 'Maior número',
-    nameAsc => 'A-Z',
-    nameDesc => 'Z-A',
-  };
-}
+enum PokemonSortOption { numberAsc, numberDesc, nameAsc, nameDesc }
 
 enum PokemonHeightBucket {
   small,
   medium,
   large;
-
-  String get label => switch (this) {
-    small => 'Baixo (< 1 m)',
-    medium => 'Médio (1–2 m)',
-    large => 'Alto (> 2 m)',
-  };
 
   bool matches(int heightDm) => switch (this) {
     small => heightDm < 10,
@@ -36,12 +18,6 @@ enum PokemonWeightBucket {
   light,
   medium,
   heavy;
-
-  String get label => switch (this) {
-    light => 'Leve (< 10 kg)',
-    medium => 'Médio (10–100 kg)',
-    heavy => 'Pesado (> 100 kg)',
-  };
 
   bool matches(int weightHg) => switch (this) {
     light => weightHg < 100,
@@ -131,14 +107,4 @@ class PokemonListFilters {
   PokemonListFilters cleared() => const PokemonListFilters();
 }
 
-const kPokemonGenerations = <({int id, String label})>[
-  (id: 1, label: 'Geração I'),
-  (id: 2, label: 'Geração II'),
-  (id: 3, label: 'Geração III'),
-  (id: 4, label: 'Geração IV'),
-  (id: 5, label: 'Geração V'),
-  (id: 6, label: 'Geração VI'),
-  (id: 7, label: 'Geração VII'),
-  (id: 8, label: 'Geração VIII'),
-  (id: 9, label: 'Geração IX'),
-];
+const kPokemonGenerationIds = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];

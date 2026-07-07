@@ -1,3 +1,5 @@
+import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
+
 class PokemonListResponse {
   const PokemonListResponse({
     required this.count,
@@ -220,34 +222,53 @@ class PokemonSpeciesVariety {
 class PokemonSpeciesResponse {
   const PokemonSpeciesResponse({
     required this.id,
-    required this.flavorText,
+    required this.names,
     required this.genderRate,
     required this.captureRate,
     required this.baseHappiness,
     required this.hatchCounter,
     required this.eggGroups,
     required this.evolutionChainUrl,
+    this.flavorTextEntries = const [],
+    this.legacyFlavorText,
     this.varieties = const [],
   });
-  factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
-    final entries = json['flavor_text_entries'] as List<dynamic>? ?? [];
-    String? flavorText;
 
-    for (final entry in entries) {
-      final map = entry as Map<String, dynamic>;
-      final language = map['language'] as Map<String, dynamic>? ?? {};
-      final langName = language['name'] as String? ?? '';
-      if (langName == 'en' || langName == 'pt') {
-        flavorText = (map['flavor_text'] as String? ?? '')
-            .replaceAll('\n', ' ')
-            .replaceAll('\f', ' ');
-        if (langName == 'pt') break;
-      }
-    }
+  /// ponytail: test/fixture shorthand — not from API JSON.
+  factory PokemonSpeciesResponse.withFlavorText({
+    required int id,
+    required String flavorText,
+    int genderRate = -1,
+    int captureRate = 0,
+    int baseHappiness = 0,
+    int hatchCounter = 0,
+    List<String> eggGroups = const [],
+    String? evolutionChainUrl,
+    List<PokemonSpeciesVariety> varieties = const [],
+    List<dynamic> names = const [],
+  }) {
+    return PokemonSpeciesResponse(
+      id: id,
+      names: names,
+      legacyFlavorText: flavorText,
+      genderRate: genderRate,
+      captureRate: captureRate,
+      baseHappiness: baseHappiness,
+      hatchCounter: hatchCounter,
+      eggGroups: eggGroups,
+      evolutionChainUrl: evolutionChainUrl,
+      varieties: varieties,
+    );
+  }
+  factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
+    final names = json['names'] as List<dynamic>? ?? [];
+    final flavorTextEntries =
+        json['flavor_text_entries'] as List<dynamic>? ?? [];
 
     return PokemonSpeciesResponse(
       id: json['id'] as int? ?? 0,
-      flavorText: flavorText,
+      names: names,
+      flavorTextEntries: flavorTextEntries,
       genderRate: json['gender_rate'] as int? ?? -1,
       captureRate: json['capture_rate'] as int? ?? 0,
       baseHappiness: json['base_happiness'] as int? ?? 0,
@@ -267,7 +288,9 @@ class PokemonSpeciesResponse {
   }
 
   final int id;
-  final String? flavorText;
+  final List<dynamic> names;
+  final List<dynamic> flavorTextEntries;
+  final String? legacyFlavorText;
   final int genderRate;
   final int captureRate;
   final int baseHappiness;
@@ -275,4 +298,17 @@ class PokemonSpeciesResponse {
   final List<String> eggGroups;
   final String? evolutionChainUrl;
   final List<PokemonSpeciesVariety> varieties;
+
+  String? localizedName(String pokeApiCode) {
+    // Use PokeApiLocalizedText helper to pick localized name.
+    return PokeApiLocalizedText.pickName(names, pokeApiCode);
+  }
+
+  String? localizedFlavorText(String pokeApiCode) {
+    return PokeApiLocalizedText.pickFlavorText(
+          flavorTextEntries,
+          pokeApiCode,
+        ) ??
+        legacyFlavorText;
+  }
 }

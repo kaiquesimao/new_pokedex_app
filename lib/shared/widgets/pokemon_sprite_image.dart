@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Lightweight native loading indicator sized for [PokemonSpriteImage] slots.
 class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
@@ -24,7 +25,7 @@ class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
     final indicatorSize = _indicatorSize();
 
     return Semantics(
-      label: 'Loading Pokémon image',
+      label: AppLocalizations.of(context).pokemonImageLoadingSemantics,
       child: SizedBox(
         width: width,
         height: height,

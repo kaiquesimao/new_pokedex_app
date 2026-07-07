@@ -2,9 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_web_render.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
 /// Google sign-in control: official GIS button on web, custom pill on mobile.
@@ -17,9 +19,13 @@ class GoogleSignInActionButton extends ConsumerWidget {
       ..watch(googleWebSignInSetupProvider)
       ..listen(googleSignInUiErrorProvider, (previous, next) {
         if (next == null || !context.mounted) return;
+        final l10n = AppLocalizations.of(context);
+        final message = next == 'authAcceptTerms'
+            ? l10n.authLegalAcceptTerms
+            : next;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(next)));
+        ).showSnackBar(SnackBar(content: Text(message)));
         ref.read(googleSignInUiErrorProvider.notifier).clear();
       });
 
@@ -29,8 +35,10 @@ class GoogleSignInActionButton extends ConsumerWidget {
     }
 
     if (kIsWeb) {
+      final localeTag = ref.read(appLocaleProvider).tag;
       return buildGoogleSignInRenderButton(
         width: AuthWebActionMetrics.buttonWidth,
+        localeTag: localeTag,
       );
     }
 

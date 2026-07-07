@@ -3,6 +3,7 @@ import 'package:pokedex_app/core/constants/pokemon_types.dart';
 class PokemonSummary {
   const PokemonSummary({
     required this.id,
+    required this.slug,
     required this.name,
     required this.types,
     this.spriteUrl,
@@ -13,6 +14,11 @@ class PokemonSummary {
   });
 
   final int id;
+
+  /// PokeAPI resource name (e.g. `pikachu`, `charizard-mega-x`).
+  final String slug;
+
+  /// Localized or formatted display name.
   final String name;
   final List<PokemonType> types;
   final String? spriteUrl;
@@ -25,8 +31,9 @@ class PokemonSummary {
   /// From PokeAPI `pokemon-form.is_mega` when [isDefault] is false.
   final bool isMega;
 
-  String get displayName =>
-      name.isEmpty ? '' : name[0].toUpperCase() + name.substring(1);
+  String get displayName => name.isEmpty
+      ? (slug.isEmpty ? '' : slug[0].toUpperCase() + slug.substring(1))
+      : name;
 }
 
 class PokemonDetail {

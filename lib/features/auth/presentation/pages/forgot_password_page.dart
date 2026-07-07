@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/forgot_password_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -44,8 +45,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   Future<void> _resendOtp() async {
     await ref.read(forgotPasswordFlowProvider.notifier).resendOtp();
     if (mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Código reenviado.')),
+        SnackBar(content: Text(l10n.authForgotCodeResentSnackbar)),
       );
     }
   }
@@ -68,10 +70,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     final flow = ref.watch(forgotPasswordFlowProvider);
     final step = flow.step;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle(step)),
+        title: Text(_appBarTitle(step, l10n)),
         leading:
             step == ForgotPasswordStep.success ||
                 step == ForgotPasswordStep.emailSent
@@ -102,14 +105,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     if (step != ForgotPasswordStep.otp)
                       const SizedBox(height: 32),
                     Text(
-                      _headline(step),
+                      _headline(step, l10n),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _subtitle(step, flow.email),
+                      _subtitle(step, flow.email, l10n),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.6,
@@ -120,7 +123,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   ],
                   switch (step) {
                     ForgotPasswordStep.email => AppTextField(
-                      label: 'E-mail',
+                      label: l10n.authEmailLabel,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       errorText: flow.error,
@@ -133,13 +136,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     ForgotPasswordStep.newPassword => Column(
                       children: [
                         AppPasswordField(
-                          label: 'Nova senha',
+                          label: l10n.authForgotNewPasswordLabel,
                           controller: _passwordController,
                           errorText: flow.error,
                         ),
                         const SizedBox(height: 16),
                         AppPasswordField(
-                          label: 'Confirmar nova senha',
+                          label: l10n.authForgotConfirmNewPasswordLabel,
                           controller: _confirmController,
                         ),
                       ],
@@ -155,7 +158,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   if (step == ForgotPasswordStep.otp && flow.resent) ...[
                     const SizedBox(height: 8),
                     Text(
-                      'Um novo código foi enviado.',
+                      l10n.authForgotCodeResentSnackbar,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.primary,
                       ),
@@ -166,7 +169,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       step == ForgotPasswordStep.newPassword) ...[
                     const SizedBox(height: 32),
                     AppButton(
-                      label: _primaryButtonLabel(step),
+                      label: _primaryButtonLabel(step, l10n),
                       isLoading: flow.loading,
                       onPressed: flow.loading ? null : _onPrimaryPressed(step),
                     ),
@@ -178,7 +181,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           if (flow.loading &&
               step != ForgotPasswordStep.success &&
               step != ForgotPasswordStep.emailSent)
-            const AuthLoadingOverlay(message: 'Processando...'),
+            AuthLoadingOverlay(message: l10n.authProcessing),
         ],
       ),
     );
@@ -192,36 +195,44 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     ForgotPasswordStep.emailSent => 3,
   };
 
-  String _appBarTitle(ForgotPasswordStep step) => switch (step) {
-    ForgotPasswordStep.success => 'Senha redefinida',
-    ForgotPasswordStep.emailSent => 'E-mail enviado',
-    _ => 'Recuperar senha',
-  };
+  String _appBarTitle(ForgotPasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ForgotPasswordStep.success => l10n.authForgotAppBarSuccess,
+        ForgotPasswordStep.emailSent => l10n.authForgotAppBarEmailSent,
+        _ => l10n.authForgotAppBarDefault,
+      };
 
-  String _headline(ForgotPasswordStep step) => switch (step) {
-    ForgotPasswordStep.email => 'Esqueceu sua senha?',
-    ForgotPasswordStep.otp => 'Confirme o código',
-    ForgotPasswordStep.newPassword => 'Crie uma nova senha',
-    ForgotPasswordStep.success => '',
-    ForgotPasswordStep.emailSent => '',
-  };
+  String _headline(ForgotPasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ForgotPasswordStep.email => l10n.authForgotHeadlineEmail,
+        ForgotPasswordStep.otp => l10n.authForgotHeadlineOtp,
+        ForgotPasswordStep.newPassword => l10n.authForgotHeadlineNewPassword,
+        ForgotPasswordStep.success => '',
+        ForgotPasswordStep.emailSent => '',
+      };
 
-  String _subtitle(ForgotPasswordStep step, String email) => switch (step) {
-    ForgotPasswordStep.email =>
-      'Informe seu e-mail para receber um código de verificação.',
+  String _subtitle(
+    ForgotPasswordStep step,
+    String email,
+    AppLocalizations l10n,
+  ) => switch (step) {
+    ForgotPasswordStep.email => l10n.authForgotSubtitleEmail,
     ForgotPasswordStep.otp => AuthEmailVerificationCopy.withSpamReminder(
-      'Digite o código de 6 dígitos enviado para $email.',
+      l10n,
+      l10n.authForgotSubtitleOtp(email),
     ),
-    ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHint,
+    ForgotPasswordStep.newPassword => PasswordPolicy.requirementsHintOf(l10n),
     ForgotPasswordStep.success => '',
     ForgotPasswordStep.emailSent => '',
   };
 
-  String _primaryButtonLabel(ForgotPasswordStep step) => switch (step) {
-    ForgotPasswordStep.email => 'Enviar código',
-    ForgotPasswordStep.newPassword => 'Salvar nova senha',
-    _ => '',
-  };
+  String _primaryButtonLabel(ForgotPasswordStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ForgotPasswordStep.email => l10n.authForgotPrimaryButtonEmail,
+        ForgotPasswordStep.newPassword =>
+          l10n.authForgotPrimaryButtonNewPassword,
+        _ => '',
+      };
 
   VoidCallback? _onPrimaryPressed(ForgotPasswordStep step) => switch (step) {
     ForgotPasswordStep.email => _submitEmail,
@@ -266,6 +277,7 @@ class _SuccessBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -277,7 +289,7 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Senha redefinida com sucesso!',
+          l10n.authForgotSuccessTitle,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -285,14 +297,14 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Use sua nova senha para entrar na PokeData.',
+          l10n.authForgotSuccessSubtitle,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 48),
-        AppButton(label: 'Voltar ao login', onPressed: onDone),
+        AppButton(label: l10n.authBackToLogin, onPressed: onDone),
       ],
     );
   }
@@ -307,6 +319,7 @@ class _EmailSentBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -318,7 +331,7 @@ class _EmailSentBody extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Verifique seu e-mail',
+          l10n.authForgotVerifyEmailTitle,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -327,7 +340,8 @@ class _EmailSentBody extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           AuthEmailVerificationCopy.withSpamReminder(
-            'Enviamos um link para redefinir sua senha em $email.',
+            l10n,
+            l10n.authForgotVerifyEmailSent(email),
           ),
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -335,7 +349,7 @@ class _EmailSentBody extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 48),
-        AppButton(label: 'Voltar ao login', onPressed: onDone),
+        AppButton(label: l10n.authBackToLogin, onPressed: onDone),
       ],
     );
   }

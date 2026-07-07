@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class PokemonDetailAboutSection extends StatelessWidget {
+class PokemonDetailAboutSection extends ConsumerWidget {
   const PokemonDetailAboutSection({required this.pokemon, super.key});
 
   final PokemonDetail pokemon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final locale = ref.watch(appLocaleProvider);
     final primaryAbility = pokemon.abilities.isNotEmpty
         ? pokemon.abilities.firstWhere(
             (a) => !a.isHidden,
             orElse: () => pokemon.abilities.first,
           )
         : null;
+    final l10n = AppLocalizations.of(context);
     final category = pokemon.eggGroups.isNotEmpty
-        ? PokemonDetailFormatters.eggGroupsLabel(
-            [pokemon.eggGroups.first],
-          )
+        ? pokemon.eggGroups.first
         : '—';
 
     return Padding(
@@ -48,35 +52,38 @@ class PokemonDetailAboutSection extends StatelessWidget {
             children: [
               _InfoTile(
                 icon: Icons.monitor_weight_outlined,
-                label: 'Peso',
+                label: l10n.detailWeight,
                 value:
-                    '${PokemonDetailFormatters.decimal(pokemon.weightKg)} kg',
+                    '${PokemonDetailFormatters.decimal(pokemon.weightKg, locale)} kg',
               ),
               _InfoTile(
                 icon: Icons.height,
-                label: 'Altura',
+                label: l10n.detailHeight,
                 value:
-                    '${PokemonDetailFormatters.decimal(pokemon.heightMeters)} m',
+                    '${PokemonDetailFormatters.decimal(pokemon.heightMeters, locale)} m',
               ),
               _InfoTile(
                 icon: Icons.grid_view_rounded,
-                label: 'Categoria',
+                label: l10n.detailCategory,
                 value: category,
               ),
               _InfoTile(
                 icon: Icons.catching_pokemon,
-                label: 'Habilidade',
+                label: l10n.detailAbility,
                 value: primaryAbility == null
                     ? '—'
-                    : PokemonDetailFormatters.abilityLabel(
-                        primaryAbility.name,
-                        isHidden: primaryAbility.isHidden,
-                      ),
+                    : primaryAbility.isHidden
+                    ? '${primaryAbility.name}${l10n.abilityHiddenSuffix}'
+                    : primaryAbility.name,
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _GenderBar(genderRate: pokemon.genderRate),
+          _GenderBar(
+            genderRate: pokemon.genderRate,
+            l10n: l10n,
+            locale: locale,
+          ),
         ],
       ),
     );
@@ -143,9 +150,15 @@ class _InfoTile extends StatelessWidget {
 }
 
 class _GenderBar extends StatelessWidget {
-  const _GenderBar({required this.genderRate});
+  const _GenderBar({
+    required this.genderRate,
+    required this.l10n,
+    required this.locale,
+  });
 
   final int genderRate;
+  final AppLocalizations l10n;
+  final AppLocale locale;
 
   @override
   Widget build(BuildContext context) {
@@ -162,10 +175,10 @@ class _GenderBar extends StatelessWidget {
     if (genderRate < 0) {
       return Column(
         children: [
-          Text('GÊNERO', style: labelStyle),
+          Text(l10n.detailGender.toUpperCase(), style: labelStyle),
           const SizedBox(height: 8),
           Text(
-            'Sem gênero',
+            l10n.genderNone,
             style: theme.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -179,7 +192,11 @@ class _GenderBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('GÊNERO', style: labelStyle, textAlign: TextAlign.center),
+        Text(
+          l10n.detailGender.toUpperCase(),
+          style: labelStyle,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: 8),
         _GenderBarTrack(
           malePercent: malePercent,
@@ -191,7 +208,7 @@ class _GenderBar extends StatelessWidget {
         Row(
           children: [
             Text(
-              '♂ ${PokemonDetailFormatters.decimal(malePercent)}%',
+              '♂ ${PokemonDetailFormatters.decimal(malePercent, locale)}%',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: maleColor,
                 fontWeight: FontWeight.w600,
@@ -199,7 +216,7 @@ class _GenderBar extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              '♀ ${PokemonDetailFormatters.decimal(femalePercent)}%',
+              '♀ ${PokemonDetailFormatters.decimal(femalePercent, locale)}%',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: femaleColor,
                 fontWeight: FontWeight.w600,

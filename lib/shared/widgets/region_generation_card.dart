@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
+import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 class RegionGenerationCard extends StatelessWidget {
@@ -11,6 +13,7 @@ class RegionGenerationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -64,7 +67,9 @@ class RegionGenerationCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              data.generationLabel(),
+                              l10n.regionGenerationBadgeLabel(
+                                data.generationNumber,
+                              ),
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.85),
                                 fontSize: 12,

@@ -34,25 +34,4 @@ enum PokemonType {
   }
 
   String get assetPath => '${AppAssets.elementsBase}$apiName.svg';
-
-  String get labelPt => switch (this) {
-    PokemonType.normal => 'Normal',
-    PokemonType.fire => 'Fogo',
-    PokemonType.water => 'Água',
-    PokemonType.grass => 'Grama',
-    PokemonType.electric => 'Elétrico',
-    PokemonType.ice => 'Gelo',
-    PokemonType.fighting => 'Lutador',
-    PokemonType.poison => 'Veneno',
-    PokemonType.ground => 'Terra',
-    PokemonType.flying => 'Voador',
-    PokemonType.psychic => 'Psíquico',
-    PokemonType.bug => 'Inseto',
-    PokemonType.rock => 'Pedra',
-    PokemonType.ghost => 'Fantasma',
-    PokemonType.dragon => 'Dragão',
-    PokemonType.dark => 'Sombrio',
-    PokemonType.steel => 'Aço',
-    PokemonType.fairy => 'Fada',
-  };
 }

@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
-import 'package:pokedex_app/core/theme/app_theme.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
+import '../../helpers/l10n_test_helper.dart';
+
 void main() {
   testWidgets('PokemonListRowCard renders one type', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        home: const Scaffold(
-          body: PokemonListRowCard(
-            number: 4,
-            name: 'Charmander',
-            types: [PokemonType.fire],
-          ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: PokemonListRowCard(
+          number: 4,
+          name: 'Charmander',
+          types: [PokemonType.fire],
         ),
       ),
     );
@@ -27,15 +26,13 @@ void main() {
   });
 
   testWidgets('PokemonListRowCard renders two types', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        home: const Scaffold(
-          body: PokemonListRowCard(
-            number: 1,
-            name: 'Bulbasaur',
-            types: [PokemonType.grass, PokemonType.poison],
-          ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: PokemonListRowCard(
+          number: 1,
+          name: 'Bulbasaur',
+          types: [PokemonType.grass, PokemonType.poison],
         ),
       ),
     );
@@ -52,15 +49,13 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        home: const Scaffold(
-          body: PokemonListRowCard(
-            number: 26,
-            name: 'Raichu',
-            types: [PokemonType.electric, PokemonType.psychic],
-          ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: PokemonListRowCard(
+          number: 26,
+          name: 'Raichu',
+          types: [PokemonType.electric, PokemonType.psychic],
         ),
       ),
     );

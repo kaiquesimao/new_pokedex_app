@@ -8,6 +8,7 @@ import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -84,10 +85,11 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
   Widget build(BuildContext context) {
     final flow = ref.watch(registerFlowProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Criar conta'),
+        title: Text(l10n.authCreateAccountTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -110,14 +112,14 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
                   _StepIndicator(current: _stepIndex(flow.step), total: 3),
                   const SizedBox(height: 32),
                   Text(
-                    _headline(flow.step),
+                    _headline(flow.step, l10n),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _subtitle(flow.step),
+                    _subtitle(flow.step, l10n),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -125,18 +127,18 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
                   const SizedBox(height: 32),
                   switch (flow.step) {
                     RegisterStep.email => AppTextField(
-                      label: 'E-mail',
+                      label: l10n.authEmailLabel,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       errorText: flow.error,
                     ),
                     RegisterStep.password => AppPasswordField(
-                      label: 'Senha',
+                      label: l10n.authPasswordLabel,
                       controller: _passwordController,
                       errorText: flow.error,
                     ),
                     RegisterStep.name => AppTextField(
-                      label: 'Nome',
+                      label: l10n.authNameLabel,
                       controller: _nameController,
                       errorText: flow.error,
                     ),
@@ -147,7 +149,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
                   ],
                   const SizedBox(height: 32),
                   AppButton(
-                    label: 'Continuar',
+                    label: l10n.authContinueButton,
                     isLoading: flow.loading,
                     onPressed: flow.loading
                         ? null
@@ -158,7 +160,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
             ),
           ),
           if (flow.loading)
-            AuthLoadingOverlay(message: _loadingMessage(flow.step)),
+            AuthLoadingOverlay(message: _loadingMessage(flow.step, l10n)),
         ],
       ),
     );
@@ -170,16 +172,16 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
     RegisterStep.name => 3,
   };
 
-  String _headline(RegisterStep step) => switch (step) {
-    RegisterStep.email => 'Qual é o seu e-mail?',
-    RegisterStep.password => 'Crie uma senha',
-    RegisterStep.name => 'Como podemos te chamar?',
+  String _headline(RegisterStep step, AppLocalizations l10n) => switch (step) {
+    RegisterStep.email => l10n.authRegisterHeadlineEmail,
+    RegisterStep.password => l10n.authRegisterHeadlinePassword,
+    RegisterStep.name => l10n.authRegisterHeadlineName,
   };
 
-  String _subtitle(RegisterStep step) => switch (step) {
-    RegisterStep.email => 'Use um endereço de e-mail válido.',
-    RegisterStep.password => PasswordPolicy.requirementsHint,
-    RegisterStep.name => 'Este nome aparecerá no seu perfil de treinador.',
+  String _subtitle(RegisterStep step, AppLocalizations l10n) => switch (step) {
+    RegisterStep.email => l10n.authRegisterSubtitleEmail,
+    RegisterStep.password => PasswordPolicy.requirementsHintOf(l10n),
+    RegisterStep.name => l10n.authRegisterSubtitleName,
   };
 
   VoidCallback _onPrimaryPressed(RegisterStep step) => switch (step) {
@@ -188,11 +190,12 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
     RegisterStep.name => _submitName,
   };
 
-  String _loadingMessage(RegisterStep step) => switch (step) {
-    RegisterStep.name => 'Finalizando cadastro...',
-    RegisterStep.email => 'Aguarde...',
-    RegisterStep.password => 'Aguarde...',
-  };
+  String _loadingMessage(RegisterStep step, AppLocalizations l10n) =>
+      switch (step) {
+        RegisterStep.name => l10n.authLoadingFinalizingRegistration,
+        RegisterStep.email => l10n.authLoadingWait,
+        RegisterStep.password => l10n.authLoadingWait,
+      };
 }
 
 class _StepIndicator extends StatelessWidget {

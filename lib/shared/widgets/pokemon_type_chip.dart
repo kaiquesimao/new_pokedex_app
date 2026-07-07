@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class PokemonTypeChip extends StatelessWidget {
@@ -42,7 +44,7 @@ class PokemonTypeChip extends StatelessWidget {
             if (showLabel) ...[
               const SizedBox(width: 6),
               Text(
-                _label(type),
+                type.label(AppLocalizations.of(context)),
                 style: TextStyle(
                   color: selected ? Colors.white : color,
                   fontWeight: FontWeight.w600,
@@ -57,6 +59,4 @@ class PokemonTypeChip extends StatelessWidget {
       ),
     );
   }
-
-  String _label(PokemonType type) => type.labelPt;
 }

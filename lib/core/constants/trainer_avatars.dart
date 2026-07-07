@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:pokedex_app/core/locale/trainer_avatar_l10n.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 abstract final class TrainerAvatars {
   static const String defaultSlug = 'hilbert';
@@ -90,12 +92,12 @@ abstract final class TrainerAvatars {
     ),
     TrainerAvatarOption(
       slug: 'bugcatcher',
-      label: 'Caçador de Insetos',
+      label: 'Bug Catcher',
       fileName: 'bugcatcher.png',
     ),
     TrainerAvatarOption(
       slug: 'pokemaniac',
-      label: 'Pokémaníaco',
+      label: 'Poké Maniac',
       fileName: 'pokemaniac.png',
     ),
     TrainerAvatarOption(
@@ -113,7 +115,10 @@ abstract final class TrainerAvatars {
     return curated.first.assetPath;
   }
 
-  static String labelFor(String slug) {
+  static String labelFor(AppLocalizations l10n, String slug) {
+    if (slug == 'bugcatcher' || slug == 'pokemaniac') {
+      return trainerAvatarLabel(l10n, slug);
+    }
     final match = curated.where((option) => option.slug == slug);
     if (match.isNotEmpty) return match.first.label;
     return curated.first.label;

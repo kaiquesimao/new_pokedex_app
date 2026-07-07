@@ -52,6 +52,7 @@ void main() {
   group('includesSummaryNamed', () {
     const mega = PokemonSummary(
       id: 10033,
+      slug: 'venusaur-mega',
       name: 'venusaur-mega',
       types: [],
       isDefault: false,
@@ -60,6 +61,7 @@ void main() {
 
     const regional = PokemonSummary(
       id: 10091,
+      slug: 'rattata-alola',
       name: 'rattata-alola',
       types: [],
       isDefault: false,
@@ -67,6 +69,7 @@ void main() {
 
     const base = PokemonSummary(
       id: 3,
+      slug: 'venusaur',
       name: 'venusaur',
       types: [],
       isDefault: true,

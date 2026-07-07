@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/login_email_form_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_listener.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -43,8 +44,9 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
   Widget build(BuildContext context) {
     final form = ref.watch(loginEmailFormProvider);
     listenPostLoginNavigation(ref);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Entrar')),
+      appBar: AppBar(title: Text(l10n.authLoginTitle)),
       body: Stack(
         children: [
           SafePageBody.belowAppBar(
@@ -54,15 +56,14 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Entre com seu e-mail',
+                    l10n.authLoginHeadline,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Use o e-mail e a senha cadastrados no app. '
-                    'Contas criadas com Google ou Apple devem entrar por esses botões.',
+                    l10n.authLoginInstructions,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,
@@ -71,13 +72,13 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                   ),
                   const SizedBox(height: 32),
                   AppTextField(
-                    label: 'E-mail',
+                    label: l10n.authEmailLabel,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
                   AppPasswordField(
-                    label: 'Senha',
+                    label: l10n.authPasswordLabel,
                     controller: _passwordController,
                     errorText: form.error,
                   ),
@@ -86,14 +87,14 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => context.push('/forgot-password'),
-                      child: const Text('Esqueci minha senha'),
+                      child: Text(l10n.authForgotPasswordText),
                     ),
                   ),
                   const SizedBox(height: 24),
                   const LegalAcceptanceField(),
                   const SizedBox(height: 16),
                   AppButton(
-                    label: 'Entrar',
+                    label: l10n.authLoginButtonLabel,
                     isLoading: form.loading,
                     onPressed: _submit,
                   ),
@@ -101,7 +102,8 @@ class _LoginEmailPageState extends ConsumerState<LoginEmailPage> {
               ),
             ),
           ),
-          if (form.loading) const AuthLoadingOverlay(message: 'Entrando...'),
+          if (form.loading)
+            AuthLoadingOverlay(message: l10n.authLoadingSigningIn),
         ],
       ),
     );

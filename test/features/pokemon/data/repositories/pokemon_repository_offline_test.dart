@@ -17,14 +17,14 @@ class _FailingRemoteDataSource extends PokemonRemoteDataSource {
     int offset = 0,
     int limit = 20,
   }) {
-    throw const NetworkException('failed host lookup: pokeapi.co');
+    throw const NetworkException();
   }
 }
 
 class _ThrowingClient implements PokeApiClient {
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    throw const NetworkException('failed host lookup: pokeapi.co');
+    throw const NetworkException();
   }
 }
 
@@ -38,6 +38,7 @@ void main() {
     await local.saveSummary(
       const PokemonSummary(
         id: 25,
+        slug: 'pikachu',
         name: 'pikachu',
         types: [],
         spriteUrl: 'https://example.com/pikachu.png',

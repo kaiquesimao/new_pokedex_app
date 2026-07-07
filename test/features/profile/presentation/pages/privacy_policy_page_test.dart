@@ -4,18 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   testWidgets('privacy page shows policy content', (tester) async {
-    await tester.pumpWidget(
-      DefaultAssetBundle(
+    await pumpLocalizedApp(
+      tester,
+      child: DefaultAssetBundle(
         bundle: _TestAssetBundle({
           'assets/legal/privacy_pt_br.md':
               '# Política de Privacidade - PokeData\n\n'
               'Texto de exemplo da política.',
         }),
-        child: const MaterialApp(home: PrivacyPolicyPage()),
+        child: const PrivacyPolicyPage(),
       ),
+      overrides: [],
     );
     await tester.pumpAndSettle();
 

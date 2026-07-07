@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/locale_resolver.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,17 +8,21 @@ const showMegaEvolutionsKey = 'profile_show_mega_evolutions';
 const showOtherFormsKey = 'profile_show_other_forms';
 const notifyNewPokemonKey = 'profile_notify_new_pokemon';
 const notifyAppUpdatesKey = 'profile_notify_app_updates';
+const appLanguageKey = 'profile_app_language';
 const interfaceLanguageKey = 'profile_interface_language';
-const gameInfoLanguageKey = 'profile_game_info_language';
 
 ProfileSettings readStoredProfileSettings(SharedPreferences prefs) {
+  final appLanguage =
+      prefs.getString(appLanguageKey) ??
+      prefs.getString(interfaceLanguageKey) ??
+      LocaleResolver.fromPlatform().tag;
+
   return ProfileSettings(
     showMegaEvolutions: prefs.getBool(showMegaEvolutionsKey) ?? true,
     showOtherForms: prefs.getBool(showOtherFormsKey) ?? true,
     notifyNewPokemon: prefs.getBool(notifyNewPokemonKey) ?? true,
     notifyAppUpdates: prefs.getBool(notifyAppUpdatesKey) ?? false,
-    interfaceLanguage: prefs.getString(interfaceLanguageKey) ?? 'pt-BR',
-    gameInfoLanguage: prefs.getString(gameInfoLanguageKey) ?? 'en-US',
+    appLanguage: appLanguage,
   );
 }
 
@@ -32,8 +37,7 @@ class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
     await prefs.setBool(showOtherFormsKey, settings.showOtherForms);
     await prefs.setBool(notifyNewPokemonKey, settings.notifyNewPokemon);
     await prefs.setBool(notifyAppUpdatesKey, settings.notifyAppUpdates);
-    await prefs.setString(interfaceLanguageKey, settings.interfaceLanguage);
-    await prefs.setString(gameInfoLanguageKey, settings.gameInfoLanguage);
+    await prefs.setString(appLanguageKey, settings.appLanguage);
   }
 
   Future<void> setShowMegaEvolutions({required bool value}) async {
@@ -56,18 +60,14 @@ class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
     await _persist(state);
   }
 
-  Future<void> toggleInterfaceLanguage() async {
-    final next = state.interfaceLanguage == 'pt-BR' ? 'en-US' : 'pt-BR';
-    state = state.copyWith(interfaceLanguage: next);
-    await _persist(state);
-  }
-
-  Future<void> toggleGameInfoLanguage() async {
-    final next = state.gameInfoLanguage == 'pt-BR' ? 'en-US' : 'pt-BR';
-    state = state.copyWith(gameInfoLanguage: next);
+  Future<void> toggleAppLanguage() async {
+    final next = state.appLanguage == 'pt-BR' ? 'en-US' : 'pt-BR';
+    state = state.copyWith(appLanguage: next);
     await _persist(state);
   }
 }
 
-final profileSettingsProvider = NotifierProvider<ProfileSettingsNotifier,
-    ProfileSettings>(ProfileSettingsNotifier.new);
+final profileSettingsProvider =
+    NotifierProvider<ProfileSettingsNotifier, ProfileSettings>(
+      ProfileSettingsNotifier.new,
+    );

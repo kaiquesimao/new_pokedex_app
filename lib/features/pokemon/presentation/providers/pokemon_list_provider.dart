@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
@@ -14,6 +15,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_ut
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class PokemonListState {
   const PokemonListState({
@@ -122,6 +124,14 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
         }
         unawaited(reloadForFilters(ref.read(pokemonFiltersProvider)));
       })
+      ..listen<String>(profileSettingsProvider.select((s) => s.appLanguage), (
+        previous,
+        next,
+      ) {
+        if (previous == null) return;
+        // Reload when app language changes so localized names/flavor texts refresh.
+        unawaited(loadInitial());
+      })
       ..listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
         final online = next.value;
         if (online != true) return;
@@ -152,8 +162,11 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
     } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
       state = PokemonListState(
-        error: friendlyErrorMessage(error),
+        error: friendlyErrorMessage(l10n, error),
         errorIsConnectivityFailure: connectivityFailure,
         isOfflineMode: connectivityFailure,
       );
@@ -185,9 +198,12 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
     } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
       state = state.copyWith(
         isLoadingMore: false,
-        error: friendlyErrorMessage(error),
+        error: friendlyErrorMessage(l10n, error),
         errorIsConnectivityFailure: connectivityFailure,
         isOfflineMode: connectivityFailure,
       );

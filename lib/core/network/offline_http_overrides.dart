@@ -8,7 +8,7 @@ class OfflineHttpOverrides extends HttpOverrides {
 
   final ConnectivityService connectivity;
 
-  static const offlineMessage = 'Sem conexão com a internet.';
+  static const offlineMessage = 'Device is offline';
 
   @override
   HttpClient createHttpClient(SecurityContext? context) {

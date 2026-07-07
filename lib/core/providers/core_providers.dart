@@ -34,7 +34,7 @@ final pokeApiClientProvider = Provider<PokeApiClient>(
 final pokemonRepositoryProvider = Provider<PokemonRepository>((ref) {
   final remote = PokemonRemoteDataSource(ref.watch(pokeApiClientProvider));
   final local = PokemonLocalDataSource(ref.watch(appDatabaseProvider));
-  return PokemonRepositoryImpl(remote: remote, local: local);
+  return PokemonRepositoryImpl(remote: remote, local: local, ref: ref);
 });
 
 final regionRepositoryProvider = Provider<RegionRepository>((ref) {

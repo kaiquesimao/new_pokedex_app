@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -11,6 +10,7 @@ import 'package:pokedex_app/features/profile/presentation/pages/edit_name_page.d
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -38,17 +38,20 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          authProvider.overrideWithBuild(
-            (ref, notifier) => readStoredAuthState(prefs),
-          ),
-        ],
-        child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => readStoredAuthState(prefs),
+        ),
+      ],
     );
     await tester.pumpAndSettle();
 
@@ -65,20 +68,19 @@ void main() {
   testWidgets('edit name shows validation error for empty name', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              displayName: 'Ash',
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const EditNamePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            displayName: 'Ash',
           ),
-        ],
-        child: const MaterialApp(home: EditNamePage()),
-      ),
+        ),
+      ],
     );
     await tester.pumpAndSettle();
 
@@ -86,6 +88,6 @@ void main() {
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Informe um nome'), findsOneWidget);
+    expect(find.text('Informe seu nome'), findsOneWidget);
   });
 }

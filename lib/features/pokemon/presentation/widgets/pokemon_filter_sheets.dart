@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
+import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
+import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/all_types_chip.dart';
 import 'package:pokedex_app/shared/widgets/bottom_sheet_header.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
@@ -53,6 +56,7 @@ class _PokemonTypeSheet extends ConsumerWidget {
     final filters = ref.watch(pokemonFiltersProvider);
     final notifier = ref.read(pokemonFiltersProvider.notifier);
 
+    final l10n = AppLocalizations.of(context);
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.75,
@@ -60,13 +64,13 @@ class _PokemonTypeSheet extends ConsumerWidget {
       maxChildSize: 0.92,
       builder: (context, scrollController) {
         return Semantics(
-          label: 'Filtro de tipos de Pokémon',
+          label: l10n.filterTypeSemantics,
           child: ListView(
             controller: scrollController,
             padding: const EdgeInsets.only(bottom: 24),
             children: [
               BottomSheetHeader(
-                title: 'Tipos',
+                title: l10n.filterTypesTitle,
                 onClear: () {
                   notifier.setTypeFilter(null);
                   ref.read(appAnalyticsProvider).filterType();
@@ -97,7 +101,7 @@ class _PokemonTypeSheet extends ConsumerWidget {
                           notifier.setTypeFilter(next);
                           ref
                               .read(appAnalyticsProvider)
-                              .filterType(typeName: next?.labelPt);
+                              .filterType(typeName: next?.label(l10n));
                           Navigator.pop(context);
                         },
                       );
@@ -120,6 +124,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
     final notifier = ref.read(pokemonFiltersProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -132,13 +137,13 @@ class _PokemonFilterSheet extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 24),
           children: [
             BottomSheetHeader(
-              title: 'Filtros avançados',
+              title: l10n.filterAdvancedTitle,
               onClear: () {
                 notifier.clearAll();
                 Navigator.pop(context);
               },
             ),
-            const _SectionTitle(title: 'Fraqueza'),
+            _SectionTitle(title: l10n.filterWeaknessTitle),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -155,7 +160,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const _SectionTitle(title: 'Altura'),
+            _SectionTitle(title: l10n.filterHeightTitle),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -164,7 +169,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
                 children: PokemonHeightBucket.values.map((bucket) {
                   final selected = filters.heightBucket == bucket;
                   return SortOptionChip(
-                    label: bucket.label,
+                    label: bucket.label(l10n),
                     selected: selected,
                     onTap: () =>
                         notifier.setHeightBucket(selected ? null : bucket),
@@ -173,7 +178,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const _SectionTitle(title: 'Peso'),
+            _SectionTitle(title: l10n.filterWeightTitle),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -182,7 +187,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
                 children: PokemonWeightBucket.values.map((bucket) {
                   final selected = filters.weightBucket == bucket;
                   return SortOptionChip(
-                    label: bucket.label,
+                    label: bucket.label(l10n),
                     selected: selected,
                     onTap: () =>
                         notifier.setWeightBucket(selected ? null : bucket),
@@ -204,15 +209,16 @@ class _PokemonSortSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
     final notifier = ref.read(pokemonFiltersProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
-      label: 'Ordenação da lista de Pokémon',
+      label: l10n.filterSortSemantics,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const BottomSheetHeader(title: 'Ordem'),
+            BottomSheetHeader(title: l10n.filterSortTitle),
             ...PokemonSortOption.values.map((option) {
               final selected = filters.sort == option;
               return Padding(
@@ -223,13 +229,13 @@ class _PokemonSortSheet extends ConsumerWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: _SortPill(
-                    label: option.label,
+                    label: option.label(l10n),
                     selected: selected,
                     onTap: () {
                       notifier.setSort(option);
                       ref
                           .read(appAnalyticsProvider)
-                          .sortChanged(sortLabel: option.label);
+                          .sortChanged(sortLabel: option.label(l10n));
                       Navigator.pop(context);
                     },
                   ),
@@ -288,6 +294,7 @@ class _PokemonGenerationSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
     final notifier = ref.read(pokemonFiltersProvider.notifier);
+    final l10n = AppLocalizations.of(context);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -300,16 +307,16 @@ class _PokemonGenerationSheet extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 24),
           children: [
             BottomSheetHeader(
-              title: 'Geração',
+              title: l10n.filterGenerationLabel,
               onClear: () {
                 notifier.setGeneration(null);
                 Navigator.pop(context);
               },
             ),
-            ...kPokemonGenerations.map((generation) {
-              final selected = filters.generationId == generation.id;
+            ...kPokemonGenerationIds.map((generationId) {
+              final selected = filters.generationId == generationId;
               return ListTile(
-                title: Text(generation.label),
+                title: Text(l10n.generationPickerLabel(generationId)),
                 trailing: selected
                     ? Icon(
                         Icons.check_circle,
@@ -317,7 +324,7 @@ class _PokemonGenerationSheet extends ConsumerWidget {
                       )
                     : null,
                 onTap: () {
-                  notifier.setGeneration(selected ? null : generation.id);
+                  notifier.setGeneration(selected ? null : generationId);
                   Navigator.pop(context);
                 },
               );

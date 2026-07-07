@@ -19,8 +19,6 @@ class RegionCardData {
   final Color gradientEnd;
   final List<int> starterIds;
   final String? landscapeAsset;
-
-  String generationLabel() => '$generationNumberª GERAÇÃO';
 }
 
 abstract final class RegionCardAssets {

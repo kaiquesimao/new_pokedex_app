@@ -2,42 +2,37 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
-import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   testWidgets('profile shows account rows and logout when authenticated', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              email: 'ash@pokemon.com',
-              displayName: 'Ash',
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            email: 'ash@pokemon.com',
+            displayName: 'Ash',
           ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: const MaterialApp(home: ProfilePage()),
-      ),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     expect(find.text('Ash'), findsOneWidget);
@@ -56,25 +51,22 @@ void main() {
   });
 
   testWidgets('profile hides password row for social account', (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              email: 'ash@gmail.com',
-              displayName: 'Ash',
-              canEditCredentials: false,
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            email: 'ash@gmail.com',
+            displayName: 'Ash',
+            canEditCredentials: false,
           ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: const MaterialApp(home: ProfilePage()),
-      ),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     expect(find.text('Ash'), findsOneWidget);
@@ -83,19 +75,16 @@ void main() {
   });
 
   testWidgets('profile shows guest CTAs when unauthenticated', (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(isInitialized: true),
-          ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: const MaterialApp(home: ProfilePage()),
-      ),
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     expect(find.text('Entrar'), findsOneWidget);
@@ -119,26 +108,27 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(isInitialized: true),
-          ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: DefaultAssetBundle(
-          bundle: _TestAssetBundle({
-            'assets/legal/terms_pt_br.md':
-                '# Termos de Uso - PokeData\n\n'
-                'não é desenvolvido, endossado ou afiliado',
-          }),
-          child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: DefaultAssetBundle(
+        bundle: _TestAssetBundle({
+          'assets/legal/terms_pt_br.md':
+              '# Termos de Uso - PokeData\n\n'
+              'não é desenvolvido, endossado ou afiliado',
+        }),
+        child: Router(
+          routerDelegate: router.routerDelegate,
+          routeInformationParser: router.routeInformationParser,
+          routeInformationProvider: router.routeInformationProvider,
         ),
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     await tester.scrollUntilVisible(
@@ -166,19 +156,20 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(isInitialized: true),
-          ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     await tester.scrollUntilVisible(
@@ -208,26 +199,27 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(isInitialized: true),
-          ),
-          profileSettingsProvider.overrideWithBuild(
-            (ref, notifier) => const ProfileSettings(),
-          ),
-        ],
-        child: DefaultAssetBundle(
-          bundle: _TestAssetBundle({
-            'assets/legal/privacy_pt_br.md':
-                '# Política de Privacidade - PokeData\n\n'
-                'texto teste',
-          }),
-          child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: DefaultAssetBundle(
+        bundle: _TestAssetBundle({
+          'assets/legal/privacy_pt_br.md':
+              '# Política de Privacidade - PokeData\n\n'
+              'texto teste',
+        }),
+        child: Router(
+          routerDelegate: router.routerDelegate,
+          routeInformationParser: router.routeInformationParser,
+          routeInformationProvider: router.routeInformationProvider,
         ),
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+        // profileSettingsProvider is set by pumpLocalizedApp
+      ],
     );
 
     await tester.scrollUntilVisible(

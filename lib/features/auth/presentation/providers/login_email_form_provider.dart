@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class LoginEmailFormState {
   const LoginEmailFormState({this.loading = false, this.error});
@@ -37,7 +39,10 @@ class LoginEmailFormNotifier extends Notifier<LoginEmailFormState> {
             password: password,
           );
     } on Object catch (e) {
-      state = state.copyWith(loading: false, error: formatAuthException(e));
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
     } finally {
       if (state.loading) {
         state = state.copyWith(loading: false);

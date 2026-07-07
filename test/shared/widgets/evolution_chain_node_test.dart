@@ -4,6 +4,8 @@ import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 
+import '../../helpers/l10n_test_helper.dart';
+
 void main() {
   testWidgets('evolution card shows name, number and level connector', (
     tester,
@@ -22,16 +24,15 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: Padding(
-            padding: EdgeInsets.all(16),
-            child: EvolutionChainTree(
-              root: root,
-              currentSpeciesId: 1,
-              embedded: true,
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(16),
+          child: EvolutionChainTree(
+            root: root,
+            currentSpeciesId: 1,
+            embedded: true,
           ),
         ),
       ),

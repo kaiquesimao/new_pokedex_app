@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 bool canProceedWithLegal(WidgetRef ref) {
   return ref.read(legalAcceptanceProvider) ||
@@ -14,12 +15,9 @@ Future<bool> ensureLegalAccepted(BuildContext context, WidgetRef ref) async {
 
   if (!ref.read(legalAcceptanceDraftProvider)) {
     if (context.mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Aceite os Termos de uso e a Política de privacidade para continuar.',
-          ),
-        ),
+        SnackBar(content: Text(l10n.authLegalAcceptTerms)),
       );
     }
     return false;
@@ -64,13 +62,14 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final linkStyle = theme.textTheme.bodySmall?.copyWith(
       color: theme.colorScheme.primary,
       fontWeight: FontWeight.w600,
       decoration: TextDecoration.underline,
     );
 
-    final label = _LegalLabel(theme: theme, linkStyle: linkStyle);
+    final label = _LegalLabel(theme: theme, linkStyle: linkStyle, l10n: l10n);
 
     final row = Row(
       mainAxisSize: kIsWeb ? MainAxisSize.min : MainAxisSize.max,
@@ -105,25 +104,30 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
 }
 
 class _LegalLabel extends StatelessWidget {
-  const _LegalLabel({required this.theme, required this.linkStyle});
+  const _LegalLabel({
+    required this.theme,
+    required this.linkStyle,
+    required this.l10n,
+  });
 
   final ThemeData theme;
   final TextStyle? linkStyle;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Text('Li e aceito os ', style: theme.textTheme.bodySmall),
+        Text(l10n.legalAcceptPrefix, style: theme.textTheme.bodySmall),
         _LegalLink(
-          label: 'Termos de uso',
+          label: l10n.profileTermsLabel,
           style: linkStyle,
           onTap: () => context.push('/legal/terms'),
         ),
-        Text(' e a ', style: theme.textTheme.bodySmall),
+        Text(l10n.legalAcceptMiddle, style: theme.textTheme.bodySmall),
         _LegalLink(
-          label: 'Política de privacidade',
+          label: l10n.profilePrivacyLabel,
           style: linkStyle,
           onTap: () => context.push('/legal/privacy'),
         ),

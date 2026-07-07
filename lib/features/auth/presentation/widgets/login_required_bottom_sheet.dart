@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 
 Future<void> showLoginRequiredBottomSheet(BuildContext context) {
@@ -18,9 +19,10 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
-      label: 'Entre para salvar favoritos',
+      label: l10n.authLoginRequiredSemanticsLabel,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         child: Column(
@@ -39,7 +41,7 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Entre para salvar favoritos',
+              l10n.authLoginRequiredTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
@@ -47,7 +49,7 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Crie uma conta ou entre para sincronizar seus Pokémon favoritos.',
+              l10n.authLoginRequiredDescription,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -55,10 +57,10 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Semantics(
-              label: 'Entrar',
+              label: l10n.authLoginRequiredSignIn,
               button: true,
               child: AppButton(
-                label: 'Entrar',
+                label: l10n.authLoginRequiredSignIn,
                 onPressed: () {
                   Navigator.of(context).pop();
                   unawaited(context.push('/login'));
@@ -67,10 +69,10 @@ class _LoginRequiredBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Semantics(
-              label: 'Criar conta',
+              label: l10n.authLoginRequiredCreateAccount,
               button: true,
               child: AppButton(
-                label: 'Criar conta',
+                label: l10n.authLoginRequiredCreateAccount,
                 variant: AppButtonVariant.outline,
                 onPressed: () {
                   Navigator.of(context).pop();

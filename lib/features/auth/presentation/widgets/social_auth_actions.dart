@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_app/core/constants/firebase_auth_config.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class SocialSignInLoadingNotifier extends Notifier<bool> {
   @override
@@ -52,8 +54,9 @@ final googleWebSignInSetupProvider = Provider<void>((ref) {
       if (event is! GoogleSignInAuthenticationEventSignIn) return;
       if (!ref.read(legalAcceptanceProvider) &&
           !ref.read(legalAcceptanceDraftProvider)) {
+        // Use a message key; UI will resolve to localized string.
         ref.read(googleSignInUiErrorProvider.notifier).report =
-            'Aceite os Termos de uso e a Política de privacidade para continuar.';
+            'authAcceptTerms';
         return;
       }
 
@@ -62,15 +65,21 @@ final googleWebSignInSetupProvider = Provider<void>((ref) {
         await ref.read(legalAcceptanceProvider.notifier).accept();
         await authNotifier.signInWithGoogleAccount(event.user);
       } on Object catch (e) {
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
         ref.read(googleSignInUiErrorProvider.notifier).report =
-            formatAuthException(e);
+            formatAuthException(l10n, e);
       } finally {
         ref.read(socialSignInLoadingProvider.notifier).loading = false;
       }
     },
     onError: (Object error) {
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
       ref.read(googleSignInUiErrorProvider.notifier).report =
-          formatAuthException(error);
+          formatAuthException(l10n, error);
     },
   );
 
@@ -85,7 +94,6 @@ Future<void> handleGoogleSignIn(BuildContext context, WidgetRef ref) async {
   await _runSocialSignIn(
     context: context,
     ref: ref,
-    providerName: 'Google',
     action: () => ref.read(authProvider.notifier).signInWithGoogle(),
   );
 }
@@ -97,7 +105,6 @@ Future<void> handleAppleSignIn(BuildContext context, WidgetRef ref) async {
   await _runSocialSignIn(
     context: context,
     ref: ref,
-    providerName: 'Apple',
     action: () => ref.read(authProvider.notifier).signInWithApple(),
   );
 }
@@ -105,7 +112,6 @@ Future<void> handleAppleSignIn(BuildContext context, WidgetRef ref) async {
 Future<void> _runSocialSignIn({
   required BuildContext context,
   required WidgetRef ref,
-  required String providerName,
   required Future<void> Function() action,
 }) async {
   final notifier = ref.read(authProvider.notifier);
@@ -119,9 +125,10 @@ Future<void> _runSocialSignIn({
     await action();
   } on Object catch (e) {
     if (context.mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(formatAuthException(e))));
+      ).showSnackBar(SnackBar(content: Text(formatAuthException(l10n, e))));
     }
   } finally {
     ref.read(socialSignInLoadingProvider.notifier).loading = false;

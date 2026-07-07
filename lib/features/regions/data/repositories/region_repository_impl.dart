@@ -1,5 +1,6 @@
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/locale/offline_cache_error_kind.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/features/regions/data/datasources/region_local_datasource.dart';
@@ -62,9 +63,10 @@ class RegionRepositoryImpl implements RegionRepository {
       );
       if (cached == null || cached.isEmpty) {
         throw OfflineEmptyCacheException(
-          'A PokeData da região de ${RegionCardAssets.forApiName(regionName)?.displayName ?? regionName} '
-          'não está salva no dispositivo.\n'
-          'Abra esta região online pelo menos uma vez.',
+          kind: OfflineCacheErrorKind.regionPokedexNotCached,
+          regionName:
+              RegionCardAssets.forApiName(regionName)?.displayName ??
+              regionName,
         );
       }
 

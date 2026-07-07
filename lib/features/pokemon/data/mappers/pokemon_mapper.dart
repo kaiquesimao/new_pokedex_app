@@ -11,10 +11,19 @@ class PokemonMapper {
         .toList();
   }
 
-  static PokemonSummary toSummary(PokemonResponse response) {
+  static PokemonSummary toSummary(
+    PokemonResponse response, {
+    required String pokeApiCode,
+    PokemonSpeciesResponse? species,
+  }) {
+    final displayName = (species?.localizedName(pokeApiCode) ?? '').isNotEmpty
+        ? species!.localizedName(pokeApiCode)!
+        : _capitalize(response.name);
+
     return PokemonSummary(
       id: response.id,
-      name: response.name,
+      slug: response.name,
+      name: displayName,
       types: mapTypes(response.types),
       spriteUrl: PokemonSpriteUrls.homeArtwork(pokemonId: response.id),
       height: response.height,
@@ -26,11 +35,14 @@ class PokemonMapper {
 
   static PokemonDetail toDetail(
     PokemonResponse response, {
+    required String pokeApiCode,
     PokemonSpeciesResponse? species,
   }) {
     return PokemonDetail(
       id: response.id,
-      name: response.name,
+      name: (species?.localizedName(pokeApiCode) ?? '').isNotEmpty
+          ? species!.localizedName(pokeApiCode)!
+          : _capitalize(response.name),
       height: response.height,
       weight: response.weight,
       types: mapTypes(response.types),
@@ -41,12 +53,17 @@ class PokemonMapper {
           .map((a) => PokemonAbility(name: a.name, isHidden: a.isHidden))
           .toList(),
       spriteUrl: PokemonSpriteUrls.homeArtwork(pokemonId: response.id),
-      flavorText: species?.flavorText,
+      flavorText: species?.localizedFlavorText(pokeApiCode),
       genderRate: species?.genderRate ?? -1,
       captureRate: species?.captureRate ?? 0,
       baseHappiness: species?.baseHappiness ?? 0,
       hatchCounter: species?.hatchCounter ?? 0,
       eggGroups: species?.eggGroups ?? const [],
     );
+  }
+
+  static String _capitalize(String value) {
+    if (value.isEmpty) return value;
+    return value[0].toUpperCase() + value.substring(1);
   }
 }

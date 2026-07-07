@@ -2,7 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
+
+Widget _localizedApp({required Widget home}) {
+  return MaterialApp(
+    locale: const Locale('en'),
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    home: home,
+  );
+}
 
 void main() {
   testWidgets('PokemonSpriteImage applies DPR-aware memCache dimensions', (
@@ -12,8 +22,8 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      _localizedApp(
+        home: const Scaffold(
           body: PokemonSpriteImage(
             imageUrl: 'https://example.com/pokemon/1.png',
             height: 72,
@@ -37,8 +47,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      _localizedApp(
+        home: const Scaffold(
           body: PokemonSpriteImage(
             imageUrl: 'https://example.com/pokemon/1.png',
             height: 72,
@@ -55,8 +65,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      _localizedApp(
+        home: const Scaffold(
           body: PokemonSpriteLoadingPlaceholder(width: 48, height: 48),
         ),
       ),
@@ -77,8 +87,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      _localizedApp(
+        home: const Scaffold(
           body: PokemonSpriteImage(
             imageUrl: 'https://example.com/pokemon/1.png',
             height: 72,

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
@@ -10,6 +9,7 @@ import 'package:pokedex_app/features/profile/presentation/pages/change_password_
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,21 +22,20 @@ void main() {
       'mock_auth_password': 'senha123',
     });
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              email: 'ash@pokemon.com',
-              displayName: 'Ash',
-            ),
+    await pumpLocalizedApp(
+      tester,
+      child: const ChangePasswordPage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            email: 'ash@pokemon.com',
+            displayName: 'Ash',
           ),
-        ],
-        child: const MaterialApp(home: ChangePasswordPage()),
-      ),
+        ),
+      ],
     );
 
     expect(find.text('Qual é sua senha atual?'), findsOneWidget);
@@ -75,20 +74,23 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          firebaseUnavailableOverride,
-          authProvider.overrideWithBuild(
-            (ref, notifier) => const AuthState(
-              isInitialized: true,
-              isAuthenticated: true,
-              canEditCredentials: false,
-            ),
-          ),
-        ],
-        child: MaterialApp.router(routerConfig: router),
+    await pumpLocalizedApp(
+      tester,
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            canEditCredentials: false,
+          ),
+        ),
+      ],
     );
 
     unawaited(router.push('/profile/change-password'));

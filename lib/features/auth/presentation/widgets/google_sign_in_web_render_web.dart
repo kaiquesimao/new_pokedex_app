@@ -1,7 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in_web/web_only.dart';
 
-Widget buildGoogleSignInRenderButton({required double width}) {
+Widget buildGoogleSignInRenderButton({
+  required double width,
+  String? localeTag,
+}) {
   return renderButton(
     configuration: GSIButtonConfiguration(
       type: GSIButtonType.standard,
@@ -9,7 +12,7 @@ Widget buildGoogleSignInRenderButton({required double width}) {
       size: GSIButtonSize.large,
       text: GSIButtonText.continueWith,
       shape: GSIButtonShape.pill,
-      locale: 'pt-BR',
+      locale: localeTag ?? 'pt-BR',
       minimumWidth: width.clamp(1, 400),
     ),
   );

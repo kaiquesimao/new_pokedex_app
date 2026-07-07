@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/change_password_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -45,9 +47,12 @@ void main() {
 
       await notifier.submitCurrent('');
 
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
       expect(
         container.read(changePasswordFlowProvider).error,
-        'Informe sua senha atual',
+        l10n.authEnterYourCurrentPassword,
       );
       expect(container.read(changePasswordFlowProvider).loading, isFalse);
     });

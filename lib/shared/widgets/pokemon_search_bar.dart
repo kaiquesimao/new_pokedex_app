@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class PokemonSearchBar extends StatefulWidget {
   const PokemonSearchBar({
@@ -46,7 +47,7 @@ class _PokemonSearchBarState extends State<PokemonSearchBar> {
       controller: _controller,
       onChanged: _onChanged,
       decoration: InputDecoration(
-        hintText: 'Procurar Pokémon...',
+        hintText: AppLocalizations.of(context).searchHint,
         prefixIcon: const Icon(Icons.search, size: 20),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: _controller,

@@ -10,7 +10,7 @@ import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_en
 class _FailingRegionClient implements PokeApiClient {
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    throw const NetworkException('failed host lookup: pokeapi.co');
+    throw const NetworkException();
   }
 }
 

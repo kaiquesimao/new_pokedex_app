@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/forgot_password_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -40,7 +42,10 @@ void main() {
       await notifier.submitEmail('invalid');
 
       final state = container.read(forgotPasswordFlowProvider);
-      expect(state.error, 'Informe um e-mail válido');
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
+      expect(state.error, l10n.authInvalidEmail);
       expect(state.step, ForgotPasswordStep.email);
       expect(state.email, isEmpty);
     });
@@ -64,7 +69,10 @@ void main() {
       await notifier.verifyOtp('123');
 
       final state = container.read(forgotPasswordFlowProvider);
-      expect(state.error, 'Código inválido. Tente novamente.');
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
+      expect(state.error, l10n.authInvalidCodeTryAgain);
       expect(state.step, ForgotPasswordStep.otp);
       expect(state.loading, isFalse);
     });
@@ -92,7 +100,10 @@ void main() {
       );
 
       final state = container.read(forgotPasswordFlowProvider);
-      expect(state.error, 'As senhas não coincidem');
+      final l10n = lookupAppLocalizations(
+        container.read(appLocaleProvider).materialLocale,
+      );
+      expect(state.error, l10n.authPasswordsDoNotMatch);
       expect(state.step, ForgotPasswordStep.newPassword);
       expect(state.loading, isFalse);
     });

@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class VerifyEmailUiState {
   const VerifyEmailUiState({
@@ -43,7 +45,10 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
       try {
         await ref.read(authProvider.notifier).sendOtp(email: flow.email);
       } on Object catch (e) {
-        state = state.copyWith(error: formatAuthException(e));
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
+        state = state.copyWith(error: formatAuthException(l10n, e));
       }
     }
   }
@@ -59,11 +64,14 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
 
       if (!verified) {
         if (ref.mounted) {
+          final l10n = lookupAppLocalizations(
+            ref.read(appLocaleProvider).materialLocale,
+          );
           state = state.copyWith(
             loading: false,
             error: _usesFirebase
-                ? AuthEmailVerificationCopy.unverifiedFirebase
-                : 'Código inválido. Tente novamente.',
+                ? AuthEmailVerificationCopy.unverifiedFirebase(l10n)
+                : l10n.authInvalidCodeTryAgain,
           );
         }
         return false;
@@ -83,7 +91,10 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
       return true;
     } on Object catch (e) {
       if (ref.mounted) {
-        state = state.copyWith(loading: false, error: formatAuthException(e));
+        final l10n = lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        );
+        state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
       }
       return false;
     }
@@ -95,7 +106,10 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
       await ref.read(authProvider.notifier).sendOtp(email: flow.email);
       state = state.copyWith(resent: true, clearError: true);
     } on Object catch (e) {
-      state = state.copyWith(error: formatAuthException(e));
+      final l10n = lookupAppLocalizations(
+        ref.read(appLocaleProvider).materialLocale,
+      );
+      state = state.copyWith(error: formatAuthException(l10n, e));
     }
   }
 }

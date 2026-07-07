@@ -9,6 +9,7 @@ import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/change_email_flow_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
@@ -58,8 +59,8 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
 
   void _finish() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ação realizada com sucesso'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).profileActionSuccess),
         backgroundColor: AppColorsLight.primary,
       ),
     );
@@ -73,7 +74,11 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(socialAccountCredentialsMessage)),
+          SnackBar(
+            content: Text(
+              socialAccountCredentialsMessage(AppLocalizations.of(context)),
+            ),
+          ),
         );
         if (context.canPop()) {
           context.pop();
@@ -88,10 +93,11 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
     final step = flow.step;
     final usesFirebase = ref.watch(firebaseBootstrapProvider).isAvailable;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle(step)),
+        title: Text(_appBarTitle(step, l10n)),
         leading: step == ChangeEmailStep.success
             ? null
             : IconButton(
@@ -115,7 +121,7 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
                 _StepIndicator(current: _stepIndex(step), total: 3),
                 const SizedBox(height: 32),
                 Text(
-                  _headline(step),
+                  _headline(step, l10n),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -124,6 +130,7 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
                 Text(
                   _subtitle(
                     step,
+                    l10n: l10n,
                     usesFirebase: usesFirebase,
                     email: flow.pendingEmail,
                   ),
@@ -135,12 +142,12 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
               ],
               switch (step) {
                 ChangeEmailStep.currentPassword => AppPasswordField(
-                  label: 'Senha atual',
+                  label: l10n.profileCurrentPasswordLabel,
                   controller: _currentPasswordController,
                   errorText: flow.error,
                 ),
                 ChangeEmailStep.newEmail => AppTextField(
-                  label: 'Novo e-mail',
+                  label: l10n.changeEmailNewEmailLabel,
                   controller: _newEmailController,
                   keyboardType: TextInputType.emailAddress,
                   errorText: flow.error,
@@ -157,6 +164,7 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
                           },
                         ),
                 ChangeEmailStep.success => _SuccessBody(
+                  l10n: l10n,
                   email: flow.pendingEmail,
                   onDone: _finish,
                 ),
@@ -164,7 +172,11 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
               if (step != ChangeEmailStep.success) ...[
                 const SizedBox(height: 32),
                 AppButton(
-                  label: _primaryButtonLabel(step, usesFirebase: usesFirebase),
+                  label: _primaryButtonLabel(
+                    step,
+                    l10n: l10n,
+                    usesFirebase: usesFirebase,
+                  ),
                   isLoading: flow.loading,
                   onPressed: flow.loading ? null : _onPrimaryPressed(step),
                 ),
@@ -183,49 +195,59 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
     ChangeEmailStep.success => 3,
   };
 
-  String _appBarTitle(ChangeEmailStep step) => switch (step) {
-    ChangeEmailStep.success => 'E-mail atualizado',
-    ChangeEmailStep.verify => 'Confirmar e-mail',
-    _ => 'Trocar e-mail',
-  };
+  String _appBarTitle(ChangeEmailStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ChangeEmailStep.success => l10n.changeEmailAppBarSuccess,
+        ChangeEmailStep.verify => l10n.authVerifyEmailTitle,
+        _ => l10n.changeEmailAppBarTitle,
+      };
 
-  String _headline(ChangeEmailStep step) => switch (step) {
-    ChangeEmailStep.currentPassword => 'Qual é sua senha atual?',
-    ChangeEmailStep.newEmail => 'Qual é o novo e-mail?',
-    ChangeEmailStep.verify => 'Confirme o novo e-mail',
-    ChangeEmailStep.success => '',
-  };
+  String _headline(ChangeEmailStep step, AppLocalizations l10n) =>
+      switch (step) {
+        ChangeEmailStep.currentPassword =>
+          l10n.changeEmailHeadlineCurrentPassword,
+        ChangeEmailStep.newEmail => l10n.changeEmailHeadlineNewEmail,
+        ChangeEmailStep.verify => l10n.changeEmailHeadlineVerify,
+        ChangeEmailStep.success => '',
+      };
 
   String _subtitle(
     ChangeEmailStep step, {
+    required AppLocalizations l10n,
     required bool usesFirebase,
     required String email,
-  }) => switch (step) {
-    ChangeEmailStep.currentPassword =>
-      'Por segurança, confirme sua senha antes de continuar.',
-    ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
-      usesFirebase
-          ? 'Enviaremos um link de verificação para o novo endereço.'
-          : 'Informe o novo e-mail da sua conta.',
-    ),
-    ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
-      usesFirebase
-          ? 'Abra o link enviado para $email e toque em "Já confirmei".'
-          : 'Digite o código de 6 dígitos enviado para $email.',
-    ),
-    ChangeEmailStep.success => '',
-  };
+  }) =>
+      switch (step) {
+        ChangeEmailStep.currentPassword =>
+          l10n.profileSecurityPasswordSubtitle,
+        ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
+          l10n,
+          usesFirebase
+              ? l10n.changeEmailSubtitleNewEmailFirebase
+              : l10n.changeEmailSubtitleNewEmailMock,
+        ),
+        ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
+          l10n,
+          usesFirebase
+              ? l10n.changeEmailSubtitleVerifyFirebase(email)
+              : l10n.authForgotSubtitleOtp(email),
+        ),
+        ChangeEmailStep.success => '',
+      };
 
   String _primaryButtonLabel(
     ChangeEmailStep step, {
+    required AppLocalizations l10n,
     required bool usesFirebase,
-  }) => switch (step) {
-    ChangeEmailStep.currentPassword => 'Continuar',
-    ChangeEmailStep.newEmail => 'Enviar verificação',
-    ChangeEmailStep.verify =>
-      usesFirebase ? 'Já confirmei o e-mail' : 'Confirmar código',
-    ChangeEmailStep.success => 'Concluir',
-  };
+  }) =>
+      switch (step) {
+        ChangeEmailStep.currentPassword => l10n.authContinueButton,
+        ChangeEmailStep.newEmail => l10n.changeEmailSendVerificationButton,
+        ChangeEmailStep.verify => usesFirebase
+            ? l10n.authVerifyEmailAlreadyConfirmedButton
+            : l10n.changeEmailConfirmCodeButton,
+        ChangeEmailStep.success => l10n.profileFinishButton,
+      };
 
   VoidCallback? _onPrimaryPressed(ChangeEmailStep step) => switch (step) {
     ChangeEmailStep.currentPassword => _submitCurrentPassword,
@@ -295,8 +317,13 @@ class _StepIndicator extends StatelessWidget {
 }
 
 class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.email, required this.onDone});
+  const _SuccessBody({
+    required this.l10n,
+    required this.email,
+    required this.onDone,
+  });
 
+  final AppLocalizations l10n;
   final String email;
   final VoidCallback onDone;
 
@@ -314,7 +341,7 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'E-mail atualizado!',
+          l10n.changeEmailSuccessTitle,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -322,14 +349,14 @@ class _SuccessBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Sua conta agora usa $email.',
+          l10n.changeEmailSuccessSubtitle(email),
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 48),
-        AppButton(label: 'Voltar à conta', onPressed: onDone),
+        AppButton(label: l10n.profileBackToAccount, onPressed: onDone),
       ],
     );
   }

@@ -19,6 +19,7 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_deta
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
@@ -44,7 +45,7 @@ class PokemonDetailPage extends ConsumerWidget {
         appBar: AppBar(),
         body: SafePageBody.belowAppBar(
           child: OfflineEmptyState(
-            message: friendlyErrorMessage(error),
+            message: friendlyErrorMessage(AppLocalizations.of(context), error),
             isConnectivityFailure: isConnectivityFailure(error),
             onRetry: () =>
                 ref.invalidate(pokemonDetailBundleProvider(pokemonId)),
@@ -339,6 +340,7 @@ class _EvolutionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final borderColor = isDark
         ? theme.dividerColor
@@ -350,7 +352,7 @@ class _EvolutionSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Evoluções',
+            l10n.pokemonDetailEvolutions,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -374,7 +376,7 @@ class _EvolutionSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Este Pokémon não evolui.',
+                        l10n.pokemonDetailNoEvolution,
                         style: theme.textTheme.bodyMedium,
                       ),
                     ],
@@ -409,6 +411,7 @@ class _CollapsibleStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const maxStat = 255;
+    final l10n = AppLocalizations.of(context);
     final total = pokemon.stats.fold<int>(0, (sum, s) => sum + s.baseStat);
 
     return Padding(
@@ -423,7 +426,7 @@ class _CollapsibleStats extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Estatísticas',
+                    l10n.pokemonDetailStats,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
@@ -451,7 +454,10 @@ class _CollapsibleStats extends StatelessWidget {
               (stat) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: PokemonStatBar(
-                  label: PokemonDetailFormatters.statLabel(stat.name),
+                  label: PokemonDetailFormatters.statLabel(
+                    AppLocalizations.of(context),
+                    stat.name,
+                  ),
                   value: stat.baseStat,
                   maxValue: maxStat,
                 ),

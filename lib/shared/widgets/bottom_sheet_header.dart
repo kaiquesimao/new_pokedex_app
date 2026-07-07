@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class BottomSheetHeader extends StatelessWidget {
   const BottomSheetHeader({required this.title, super.key, this.onClear});
@@ -21,7 +22,10 @@ class BottomSheetHeader extends StatelessWidget {
             ),
           ),
           if (onClear != null)
-            TextButton(onPressed: onClear, child: const Text('Limpar')),
+            TextButton(
+              onPressed: onClear,
+              child: Text(AppLocalizations.of(context).filterClearButton),
+            ),
         ],
       ),
     );

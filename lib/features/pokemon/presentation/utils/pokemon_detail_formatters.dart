@@ -1,22 +1,22 @@
-abstract final class PokemonDetailFormatters {
-  static String decimal(double value) =>
-      value.toStringAsFixed(1).replaceAll('.', ',');
+import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-  static String statLabel(String apiName) {
-    return switch (apiName) {
-      'hp' => 'HP',
-      'attack' => 'Ataque',
-      'defense' => 'Defesa',
-      'special-attack' => 'Atq. Esp.',
-      'special-defense' => 'Def. Esp.',
-      'speed' => 'Velocidade',
-      _ => _formatName(apiName),
-    };
+abstract final class PokemonDetailFormatters {
+  static String decimal(double value, AppLocale locale) {
+    final fixed = value.toStringAsFixed(1);
+    return locale == AppLocale.pt ? fixed.replaceAll('.', ',') : fixed;
   }
 
-  static String abilityLabel(String apiName, {required bool isHidden}) {
-    final name = _formatName(apiName);
-    return isHidden ? '$name (oculta)' : name;
+  static String statLabel(AppLocalizations l10n, String apiName) {
+    return switch (apiName) {
+      'hp' => l10n.statHp,
+      'attack' => l10n.statAttack,
+      'defense' => l10n.statDefense,
+      'special-attack' => l10n.statSpecialAttack,
+      'special-defense' => l10n.statSpecialDefense,
+      'speed' => l10n.statSpeed,
+      _ => _formatName(apiName),
+    };
   }
 
   /// PokeAPI `gender_rate` uses steps of 12.5% (0–8), not 0–255.
@@ -28,20 +28,22 @@ abstract final class PokemonDetailFormatters {
 
   static double malePercent(int genderRate) => 100 - femalePercent(genderRate);
 
-  static String genderLabel(int genderRate) {
-    if (genderRate < 0) return 'Sem gênero';
-    if (genderRate == 0) return 'Somente macho';
-    if (genderRate >= 8 || genderRate == 254) return 'Somente fêmea';
-    return '${decimal(femalePercent(genderRate))}% fêmea';
+  static String genderLabel(
+    AppLocalizations l10n,
+    int genderRate,
+    AppLocale locale,
+  ) {
+    if (genderRate < 0) return l10n.genderNone;
+    if (genderRate == 0) return l10n.genderMaleOnly;
+    if (genderRate >= 8 || genderRate == 254) return l10n.genderFemaleOnly;
+    return l10n.genderFemalePercent(
+      decimal(femalePercent(genderRate), locale),
+    );
   }
 
-  static String eggGroupsLabel(List<String> eggGroups) {
-    return eggGroups.map(_formatName).join(', ');
-  }
-
-  static String hatchSteps(int hatchCounter) {
-    if (hatchCounter <= 0) return 'Não choca de ovo';
-    return '${hatchCounter * 255} passos';
+  static String hatchSteps(AppLocalizations l10n, int hatchCounter) {
+    if (hatchCounter <= 0) return l10n.hatchNever;
+    return l10n.hatchSteps((hatchCounter * 255).toString());
   }
 
   static String _formatName(String value) {

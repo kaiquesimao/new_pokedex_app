@@ -1,3 +1,6 @@
+import 'package:pokedex_app/core/locale/api_load_target.dart';
+import 'package:pokedex_app/core/locale/offline_cache_error_kind.dart';
+
 sealed class AppException implements Exception {
   const AppException(this.message);
 
@@ -8,7 +11,9 @@ sealed class AppException implements Exception {
 }
 
 final class NetworkException extends AppException {
-  const NetworkException([super.message = 'Network error']);
+  const NetworkException({this.loadTarget}) : super('');
+
+  final ApiLoadTarget? loadTarget;
 }
 
 final class CacheException extends AppException {
@@ -16,19 +21,22 @@ final class CacheException extends AppException {
 }
 
 final class NotFoundException extends AppException {
-  const NotFoundException([super.message = 'Resource not found']);
+  const NotFoundException() : super('');
 }
 
 final class ApiException extends AppException {
-  const ApiException(super.message, {this.statusCode});
+  const ApiException({this.loadTarget, this.statusCode}) : super('');
 
+  final ApiLoadTarget? loadTarget;
   final int? statusCode;
 }
 
 final class OfflineEmptyCacheException extends AppException {
-  const OfflineEmptyCacheException([
-    super.message =
-        'Sem conexão e nenhum Pokémon salvo no dispositivo.\n'
-        'Conecte-se uma vez para baixar a PokeData.',
-  ]);
+  const OfflineEmptyCacheException({
+    this.kind = OfflineCacheErrorKind.emptyPokemonList,
+    this.regionName,
+  }) : super('');
+
+  final OfflineCacheErrorKind kind;
+  final String? regionName;
 }

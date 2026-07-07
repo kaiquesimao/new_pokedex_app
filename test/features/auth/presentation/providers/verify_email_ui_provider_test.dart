@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/verify_email_ui_provider.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -50,7 +52,10 @@ void main() {
 
         expect(success, isFalse);
         final state = container.read(verifyEmailUiProvider);
-        expect(state.error, 'Código inválido. Tente novamente.');
+        final l10n = lookupAppLocalizations(
+          container.read(appLocaleProvider).materialLocale,
+        );
+        expect(state.error, l10n.authInvalidCodeTryAgain);
         expect(state.loading, isFalse);
       },
     );

@@ -15,10 +15,10 @@ void main() {
       jsonDecode(jsonString) as Map<String, dynamic>,
     );
 
-    final summary = PokemonMapper.toSummary(response);
+    final summary = PokemonMapper.toSummary(response, pokeApiCode: 'en');
 
     expect(summary.id, 1);
-    expect(summary.name, 'bulbasaur');
+    expect(summary.name, 'Bulbasaur');
     expect(summary.types, [PokemonType.grass, PokemonType.poison]);
     expect(summary.spriteUrl, contains('other/home'));
   });

@@ -45,16 +45,23 @@ class _ZygardeMegaRemote extends PokemonRemoteDataSource {
   @override
   Future<PokemonSpeciesResponse> fetchPokemonSpecies(int id) async {
     lastSpeciesIdRequested = id;
-    return const PokemonSpeciesResponse(
+    return PokemonSpeciesResponse.withFlavorText(
       id: 718,
       flavorText: 'Zygarde species',
-      genderRate: -1,
       captureRate: 3,
-      baseHappiness: 0,
       hatchCounter: 120,
       eggGroups: ['dragon'],
       evolutionChainUrl: 'https://pokeapi.co/api/v2/evolution-chain/371/',
     );
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchEggGroup(String name) async {
+    return {
+      'names': [
+        {'language': {'name': 'en'}, 'name': 'Dragon'},
+      ],
+    };
   }
 }
 

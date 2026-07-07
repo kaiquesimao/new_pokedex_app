@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/region_generation_card.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -14,7 +15,7 @@ class RegionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Regiões')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).navRegions)),
       body: SafePageBody.inTabShell(
         child: ListView.separated(
           padding: const EdgeInsets.all(16),

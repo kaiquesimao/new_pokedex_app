@@ -30,7 +30,7 @@ class NoOpAppAnalytics implements AppAnalytics {
 
   @override
   void filterType({String? typeName}) {
-    _log('filter_type', {'type': typeName ?? 'todos'});
+    _log('filter_type', {'type': typeName ?? 'all'});
   }
 
   @override
@@ -79,7 +79,7 @@ class FirebaseAppAnalytics implements AppAnalytics {
 
   @override
   void filterType({String? typeName}) {
-    _logEvent(name: 'filter_type', parameters: {'type': typeName ?? 'todos'});
+    _logEvent(name: 'filter_type', parameters: {'type': typeName ?? 'all'});
   }
 
   @override

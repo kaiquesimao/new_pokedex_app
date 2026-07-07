@@ -38,4 +38,16 @@ class PokemonRemoteDataSource {
   Future<EvolutionChainResponse> fetchEvolutionChain(int id) {
     return _client.getEvolutionChain(id);
   }
+
+  Future<Map<String, dynamic>> fetchAbility(String name) {
+    return _client.getAbility(name);
+  }
+
+  Future<Map<String, dynamic>> fetchEggGroup(String name) {
+    return _client.fetchEggGroup(name);
+  }
+
+  Future<Map<String, dynamic>> fetchItem(String name) {
+    return _client.fetchItem(name);
+  }
 }

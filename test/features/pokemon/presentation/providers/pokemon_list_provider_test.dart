@@ -86,6 +86,7 @@ class _FakePokemonRepository implements PokemonRepository {
         .firstOrNull;
     return PokemonSummary(
       id: id,
+      slug: name ?? 'pokemon-$id',
       name: name ?? 'pokemon-$id',
       types: const [PokemonType.grass],
       spriteUrl: 'https://example.com/$id.png',

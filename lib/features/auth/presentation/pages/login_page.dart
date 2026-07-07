@@ -8,6 +8,7 @@ import 'package:pokedex_app/features/auth/presentation/widgets/auth_navigation_l
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_action_button.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
@@ -16,6 +17,7 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     listenPostLoginNavigation(ref);
     final loading = ref.watch(socialSignInLoadingProvider);
     final usesFirebase = ref.watch(authProvider.notifier).usesFirebase;
@@ -43,16 +45,16 @@ class LoginPage extends ConsumerWidget {
       fit: StackFit.expand,
       children: [
         AuthHubLayout(
-          appBarTitle: 'Entrar',
+          appBarTitle: l10n.authLoginTitle,
           illustrationAsset: TrainerAvatars.assetPathFor('victor'),
-          headline: 'Que bom te ver aqui novamente!',
-          subtitle: 'Como deseja se conectar?',
+          headline: l10n.authWelcomeQuestion,
+          subtitle: l10n.authLoginInstructions,
           footer: const LegalAcceptanceField(),
           actions: actions,
         ),
         if (loading)
-          const Positioned.fill(
-            child: AuthLoadingOverlay(message: 'Entrando...'),
+          Positioned.fill(
+            child: AuthLoadingOverlay(message: l10n.authLoadingSigningIn),
           ),
       ],
     );

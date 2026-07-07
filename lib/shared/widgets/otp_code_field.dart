@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class OtpCodeField extends StatefulWidget {
   const OtpCodeField({
@@ -97,7 +98,8 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
-          label: 'Código de verificação de ${widget.length} dígitos',
+          label:
+              '${AppLocalizations.of(context).otpCodeSemanticsPrefix}${widget.length}${AppLocalizations.of(context).otpCodeSemanticsSuffix}',
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(widget.length, (index) {
@@ -161,11 +163,11 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
           const SizedBox(height: 16),
           Center(
             child: Semantics(
-              label: 'Reenviar código de verificação',
+              label: AppLocalizations.of(context).otpResendSemantics,
               button: true,
               child: TextButton(
                 onPressed: widget.onResend,
-                child: const Text('Reenviar código'),
+                child: Text(AppLocalizations.of(context).otpResendButton),
               ),
             ),
           ),
