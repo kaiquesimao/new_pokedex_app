@@ -22,6 +22,7 @@ import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_p
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/about_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
@@ -156,6 +157,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
 
         builder: (_, _) => const AboutPage(),
+      ),
+
+      GoRoute(
+        path: '/profile/help',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        builder: (_, _) => const HelpPage(),
       ),
 
       GoRoute(

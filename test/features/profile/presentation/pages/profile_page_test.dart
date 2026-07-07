@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
@@ -127,6 +128,45 @@ void main() {
       find.textContaining('não é desenvolvido, endossado ou afiliado'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('profile help link navigates to help page', (tester) async {
+    final router = GoRouter(
+      initialLocation: '/profile',
+      routes: [
+        GoRoute(path: '/profile', builder: (_, _) => const ProfilePage()),
+        GoRoute(path: '/profile/help', builder: (_, _) => const HelpPage()),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          firebaseUnavailableOverride,
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(isInitialized: true),
+          ),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => const ProfileSettings(),
+          ),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Ajuda'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ajuda'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Perguntas frequentes'), findsOneWidget);
+    expect(find.text('Suporte'), findsOneWidget);
+    expect(find.text(HelpPage.supportEmail), findsOneWidget);
   });
 
   testWidgets('profile privacy link navigates to privacy page', (tester) async {

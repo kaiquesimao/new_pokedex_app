@@ -94,6 +94,7 @@ class ProfilePage extends ConsumerWidget {
               ),
               onTermsTap: () => context.push('/legal/terms'),
               onPrivacyTap: () => context.push('/legal/privacy'),
+              onHelpTap: () => context.push('/profile/help'),
               onAboutTap: () => context.push('/profile/about'),
             ),
             if (auth.isAuthenticated) ...[
@@ -235,6 +236,7 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleGameInfoLanguage,
     required this.onTermsTap,
     required this.onPrivacyTap,
+    required this.onHelpTap,
     required this.onAboutTap,
   });
 
@@ -248,6 +250,7 @@ class _SettingsSections extends StatelessWidget {
   final VoidCallback onToggleGameInfoLanguage;
   final VoidCallback onTermsTap;
   final VoidCallback onPrivacyTap;
+  final VoidCallback onHelpTap;
   final VoidCallback onAboutTap;
 
   @override
@@ -319,10 +322,10 @@ class _SettingsSections extends StatelessWidget {
               label: 'Política de privacidade',
               onTap: onPrivacyTap,
             ),
-            // _ChevronRow(
-            //   label: 'Ajuda',
-            //   onTap: () => onPlaceholderLink('Ajuda'),
-            // ),
+            _ChevronRow(
+              label: 'Ajuda',
+              onTap: onHelpTap,
+            ),
             _ChevronRow(
               label: 'Sobre',
               onTap: onAboutTap,
