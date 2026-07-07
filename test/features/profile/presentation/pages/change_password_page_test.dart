@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
@@ -55,5 +58,43 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Senha alterada com sucesso!'), findsOneWidget);
+  });
+
+  testWidgets('change password page redirects social account', (tester) async {
+    final router = GoRouter(
+      initialLocation: '/profile',
+      routes: [
+        GoRoute(
+          path: '/profile',
+          builder: (_, _) => const Scaffold(body: Text('Perfil')),
+        ),
+        GoRoute(
+          path: '/profile/change-password',
+          builder: (_, _) => const ChangePasswordPage(),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          firebaseUnavailableOverride,
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              canEditCredentials: false,
+            ),
+          ),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+
+    unawaited(router.push('/profile/change-password'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Qual é sua senha atual?'), findsNothing);
+    expect(find.text('Perfil'), findsOneWidget);
   });
 }

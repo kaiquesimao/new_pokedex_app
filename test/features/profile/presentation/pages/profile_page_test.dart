@@ -55,6 +55,33 @@ void main() {
     expect(find.text('Você entrou como Ash'), findsOneWidget);
   });
 
+  testWidgets('profile hides password row for social account', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          firebaseUnavailableOverride,
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              email: 'ash@gmail.com',
+              displayName: 'Ash',
+              canEditCredentials: false,
+            ),
+          ),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => const ProfileSettings(),
+          ),
+        ],
+        child: const MaterialApp(home: ProfilePage()),
+      ),
+    );
+
+    expect(find.text('Ash'), findsOneWidget);
+    expect(find.text('ash@gmail.com'), findsOneWidget);
+    expect(find.text('Senha'), findsNothing);
+  });
+
   testWidgets('profile shows guest CTAs when unauthenticated', (tester) async {
     await tester.pumpWidget(
       ProviderScope(

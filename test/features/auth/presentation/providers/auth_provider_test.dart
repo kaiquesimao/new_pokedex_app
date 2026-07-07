@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
+import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
+import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -71,6 +73,55 @@ void main() {
             .read(authProvider.notifier)
             .verifyCurrentPassword('newpass123'),
         isTrue,
+      );
+    });
+  });
+
+  group('AuthNotifier credential edits', () {
+    test('changePassword rejects social account', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          firebaseUnavailableOverride,
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              canEditCredentials: false,
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await expectLater(
+        container
+            .read(authProvider.notifier)
+            .changePassword(
+              currentPassword: 'oldpass',
+              newPassword: 'newpass123',
+            ),
+        throwsA(isA<AuthException>()),
+      );
+    });
+
+    test('verifyCurrentPassword rejects social account', () async {
+      final container = ProviderContainer.test(
+        overrides: [
+          firebaseUnavailableOverride,
+          authProvider.overrideWithBuild(
+            (ref, notifier) => const AuthState(
+              isInitialized: true,
+              isAuthenticated: true,
+              canEditCredentials: false,
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await expectLater(
+        container.read(authProvider.notifier).verifyCurrentPassword('any'),
+        throwsA(isA<AuthException>()),
       );
     });
   });
