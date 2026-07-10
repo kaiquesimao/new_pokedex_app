@@ -191,6 +191,11 @@ class PokemonLocalDataSource {
             },
           )
           .toList(),
+      if (response.cries.latest != null || response.cries.legacy != null)
+        'cries': {
+          if (response.cries.latest != null) 'latest': response.cries.latest,
+          if (response.cries.legacy != null) 'legacy': response.cries.legacy,
+        },
     };
   }
 }

@@ -46,6 +46,8 @@ class PokemonDetail {
     required this.stats,
     required this.abilities,
     this.spriteUrl,
+    this.cryUrl,
+    this.legacyCryUrl,
     this.flavorText,
     this.genderRate = -1,
     this.captureRate = 0,
@@ -65,6 +67,8 @@ class PokemonDetail {
   final List<PokemonStat> stats;
   final List<PokemonAbility> abilities;
   final String? spriteUrl;
+  final String? cryUrl;
+  final String? legacyCryUrl;
   final String? flavorText;
   final int genderRate;
   final int captureRate;

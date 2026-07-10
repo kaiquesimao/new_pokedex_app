@@ -2078,6 +2078,12 @@ abstract class AppLocalizations {
   /// **'Loading Pokémon image'**
   String get pokemonImageLoadingSemantics;
 
+  /// Semantics: play Pokémon cry on sprite tap
+  ///
+  /// In en, this message translates to:
+  /// **'Play Pokémon cry'**
+  String get pokemonCryPlaySemantics;
+
   /// No description provided for @firebaseConfigErrorTitle.
   ///
   /// In en, this message translates to:

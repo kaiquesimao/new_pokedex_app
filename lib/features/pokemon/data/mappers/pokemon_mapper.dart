@@ -52,6 +52,8 @@ class PokemonMapper {
           .map((a) => PokemonAbility(name: a.name, isHidden: a.isHidden))
           .toList(),
       spriteUrl: response.spriteUrl,
+      cryUrl: response.cries.latest,
+      legacyCryUrl: response.cries.legacy,
       flavorText: species?.localizedFlavorText(pokeApiCode),
       genderRate: species?.genderRate ?? -1,
       captureRate: species?.captureRate ?? 0,

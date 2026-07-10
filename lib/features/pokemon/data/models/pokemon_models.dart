@@ -42,6 +42,21 @@ class NamedApiResource {
   }
 }
 
+class PokemonCries {
+  const PokemonCries({this.latest, this.legacy});
+
+  factory PokemonCries.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const PokemonCries();
+    return PokemonCries(
+      latest: json['latest'] as String?,
+      legacy: json['legacy'] as String?,
+    );
+  }
+
+  final String? latest;
+  final String? legacy;
+}
+
 class PokemonFormResponse {
   const PokemonFormResponse({required this.isMega});
 
@@ -68,6 +83,7 @@ class PokemonResponse {
     this.primaryFormId,
     this.isMega,
     this.speciesId,
+    this.cries = const PokemonCries(),
   });
 
   factory PokemonResponse.fromJson(Map<String, dynamic> json) {
@@ -98,6 +114,7 @@ class PokemonResponse {
       primaryFormId: _primaryFormId(json['forms']),
       isMega: json['is_mega'] as bool?,
       speciesId: json['species_id'] as int? ?? _resourceId(json['species']),
+      cries: PokemonCries.fromJson(json['cries'] as Map<String, dynamic>?),
     );
   }
 
@@ -117,6 +134,7 @@ class PokemonResponse {
 
   /// Species id from `pokemon.species` (differs from [id] for forms/megas).
   final int? speciesId;
+  final PokemonCries cries;
 
   PokemonResponse copyWith({bool? isMega}) {
     return PokemonResponse(
@@ -134,6 +152,7 @@ class PokemonResponse {
       primaryFormId: primaryFormId,
       isMega: isMega ?? this.isMega,
       speciesId: speciesId,
+      cries: cries,
     );
   }
 

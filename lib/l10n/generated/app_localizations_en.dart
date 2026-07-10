@@ -1101,6 +1101,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pokemonImageLoadingSemantics => 'Loading Pokémon image';
 
   @override
+  String get pokemonCryPlaySemantics => 'Play Pokémon cry';
+
+  @override
   String get firebaseConfigErrorTitle => 'Configuration unavailable';
 
   @override

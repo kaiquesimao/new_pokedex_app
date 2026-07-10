@@ -489,6 +489,8 @@
   "trainerAvatarPokemaniacLabel": "Pokémaníaco",
 
   "pokemonImageLoadingSemantics": "Carregando imagem do Pokémon",
+  "pokemonCryPlaySemantics": "Reproduzir som do Pokémon",
+  "@pokemonCryPlaySemantics": { "description": "Semantics: play Pokémon cry on sprite tap" },
 
   "firebaseConfigErrorTitle": "Configuração indisponível",
   "firebaseConfigErrorBody": "Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json."

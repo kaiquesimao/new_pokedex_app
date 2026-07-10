@@ -16,6 +16,7 @@ import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bo
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
@@ -103,10 +104,12 @@ class _PokemonDetailContent extends ConsumerStatefulWidget {
 
 class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   var _statsExpanded = true;
+  PokemonCryPlayerNotifier? _cryPlayer;
 
   @override
   void initState() {
     super.initState();
+    _cryPlayer = ref.read(pokemonCryPlayerProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(appAnalyticsProvider)
@@ -118,7 +121,22 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   }
 
   @override
+  void didUpdateWidget(covariant _PokemonDetailContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.pokemonId != widget.pokemonId) {
+      unawaited(_cryPlayer?.stop());
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_cryPlayer?.stop());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.watch(pokemonCryPlayerProvider);
     final favorites = ref.watch(favoritesProvider);
     final isFavorite = favorites.contains(widget.pokemonId);
     final pokemon = widget.pokemon;
@@ -227,7 +245,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   }
 }
 
-class _HeroSection extends StatelessWidget {
+class _HeroSection extends ConsumerWidget {
   const _HeroSection({
     required this.pokemonId,
     required this.pokemon,
@@ -245,7 +263,7 @@ class _HeroSection extends StatelessWidget {
   final VoidCallback onFavoriteTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final surfaceColor = colorScheme.surface;
     final headerActionColor = colorScheme.onSurface;
@@ -306,13 +324,11 @@ class _HeroSection extends StatelessWidget {
                         : PokemonPrimaryTypeBackdrop.detailLightOpacity,
                   ),
                 if (pokemon.spriteUrl != null)
-                  PokemonSpriteImage(
+                  _TappableDetailSprite(
+                    pokemonId: pokemonId,
                     imageUrl: pokemon.spriteUrl!,
-                    height: PokemonSpriteDisplaySizes.detail,
-                    maxCachePixels: PokemonSpriteCachePresets.detail,
-                    heroTag: PokemonHeroTags.sprite(pokemonId),
-                    errorIconColor: Colors.white,
-                    errorIconSize: 96,
+                    cryUrl: pokemon.cryUrl,
+                    legacyCryUrl: pokemon.legacyCryUrl,
                   )
                 else
                   Hero(
@@ -353,6 +369,92 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TappableDetailSprite extends ConsumerStatefulWidget {
+  const _TappableDetailSprite({
+    required this.pokemonId,
+    required this.imageUrl,
+    this.cryUrl,
+    this.legacyCryUrl,
+  });
+
+  final int pokemonId;
+  final String imageUrl;
+  final String? cryUrl;
+  final String? legacyCryUrl;
+
+  @override
+  ConsumerState<_TappableDetailSprite> createState() =>
+      _TappableDetailSpriteState();
+}
+
+class _TappableDetailSpriteState extends ConsumerState<_TappableDetailSprite>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _tapController;
+  late final Animation<double> _tapScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _tapController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 140),
+    );
+    _tapScale = TweenSequence<double>(
+      [
+        TweenSequenceItem(
+          tween: Tween<double>(begin: 1, end: 0.92),
+          weight: 50,
+        ),
+        TweenSequenceItem(
+          tween: Tween<double>(begin: 0.92, end: 1),
+          weight: 50,
+        ),
+      ],
+    ).animate(CurvedAnimation(parent: _tapController, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _tapController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onTap() async {
+    unawaited(_tapController.forward(from: 0));
+    await ref
+        .read(pokemonCryPlayerProvider.notifier)
+        .playCry(
+          cryUrl: widget.cryUrl,
+          legacyCryUrl: widget.legacyCryUrl,
+          pokemonId: widget.pokemonId,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Semantics(
+      button: true,
+      label: l10n.pokemonCryPlaySemantics,
+      child: GestureDetector(
+        onTap: _onTap,
+        child: ScaleTransition(
+          scale: _tapScale,
+          child: PokemonSpriteImage(
+            imageUrl: widget.imageUrl,
+            height: PokemonSpriteDisplaySizes.detail,
+            maxCachePixels: PokemonSpriteCachePresets.detail,
+            heroTag: PokemonHeroTags.sprite(widget.pokemonId),
+            errorIconColor: Colors.white,
+            errorIconSize: 96,
+          ),
+        ),
       ),
     );
   }
