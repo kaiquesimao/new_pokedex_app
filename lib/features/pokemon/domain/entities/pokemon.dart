@@ -52,6 +52,8 @@ class PokemonDetail {
     this.baseHappiness = 0,
     this.hatchCounter = 0,
     this.eggGroups = const [],
+    this.category,
+    this.flavorTextEntries = const [],
   });
 
   final int id;
@@ -68,6 +70,8 @@ class PokemonDetail {
   final int baseHappiness;
   final int hatchCounter;
   final List<String> eggGroups;
+  final String? category;
+  final List<dynamic> flavorTextEntries;
 
   String get displayName =>
       name.isEmpty ? '' : name[0].toUpperCase() + name.substring(1);

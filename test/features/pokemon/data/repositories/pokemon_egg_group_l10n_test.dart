@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
+import 'package:pokedex_app/core/locale/api_load_target.dart';
+import 'package:pokedex_app/core/locale/game_text_resolver.dart';
+import 'package:pokedex_app/core/locale/machine_translation_backend.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
@@ -37,6 +40,15 @@ void main() {
     final repository = PokemonRepositoryImpl(
       remote: _EggGroupRemote(fixture),
       local: PokemonLocalDataSource(db),
+      gameTextResolver: GameTextResolver(
+        machineTranslation: InMemoryMachineTranslationBackend(),
+        fetchResourceEntries: (resource, slug) async {
+          if (resource == ApiLoadTarget.eggGroup && slug == 'monster') {
+            return fixture['names'] as List<dynamic>? ?? [];
+          }
+          return [];
+        },
+      ),
     );
 
     final display = await repository.getEggGroupDisplayName(

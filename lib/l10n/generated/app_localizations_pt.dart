@@ -716,6 +716,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detailGender => 'Gênero';
 
   @override
+  String get flavorTextTranslating => 'Traduzindo descrição...';
+
+  @override
   String get favoriteAddSemantics => 'Adicionar aos favoritos';
 
   @override

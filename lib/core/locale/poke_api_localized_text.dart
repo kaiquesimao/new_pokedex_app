@@ -19,6 +19,27 @@ abstract final class PokeApiLocalizedText {
     return text.replaceAll('\n', ' ').replaceAll('\f', ' ');
   }
 
+  static bool hasEntry(
+    List<dynamic> entries,
+    String lang,
+    String textKey,
+  ) {
+    return _findEntryText(entries, lang, textKey) != null;
+  }
+
+  static String? pickOfficial(
+    List<dynamic> entries,
+    String lang,
+    String textKey,
+  ) {
+    if (!hasEntry(entries, lang, textKey)) return null;
+    return _findEntryText(entries, lang, textKey);
+  }
+
+  static String? pickEnglish(List<dynamic> entries, String textKey) {
+    return _findEntryText(entries, 'en', textKey);
+  }
+
   static String? _pickText(
     List<dynamic> entries,
     String preferredLang,

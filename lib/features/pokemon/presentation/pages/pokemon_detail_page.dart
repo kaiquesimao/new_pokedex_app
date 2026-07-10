@@ -7,6 +7,7 @@ import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
+import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
@@ -36,6 +37,18 @@ class PokemonDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
+      if (next.value != true) return;
+
+      final current = ref.read(pokemonDetailBundleProvider(pokemonId));
+      if (!shouldReloadPokemonDetailOnConnectivityRestore(current)) return;
+
+      unawaited(() async {
+        await ref.read(connectivityServiceProvider).refresh();
+        ref.invalidate(pokemonDetailBundleProvider(pokemonId));
+      }());
+    });
+
     final bundleAsync = ref.watch(pokemonDetailBundleProvider(pokemonId));
 
     return bundleAsync.when(
@@ -56,9 +69,18 @@ class PokemonDetailPage extends ConsumerWidget {
         pokemonId: pokemonId,
         pokemon: bundle.detail,
         evolution: bundle.evolution,
+        flavorTextEntries: bundle.flavorTextEntries,
       ),
     );
   }
+}
+
+bool shouldReloadPokemonDetailOnConnectivityRestore(
+  AsyncValue<PokemonDetailBundle> current,
+) {
+  return current.hasError
+      ? isConnectivityFailure(current.error!)
+      : current.hasValue && current.requireValue.isOfflineMode;
 }
 
 class _PokemonDetailContent extends ConsumerStatefulWidget {
@@ -66,11 +88,13 @@ class _PokemonDetailContent extends ConsumerStatefulWidget {
     required this.pokemonId,
     required this.pokemon,
     required this.evolution,
+    this.flavorTextEntries = const [],
   });
 
   final int pokemonId;
   final PokemonDetail pokemon;
   final EvolutionChain evolution;
+  final List<dynamic> flavorTextEntries;
 
   @override
   ConsumerState<_PokemonDetailContent> createState() =>
@@ -156,7 +180,10 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
               ),
             ),
             SliverToBoxAdapter(
-              child: PokemonDetailAboutSection(pokemon: pokemon),
+              child: PokemonDetailAboutSection(
+                pokemon: pokemon,
+                flavorTextEntries: widget.flavorTextEntries,
+              ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
             SliverToBoxAdapter(

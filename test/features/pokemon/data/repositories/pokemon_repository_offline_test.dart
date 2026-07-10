@@ -2,6 +2,8 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/locale/game_text_resolver.dart';
+import 'package:pokedex_app/core/locale/machine_translation_backend.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
@@ -47,6 +49,10 @@ void main() {
     repository = PokemonRepositoryImpl(
       remote: _FailingRemoteDataSource(),
       local: local,
+      gameTextResolver: GameTextResolver(
+        machineTranslation: InMemoryMachineTranslationBackend(),
+        fetchResourceEntries: (_, _) async => [],
+      ),
     );
   });
 

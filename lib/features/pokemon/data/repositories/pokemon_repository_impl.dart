@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
+import 'package:pokedex_app/core/locale/api_load_target.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
+import 'package:pokedex_app/core/locale/game_text_resolver.dart';
+import 'package:pokedex_app/core/locale/game_text_source.dart';
 import 'package:pokedex_app/core/locale/offline_cache_error_kind.dart';
-import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
@@ -25,6 +27,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
   PokemonRepositoryImpl({
     required this._remote,
     required this._local,
+    required this._gameTextResolver,
     Ref? ref,
   }) : _getAppLocale = ref != null
            ? (() => ref.read(appLocaleProvider))
@@ -35,9 +38,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       ref.listen<AppLocale>(appLocaleProvider, (previous, next) {
         if (previous != next) {
           _speciesCache.clear();
-          _abilityCache.clear();
-          _eggGroupCache.clear();
-          _itemCache.clear();
+          _gameTextResolver.clearCache();
           // Clear name index so it will be rebuilt with localized names.
           unawaited(Future.microtask(() => _local.replaceNameIndex(const [])));
           _warmNameIndexFuture = null;
@@ -49,6 +50,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   final PokemonRemoteDataSource _remote;
   final PokemonLocalDataSource _local;
+  final GameTextResolver _gameTextResolver;
   final AppLocale Function() _getAppLocale;
 
   List<NamedApiResource>? _allPokemonRefsCache;
@@ -56,9 +58,6 @@ class PokemonRepositoryImpl implements PokemonRepository {
   bool _usedOfflineFallback = false;
   final Map<int, bool> _formMegaCache = {};
   final Map<int, PokemonSpeciesResponse> _speciesCache = {};
-  final Map<String, String> _abilityCache = {};
-  final Map<String, String> _eggGroupCache = {};
-  final Map<String, String> _itemCache = {};
 
   @override
   bool takeOfflineFallbackUsed() {
@@ -233,6 +232,9 @@ class PokemonRepositoryImpl implements PokemonRepository {
       );
       detail = await _enrichDetailAbilities(detail, pokeApiCode);
       detail = await _enrichDetailEggGroups(detail, pokeApiCode);
+      if (species != null) {
+        detail = await _enrichDetailCategory(detail, species, pokeApiCode);
+      }
 
       if (species != null) {
         await _local.saveSummary(
@@ -262,6 +264,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       );
       detail = await _enrichDetailAbilities(detail, pokeApiCode);
       detail = await _enrichDetailEggGroups(detail, pokeApiCode);
+      detail = await _enrichDetailCategory(detail, species, pokeApiCode);
 
       await _local.saveSummary(
         PokemonMapper.toSummary(
@@ -631,20 +634,15 @@ class PokemonRepositoryImpl implements PokemonRepository {
   }
 
   /// Return a localized display name for an ability `slug` (e.g. "overgrow").
-  /// Uses a cache keyed by '$slug:$pokeApiCode'.
   Future<String?> getAbilityDisplayName(String slug, String pokeApiCode) async {
-    final key = '$slug:$pokeApiCode';
-    final cached = _abilityCache[key];
-    if (cached != null) return cached;
-
     try {
-      final response = await _remote.fetchAbility(slug);
-      final names = response['names'] as List<dynamic>? ?? [];
-      final display =
-          PokeApiLocalizedText.pickName(names, pokeApiCode) ??
-          _capitalize(slug);
-      _abilityCache[key] = display;
-      return display;
+      final resolved = await _gameTextResolver.resolveResource(
+        resource: ApiLoadTarget.ability,
+        slug: slug,
+        kind: GameTextKind.name,
+        targetLang: pokeApiCode,
+      );
+      return resolved.text;
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();
@@ -681,6 +679,8 @@ class PokemonRepositoryImpl implements PokemonRepository {
       baseHappiness: detail.baseHappiness,
       hatchCounter: detail.hatchCounter,
       eggGroups: detail.eggGroups,
+      category: detail.category,
+      flavorTextEntries: detail.flavorTextEntries,
     );
   }
 
@@ -688,18 +688,14 @@ class PokemonRepositoryImpl implements PokemonRepository {
     String slug,
     String pokeApiCode,
   ) async {
-    final key = 'egg:$slug:$pokeApiCode';
-    final cached = _eggGroupCache[key];
-    if (cached != null) return cached;
-
     try {
-      final response = await _remote.fetchEggGroup(slug);
-      final names = response['names'] as List<dynamic>? ?? [];
-      final display =
-          PokeApiLocalizedText.pickName(names, pokeApiCode) ??
-          _capitalize(slug);
-      _eggGroupCache[key] = display;
-      return display;
+      final resolved = await _gameTextResolver.resolveResource(
+        resource: ApiLoadTarget.eggGroup,
+        slug: slug,
+        kind: GameTextKind.name,
+        targetLang: pokeApiCode,
+      );
+      return resolved.text;
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();
@@ -735,22 +731,54 @@ class PokemonRepositoryImpl implements PokemonRepository {
       baseHappiness: detail.baseHappiness,
       hatchCounter: detail.hatchCounter,
       eggGroups: localized,
+      category: detail.category,
+      flavorTextEntries: detail.flavorTextEntries,
+    );
+  }
+
+  Future<PokemonDetail> _enrichDetailCategory(
+    PokemonDetail detail,
+    PokemonSpeciesResponse species,
+    String pokeApiCode,
+  ) async {
+    if (species.genera.isEmpty) return detail;
+
+    final resolved = await _gameTextResolver.resolveFromEntries(
+      entries: species.genera,
+      kind: GameTextKind.name,
+      targetLang: pokeApiCode,
+      textKey: 'genus',
+    );
+
+    return PokemonDetail(
+      id: detail.id,
+      name: detail.name,
+      height: detail.height,
+      weight: detail.weight,
+      types: detail.types,
+      stats: detail.stats,
+      abilities: detail.abilities,
+      spriteUrl: detail.spriteUrl,
+      flavorText: detail.flavorText,
+      genderRate: detail.genderRate,
+      captureRate: detail.captureRate,
+      baseHappiness: detail.baseHappiness,
+      hatchCounter: detail.hatchCounter,
+      eggGroups: detail.eggGroups,
+      category: resolved.text,
+      flavorTextEntries: detail.flavorTextEntries,
     );
   }
 
   Future<String?> getItemDisplayName(String slug, String pokeApiCode) async {
-    final key = 'item:$slug:$pokeApiCode';
-    final cached = _itemCache[key];
-    if (cached != null) return cached;
-
     try {
-      final response = await _remote.fetchItem(slug);
-      final names = response['names'] as List<dynamic>? ?? [];
-      final display =
-          PokeApiLocalizedText.pickName(names, pokeApiCode) ??
-          _capitalize(slug);
-      _itemCache[key] = display;
-      return display;
+      final resolved = await _gameTextResolver.resolveResource(
+        resource: ApiLoadTarget.item,
+        slug: slug,
+        kind: GameTextKind.name,
+        targetLang: pokeApiCode,
+      );
+      return resolved.text;
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();

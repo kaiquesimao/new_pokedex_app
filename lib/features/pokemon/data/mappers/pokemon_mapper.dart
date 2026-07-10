@@ -59,6 +59,7 @@ class PokemonMapper {
       baseHappiness: species?.baseHappiness ?? 0,
       hatchCounter: species?.hatchCounter ?? 0,
       eggGroups: species?.eggGroups ?? const [],
+      flavorTextEntries: species?.flavorTextEntries ?? const [],
     );
   }
 

@@ -232,6 +232,7 @@ class PokemonSpeciesResponse {
     this.flavorTextEntries = const [],
     this.legacyFlavorText,
     this.varieties = const [],
+    this.genera = const [],
   });
 
   /// ponytail: test/fixture shorthand — not from API JSON.
@@ -246,6 +247,7 @@ class PokemonSpeciesResponse {
     String? evolutionChainUrl,
     List<PokemonSpeciesVariety> varieties = const [],
     List<dynamic> names = const [],
+    List<dynamic> genera = const [],
   }) {
     return PokemonSpeciesResponse(
       id: id,
@@ -258,6 +260,7 @@ class PokemonSpeciesResponse {
       eggGroups: eggGroups,
       evolutionChainUrl: evolutionChainUrl,
       varieties: varieties,
+      genera: genera,
     );
   }
   factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
@@ -284,11 +287,13 @@ class PokemonSpeciesResponse {
             (e) => PokemonSpeciesVariety.fromJson(e as Map<String, dynamic>),
           )
           .toList(),
+      genera: json['genera'] as List<dynamic>? ?? [],
     );
   }
 
   final int id;
   final List<dynamic> names;
+  final List<dynamic> genera;
   final List<dynamic> flavorTextEntries;
   final String? legacyFlavorText;
   final int genderRate;

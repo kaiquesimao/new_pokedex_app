@@ -1388,6 +1388,12 @@ abstract class AppLocalizations {
   /// **'Gender'**
   String get detailGender;
 
+  /// Semantics: flavor text MT in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Translating description...'**
+  String get flavorTextTranslating;
+
   /// No description provided for @favoriteAddSemantics.
   ///
   /// In en, this message translates to:

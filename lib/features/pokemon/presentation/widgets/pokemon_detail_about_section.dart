@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
+import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class PokemonDetailAboutSection extends ConsumerWidget {
-  const PokemonDetailAboutSection({required this.pokemon, super.key});
+  const PokemonDetailAboutSection({
+    required this.pokemon,
+    this.flavorTextEntries = const [],
+    super.key,
+  });
 
   final PokemonDetail pokemon;
+  final List<dynamic> flavorTextEntries;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,23 +30,62 @@ class PokemonDetailAboutSection extends ConsumerWidget {
           )
         : null;
     final l10n = AppLocalizations.of(context);
-    final category = pokemon.eggGroups.isNotEmpty
-        ? pokemon.eggGroups.first
-        : '—';
+    final category = pokemon.category ?? '—';
+    final targetLang = locale.pokeApiCode;
+    final flavorAsync = ref.watch(
+      localizedFlavorTextProvider((
+        flavorEntries: flavorTextEntries,
+        targetLang: targetLang,
+      )),
+    );
+    final needsMt = _mayNeedMachineTranslation(flavorTextEntries, targetLang);
+    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+      height: 1.4,
+    );
+    final description = flavorAsync.when<Widget?>(
+      loading: () {
+        if (needsMt) {
+          return Semantics(
+            label: l10n.flavorTextTranslating,
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+          );
+        }
+        final text =
+            PokeApiLocalizedText.pickFlavorText(flavorTextEntries, targetLang) ??
+            pokemon.flavorText ??
+            '';
+        if (text.isEmpty) return null;
+        return Text(text, style: descriptionStyle);
+      },
+      data: (resolved) {
+        final text = resolved?.text ?? pokemon.flavorText ?? '';
+        if (text.isEmpty) return null;
+        return Text(text, style: descriptionStyle);
+      },
+      error: (_, _) {
+        final text = pokemon.flavorText ?? '';
+        if (text.isEmpty) return null;
+        return Text(text, style: descriptionStyle);
+      },
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (pokemon.flavorText != null) ...[
-            Text(
-              pokemon.flavorText!,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                height: 1.4,
-              ),
-            ),
+          if (description != null) ...[
+            description,
             const SizedBox(height: 20),
           ],
           GridView.count(
@@ -48,7 +94,7 @@ class PokemonDetailAboutSection extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 16,
             crossAxisSpacing: 12,
-            childAspectRatio: 2.1,
+            mainAxisExtent: 96,
             children: [
               _InfoTile(
                 icon: Icons.monitor_weight_outlined,
@@ -66,6 +112,7 @@ class PokemonDetailAboutSection extends ConsumerWidget {
                 icon: Icons.grid_view_rounded,
                 label: l10n.detailCategory,
                 value: category,
+                wrapValue: true,
               ),
               _InfoTile(
                 icon: Icons.catching_pokemon,
@@ -75,6 +122,7 @@ class PokemonDetailAboutSection extends ConsumerWidget {
                     : primaryAbility.isHidden
                     ? '${primaryAbility.name}${l10n.abilityHiddenSuffix}'
                     : primaryAbility.name,
+                wrapValue: true,
               ),
             ],
           ),
@@ -90,16 +138,26 @@ class PokemonDetailAboutSection extends ConsumerWidget {
   }
 }
 
+bool _mayNeedMachineTranslation(List<dynamic> entries, String targetLang) {
+  if (targetLang == 'en' || entries.isEmpty) return false;
+  if (PokeApiLocalizedText.hasEntry(entries, targetLang, 'flavor_text')) {
+    return false;
+  }
+  return PokeApiLocalizedText.pickEnglish(entries, 'flavor_text') != null;
+}
+
 class _InfoTile extends StatelessWidget {
   const _InfoTile({
     required this.icon,
     required this.label,
     required this.value,
+    this.wrapValue = false,
   });
 
   final IconData icon;
   final String label;
   final String value;
+  final bool wrapValue;
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +198,8 @@ class _InfoTile extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: wrapValue ? null : 1,
+            overflow: wrapValue ? null : TextOverflow.ellipsis,
           ),
         ),
       ],

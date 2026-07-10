@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
+import 'package:pokedex_app/core/locale/game_text_resolver_provider.dart';
 import 'package:pokedex_app/core/network/dio_client.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
@@ -31,10 +32,19 @@ final pokeApiClientProvider = Provider<PokeApiClient>(
   (ref) => PokeApiClient(ref.watch(dioProvider)),
 );
 
+final pokemonRemoteDataSourceProvider = Provider<PokemonRemoteDataSource>((
+  ref,
+) {
+  return PokemonRemoteDataSource(ref.watch(pokeApiClientProvider));
+});
+
 final pokemonRepositoryProvider = Provider<PokemonRepository>((ref) {
-  final remote = PokemonRemoteDataSource(ref.watch(pokeApiClientProvider));
-  final local = PokemonLocalDataSource(ref.watch(appDatabaseProvider));
-  return PokemonRepositoryImpl(remote: remote, local: local, ref: ref);
+  return PokemonRepositoryImpl(
+    remote: ref.watch(pokemonRemoteDataSourceProvider),
+    local: PokemonLocalDataSource(ref.watch(appDatabaseProvider)),
+    gameTextResolver: ref.watch(gameTextResolverProvider),
+    ref: ref,
+  );
 });
 
 final regionRepositoryProvider = Provider<RegionRepository>((ref) {

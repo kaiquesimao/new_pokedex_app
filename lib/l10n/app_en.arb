@@ -367,6 +367,8 @@
   "detailCategory": "Category",
   "detailAbility": "Ability",
   "detailGender": "Gender",
+  "flavorTextTranslating": "Translating description...",
+  "@flavorTextTranslating": { "description": "Semantics: flavor text MT in progress" },
   "favoriteAddSemantics": "Add to favorites",
   "favoriteRemoveSemantics": "Remove from favorites",
 

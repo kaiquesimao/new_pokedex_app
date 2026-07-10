@@ -8,11 +8,13 @@ class PokemonDetailBundle {
   const PokemonDetailBundle({
     required this.detail,
     required this.evolution,
+    this.flavorTextEntries = const [],
     this.isOfflineMode = false,
   });
 
   final PokemonDetail detail;
   final EvolutionChain evolution;
+  final List<dynamic> flavorTextEntries;
   final bool isOfflineMode;
 }
 
@@ -30,6 +32,7 @@ pokemonDetailBundleProvider = FutureProvider.family<PokemonDetailBundle, int>((
   return PokemonDetailBundle(
     detail: detail,
     evolution: evolution,
+    flavorTextEntries: detail.flavorTextEntries,
     isOfflineMode: offlineFromDetail || offlineFromEvolution,
   );
 });

@@ -1,0 +1,15 @@
+{
+  "id": 25,
+  "genera": [
+    { "genus": "Mouse Pokémon", "language": { "name": "en" } }
+  ],
+  "names": [],
+  "flavor_text_entries": [],
+  "gender_rate": 4,
+  "capture_rate": 190,
+  "base_happiness": 70,
+  "hatch_counter": 10,
+  "egg_groups": [],
+  "evolution_chain": { "url": "" },
+  "varieties": []
+}

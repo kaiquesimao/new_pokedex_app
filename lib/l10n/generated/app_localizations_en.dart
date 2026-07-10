@@ -714,6 +714,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailGender => 'Gender';
 
   @override
+  String get flavorTextTranslating => 'Translating description...';
+
+  @override
   String get favoriteAddSemantics => 'Add to favorites';
 
   @override

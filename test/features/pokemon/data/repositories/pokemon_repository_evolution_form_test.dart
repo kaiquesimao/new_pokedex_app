@@ -1,6 +1,8 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
+import 'package:pokedex_app/core/locale/game_text_resolver.dart';
+import 'package:pokedex_app/core/locale/machine_translation_backend.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
@@ -158,7 +160,14 @@ void main() {
 
       final local = PokemonLocalDataSource(db);
       final remote = _CharizardMegaRemote();
-      final repository = PokemonRepositoryImpl(remote: remote, local: local);
+      final repository = PokemonRepositoryImpl(
+        remote: remote,
+        local: local,
+        gameTextResolver: GameTextResolver(
+          machineTranslation: InMemoryMachineTranslationBackend(),
+          fetchResourceEntries: (_, _) async => [],
+        ),
+      );
 
       final chain = await repository.getEvolutionChain(10034);
 
@@ -184,7 +193,14 @@ void main() {
 
       final local = PokemonLocalDataSource(db);
       final remote = _GrimerAlolaRemote();
-      final repository = PokemonRepositoryImpl(remote: remote, local: local);
+      final repository = PokemonRepositoryImpl(
+        remote: remote,
+        local: local,
+        gameTextResolver: GameTextResolver(
+          machineTranslation: InMemoryMachineTranslationBackend(),
+          fetchResourceEntries: (_, _) async => [],
+        ),
+      );
 
       expect(
         await repository.resolvePokemonIdForRegionalSpecies(88, 'alola'),
@@ -207,7 +223,14 @@ void main() {
 
     final local = PokemonLocalDataSource(db);
     final remote = _GrimerAlolaRemote();
-    final repository = PokemonRepositoryImpl(remote: remote, local: local);
+    final repository = PokemonRepositoryImpl(
+      remote: remote,
+      local: local,
+      gameTextResolver: GameTextResolver(
+        machineTranslation: InMemoryMachineTranslationBackend(),
+        fetchResourceEntries: (_, _) async => [],
+      ),
+    );
 
     final chain = await repository.getEvolutionChain(10112);
 
