@@ -15,6 +15,7 @@ import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String resolveInitialLocation({
@@ -55,6 +56,8 @@ Future<ColdStartResult> runColdStart() async {
     bootstrapFirebase().then((result) => bootstrapResult = result),
     SharedPreferences.getInstance().then((instance) => prefs = instance),
   ]);
+
+  await seedInitialAppLanguage(prefs);
 
   if (!kIsWeb) {
     HttpOverrides.global = OfflineHttpOverrides(connectivityService);

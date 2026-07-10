@@ -45,4 +45,13 @@ enum AppLocale {
     if (locale.languageCode == 'pt') return AppLocale.pt;
     return AppLocale.en;
   }
+
+  /// Picks the first supported locale from [preferredLocales], else [en].
+  static AppLocale fromPreferredLocales(List<Locale> preferredLocales) {
+    for (final locale in preferredLocales) {
+      if (locale.languageCode == 'pt') return AppLocale.pt;
+      if (locale.languageCode == 'en') return AppLocale.en;
+    }
+    return AppLocale.en;
+  }
 }

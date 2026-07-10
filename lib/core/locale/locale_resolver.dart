@@ -7,5 +7,5 @@ abstract final class LocaleResolver {
       AppLocale.fromSystemLocale(locale);
 
   static AppLocale fromPlatform() =>
-      fromSystemLocale(PlatformDispatcher.instance.locale);
+      AppLocale.fromPreferredLocales(PlatformDispatcher.instance.locales);
 }

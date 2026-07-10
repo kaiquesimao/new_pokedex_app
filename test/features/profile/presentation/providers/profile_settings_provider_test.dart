@@ -18,13 +18,52 @@ void main() {
     expect(settings.appLanguage, anyOf('pt-BR', 'en-US'));
   });
 
-  test('migrates legacy interfaceLanguageKey', () async {
+  test('migrates legacy interfaceLanguageKey when explicitly en-US', () async {
     SharedPreferences.setMockInitialValues({
       interfaceLanguageKey: 'en-US',
     });
     final prefs = await SharedPreferences.getInstance();
 
     expect(readStoredProfileSettings(prefs).appLanguage, 'en-US');
+  });
+
+  test('ignores legacy pt-BR default and uses system locale', () async {
+    SharedPreferences.setMockInitialValues({
+      interfaceLanguageKey: 'pt-BR',
+    });
+    final prefs = await SharedPreferences.getInstance();
+
+    expect(
+      readStoredProfileSettings(prefs).appLanguage,
+      anyOf('pt-BR', 'en-US'),
+    );
+  });
+
+  test(
+    'seedInitialAppLanguage persists detected language on first launch',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+
+      await seedInitialAppLanguage(prefs);
+
+      expect(prefs.getString(appLanguageKey), anyOf('pt-BR', 'en-US'));
+      expect(
+        readStoredProfileSettings(prefs).appLanguage,
+        prefs.getString(appLanguageKey),
+      );
+    },
+  );
+
+  test('seedInitialAppLanguage is a no-op when already stored', () async {
+    SharedPreferences.setMockInitialValues({
+      appLanguageKey: 'en-US',
+    });
+    final prefs = await SharedPreferences.getInstance();
+
+    await seedInitialAppLanguage(prefs);
+
+    expect(prefs.getString(appLanguageKey), 'en-US');
   });
 
   test('readStoredProfileSettings returns persisted values', () async {

@@ -31,6 +31,29 @@ void main() {
     });
   });
 
+  group('AppLocale.fromPreferredLocales', () {
+    test('resolves pt-BR from preferred list', () {
+      expect(
+        AppLocale.fromPreferredLocales(const [Locale('pt', 'BR')]),
+        AppLocale.pt,
+      );
+    });
+
+    test('resolves en from preferred list', () {
+      expect(
+        AppLocale.fromPreferredLocales(const [Locale('en', 'US')]),
+        AppLocale.en,
+      );
+    });
+
+    test('falls back to en when no supported locale matches', () {
+      expect(
+        AppLocale.fromPreferredLocales(const [Locale('fr', 'FR')]),
+        AppLocale.en,
+      );
+    });
+  });
+
   group('AppLocale.fromTag', () {
     test('round-trips pt-BR', () {
       expect(AppLocale.fromTag('pt-BR'), AppLocale.pt);

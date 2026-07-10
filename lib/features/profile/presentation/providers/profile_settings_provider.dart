@@ -11,11 +11,27 @@ const notifyAppUpdatesKey = 'profile_notify_app_updates';
 const appLanguageKey = 'profile_app_language';
 const interfaceLanguageKey = 'profile_interface_language';
 
+/// Resolves app language from prefs, with system detection on first launch.
+String resolveInitialAppLanguage(SharedPreferences prefs) {
+  final stored = prefs.getString(appLanguageKey);
+  if (stored != null) return stored;
+
+  final legacy = prefs.getString(interfaceLanguageKey);
+  // ponytail: pre-i18n app always defaulted interface language to pt-BR and
+  // persisted it on any settings save — only trust an explicit en-US choice.
+  if (legacy == 'en-US') return legacy!;
+
+  return LocaleResolver.fromPlatform().tag;
+}
+
+/// Persists detected language on first launch so later reads stay consistent.
+Future<void> seedInitialAppLanguage(SharedPreferences prefs) async {
+  if (prefs.containsKey(appLanguageKey)) return;
+  await prefs.setString(appLanguageKey, resolveInitialAppLanguage(prefs));
+}
+
 ProfileSettings readStoredProfileSettings(SharedPreferences prefs) {
-  final appLanguage =
-      prefs.getString(appLanguageKey) ??
-      prefs.getString(interfaceLanguageKey) ??
-      LocaleResolver.fromPlatform().tag;
+  final appLanguage = resolveInitialAppLanguage(prefs);
 
   return ProfileSettings(
     showMegaEvolutions: prefs.getBool(showMegaEvolutionsKey) ?? true,
