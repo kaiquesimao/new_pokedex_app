@@ -1,3 +1,4 @@
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 
 class PokemonListResponse {
@@ -62,6 +63,7 @@ class PokemonResponse {
     required this.abilities,
     required this.spriteUrl,
     required this.listSpriteUrl,
+    this.sprites,
     this.isDefault = true,
     this.primaryFormId,
     this.isMega,
@@ -69,16 +71,11 @@ class PokemonResponse {
   });
 
   factory PokemonResponse.fromJson(Map<String, dynamic> json) {
-    final sprites = Map<String, dynamic>.from(
-      json['sprites'] as Map<Object?, Object?>? ?? const {},
-    );
-    final other = Map<String, dynamic>.from(
-      sprites['other'] as Map<Object?, Object?>? ?? const {},
-    );
-    final artwork = Map<String, dynamic>.from(
-      other['official-artwork'] as Map<Object?, Object?>? ?? const {},
-    );
-    final frontDefault = sprites['front_default'] as String?;
+    final spritesJson = json['sprites'];
+    final spritesMap = spritesJson is Map<Object?, Object?>
+        ? Map<String, dynamic>.from(spritesJson)
+        : null;
+    final parsed = PokemonSprites.fromJson(spritesMap);
 
     return PokemonResponse(
       id: json['id'] as int? ?? 0,
@@ -94,8 +91,9 @@ class PokemonResponse {
       abilities: (json['abilities'] as List<dynamic>? ?? [])
           .map((e) => PokemonAbilitySlot.fromJson(e as Map<String, dynamic>))
           .toList(),
-      spriteUrl: artwork['front_default'] as String? ?? frontDefault,
-      listSpriteUrl: frontDefault ?? artwork['front_default'] as String?,
+      spriteUrl: parsed.displayUrl,
+      listSpriteUrl: parsed.listUrl,
+      sprites: spritesMap,
       isDefault: json['is_default'] as bool? ?? true,
       primaryFormId: _primaryFormId(json['forms']),
       isMega: json['is_mega'] as bool?,
@@ -112,6 +110,7 @@ class PokemonResponse {
   final List<PokemonAbilitySlot> abilities;
   final String? spriteUrl;
   final String? listSpriteUrl;
+  final Map<String, dynamic>? sprites;
   final bool isDefault;
   final int? primaryFormId;
   final bool? isMega;
@@ -130,6 +129,7 @@ class PokemonResponse {
       abilities: abilities,
       spriteUrl: spriteUrl,
       listSpriteUrl: listSpriteUrl,
+      sprites: sprites,
       isDefault: isDefault,
       primaryFormId: primaryFormId,
       isMega: isMega ?? this.isMega,

@@ -54,6 +54,7 @@ class PokemonDetail {
     this.eggGroups = const [],
     this.category,
     this.flavorTextEntries = const [],
+    this.generaEntries = const [],
   });
 
   final int id;
@@ -72,6 +73,7 @@ class PokemonDetail {
   final List<String> eggGroups;
   final String? category;
   final List<dynamic> flavorTextEntries;
+  final List<dynamic> generaEntries;
 
   String get displayName =>
       name.isEmpty ? '' : name[0].toUpperCase() + name.substring(1);
@@ -88,10 +90,17 @@ class PokemonStat {
 }
 
 class PokemonAbility {
-  const PokemonAbility({required this.name, required this.isHidden});
+  const PokemonAbility({
+    required this.name,
+    required this.isHidden,
+    String? slug,
+  }) : slug = slug ?? name;
 
   final String name;
   final bool isHidden;
+
+  /// PokeAPI ability resource name (e.g. `overgrow`); preserved after enrichment.
+  final String slug;
 }
 
 class PokemonPage {

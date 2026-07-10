@@ -5,6 +5,8 @@ import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/localized_ability_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/localized_category_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
@@ -30,35 +32,49 @@ class PokemonDetailAboutSection extends ConsumerWidget {
           )
         : null;
     final l10n = AppLocalizations.of(context);
-    final category = pokemon.category ?? '—';
     final targetLang = locale.pokeApiCode;
+    final generaEntries = pokemon.generaEntries;
     final flavorAsync = ref.watch(
       localizedFlavorTextProvider((
         flavorEntries: flavorTextEntries,
         targetLang: targetLang,
       )),
     );
-    final needsMt = _mayNeedMachineTranslation(flavorTextEntries, targetLang);
+    final categoryAsync = ref.watch(
+      localizedCategoryProvider((
+        generaEntries: generaEntries,
+        targetLang: targetLang,
+      )),
+    );
+    final abilityAsync = primaryAbility == null
+        ? null
+        : ref.watch(
+            localizedAbilityProvider((
+              slug: primaryAbility.slug,
+              targetLang: targetLang,
+            )),
+          );
+    final needsFlavorMt = _mayNeedMachineTranslation(
+      flavorTextEntries,
+      targetLang,
+      'flavor_text',
+    );
+    final needsCategoryMt = _mayNeedMachineTranslation(
+      generaEntries,
+      targetLang,
+      'genus',
+    );
     final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
       height: 1.4,
     );
+    final tileValueStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+    );
     final description = flavorAsync.when<Widget?>(
       loading: () {
-        if (needsMt) {
-          return Semantics(
-            label: l10n.flavorTextTranslating,
-            child: Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: theme.colorScheme.primary.withValues(alpha: 0.7),
-                ),
-              ),
-            ),
-          );
+        if (needsFlavorMt) {
+          return _loadingIndicator(theme, l10n.flavorTextTranslating);
         }
         final text =
             PokeApiLocalizedText.pickFlavorText(flavorTextEntries, targetLang) ??
@@ -78,6 +94,44 @@ class PokemonDetailAboutSection extends ConsumerWidget {
         return Text(text, style: descriptionStyle);
       },
     );
+    final categoryValue = categoryAsync.when(
+      loading: () {
+        if (needsCategoryMt) {
+          return _loadingIndicator(theme, l10n.flavorTextTranslating);
+        }
+        return _tileText(
+          _syncCategoryText(generaEntries, targetLang, pokemon.category),
+          tileValueStyle,
+        );
+      },
+      data: (resolved) => _tileText(
+        resolved?.text ?? pokemon.category ?? '—',
+        tileValueStyle,
+      ),
+      error: (_, _) => _tileText(
+        _syncCategoryText(generaEntries, targetLang, pokemon.category),
+        tileValueStyle,
+      ),
+    );
+    final abilityValue = primaryAbility == null
+        ? _tileText('—', tileValueStyle)
+        : abilityAsync!.when(
+            loading: () =>
+                _loadingIndicator(theme, l10n.flavorTextTranslating),
+            data: (resolved) => _tileText(
+              primaryAbility.isHidden
+                  ? '${resolved.text}${l10n.abilityHiddenSuffix}'
+                  : resolved.text,
+              tileValueStyle,
+            ),
+            error: (_, _) => _tileText(
+              primaryAbility.isHidden
+                  ? '${_capitalize(primaryAbility.slug)}'
+                        '${l10n.abilityHiddenSuffix}'
+                  : _capitalize(primaryAbility.slug),
+              tileValueStyle,
+            ),
+          );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -99,29 +153,29 @@ class PokemonDetailAboutSection extends ConsumerWidget {
               _InfoTile(
                 icon: Icons.monitor_weight_outlined,
                 label: l10n.detailWeight,
-                value:
-                    '${PokemonDetailFormatters.decimal(pokemon.weightKg, locale)} kg',
+                value: _tileText(
+                  '${PokemonDetailFormatters.decimal(pokemon.weightKg, locale)} kg',
+                  tileValueStyle,
+                ),
               ),
               _InfoTile(
                 icon: Icons.height,
                 label: l10n.detailHeight,
-                value:
-                    '${PokemonDetailFormatters.decimal(pokemon.heightMeters, locale)} m',
+                value: _tileText(
+                  '${PokemonDetailFormatters.decimal(pokemon.heightMeters, locale)} m',
+                  tileValueStyle,
+                ),
               ),
               _InfoTile(
                 icon: Icons.grid_view_rounded,
                 label: l10n.detailCategory,
-                value: category,
+                value: categoryValue,
                 wrapValue: true,
               ),
               _InfoTile(
                 icon: Icons.catching_pokemon,
                 label: l10n.detailAbility,
-                value: primaryAbility == null
-                    ? '—'
-                    : primaryAbility.isHidden
-                    ? '${primaryAbility.name}${l10n.abilityHiddenSuffix}'
-                    : primaryAbility.name,
+                value: abilityValue,
                 wrapValue: true,
               ),
             ],
@@ -138,12 +192,57 @@ class PokemonDetailAboutSection extends ConsumerWidget {
   }
 }
 
-bool _mayNeedMachineTranslation(List<dynamic> entries, String targetLang) {
+bool _mayNeedMachineTranslation(
+  List<dynamic> entries,
+  String targetLang,
+  String textKey,
+) {
   if (targetLang == 'en' || entries.isEmpty) return false;
-  if (PokeApiLocalizedText.hasEntry(entries, targetLang, 'flavor_text')) {
+  if (PokeApiLocalizedText.hasEntry(entries, targetLang, textKey)) {
     return false;
   }
-  return PokeApiLocalizedText.pickEnglish(entries, 'flavor_text') != null;
+  return PokeApiLocalizedText.pickEnglish(entries, textKey) != null;
+}
+
+String _syncCategoryText(
+  List<dynamic> generaEntries,
+  String targetLang,
+  String? fallback,
+) {
+  if (generaEntries.isEmpty) return fallback ?? '—';
+  return PokeApiLocalizedText.pickOfficial(generaEntries, targetLang, 'genus') ??
+      PokeApiLocalizedText.pickEnglish(generaEntries, 'genus') ??
+      fallback ??
+      '—';
+}
+
+String _capitalize(String value) {
+  if (value.isEmpty) return value;
+  return value[0].toUpperCase() + value.substring(1);
+}
+
+Widget _tileText(String text, TextStyle? style) {
+  return Text(
+    text,
+    style: style,
+    textAlign: TextAlign.center,
+  );
+}
+
+Widget _loadingIndicator(ThemeData theme, String semanticsLabel) {
+  return Semantics(
+    label: semanticsLabel,
+    child: Center(
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: theme.colorScheme.primary.withValues(alpha: 0.7),
+        ),
+      ),
+    ),
+  );
 }
 
 class _InfoTile extends StatelessWidget {
@@ -156,7 +255,7 @@ class _InfoTile extends StatelessWidget {
 
   final IconData icon;
   final String label;
-  final String value;
+  final Widget value;
   final bool wrapValue;
 
   @override
@@ -192,15 +291,17 @@ class _InfoTile extends StatelessWidget {
               color: theme.dividerColor.withValues(alpha: 0.5),
             ),
           ),
-          child: Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: wrapValue ? null : 1,
-            overflow: wrapValue ? null : TextOverflow.ellipsis,
-          ),
+          child: wrapValue
+              ? value
+              : DefaultTextStyle(
+                  style: theme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  child: value,
+                ),
         ),
       ],
     );

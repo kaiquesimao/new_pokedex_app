@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
+import 'package:riverpod/misc.dart';
 
 class RegionGenerationCard extends StatelessWidget {
   const RegionGenerationCard({required this.data, super.key, this.onTap});
@@ -93,28 +96,69 @@ class RegionGenerationCard extends StatelessWidget {
   }
 }
 
-class _StarterSprites extends StatelessWidget {
+class _StarterSprites extends ConsumerWidget {
   const _StarterSprites({required this.starterIds});
 
   final List<int> starterIds;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (final id in starterIds)
           Padding(
             padding: const EdgeInsets.only(left: 4),
-            child: PokemonSpriteImage(
-              imageUrl: RegionCardAssets.starterSpriteUrl(id),
-              width: PokemonSpriteDisplaySizes.regionStarter,
-              height: PokemonSpriteDisplaySizes.regionStarter,
-              maxCachePixels: PokemonSpriteCachePresets.compact,
-              errorIconSize: 36,
-            ),
+            child: _StarterSprite(pokemonId: id),
           ),
       ],
     );
   }
 }
+
+class _StarterSprite extends ConsumerWidget {
+  const _StarterSprite({required this.pokemonId});
+
+  final int pokemonId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final spriteUrl = ref
+        .watch(pokemonSpriteUrlProvider(pokemonId))
+        .value;
+
+    if (spriteUrl == null) {
+      return const SizedBox(
+        width: PokemonSpriteDisplaySizes.regionStarter,
+        height: PokemonSpriteDisplaySizes.regionStarter,
+        child: PokemonSpriteLoadingPlaceholder(
+          width: PokemonSpriteDisplaySizes.regionStarter,
+          height: PokemonSpriteDisplaySizes.regionStarter,
+        ),
+      );
+    }
+
+    return PokemonSpriteImage(
+      imageUrl: spriteUrl,
+      width: PokemonSpriteDisplaySizes.regionStarter,
+      height: PokemonSpriteDisplaySizes.regionStarter,
+      maxCachePixels: PokemonSpriteCachePresets.compact,
+      errorIconSize: 36,
+    );
+  }
+}
+
+final FutureProviderFamily<String?, int> pokemonSpriteUrlProvider =
+    FutureProvider.family<String?, int>((
+      ref,
+      pokemonId,
+    ) async {
+      try {
+        final summary = await ref
+            .read(pokemonRepositoryProvider)
+            .getSummaryById(pokemonId);
+        return summary.spriteUrl;
+      } on Object {
+        return null;
+      }
+    });

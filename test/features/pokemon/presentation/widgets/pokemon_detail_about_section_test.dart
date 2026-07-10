@@ -8,12 +8,26 @@ import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/game_text_source.dart';
 import 'package:pokedex_app/core/locale/resolved_game_text.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/localized_ability_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/localized_category_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:riverpod/misc.dart';
 import '../../../../helpers/l10n_test_helper.dart';
+
+List<Override> _defaultGameTextOverrides() => [
+  localizedCategoryProvider.overrideWith((ref, input) async => null),
+  localizedAbilityProvider.overrideWith((ref, input) async {
+    final slug = input.slug;
+    if (slug.isEmpty) {
+      return const ResolvedGameText(text: '—', source: GameTextSource.slug);
+    }
+    return ResolvedGameText(text: slug, source: GameTextSource.slug);
+  }),
+];
 
 void main() {
   testWidgets('gender bar track renders with visible size', (tester) async {
@@ -31,6 +45,7 @@ void main() {
 
     await pumpLocalizedApp(
       tester,
+      overrides: _defaultGameTextOverrides(),
       child: const Scaffold(
         body: SingleChildScrollView(
           child: PokemonDetailAboutSection(pokemon: pokemon),
@@ -62,6 +77,7 @@ void main() {
 
     await pumpLocalizedApp(
       tester,
+      overrides: _defaultGameTextOverrides(),
       child: const Scaffold(
         body: SingleChildScrollView(
           child: PokemonDetailAboutSection(pokemon: pokemon),
@@ -93,6 +109,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ..._defaultGameTextOverrides(),
           profileSettingsProvider.overrideWithBuild(
             (ref, notifier) => ProfileSettings(appLanguage: AppLocale.pt.tag),
           ),
@@ -110,7 +127,8 @@ void main() {
                 pokemon: pokemon,
                 flavorTextEntries: [
                   {
-                    'flavor_text': 'When several electric Pokémon gather, '
+                    'flavor_text':
+                        'When several electric Pokémon gather, '
                         'a thunderstorm forms.',
                     'language': {'name': 'en'},
                   },
@@ -128,7 +146,8 @@ void main() {
 
     completer.complete(
       const ResolvedGameText(
-        text: 'Quando vários Pokémon elétricos se reúnem, formam-se tempestades.',
+        text:
+            'Quando vários Pokémon elétricos se reúnem, formam-se tempestades.',
         source: GameTextSource.machineTranslated,
       ),
     );
@@ -163,6 +182,7 @@ void main() {
 
     await pumpLocalizedApp(
       tester,
+      overrides: _defaultGameTextOverrides(),
       child: const Scaffold(
         body: SingleChildScrollView(
           child: PokemonDetailAboutSection(pokemon: pokemon),
@@ -173,5 +193,128 @@ void main() {
     expect(find.text(longCategory), findsOneWidget);
     expect(find.text(longAbility), findsOneWidget);
     expect(find.textContaining('…'), findsNothing);
+  });
+
+  testWidgets('hides stale category while genus MT is pending', (
+    tester,
+  ) async {
+    const pokemon = PokemonDetail(
+      id: 25,
+      name: 'pikachu',
+      height: 4,
+      weight: 60,
+      types: [PokemonType.electric],
+      stats: [PokemonStat(name: 'hp', baseStat: 35)],
+      abilities: [PokemonAbility(name: 'static', isHidden: false)],
+      genderRate: 4,
+      category: 'Mouse Pokémon',
+      generaEntries: [
+        {
+          'genus': 'Mouse Pokémon',
+          'language': {'name': 'en'},
+        },
+      ],
+    );
+    final completer = Completer<ResolvedGameText?>();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          localizedAbilityProvider.overrideWith((ref, input) async {
+            return const ResolvedGameText(
+              text: '—',
+              source: GameTextSource.slug,
+            );
+          }),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => ProfileSettings(appLanguage: AppLocale.pt.tag),
+          ),
+          localizedCategoryProvider.overrideWith((ref, input) {
+            return completer.future;
+          }),
+        ],
+        child: MaterialApp(
+          locale: AppLocale.pt.materialLocale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: PokemonDetailAboutSection(pokemon: pokemon),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Mouse Pokémon'), findsNothing);
+
+    completer.complete(
+      const ResolvedGameText(
+        text: 'Pokémon Rato',
+        source: GameTextSource.machineTranslated,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pokémon Rato'), findsOneWidget);
+  });
+
+  testWidgets('hides stale ability while resolving after locale change', (
+    tester,
+  ) async {
+    const pokemon = PokemonDetail(
+      id: 25,
+      name: 'pikachu',
+      height: 4,
+      weight: 60,
+      types: [PokemonType.electric],
+      stats: [PokemonStat(name: 'hp', baseStat: 35)],
+      abilities: [
+        PokemonAbility(name: 'Static', slug: 'static', isHidden: false),
+      ],
+      genderRate: 4,
+      category: 'Mouse Pokémon',
+    );
+    final completer = Completer<ResolvedGameText>();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          localizedCategoryProvider.overrideWith((ref, input) async => null),
+          profileSettingsProvider.overrideWithBuild(
+            (ref, notifier) => ProfileSettings(appLanguage: AppLocale.pt.tag),
+          ),
+          localizedAbilityProvider.overrideWith((ref, input) {
+            return completer.future;
+          }),
+        ],
+        child: MaterialApp(
+          locale: AppLocale.pt.materialLocale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: PokemonDetailAboutSection(pokemon: pokemon),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Static'), findsNothing);
+
+    completer.complete(
+      const ResolvedGameText(
+        text: 'Estaticidade',
+        source: GameTextSource.official,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Estaticidade'), findsOneWidget);
   });
 }

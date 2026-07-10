@@ -658,7 +658,8 @@ class PokemonRepositoryImpl implements PokemonRepository {
       detail.abilities.map((a) async {
         final display = await getAbilityDisplayName(a.name, pokeApiCode);
         return PokemonAbility(
-          name: display ?? _capitalize(a.name),
+          slug: a.slug,
+          name: display ?? _capitalize(a.slug),
           isHidden: a.isHidden,
         );
       }),
@@ -681,6 +682,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       eggGroups: detail.eggGroups,
       category: detail.category,
       flavorTextEntries: detail.flavorTextEntries,
+      generaEntries: detail.generaEntries,
     );
   }
 
@@ -733,6 +735,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       eggGroups: localized,
       category: detail.category,
       flavorTextEntries: detail.flavorTextEntries,
+      generaEntries: detail.generaEntries,
     );
   }
 
@@ -767,6 +770,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       eggGroups: detail.eggGroups,
       category: resolved.text,
       flavorTextEntries: detail.flavorTextEntries,
+      generaEntries: detail.generaEntries,
     );
   }
 
