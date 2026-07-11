@@ -494,6 +494,34 @@
   "pokemonCryPlaySemantics": "Reproduzir som do Pokémon",
   "@pokemonCryPlaySemantics": { "description": "Semantics: play Pokémon cry on sprite tap" },
 
+  "pokemonFormLabelNormal": "Normal",
+  "@pokemonFormLabelNormal": { "description": "Detail sprite carousel: default form label" },
+  "pokemonFormLabelShiny": "Shiny",
+  "@pokemonFormLabelShiny": { "description": "Detail sprite carousel: shiny form label" },
+  "pokemonFormLabelMega": "Mega",
+  "@pokemonFormLabelMega": { "description": "Detail sprite carousel: mega evolution label" },
+  "pokemonFormLabelMegaX": "Mega X",
+  "@pokemonFormLabelMegaX": { "description": "Detail sprite carousel: Mega X label" },
+  "pokemonFormLabelMegaY": "Mega Y",
+  "@pokemonFormLabelMegaY": { "description": "Detail sprite carousel: Mega Y label" },
+  "pokemonFormLabelAlola": "Alola",
+  "@pokemonFormLabelAlola": { "description": "Detail sprite carousel: Alola form label" },
+  "pokemonFormLabelGalar": "Galar",
+  "@pokemonFormLabelGalar": { "description": "Detail sprite carousel: Galar form label" },
+  "pokemonFormLabelHisui": "Hisui",
+  "@pokemonFormLabelHisui": { "description": "Detail sprite carousel: Hisui form label" },
+  "pokemonFormLabelPaldea": "Paldea",
+  "@pokemonFormLabelPaldea": { "description": "Detail sprite carousel: Paldea form label" },
+  "pokemonFormLabelGigantamax": "Gigantamax",
+  "@pokemonFormLabelGigantamax": { "description": "Detail sprite carousel: Gigantamax form label" },
+  "pokemonFormCarouselSemantics": "{formLabel}, deslize para ver outras formas",
+  "@pokemonFormCarouselSemantics": {
+    "description": "Semantics for detail sprite form carousel",
+    "placeholders": {
+      "formLabel": { "type": "String" }
+    }
+  },
+
   "firebaseConfigErrorTitle": "Configuração indisponível",
   "firebaseConfigErrorBody": "Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json."
 }

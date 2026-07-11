@@ -1112,6 +1112,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pokemonCryPlaySemantics => 'Play Pokémon cry';
 
   @override
+  String get pokemonFormLabelNormal => 'Normal';
+
+  @override
+  String get pokemonFormLabelShiny => 'Shiny';
+
+  @override
+  String get pokemonFormLabelMega => 'Mega';
+
+  @override
+  String get pokemonFormLabelMegaX => 'Mega X';
+
+  @override
+  String get pokemonFormLabelMegaY => 'Mega Y';
+
+  @override
+  String get pokemonFormLabelAlola => 'Alola';
+
+  @override
+  String get pokemonFormLabelGalar => 'Galar';
+
+  @override
+  String get pokemonFormLabelHisui => 'Hisui';
+
+  @override
+  String get pokemonFormLabelPaldea => 'Paldea';
+
+  @override
+  String get pokemonFormLabelGigantamax => 'Gigantamax';
+
+  @override
+  String pokemonFormCarouselSemantics(String formLabel) {
+    return '$formLabel, swipe to see other forms';
+  }
+
+  @override
   String get firebaseConfigErrorTitle => 'Configuration unavailable';
 
   @override

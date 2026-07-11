@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
 import 'package:pokedex_app/core/locale/api_load_target.dart';
@@ -18,7 +19,9 @@ import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dar
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_sprite_variant.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_detail_sprite_variants.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
@@ -269,6 +272,79 @@ class PokemonRepositoryImpl implements PokemonRepository {
       await _local.savePokemonResponse(response);
 
       return detail;
+    } catch (error) {
+      if (!isNetworkError(error)) rethrow;
+      _markOfflineFallback();
+      throw const OfflineEmptyCacheException(
+        kind: OfflineCacheErrorKind.pokemonNotCached,
+      );
+    }
+  }
+
+  @override
+  Future<List<PokemonSpriteVariant>> getDetailSpriteVariants(
+    int pokemonId, {
+    required bool showMegaEvolutions,
+    required bool showOtherForms,
+  }) async {
+    final current = await _loadPokemonResponseForVariants(pokemonId);
+    final sprites = PokemonSprites.fromJson(current.sprites);
+    final visibility = PokemonFormVisibility(
+      showMegaEvolutions: showMegaEvolutions,
+      showOtherForms: showOtherForms,
+    );
+
+    var varietySummaries = <PokemonSummary>[];
+    try {
+      final speciesId = await _resolveSpeciesId(pokemonId, pokemon: current);
+      final species = await _getCachedSpecies(speciesId);
+      final varietyIds = species.varieties
+          .map((variety) => variety.pokemonId)
+          .where((id) => id > 0)
+          .toList();
+      if (varietyIds.isNotEmpty) {
+        varietySummaries = await getSummariesByIds(varietyIds);
+      }
+    } catch (error) {
+      if (error is NotFoundException) {
+        varietySummaries = const [];
+      } else if (isNetworkError(error)) {
+        _markOfflineFallback();
+        varietySummaries = const [];
+      } else {
+        rethrow;
+      }
+    }
+
+    if (varietySummaries.every((summary) => summary.id != pokemonId)) {
+      varietySummaries = [
+        PokemonMapper.toSummary(
+          current,
+          pokeApiCode: _cachedLocale.pokeApiCode,
+        ),
+        ...varietySummaries,
+      ];
+    }
+
+    return buildPokemonDetailSpriteVariants(
+      currentPokemonId: pokemonId,
+      currentSpriteUrl: current.spriteUrl ?? sprites.displayUrl,
+      currentShinySpriteUrl: sprites.shinyDisplayUrl,
+      varietySummaries: varietySummaries,
+      visibility: visibility,
+    );
+  }
+
+  Future<PokemonResponse> _loadPokemonResponseForVariants(int pokemonId) async {
+    final cached = await _local.getPokemonResponse(pokemonId, allowStale: true);
+    if (cached != null) {
+      return _enrichWithFormMetadata(cached);
+    }
+
+    try {
+      final response = await _remote.fetchPokemon(pokemonId);
+      await _local.savePokemonResponse(response);
+      return _enrichWithFormMetadata(response);
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();
