@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/locale/game_text_resolver_provider.dart';
 import 'package:pokedex_app/core/network/dio_client.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
+import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
@@ -19,7 +20,11 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 });
 
 final dioProvider = Provider<Dio>((ref) {
-  return createDio(connectivity: ref.watch(connectivityServiceProvider));
+  final appVersion = ref.watch(packageInfoProvider).value?.version ?? '1.0.0';
+  return createDio(
+    connectivity: ref.watch(connectivityServiceProvider),
+    appVersion: appVersion,
+  );
 });
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
