@@ -11,6 +11,7 @@ import 'package:pokedex_app/core/network/offline_http_overrides.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
+import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
@@ -112,10 +113,11 @@ Future<ColdStartResult> runColdStart() async {
 
 /// Warms local resources during the native splash.
 Future<void> _warmSplashResources(ProviderContainer container) async {
-  final repository = container.read(pokemonRepositoryProvider);
-  final isOnline = container.read(connectivityServiceProvider).isOnline;
+  await container.read(packageInfoProvider.future);
 
   container.read(appDatabaseProvider);
+  final repository = container.read(pokemonRepositoryProvider);
+  final isOnline = container.read(connectivityServiceProvider).isOnline;
 
   if (isOnline) {
     unawaited(repository.warmPokemonNameIndex());

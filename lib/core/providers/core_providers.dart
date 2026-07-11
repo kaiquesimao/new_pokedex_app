@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
+import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/locale/game_text_resolver_provider.dart';
 import 'package:pokedex_app/core/network/dio_client.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
@@ -44,12 +46,23 @@ final pokemonRemoteDataSourceProvider = Provider<PokemonRemoteDataSource>((
 });
 
 final pokemonRepositoryProvider = Provider<PokemonRepository>((ref) {
-  return PokemonRepositoryImpl(
-    remote: ref.watch(pokemonRemoteDataSourceProvider),
-    local: PokemonLocalDataSource(ref.watch(appDatabaseProvider)),
-    gameTextResolver: ref.watch(gameTextResolverProvider),
-    ref: ref,
+  // ponytail: warmNameIndex is long-running; read deps + keepAlive avoid rebuild mid-flight.
+  ref.keepAlive();
+
+  final repository = PokemonRepositoryImpl(
+    remote: ref.read(pokemonRemoteDataSourceProvider),
+    local: PokemonLocalDataSource(ref.read(appDatabaseProvider)),
+    gameTextResolver: ref.read(gameTextResolverProvider),
+    initialLocale: ref.read(appLocaleProvider),
   );
+
+  ref.listen<AppLocale>(appLocaleProvider, (previous, next) {
+    if (previous != next) {
+      repository.onLocaleChanged(next);
+    }
+  });
+
+  return repository;
 });
 
 final regionRepositoryProvider = Provider<RegionRepository>((ref) {

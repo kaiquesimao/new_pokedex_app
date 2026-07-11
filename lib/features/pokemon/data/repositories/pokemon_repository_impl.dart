@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/errors/app_exception.dart';
 import 'package:pokedex_app/core/locale/api_load_target.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
-import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/locale/game_text_resolver.dart';
 import 'package:pokedex_app/core/locale/game_text_source.dart';
 import 'package:pokedex_app/core/locale/offline_cache_error_kind.dart';
@@ -28,34 +26,28 @@ class PokemonRepositoryImpl implements PokemonRepository {
     required this._remote,
     required this._local,
     required this._gameTextResolver,
-    Ref? ref,
-  }) : _getAppLocale = ref != null
-           ? (() => ref.read(appLocaleProvider))
-           : (() => AppLocale.en) {
-    // Only hook provider listener when a Ref is supplied (production usage).
-    if (ref != null) {
-      // Clear localized caches when app locale changes so localized names/flavor texts refresh.
-      ref.listen<AppLocale>(appLocaleProvider, (previous, next) {
-        if (previous != next) {
-          _speciesCache.clear();
-          _gameTextResolver.clearCache();
-          // Clear name index so it will be rebuilt with localized names.
-          unawaited(Future.microtask(() => _local.replaceNameIndex(const [])));
-          _warmNameIndexFuture = null;
-          unawaited(Future.microtask(warmPokemonNameIndex));
-        }
-      });
-    }
-  }
+    AppLocale initialLocale = AppLocale.en,
+  }) : _cachedLocale = initialLocale;
 
   final PokemonRemoteDataSource _remote;
   final PokemonLocalDataSource _local;
   final GameTextResolver _gameTextResolver;
-  final AppLocale Function() _getAppLocale;
 
+  AppLocale _cachedLocale;
   List<NamedApiResource>? _allPokemonRefsCache;
   Future<void>? _warmNameIndexFuture;
   bool _usedOfflineFallback = false;
+
+  /// Clears localized caches and rebuilds the name index for [locale].
+  void onLocaleChanged(AppLocale locale) {
+    _cachedLocale = locale;
+    _speciesCache.clear();
+    _gameTextResolver.clearCache();
+    unawaited(Future.microtask(() => _local.replaceNameIndex(const [])));
+    _warmNameIndexFuture = null;
+    unawaited(Future.microtask(warmPokemonNameIndex));
+  }
+
   final Map<int, bool> _formMegaCache = {};
   final Map<int, PokemonSpeciesResponse> _speciesCache = {};
 
@@ -155,7 +147,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
       final chainResponse = await _remote.fetchEvolutionChain(chainId);
       final root = EvolutionMapper.toNode(chainResponse.chain);
-      final pokeApiCode = _getAppLocale().pokeApiCode;
+      final pokeApiCode = _cachedLocale.pokeApiCode;
       final enrichedRoot = await _enrichEvolutionChain(root, pokeApiCode);
       final enrichedWithSprites = await _enrichEvolutionSprites(
         enrichedRoot,
@@ -224,7 +216,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         }
       }
 
-      final pokeApiCode = _getAppLocale().pokeApiCode;
+      final pokeApiCode = _cachedLocale.pokeApiCode;
       var detail = PokemonMapper.toDetail(
         cachedResponse,
         species: species,
@@ -256,7 +248,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       );
       final speciesId = await _resolveSpeciesId(id, pokemon: response);
       final species = await _getCachedSpecies(speciesId);
-      final pokeApiCode = _getAppLocale().pokeApiCode;
+      final pokeApiCode = _cachedLocale.pokeApiCode;
       var detail = PokemonMapper.toDetail(
         response,
         species: species,
@@ -378,7 +370,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       null,
     );
     var nextIndex = 0;
-    final pokeApiCode = _getAppLocale().pokeApiCode;
+    final pokeApiCode = _cachedLocale.pokeApiCode;
 
     Future<void> worker() async {
       while (true) {
@@ -566,7 +558,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         allowStale: true,
       );
       if (cachedDetail != null && cachedDetail.name.isNotEmpty) {
-        final pokeApiCode = _getAppLocale().pokeApiCode;
+        final pokeApiCode = _cachedLocale.pokeApiCode;
         viewingSummary = PokemonMapper.toSummary(
           cachedDetail,
           pokeApiCode: pokeApiCode,
@@ -946,7 +938,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         try {
           final response = await _remote.fetchPokemon(id);
           final enriched = await _enrichWithFormMetadata(response);
-          final pokeApiCode = _getAppLocale().pokeApiCode;
+          final pokeApiCode = _cachedLocale.pokeApiCode;
           final summary = PokemonMapper.toSummary(
             enriched,
             pokeApiCode: pokeApiCode,

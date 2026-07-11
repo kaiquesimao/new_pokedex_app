@@ -19,7 +19,7 @@ Dio createDio({
       baseUrl: 'https://pokeapi.co/api/v2',
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
-      sendTimeout: const Duration(seconds: 15),
+      sendTimeout: kIsWeb ? null : const Duration(seconds: 15),
       headers: {
         'Accept': 'application/json',
         'User-Agent': pokeApiUserAgent(appVersion),
