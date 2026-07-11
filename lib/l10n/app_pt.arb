@@ -408,6 +408,8 @@
   "aboutDisclaimer": "O PokeData é um aplicativo de fãs, não oficial. Não é desenvolvido, endossado ou afiliado à Nintendo, Creatures Inc., GAME FREAK ou The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.",
 
   "errorNetworkOffline": "Sem conexão com a internet.",
+  "errorTooManyRequests": "Muitas requisições. Aguarde um momento e tente novamente.",
+  "errorServiceUnavailable": "O serviço está temporariamente indisponível. Tente novamente em instantes.",
   "errorGenericRetry": "Algo deu errado. Tente novamente.",
   "errorLoadDataWithStatus": "Não foi possível carregar os dados ({statusCode}). Tente novamente.",
   "@errorLoadDataWithStatus": { "placeholders": { "statusCode": { "type": "int" } } },

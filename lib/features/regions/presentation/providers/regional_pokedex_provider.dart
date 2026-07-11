@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
+import 'package:pokedex_app/core/network/poke_api_limits.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
@@ -73,7 +74,7 @@ class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
   ConnectivityService get _connectivity =>
       ref.read(connectivityServiceProvider);
 
-  static const int _concurrency = 8;
+  static const int _concurrency = pokeApiMaxConcurrentRequests;
   int _loadGeneration = 0;
 
   @override

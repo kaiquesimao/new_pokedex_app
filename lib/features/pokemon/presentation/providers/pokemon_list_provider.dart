@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
+import 'package:pokedex_app/core/network/poke_api_limits.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -95,7 +96,7 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
       ref.read(connectivityServiceProvider);
 
   static const int _catalogBatchSize = 20;
-  static const int _concurrency = 8;
+  static const int _concurrency = pokeApiMaxConcurrentRequests;
 
   int _loadGeneration = 0;
   Set<PokemonType>? _weakToTypesCache;

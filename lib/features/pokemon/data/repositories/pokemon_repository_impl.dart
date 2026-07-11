@@ -8,6 +8,7 @@ import 'package:pokedex_app/core/locale/game_text_resolver.dart';
 import 'package:pokedex_app/core/locale/game_text_source.dart';
 import 'package:pokedex_app/core/locale/offline_cache_error_kind.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
+import 'package:pokedex_app/core/network/poke_api_limits.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/mappers/evolution_mapper.dart';
@@ -399,7 +400,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       }
     }
 
-    const concurrency = 8;
+    const concurrency = pokeApiMaxConcurrentRequests;
     await Future.wait(List.generate(concurrency, (_) => worker()));
     return entries
         .whereType<({int id, String name, String localizedName})>()
@@ -954,7 +955,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       }
     }
 
-    const concurrency = 8;
+    const concurrency = pokeApiMaxConcurrentRequests;
     await Future.wait(List.generate(concurrency, (_) => worker()));
     return results.whereType<PokemonSummary>().toList();
   }

@@ -421,6 +421,8 @@
   "aboutDisclaimer": "PokeData is an unofficial fan app. It is not developed, endorsed, or affiliated with Nintendo, Creatures Inc., GAME FREAK, or The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.",
 
   "errorNetworkOffline": "No internet connection.",
+  "errorTooManyRequests": "Too many requests. Wait a moment and try again.",
+  "errorServiceUnavailable": "The service is temporarily unavailable. Try again in a moment.",
   "errorGenericRetry": "Something went wrong. Try again.",
   "errorLoadDataWithStatus": "Could not load data ({statusCode}). Try again.",
   "@errorLoadDataWithStatus": { "placeholders": { "statusCode": { "type": "int" } } },

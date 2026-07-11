@@ -42,6 +42,50 @@ void main() {
         throwsA(isA<NetworkException>()),
       );
     });
+
+    test('maps HTTP 503 to ServiceUnavailableException', () {
+      final error = DioException(
+        requestOptions: RequestOptions(path: '/pokemon'),
+        type: DioExceptionType.badResponse,
+        response: Response(
+          requestOptions: RequestOptions(path: '/pokemon'),
+          statusCode: 503,
+        ),
+      );
+
+      expect(
+        () => mapDioException(error, loadTarget: ApiLoadTarget.pokemon),
+        throwsA(
+          isA<ServiceUnavailableException>().having(
+            (e) => e.statusCode,
+            'statusCode',
+            503,
+          ),
+        ),
+      );
+    });
+
+    test('maps HTTP 429 to ServiceUnavailableException', () {
+      final error = DioException(
+        requestOptions: RequestOptions(path: '/pokemon'),
+        type: DioExceptionType.badResponse,
+        response: Response(
+          requestOptions: RequestOptions(path: '/pokemon'),
+          statusCode: 429,
+        ),
+      );
+
+      expect(
+        () => mapDioException(error, loadTarget: ApiLoadTarget.pokemon),
+        throwsA(
+          isA<ServiceUnavailableException>().having(
+            (e) => e.statusCode,
+            'statusCode',
+            429,
+          ),
+        ),
+      );
+    });
   });
 
   group('isConnectivityFailure', () {
@@ -78,6 +122,24 @@ void main() {
       const error = NetworkException();
 
       expect(friendlyErrorMessage(l10nEn, error), l10nEn.errorNetworkOffline);
+    });
+
+    test('localizes 429 as too many requests', () {
+      const error = ServiceUnavailableException(statusCode: 429);
+
+      expect(
+        friendlyErrorMessage(l10nPt, error),
+        l10nPt.errorTooManyRequests,
+      );
+    });
+
+    test('localizes 503 as service unavailable', () {
+      const error = ServiceUnavailableException(statusCode: 503);
+
+      expect(
+        friendlyErrorMessage(l10nEn, error),
+        l10nEn.errorServiceUnavailable,
+      );
     });
 
     test('localizes egg group and item load targets', () {

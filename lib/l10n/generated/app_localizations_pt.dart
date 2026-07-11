@@ -871,6 +871,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get errorNetworkOffline => 'Sem conexão com a internet.';
 
   @override
+  String get errorTooManyRequests =>
+      'Muitas requisições. Aguarde um momento e tente novamente.';
+
+  @override
+  String get errorServiceUnavailable =>
+      'O serviço está temporariamente indisponível. Tente novamente em instantes.';
+
+  @override
   String get errorGenericRetry => 'Algo deu errado. Tente novamente.';
 
   @override

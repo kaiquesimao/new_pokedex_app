@@ -1664,6 +1664,18 @@ abstract class AppLocalizations {
   /// **'No internet connection.'**
   String get errorNetworkOffline;
 
+  /// No description provided for @errorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Wait a moment and try again.'**
+  String get errorTooManyRequests;
+
+  /// No description provided for @errorServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The service is temporarily unavailable. Try again in a moment.'**
+  String get errorServiceUnavailable;
+
   /// No description provided for @errorGenericRetry.
   ///
   /// In en, this message translates to:

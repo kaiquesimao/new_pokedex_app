@@ -41,6 +41,12 @@ String friendlyErrorMessage(AppLocalizations l10n, Object error) {
   if (isNetworkError(error)) {
     return l10n.errorNetworkOffline;
   }
+  if (error is ServiceUnavailableException) {
+    if (error.statusCode == 429) {
+      return l10n.errorTooManyRequests;
+    }
+    return l10n.errorServiceUnavailable;
+  }
   if (error is ApiException) {
     if (error.statusCode != null) {
       return l10n.errorLoadDataWithStatus(error.statusCode!);

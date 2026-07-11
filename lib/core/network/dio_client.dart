@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_guard_interceptor.dart';
+import 'package:pokedex_app/core/network/transient_retry_interceptor.dart';
 
 const _appName = 'PokeData';
 const _projectUrl = 'https://pokedata.kaique.site';
@@ -20,6 +21,9 @@ Dio createDio({
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       sendTimeout: kIsWeb ? null : const Duration(seconds: 15),
+      // ponytail: explicit per network-resilience spec (default is json).
+      // ignore: avoid_redundant_argument_values
+      responseType: ResponseType.json,
       headers: {
         'Accept': 'application/json',
         'User-Agent': pokeApiUserAgent(appVersion),
@@ -28,6 +32,7 @@ Dio createDio({
   );
 
   dio.interceptors.add(OfflineGuardInterceptor(connectivity));
+  dio.interceptors.add(TransientRetryInterceptor(dio: dio));
 
   if (kDebugMode) {
     dio.interceptors.add(

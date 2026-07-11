@@ -46,6 +46,13 @@ Never mapDioException(
     throw NetworkException(loadTarget: loadTarget);
   }
 
+  if (statusCode == 429 ||
+      statusCode == 502 ||
+      statusCode == 503 ||
+      statusCode == 504) {
+    throw ServiceUnavailableException(statusCode: statusCode);
+  }
+
   if (error.type == DioExceptionType.badResponse && statusCode != null) {
     throw ApiException(loadTarget: loadTarget, statusCode: statusCode);
   }

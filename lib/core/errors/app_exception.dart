@@ -24,6 +24,12 @@ final class NotFoundException extends AppException {
   const NotFoundException() : super('');
 }
 
+final class ServiceUnavailableException extends AppException {
+  const ServiceUnavailableException({this.statusCode}) : super('');
+
+  final int? statusCode;
+}
+
 final class ApiException extends AppException {
   const ApiException({this.loadTarget, this.statusCode}) : super('');
 

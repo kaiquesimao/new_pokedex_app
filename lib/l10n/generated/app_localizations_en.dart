@@ -866,6 +866,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorNetworkOffline => 'No internet connection.';
 
   @override
+  String get errorTooManyRequests =>
+      'Too many requests. Wait a moment and try again.';
+
+  @override
+  String get errorServiceUnavailable =>
+      'The service is temporarily unavailable. Try again in a moment.';
+
+  @override
   String get errorGenericRetry => 'Something went wrong. Try again.';
 
   @override
