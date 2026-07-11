@@ -1,11 +1,12 @@
 flutter_native_splash:
-  background_image: assets/images/splash/splash_background.png
+  color: "#0D1B2A"
+  image: assets/images/splash/splash_icon.png
+  branding: assets/images/splash/splash_branding.png
+  branding_bottom_padding: 16
   fullscreen: true
-  android_gravity: fill
-  ios_content_mode: scaleAspectFill
+  android_gravity: center
+  ios_content_mode: center
 
-  # Web/desktop: Android 12+ layout (solid navy + centered icon + bottom branding).
-  # Full-screen background_image stretches badly on wide viewports.
   color_web: "#0D1B2A"
   background_image_web: assets/images/splash/splash_web_background.png
   image_web: assets/images/splash/splash_icon.png
@@ -16,4 +17,4 @@ flutter_native_splash:
     color: "#0D1B2A"
     image: assets/images/splash/splash_icon.png
     branding: assets/images/splash/splash_branding.png
-    branding_bottom_padding: 24
+    branding_bottom_padding: 16

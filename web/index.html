@@ -25,13 +25,24 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 
   <title>PokeData</title>
   <link rel="manifest" href="manifest.json">
 
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <style id="splash-screen-style">
     html {
       height: 100%
@@ -90,6 +101,18 @@
       bottom: 0;
       right: 0;
     }
+
+    /* ponytail: web splash scales above flutter_native_splash 1x intrinsic size */
+    #splash img {
+      width: min(48vw, 300px);
+      height: auto;
+    }
+
+    #splash-branding img {
+      width: min(62vw, 380px);
+      height: auto;
+      margin-bottom: 16px;
+    }
   </style>
   <script id="splash-screen-script">
     function removeSplashFromWeb() {
@@ -110,6 +133,16 @@
       <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
       <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
   </picture>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
