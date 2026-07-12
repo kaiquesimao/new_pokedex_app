@@ -18,15 +18,16 @@ import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dar
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_sprite_variants_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
+import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_sprite_carousel.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -323,25 +324,10 @@ class _HeroSection extends ConsumerWidget {
                         ? PokemonPrimaryTypeBackdrop.detailOpacity
                         : PokemonPrimaryTypeBackdrop.detailLightOpacity,
                   ),
-                if (pokemon.spriteUrl != null)
-                  _TappableDetailSprite(
-                    pokemonId: pokemonId,
-                    imageUrl: pokemon.spriteUrl!,
-                    cryUrl: pokemon.cryUrl,
-                    legacyCryUrl: pokemon.legacyCryUrl,
-                  )
-                else
-                  Hero(
-                    tag: PokemonHeroTags.sprite(pokemonId),
-                    child: const Material(
-                      color: Colors.transparent,
-                      child: Icon(
-                        Icons.catching_pokemon,
-                        size: 96,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                _HeroSprite(
+                  pokemonId: pokemonId,
+                  pokemon: pokemon,
+                ),
               ],
             ),
           ),
@@ -374,86 +360,63 @@ class _HeroSection extends ConsumerWidget {
   }
 }
 
-class _TappableDetailSprite extends ConsumerStatefulWidget {
-  const _TappableDetailSprite({
+class _HeroSprite extends ConsumerWidget {
+  const _HeroSprite({
     required this.pokemonId,
-    required this.imageUrl,
-    this.cryUrl,
-    this.legacyCryUrl,
+    required this.pokemon,
   });
 
   final int pokemonId;
-  final String imageUrl;
-  final String? cryUrl;
-  final String? legacyCryUrl;
+  final PokemonDetail pokemon;
 
   @override
-  ConsumerState<_TappableDetailSprite> createState() =>
-      _TappableDetailSpriteState();
-}
-
-class _TappableDetailSpriteState extends ConsumerState<_TappableDetailSprite>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _tapController;
-  late final Animation<double> _tapScale;
-
-  @override
-  void initState() {
-    super.initState();
-    _tapController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 140),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final variantsAsync = ref.watch(
+      pokemonDetailSpriteVariantsProvider(pokemonId),
     );
-    _tapScale = TweenSequence<double>(
-      [
-        TweenSequenceItem(
-          tween: Tween<double>(begin: 1, end: 0.92),
-          weight: 50,
-        ),
-        TweenSequenceItem(
-          tween: Tween<double>(begin: 0.92, end: 1),
-          weight: 50,
-        ),
-      ],
-    ).animate(CurvedAnimation(parent: _tapController, curve: Curves.easeInOut));
+
+    return variantsAsync.when(
+      data: (variants) {
+        if (variants.length > 1) {
+          return PokemonDetailSpriteCarousel(
+            routePokemonId: pokemonId,
+            variants: variants,
+            fallbackCryUrl: pokemon.cryUrl,
+            fallbackLegacyCryUrl: pokemon.legacyCryUrl,
+          );
+        }
+        if (variants.length == 1) {
+          return PokemonDetailTappableSprite(
+            pokemonId: pokemonId,
+            imageUrl: variants.first.imageUrl,
+            cryUrl: pokemon.cryUrl,
+            legacyCryUrl: pokemon.legacyCryUrl,
+          );
+        }
+        return _fallbackSprite();
+      },
+      loading: _fallbackSprite,
+      error: (_, _) => _fallbackSprite(),
+    );
   }
 
-  @override
-  void dispose() {
-    _tapController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _onTap() async {
-    unawaited(_tapController.forward(from: 0));
-    await ref
-        .read(pokemonCryPlayerProvider.notifier)
-        .playCry(
-          cryUrl: widget.cryUrl,
-          legacyCryUrl: widget.legacyCryUrl,
-          pokemonId: widget.pokemonId,
-        );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return Semantics(
-      button: true,
-      label: l10n.pokemonCryPlaySemantics,
-      child: GestureDetector(
-        onTap: _onTap,
-        child: ScaleTransition(
-          scale: _tapScale,
-          child: PokemonSpriteImage(
-            imageUrl: widget.imageUrl,
-            height: PokemonSpriteDisplaySizes.detail,
-            maxCachePixels: PokemonSpriteCachePresets.detail,
-            heroTag: PokemonHeroTags.sprite(widget.pokemonId),
-            errorIconColor: Colors.white,
-            errorIconSize: 96,
-          ),
+  Widget _fallbackSprite() {
+    if (pokemon.spriteUrl != null) {
+      return PokemonDetailTappableSprite(
+        pokemonId: pokemonId,
+        imageUrl: pokemon.spriteUrl!,
+        cryUrl: pokemon.cryUrl,
+        legacyCryUrl: pokemon.legacyCryUrl,
+      );
+    }
+    return Hero(
+      tag: PokemonHeroTags.sprite(pokemonId),
+      child: const Material(
+        color: Colors.transparent,
+        child: Icon(
+          Icons.catching_pokemon,
+          size: 96,
+          color: Colors.white,
         ),
       ),
     );

@@ -22,6 +22,41 @@ void main() {
     expect(parsed.listUrl, lowResUrl);
   });
 
+  test('PokemonSprites prefers shiny home then official then front_shiny', () {
+    const homeShiny =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/25.png';
+    const officialShiny =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/25.png';
+    const frontShiny =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png';
+
+    final parsed = PokemonSprites.fromJson({
+      'front_default': lowResUrl,
+      'front_shiny': frontShiny,
+      'other': {
+        'official-artwork': {
+          'front_default': officialUrl,
+          'front_shiny': officialShiny,
+        },
+        'home': {
+          'front_default': homeUrl,
+          'front_shiny': homeShiny,
+        },
+      },
+    });
+
+    expect(parsed.shinyDisplayUrl, homeShiny);
+    expect(
+      PokemonSprites.fromJson({
+        'front_shiny': frontShiny,
+        'other': {
+          'official-artwork': {'front_shiny': officialShiny},
+        },
+      }).shinyDisplayUrl,
+      officialShiny,
+    );
+  });
+
   test('PokemonSprites falls back when home is missing', () {
     final parsed = PokemonSprites.fromJson({
       'front_default': lowResUrl,

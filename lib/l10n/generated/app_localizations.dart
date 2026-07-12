@@ -2096,6 +2096,72 @@ abstract class AppLocalizations {
   /// **'Play Pokémon cry'**
   String get pokemonCryPlaySemantics;
 
+  /// Detail sprite carousel: default form label
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get pokemonFormLabelNormal;
+
+  /// Detail sprite carousel: shiny form label
+  ///
+  /// In en, this message translates to:
+  /// **'Shiny'**
+  String get pokemonFormLabelShiny;
+
+  /// Detail sprite carousel: mega evolution label
+  ///
+  /// In en, this message translates to:
+  /// **'Mega'**
+  String get pokemonFormLabelMega;
+
+  /// Detail sprite carousel: Mega X label
+  ///
+  /// In en, this message translates to:
+  /// **'Mega X'**
+  String get pokemonFormLabelMegaX;
+
+  /// Detail sprite carousel: Mega Y label
+  ///
+  /// In en, this message translates to:
+  /// **'Mega Y'**
+  String get pokemonFormLabelMegaY;
+
+  /// Detail sprite carousel: Alola form label
+  ///
+  /// In en, this message translates to:
+  /// **'Alola'**
+  String get pokemonFormLabelAlola;
+
+  /// Detail sprite carousel: Galar form label
+  ///
+  /// In en, this message translates to:
+  /// **'Galar'**
+  String get pokemonFormLabelGalar;
+
+  /// Detail sprite carousel: Hisui form label
+  ///
+  /// In en, this message translates to:
+  /// **'Hisui'**
+  String get pokemonFormLabelHisui;
+
+  /// Detail sprite carousel: Paldea form label
+  ///
+  /// In en, this message translates to:
+  /// **'Paldea'**
+  String get pokemonFormLabelPaldea;
+
+  /// Detail sprite carousel: Gigantamax form label
+  ///
+  /// In en, this message translates to:
+  /// **'Gigantamax'**
+  String get pokemonFormLabelGigantamax;
+
+  /// Semantics for detail sprite form carousel
+  ///
+  /// In en, this message translates to:
+  /// **'{formLabel}, swipe to see other forms'**
+  String pokemonFormCarouselSemantics(String formLabel);
+
   /// No description provided for @firebaseConfigErrorTitle.
   ///
   /// In en, this message translates to:

@@ -1118,6 +1118,41 @@ class AppLocalizationsPt extends AppLocalizations {
   String get pokemonCryPlaySemantics => 'Reproduzir som do Pokémon';
 
   @override
+  String get pokemonFormLabelNormal => 'Normal';
+
+  @override
+  String get pokemonFormLabelShiny => 'Shiny';
+
+  @override
+  String get pokemonFormLabelMega => 'Mega';
+
+  @override
+  String get pokemonFormLabelMegaX => 'Mega X';
+
+  @override
+  String get pokemonFormLabelMegaY => 'Mega Y';
+
+  @override
+  String get pokemonFormLabelAlola => 'Alola';
+
+  @override
+  String get pokemonFormLabelGalar => 'Galar';
+
+  @override
+  String get pokemonFormLabelHisui => 'Hisui';
+
+  @override
+  String get pokemonFormLabelPaldea => 'Paldea';
+
+  @override
+  String get pokemonFormLabelGigantamax => 'Gigantamax';
+
+  @override
+  String pokemonFormCarouselSemantics(String formLabel) {
+    return '$formLabel, deslize para ver outras formas';
+  }
+
+  @override
   String get firebaseConfigErrorTitle => 'Configuração indisponível';
 
   @override

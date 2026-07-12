@@ -4,6 +4,9 @@ class PokemonSprites {
     this.frontDefault,
     this.officialArtwork,
     this.home,
+    this.frontShiny,
+    this.officialArtworkShiny,
+    this.homeShiny,
   });
 
   factory PokemonSprites.fromJson(dynamic sprites) {
@@ -24,18 +27,28 @@ class PokemonSprites {
       frontDefault: map['front_default'] as String?,
       officialArtwork: artwork['front_default'] as String?,
       home: homeMap['front_default'] as String?,
+      frontShiny: map['front_shiny'] as String?,
+      officialArtworkShiny: artwork['front_shiny'] as String?,
+      homeShiny: homeMap['front_shiny'] as String?,
     );
   }
 
   final String? frontDefault;
   final String? officialArtwork;
   final String? home;
+  final String? frontShiny;
+  final String? officialArtworkShiny;
+  final String? homeShiny;
 
   /// Primary display URL: home → official-artwork → front_default.
   String? get displayUrl => home ?? officialArtwork ?? frontDefault;
 
   /// Compact list URL: front_default → official-artwork → home.
   String? get listUrl => frontDefault ?? officialArtwork ?? home;
+
+  /// Shiny display URL: home shiny → official-artwork shiny → front_shiny.
+  String? get shinyDisplayUrl =>
+      homeShiny ?? officialArtworkShiny ?? frontShiny;
 }
 
 /// Helpers for Pokémon sprite URLs supplied by PokéAPI responses.
