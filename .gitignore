@@ -57,6 +57,9 @@ docs/superpowers
 # Tool
 tool/
 
+# Git worktrees (local agent isolation)
+.worktrees/
+
 # Firebase secrets (copy from *.example.* or flutterfire configure)
 dart_defines.json
 android/app/google-services.json

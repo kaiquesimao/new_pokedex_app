@@ -180,6 +180,26 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> upsertNameIndexEntries(
+    List<({int id, String name, String localizedName})> entries,
+  ) async {
+    if (entries.isEmpty) return;
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(
+        pokemonNameIndex,
+        entries
+            .map(
+              (entry) => PokemonNameIndexCompanion.insert(
+                id: Value(entry.id),
+                name: entry.name,
+                localizedName: Value(entry.localizedName),
+              ),
+            )
+            .toList(),
+      );
+    });
+  }
+
   Future<int> countNameIndex() async {
     final countExp = pokemonNameIndex.id.count();
     final query = selectOnly(pokemonNameIndex)..addColumns([countExp]);

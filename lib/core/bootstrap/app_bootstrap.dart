@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -114,12 +113,5 @@ Future<ColdStartResult> runColdStart() async {
 /// Warms local resources during the native splash.
 Future<void> _warmSplashResources(ProviderContainer container) async {
   await container.read(packageInfoProvider.future);
-
   container.read(appDatabaseProvider);
-  final repository = container.read(pokemonRepositoryProvider);
-  final isOnline = container.read(connectivityServiceProvider).isOnline;
-
-  if (isOnline) {
-    unawaited(repository.warmPokemonNameIndex());
-  }
 }

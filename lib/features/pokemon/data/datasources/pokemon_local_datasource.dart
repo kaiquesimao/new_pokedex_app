@@ -107,6 +107,10 @@ class PokemonLocalDataSource {
     return _db.replaceNameIndex(entries);
   }
 
+  Future<void> upsertNameIndex(List<PokemonNameIndexRef> refs) {
+    return _db.upsertNameIndexEntries(refs);
+  }
+
   Future<bool> isNameIndexReady() async {
     return (await _db.countNameIndex()) > 0;
   }

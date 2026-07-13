@@ -160,6 +160,15 @@ class PokemonListNotifier extends Notifier<PokemonListState> {
       } else {
         await _loadPaginatedInitial(generation);
       }
+      if (generation != _loadGeneration) return;
+      // ponytail: defer name-index warm so first paint only pays for the list.
+      if (_connectivity.isOnline) {
+        try {
+          unawaited(_repository.warmPokemonNameIndex());
+        } on Object {
+          // Best-effort; list already painted.
+        }
+      }
     } on Object catch (error) {
       if (generation != _loadGeneration) return;
       final connectivityFailure = isConnectivityFailure(error);

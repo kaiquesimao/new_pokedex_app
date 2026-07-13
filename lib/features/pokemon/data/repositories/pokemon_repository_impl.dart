@@ -40,6 +40,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
   AppLocale _cachedLocale;
   List<NamedApiResource>? _allPokemonRefsCache;
   Future<void>? _warmNameIndexFuture;
+  int _nameIndexGeneration = 0;
   bool _usedOfflineFallback = false;
 
   /// Clears localized caches and rebuilds the name index for [locale].
@@ -47,9 +48,19 @@ class PokemonRepositoryImpl implements PokemonRepository {
     _cachedLocale = locale;
     _speciesCache.clear();
     _gameTextResolver.clearCache();
-    unawaited(Future.microtask(() => _local.replaceNameIndex(const [])));
-    _warmNameIndexFuture = null;
-    unawaited(Future.microtask(warmPokemonNameIndex));
+    _nameIndexGeneration++;
+    // Await clear before warm so early-return on ready index cannot keep
+    // the previous locale. Callers may still unawait this whole rebuild.
+    final rebuild = _rebuildNameIndexAfterLocaleChange();
+    _warmNameIndexFuture = rebuild;
+    unawaited(rebuild);
+  }
+
+  Future<void> _rebuildNameIndexAfterLocaleChange() async {
+    await _local.replaceNameIndex(const []);
+    // Call the body directly: warmPokemonNameIndex() would return this
+    // same future (deadlock) because _warmNameIndexFuture is already set.
+    await _warmPokemonNameIndex();
   }
 
   final Map<int, bool> _formMegaCache = {};
@@ -399,6 +410,8 @@ class PokemonRepositoryImpl implements PokemonRepository {
   }
 
   Future<void> _warmPokemonNameIndex() async {
+    final generation = ++_nameIndexGeneration;
+
     if (await isNameIndexReady()) {
       final indexed = await _local.getIndexedRefs();
       if (indexed.isNotEmpty) {
@@ -413,74 +426,158 @@ class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     try {
-      final refs = await _fetchAllPokemonRefsForIndex();
-      await _local.replaceNameIndex(refs);
-      _allPokemonRefsCache = refs
-          .map(
-            (ref) =>
-                NamedApiResource(name: ref.name, url: '/pokemon/${ref.id}/'),
-          )
-          .toList();
+      await _warmNameIndexPhaseA();
+      if (generation != _nameIndexGeneration) return;
+      await _warmNameIndexPhaseB(generation);
     } catch (error) {
       if (error is! NetworkException && error is! ApiException) rethrow;
     }
   }
 
-  Future<List<({int id, String name, String localizedName})>>
-  _fetchAllPokemonRefsForIndex() async {
-    const pageSize = 100;
-    final refs = <PokemonRef>[];
-    var offset = 0;
+  Future<void> _warmNameIndexPhaseA() async {
+    final refs = await getAllPokemonRefs();
+    final entries = refs
+        .map(
+          (ref) => (
+            id: ref.id,
+            name: ref.name,
+            localizedName: ref.name, // slug until Phase B
+          ),
+        )
+        .toList();
+    await _local.replaceNameIndex(entries);
+  }
 
-    while (true) {
-      final page = await _remote.fetchPokemonList(
-        offset: offset,
-        limit: pageSize,
-      );
-      refs.addAll(_mapRefs(page.results));
-      if (page.next == null) break;
-      offset += pageSize;
-    }
-    // Enrich with localized names by fetching species for each pokemon.
-    final entries = List<({int id, String name, String localizedName})?>.filled(
-      refs.length,
-      null,
-    );
-    var nextIndex = 0;
+  /// Enrich localized names via species (default line + alternate forms).
+  Future<void> _warmNameIndexPhaseB(int generation) async {
+    final refs = await getIndexedPokemonRefs();
+    if (refs.isEmpty) return;
+
     final pokeApiCode = _cachedLocale.pokeApiCode;
+    // ponytail: ceiling — PokéAPI alternate forms use id >= 10000.
+    final defaultLine = refs.where((r) => r.id < 10000).toList();
+    final forms = refs.where((r) => r.id >= 10000).toList();
+
+    final pending = <PokemonNameIndexRef>[];
+    var next = 0;
+
+    Future<void> flushPending() async {
+      if (pending.isEmpty) return;
+      final batch = List<PokemonNameIndexRef>.from(pending);
+      pending.clear();
+      if (generation != _nameIndexGeneration) return;
+      await _local.upsertNameIndex(batch);
+    }
 
     Future<void> worker() async {
       while (true) {
-        final index = nextIndex++;
-        if (index >= refs.length) return;
-        final ref = refs[index];
+        final i = next++;
+        if (i >= defaultLine.length) return;
+        if (generation != _nameIndexGeneration) return;
+
+        final ref = defaultLine[i];
         try {
-          final pokemon = await _remote.fetchPokemon(ref.id);
-          final speciesId = pokemon.speciesId ?? ref.id;
-          final species = await _remote.fetchPokemonSpecies(speciesId);
-          final localized = species.localizedName(pokeApiCode) ?? ref.name;
-          entries[index] = (
+          final species = await _getCachedSpecies(ref.id);
+          if (generation != _nameIndexGeneration) return;
+          final localized =
+              species.localizedName(pokeApiCode) ?? ref.name;
+          pending.add((
             id: ref.id,
             name: ref.name,
             localizedName: localized,
-          );
+          ));
+          if (pending.length >= 20) {
+            await flushPending();
+          }
         } catch (error) {
           if (!isNetworkError(error)) rethrow;
           _markOfflineFallback();
-          entries[index] = (
-            id: ref.id,
-            name: ref.name,
-            localizedName: ref.name,
-          );
         }
       }
     }
 
-    const concurrency = pokeApiMaxConcurrentRequests;
-    await Future.wait(List.generate(concurrency, (_) => worker()));
-    return entries
-        .whereType<({int id, String name, String localizedName})>()
-        .toList();
+    await Future.wait(
+      List.generate(pokeApiMaxConcurrentRequests, (_) => worker()),
+    );
+    await flushPending();
+    if (generation != _nameIndexGeneration) return;
+
+    await _warmNameIndexPhaseBForms(
+      forms,
+      pokeApiCode: pokeApiCode,
+      generation: generation,
+    );
+  }
+
+  /// Forms: `fetchPokemon` → speciesId → species (Map-cached) → upsert.
+  Future<void> _warmNameIndexPhaseBForms(
+    List<PokemonRef> forms, {
+    required String pokeApiCode,
+    required int generation,
+  }) async {
+    if (forms.isEmpty) return;
+
+    // Dedupes concurrent form workers hitting the same speciesId.
+    final speciesInflight = <int, Future<PokemonSpeciesResponse>>{};
+    final pending = <PokemonNameIndexRef>[];
+    var next = 0;
+
+    Future<PokemonSpeciesResponse> speciesFor(int speciesId) {
+      final cached = _speciesCache[speciesId];
+      if (cached != null) return Future.value(cached);
+      return speciesInflight.putIfAbsent(speciesId, () async {
+        final species = await _remote.fetchPokemonSpecies(speciesId);
+        _speciesCache[speciesId] = species;
+        return species;
+      });
+    }
+
+    Future<void> flushPending() async {
+      if (pending.isEmpty) return;
+      final batch = List<PokemonNameIndexRef>.from(pending);
+      pending.clear();
+      if (generation != _nameIndexGeneration) return;
+      await _local.upsertNameIndex(batch);
+    }
+
+    Future<void> worker() async {
+      while (true) {
+        final i = next++;
+        if (i >= forms.length) return;
+        if (generation != _nameIndexGeneration) return;
+
+        final ref = forms[i];
+        try {
+          final pokemon = await _remote.fetchPokemon(ref.id);
+          if (generation != _nameIndexGeneration) return;
+          // Forms must carry a real species id — never invent speciesId
+          // from pokemon id (>=10000), which would map to the wrong resource.
+          final speciesId = pokemon.speciesId;
+          if (speciesId == null) continue;
+          final species = await speciesFor(speciesId);
+          if (generation != _nameIndexGeneration) return;
+          final localized =
+              species.localizedName(pokeApiCode) ?? ref.name;
+          pending.add((
+            id: ref.id,
+            name: ref.name,
+            localizedName: localized,
+          ));
+          if (pending.length >= 20) {
+            await flushPending();
+          }
+        } catch (error) {
+          // Network error: keep Phase A slug.
+          if (!isNetworkError(error)) rethrow;
+          _markOfflineFallback();
+        }
+      }
+    }
+
+    await Future.wait(
+      List.generate(pokeApiMaxConcurrentRequests, (_) => worker()),
+    );
+    await flushPending();
   }
 
   @override
@@ -996,6 +1093,8 @@ class PokemonRepositoryImpl implements PokemonRepository {
     final staleCached = await _local.getSummaries(ids, allowStale: true);
     final cachedById = {for (final item in cached) item.id: item};
     final staleById = {for (final item in staleCached) item.id: item};
+    // Gate: never seed an empty index — count>0 would make warm early-return.
+    final nameIndexReady = await isNameIndexReady();
 
     final results = List<PokemonSummary?>.filled(ids.length, null);
     var nextIndex = 0;
@@ -1016,12 +1115,30 @@ class PokemonRepositoryImpl implements PokemonRepository {
           final response = await _remote.fetchPokemon(id);
           final enriched = await _enrichWithFormMetadata(response);
           final pokeApiCode = _cachedLocale.pokeApiCode;
+          // ponytail: piggyback name-index only when Phase A already built
+          // the index and species is already in memory — do not
+          // fetchPokemonSpecies here (home cost ceiling).
+          final speciesId = enriched.speciesId;
+          final species =
+              speciesId != null ? _speciesCache[speciesId] : null;
           final summary = PokemonMapper.toSummary(
             enriched,
+            species: species,
             pokeApiCode: pokeApiCode,
           );
           await _local.saveSummary(summary);
           await _local.savePokemonResponse(enriched);
+          if (nameIndexReady && species != null) {
+            final localized =
+                species.localizedName(pokeApiCode) ?? enriched.name;
+            await _local.upsertNameIndex([
+              (
+                id: enriched.id,
+                name: enriched.name,
+                localizedName: localized,
+              ),
+            ]);
+          }
           results[index] = summary;
         } catch (error) {
           if (!isNetworkError(error)) rethrow;

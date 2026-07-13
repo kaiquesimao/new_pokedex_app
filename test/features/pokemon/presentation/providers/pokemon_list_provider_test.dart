@@ -79,6 +79,9 @@ class _FakePokemonRepository implements PokemonRepository {
   Future<List<PokemonRef>> getAllPokemonRefs() async => refs;
 
   @override
+  Future<void> warmPokemonNameIndex() async {}
+
+  @override
   Future<PokemonSummary> getSummaryById(int id) async {
     final name = refs
         .where((ref) => ref.id == id)
