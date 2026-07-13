@@ -24,6 +24,7 @@ import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_sprite_carousel.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
@@ -179,33 +180,36 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        pokemon.displayName,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        PokemonFormatters.displayNumber(pokemon.id),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
-                          fontWeight: FontWeight.w600,
+                  child: DetailSurfaceCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pokemon.displayName,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w800),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: pokemon.types
-                            .map((t) => PokemonTypeChip(type: t))
-                            .toList(),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          PokemonFormatters.displayNumber(pokemon.id),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: pokemon.types
+                              .map((t) => PokemonTypeChip(type: t))
+                              .toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -277,9 +281,7 @@ class _HeroSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final surfaceColor = colorScheme.surface;
-    final headerActionColor = colorScheme.onSurface;
+    final headerActionColor = Theme.of(context).colorScheme.onSurface;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const headerHeight = PokemonSpriteLayoutSizes.detailHeaderHeight;
     const circleSize = PokemonSpriteLayoutSizes.detailHeaderCircleDiameter;
@@ -309,7 +311,6 @@ class _HeroSection extends ConsumerWidget {
             fit: StackFit.expand,
             clipBehavior: Clip.none,
             children: [
-              ColoredBox(color: surfaceColor),
               Positioned(
                 top: circleTop,
                 left: circleLeft,
@@ -350,6 +351,9 @@ class _HeroSection extends ConsumerWidget {
                 top: 4,
                 left: 4,
                 child: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                  ),
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: headerActionColor,
@@ -361,6 +365,9 @@ class _HeroSection extends ConsumerWidget {
                 top: 4,
                 right: 4,
                 child: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                  ),
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
                     color: isFavorite ? Colors.red : headerActionColor,
@@ -450,57 +457,49 @@ class _EvolutionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final borderColor = isDark
-        ? theme.dividerColor
-        : AppColorsLight.textSecondary.withValues(alpha: 0.25);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.pokemonDetailEvolutions,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+      child: DetailSurfaceCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.pokemonDetailEvolutions,
+              style: DetailSurfaceCard.titleStyle(context),
             ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
+            const SizedBox(height: 12),
+            // Restore pre-card centering inside start-aligned section Column.
+            Center(
+              child: evolution.isSingleStage
+                  ? Column(
+                      children: [
+                        EvolutionChainNodeCard(
+                          node: evolution.root,
+                          isCurrent: true,
+                          isFinalStage: true,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.pokemonDetailNoEvolution,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    )
+                  : EvolutionChainTree(
+                      root: evolution.root,
+                      currentSpeciesId: evolution.currentSpeciesId,
+                      embedded: true,
+                      onNodeTap: (targetPokemonId) {
+                        if (targetPokemonId == pokemonId) return;
+                        unawaited(
+                          context.push('/pokemon/$targetPokemonId'),
+                        );
+                      },
+                    ),
             ),
-            child: evolution.isSingleStage
-                ? Column(
-                    children: [
-                      EvolutionChainNodeCard(
-                        node: evolution.root,
-                        isCurrent: true,
-                        isFinalStage: true,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        l10n.pokemonDetailNoEvolution,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ],
-                  )
-                : EvolutionChainTree(
-                    root: evolution.root,
-                    currentSpeciesId: evolution.currentSpeciesId,
-                    embedded: true,
-                    onNodeTap: (targetPokemonId) {
-                      if (targetPokemonId == pokemonId) return;
-                      unawaited(context.push('/pokemon/$targetPokemonId'));
-                    },
-                  ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -525,55 +524,53 @@ class _CollapsibleStats extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onToggle,
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                children: [
-                  Text(
-                    l10n.pokemonDetailStats,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+      child: DetailSurfaceCard(
+        child: Column(
+          children: [
+            InkWell(
+              onTap: onToggle,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Text(
+                      l10n.pokemonDetailStats,
+                      style: DetailSurfaceCard.titleStyle(context),
                     ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '$total',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    const Spacer(),
+                    Text(
+                      '$total',
+                      style: DetailSurfaceCard.titleStyle(context),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    expanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (expanded) ...[
-            const SizedBox(height: 8),
-            ...pokemon.stats.map(
-              (stat) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: PokemonStatBar(
-                  label: PokemonDetailFormatters.statLabel(
-                    AppLocalizations.of(context),
-                    stat.name,
-                  ),
-                  value: stat.baseStat,
-                  maxValue: maxStat,
+                    const SizedBox(width: 4),
+                    Icon(
+                      expanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                    ),
+                  ],
                 ),
               ),
             ),
+            if (expanded) ...[
+              const SizedBox(height: 8),
+              ...pokemon.stats.map(
+                (stat) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: PokemonStatBar(
+                    label: PokemonDetailFormatters.statLabel(
+                      AppLocalizations.of(context),
+                      stat.name,
+                    ),
+                    value: stat.baseStat,
+                    maxValue: maxStat,
+                  ),
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

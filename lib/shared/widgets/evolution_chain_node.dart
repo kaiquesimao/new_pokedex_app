@@ -5,7 +5,6 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
@@ -30,13 +29,10 @@ class EvolutionChainNodeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryType = node.types.isNotEmpty
-        ? node.types.first
-        : PokemonType.normal;
-    final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
-    final spriteHeight = isFinalStage ? 108.0 : 72.0;
-    final ovalWidth = isFinalStage ? 96.0 : 84.0;
-    final ovalHeight = isFinalStage ? 88.0 : 72.0;
+    final spriteHeight = isFinalStage ? 80.0 : 72.0;
+    final fallbackIconColor = theme.colorScheme.onSurface.withValues(
+      alpha: 0.45,
+    );
 
     return Material(
       color: Colors.transparent,
@@ -59,38 +55,19 @@ class EvolutionChainNodeCard extends StatelessWidget {
             children: [
               SizedBox(
                 width: _spritePanelWidth,
-                child: Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: ovalWidth,
-                      height: ovalHeight,
-                      decoration: BoxDecoration(
-                        color: typeColor,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Center(
-                        child: PokemonPrimaryTypeBackdrop(
-                          type: primaryType,
-                          size: isFinalStage ? 72 : 56,
+                child: Center(
+                  child: node.spriteUrl != null
+                      ? PokemonSpriteImage(
+                          imageUrl: node.spriteUrl!,
+                          height: spriteHeight,
+                          maxCachePixels: PokemonSpriteCachePresets.evolution,
+                          errorIconColor: fallbackIconColor,
+                        )
+                      : Icon(
+                          Icons.catching_pokemon,
+                          size: isFinalStage ? 64 : 48,
+                          color: fallbackIconColor,
                         ),
-                      ),
-                    ),
-                    if (node.spriteUrl != null)
-                      PokemonSpriteImage(
-                        imageUrl: node.spriteUrl!,
-                        height: spriteHeight,
-                        maxCachePixels: PokemonSpriteCachePresets.evolution,
-                        errorIconColor: Colors.white70,
-                      )
-                    else
-                      Icon(
-                        Icons.catching_pokemon,
-                        size: isFinalStage ? 64 : 48,
-                        color: Colors.white70,
-                      ),
-                  ],
                 ),
               ),
               Padding(

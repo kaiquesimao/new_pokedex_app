@@ -10,6 +10,7 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/localized_ca
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 
 class PokemonDetailAboutSection extends ConsumerWidget {
   const PokemonDetailAboutSection({
@@ -64,20 +65,17 @@ class PokemonDetailAboutSection extends ConsumerWidget {
       targetLang,
       'genus',
     );
-    final descriptionStyle = theme.textTheme.bodyLarge?.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-      height: 1.4,
-    );
-    final tileValueStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.w700,
-    );
+    final descriptionStyle = DetailSurfaceCard.bodyStyle(context);
     final description = flavorAsync.when<Widget?>(
       loading: () {
         if (needsFlavorMt) {
           return _loadingIndicator(theme, l10n.flavorTextTranslating);
         }
         final text =
-            PokeApiLocalizedText.pickFlavorText(flavorTextEntries, targetLang) ??
+            PokeApiLocalizedText.pickFlavorText(
+              flavorTextEntries,
+              targetLang,
+            ) ??
             pokemon.flavorText ??
             '';
         if (text.isEmpty) return null;
@@ -101,35 +99,34 @@ class PokemonDetailAboutSection extends ConsumerWidget {
         }
         return _tileText(
           _syncCategoryText(generaEntries, targetLang, pokemon.category),
-          tileValueStyle,
+          descriptionStyle,
         );
       },
       data: (resolved) => _tileText(
         resolved?.text ?? pokemon.category ?? '—',
-        tileValueStyle,
+        descriptionStyle,
       ),
       error: (_, _) => _tileText(
         _syncCategoryText(generaEntries, targetLang, pokemon.category),
-        tileValueStyle,
+        descriptionStyle,
       ),
     );
     final abilityValue = primaryAbility == null
-        ? _tileText('—', tileValueStyle)
+        ? _tileText('—', descriptionStyle)
         : abilityAsync!.when(
-            loading: () =>
-                _loadingIndicator(theme, l10n.flavorTextTranslating),
+            loading: () => _loadingIndicator(theme, l10n.flavorTextTranslating),
             data: (resolved) => _tileText(
               primaryAbility.isHidden
                   ? '${resolved.text}${l10n.abilityHiddenSuffix}'
                   : resolved.text,
-              tileValueStyle,
+              descriptionStyle,
             ),
             error: (_, _) => _tileText(
               primaryAbility.isHidden
                   ? '${_capitalize(primaryAbility.slug)}'
                         '${l10n.abilityHiddenSuffix}'
                   : _capitalize(primaryAbility.slug),
-              tileValueStyle,
+              descriptionStyle,
             ),
           );
 
@@ -139,7 +136,7 @@ class PokemonDetailAboutSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (description != null) ...[
-            description,
+            DetailSurfaceCard(child: description),
             const SizedBox(height: 20),
           ],
           GridView.count(
@@ -148,14 +145,14 @@ class PokemonDetailAboutSection extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 16,
             crossAxisSpacing: 12,
-            mainAxisExtent: 96,
+            mainAxisExtent: 104,
             children: [
               _InfoTile(
                 icon: Icons.monitor_weight_outlined,
                 label: l10n.detailWeight,
                 value: _tileText(
                   '${PokemonDetailFormatters.decimal(pokemon.weightKg, locale)} kg',
-                  tileValueStyle,
+                  descriptionStyle,
                 ),
               ),
               _InfoTile(
@@ -163,7 +160,7 @@ class PokemonDetailAboutSection extends ConsumerWidget {
                 label: l10n.detailHeight,
                 value: _tileText(
                   '${PokemonDetailFormatters.decimal(pokemon.heightMeters, locale)} m',
-                  tileValueStyle,
+                  descriptionStyle,
                 ),
               ),
               _InfoTile(
@@ -181,10 +178,12 @@ class PokemonDetailAboutSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _GenderBar(
-            genderRate: pokemon.genderRate,
-            l10n: l10n,
-            locale: locale,
+          DetailSurfaceCard(
+            child: _GenderBar(
+              genderRate: pokemon.genderRate,
+              l10n: l10n,
+              locale: locale,
+            ),
           ),
         ],
       ),
@@ -210,7 +209,11 @@ String _syncCategoryText(
   String? fallback,
 ) {
   if (generaEntries.isEmpty) return fallback ?? '—';
-  return PokeApiLocalizedText.pickOfficial(generaEntries, targetLang, 'genus') ??
+  return PokeApiLocalizedText.pickOfficial(
+        generaEntries,
+        targetLang,
+        'genus',
+      ) ??
       PokeApiLocalizedText.pickEnglish(generaEntries, 'genus') ??
       fallback ??
       '—';
@@ -260,43 +263,33 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final labelColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final titleStyle = DetailSurfaceCard.titleStyle(context);
+    final bodyStyle = DetailSurfaceCard.bodyStyle(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: labelColor),
+            Icon(icon, size: 18, color: titleStyle?.color),
             const SizedBox(width: 6),
-            Text(
-              label.toUpperCase(),
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: labelColor,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.4,
+            Flexible(
+              child: Text(
+                label,
+                style: titleStyle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
+        DetailSurfaceCard(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: theme.dividerColor.withValues(alpha: 0.5),
-            ),
-          ),
           child: wrapValue
               ? value
               : DefaultTextStyle(
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: bodyStyle ?? Theme.of(context).textTheme.bodyLarge!,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -324,22 +317,17 @@ class _GenderBar extends StatelessWidget {
     final theme = Theme.of(context);
     final maleColor = theme.colorScheme.primary;
     const femaleColor = AppColorsLight.genderFemale;
-    final labelColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
-    final labelStyle = theme.textTheme.labelSmall?.copyWith(
-      color: labelColor,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.4,
-    );
+    final titleStyle = DetailSurfaceCard.titleStyle(context);
 
     if (genderRate < 0) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.detailGender.toUpperCase(), style: labelStyle),
+          Text(l10n.detailGender, style: titleStyle),
           const SizedBox(height: 8),
           Text(
             l10n.genderNone,
             style: theme.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
           ),
         ],
       );
@@ -351,11 +339,7 @@ class _GenderBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          l10n.detailGender.toUpperCase(),
-          style: labelStyle,
-          textAlign: TextAlign.center,
-        ),
+        Text(l10n.detailGender, style: titleStyle),
         const SizedBox(height: 8),
         _GenderBarTrack(
           malePercent: malePercent,
