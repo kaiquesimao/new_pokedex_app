@@ -179,7 +179,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 44, 16, 8),
                   child: DetailSurfaceCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

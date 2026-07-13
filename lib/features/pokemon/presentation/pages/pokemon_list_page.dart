@@ -135,8 +135,13 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     );
 
     if (state.showFullSkeleton) {
+      // PokemonListSkeleton already applies content inset of 16; keep only
+      // header / bottom-nav overlays to avoid double horizontal padding.
       return Padding(
-        padding: edgePadding,
+        padding: EdgeInsets.only(
+          top: topPadding,
+          bottom: bottomPadding,
+        ),
         child: const PokemonListSkeleton(),
       );
     }

@@ -16,6 +16,7 @@ import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/empty_state_illustration.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
+import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class FavoritesPage extends ConsumerWidget {
@@ -102,7 +103,7 @@ class _FavoritesListBody extends ConsumerWidget {
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
+          return const PokemonListSkeleton();
         }
 
         final items = snapshot.data ?? [];
