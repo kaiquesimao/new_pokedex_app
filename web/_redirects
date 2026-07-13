@@ -1,0 +1,2 @@
+# SPA fallback so deep links / refresh serve index.html (Flutter web + go_router).
+/*    /index.html   200

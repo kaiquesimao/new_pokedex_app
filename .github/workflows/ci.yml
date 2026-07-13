@@ -1,0 +1,69 @@
+# CI on every PR/push; web deploy to Cloudflare Pages on master only.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+  deploy-web:
+    name: Deploy web (Cloudflare Pages)
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Write dart_defines.json
+        env:
+          DART_DEFINES_JSON: ${{ secrets.DART_DEFINES_JSON }}
+        run: |
+          if [ -z "$DART_DEFINES_JSON" ]; then
+            echo "::error::Missing secret DART_DEFINES_JSON"
+            exit 1
+          fi
+          printf '%s\n' "$DART_DEFINES_JSON" > dart_defines.json
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --dart-define-from-file=dart_defines.json
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Default project name; override via CLOUDFLARE_PROJECT_NAME secret.
+          command: pages deploy build/web --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME || 'pokedata' }}

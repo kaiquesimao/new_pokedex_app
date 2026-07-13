@@ -66,7 +66,49 @@ cd android && ./gradlew signingReport
 
 ### Web Google Sign-In
 
-The `google-signin-client_id` meta tag in [`web/index.html`](web/index.html) must match `FIREBASE_GOOGLE_WEB_CLIENT_ID` in `dart_defines.json`.
+`FIREBASE_GOOGLE_WEB_CLIENT_ID` in `dart_defines.json` is used at runtime
+([`FirebaseAuthConfig`](lib/core/constants/firebase_auth_config.dart)). If you
+add a `google-signin-client_id` meta tag in [`web/index.html`](web/index.html),
+keep it in sync with that value.
+
+## CI / CD (web → Cloudflare Pages)
+
+On every push/PR, [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs
+`flutter analyze` and `flutter test`. On push to `master` (after CI green), it
+builds Flutter web and deploys `build/web` to **Cloudflare Pages** via Wrangler.
+
+Production URL: **https://pokedata.kaique.site**
+
+SPA deep links use [`web/_redirects`](web/_redirects) (copied into `build/web`).
+
+### GitHub Secrets (required)
+
+| Secret | Purpose |
+|--------|---------|
+| `DART_DEFINES_JSON` | Full contents of `dart_defines.json` (same shape as [`dart_defines.example.json`](dart_defines.example.json)) |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with **Account → Cloudflare Pages → Edit** |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
+
+Optional:
+
+| Secret | Purpose |
+|--------|---------|
+| `CLOUDFLARE_PROJECT_NAME` | Pages project name (default: `pokedata`) |
+
+Do **not** commit real `dart_defines.json` or Cloudflare credentials.
+
+### One-time setup (manual)
+
+1. **Cloudflare Pages:** create a project (name `pokedata` unless you set
+   `CLOUDFLARE_PROJECT_NAME`). Direct Upload / Wrangler is enough — GitHub
+   Actions owns the build; you do not need a second Pages Git integration.
+2. **Custom domain:** attach `pokedata.kaique.site` to that Pages project
+   (Cloudflare Dashboard → Pages → Custom domains). DNS for `kaique.site`
+   should already be on Cloudflare.
+3. **GitHub Secrets:** add the secrets above
+   (Settings → Secrets and variables → Actions).
+4. **Firebase Auth:** add `pokedata.kaique.site` under
+   Authentication → Settings → Authorized domains.
 
 ## Verify
 
