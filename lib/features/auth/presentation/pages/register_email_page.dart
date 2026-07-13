@@ -7,6 +7,7 @@ import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -14,6 +15,7 @@ import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class RegisterEmailPage extends ConsumerStatefulWidget {
   const RegisterEmailPage({super.key});
@@ -88,6 +90,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
+      backgroundColor: wideViewportAwareScaffoldColor(context),
       appBar: AppBar(
         title: Text(l10n.authCreateAccountTitle),
         leading: IconButton(
@@ -106,56 +109,60 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
           SafePageBody.belowAppBar(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _StepIndicator(current: _stepIndex(flow.step), total: 3),
-                  const SizedBox(height: 32),
-                  Text(
-                    _headline(flow.step, l10n),
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
+              child: AuthHubNarrowFrame(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _StepIndicator(current: _stepIndex(flow.step), total: 3),
+                    const SizedBox(height: 32),
+                    Text(
+                      _headline(flow.step, l10n),
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _subtitle(flow.step, l10n),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    const SizedBox(height: 8),
+                    Text(
+                      _subtitle(flow.step, l10n),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  switch (flow.step) {
-                    RegisterStep.email => AppTextField(
-                      label: l10n.authEmailLabel,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      errorText: flow.error,
+                    const SizedBox(height: 32),
+                    switch (flow.step) {
+                      RegisterStep.email => AppTextField(
+                        label: l10n.authEmailLabel,
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        errorText: flow.error,
+                      ),
+                      RegisterStep.password => AppPasswordField(
+                        label: l10n.authPasswordLabel,
+                        controller: _passwordController,
+                        errorText: flow.error,
+                      ),
+                      RegisterStep.name => AppTextField(
+                        label: l10n.authNameLabel,
+                        controller: _nameController,
+                        errorText: flow.error,
+                      ),
+                    },
+                    if (flow.step == RegisterStep.email) ...[
+                      const SizedBox(height: 16),
+                      const LegalAcceptanceField(),
+                    ],
+                    const SizedBox(height: 32),
+                    AppButton(
+                      label: l10n.authContinueButton,
+                      isLoading: flow.loading,
+                      onPressed: flow.loading
+                          ? null
+                          : _onPrimaryPressed(flow.step),
                     ),
-                    RegisterStep.password => AppPasswordField(
-                      label: l10n.authPasswordLabel,
-                      controller: _passwordController,
-                      errorText: flow.error,
-                    ),
-                    RegisterStep.name => AppTextField(
-                      label: l10n.authNameLabel,
-                      controller: _nameController,
-                      errorText: flow.error,
-                    ),
-                  },
-                  if (flow.step == RegisterStep.email) ...[
-                    const SizedBox(height: 16),
-                    const LegalAcceptanceField(),
                   ],
-                  const SizedBox(height: 32),
-                  AppButton(
-                    label: l10n.authContinueButton,
-                    isLoading: flow.loading,
-                    onPressed: flow.loading
-                        ? null
-                        : _onPrimaryPressed(flow.step),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

@@ -30,7 +30,9 @@ import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
+import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class PokemonDetailPage extends ConsumerWidget {
   const PokemonDetailPage({required this.pokemonId, super.key});
@@ -54,8 +56,15 @@ class PokemonDetailPage extends ConsumerWidget {
     final bundleAsync = ref.watch(pokemonDetailBundleProvider(pokemonId));
 
     return bundleAsync.when(
-      loading: () =>
-          const Scaffold(body: SafePageBody(child: PokemonDetailSkeleton())),
+      loading: () => Scaffold(
+        backgroundColor: wideViewportAwareScaffoldColor(context),
+        body: const SafePageBody(
+          child: ResponsiveContentFrame(
+            expandHeight: true,
+            child: PokemonDetailSkeleton(),
+          ),
+        ),
+      ),
       error: (error, _) => Scaffold(
         appBar: AppBar(),
         body: SafePageBody.belowAppBar(
@@ -151,80 +160,83 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
         : Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: wideViewportAwareScaffoldColor(context),
       body: SafePageBody(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _HeroSection(
-                pokemonId: widget.pokemonId,
-                pokemon: pokemon,
-                primaryType: primaryType,
-                headerColor: headerColor,
-                isFavorite: isFavorite,
-                onFavoriteTap: () => _toggleFavorite(context),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      pokemon.displayName,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      PokemonFormatters.displayNumber(pokemon.id),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
-                      children: pokemon.types
-                          .map((t) => PokemonTypeChip(type: t))
-                          .toList(),
-                    ),
-                  ],
+        child: ResponsiveContentFrame(
+          expandHeight: true,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: _HeroSection(
+                  pokemonId: widget.pokemonId,
+                  pokemon: pokemon,
+                  primaryType: primaryType,
+                  headerColor: headerColor,
+                  isFavorite: isFavorite,
+                  onFavoriteTap: () => _toggleFavorite(context),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: PokemonDetailAboutSection(
-                pokemon: pokemon,
-                flavorTextEntries: widget.flavorTextEntries,
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pokemon.displayName,
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        PokemonFormatters.displayNumber(pokemon.id),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: pokemon.types
+                            .map((t) => PokemonTypeChip(type: t))
+                            .toList(),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-            SliverToBoxAdapter(
-              child: PokemonWeaknessSection(types: pokemon.types),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-            SliverToBoxAdapter(
-              child: _EvolutionSection(
-                pokemonId: widget.pokemonId,
-                evolution: widget.evolution,
+              SliverToBoxAdapter(
+                child: PokemonDetailAboutSection(
+                  pokemon: pokemon,
+                  flavorTextEntries: widget.flavorTextEntries,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: _CollapsibleStats(
-                pokemon: pokemon,
-                expanded: _statsExpanded,
-                onToggle: () =>
-                    setState(() => _statsExpanded = !_statsExpanded),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(
+                child: PokemonWeaknessSection(types: pokemon.types),
               ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          ],
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(
+                child: _EvolutionSection(
+                  pokemonId: widget.pokemonId,
+                  evolution: widget.evolution,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _CollapsibleStats(
+                  pokemon: pokemon,
+                  expanded: _statsExpanded,
+                  onToggle: () =>
+                      setState(() => _statsExpanded = !_statsExpanded),
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
+          ),
         ),
       ),
     );
@@ -277,7 +289,6 @@ class _HeroSection extends ConsumerWidget {
     final circleTop = PokemonSpriteLayoutSizes.detailHeaderCircleTop(
       headerHeight,
     );
-    final circleLeft = (MediaQuery.sizeOf(context).width - circleSize) / 2;
     final circleGradientColors = isDark
         ? [
             headerColor.withValues(alpha: 0.55),
@@ -288,74 +299,80 @@ class _HeroSection extends ConsumerWidget {
             Color.lerp(headerColor, Colors.white, 0.28)!,
           ];
 
-    return SizedBox(
-      height: headerHeight,
-      child: Stack(
-        fit: StackFit.expand,
-        clipBehavior: Clip.none,
-        children: [
-          ColoredBox(color: surfaceColor),
-          Positioned(
-            top: circleTop,
-            left: circleLeft,
-            width: circleSize,
-            height: circleSize,
-            child: Stack(
-              alignment: Alignment.center,
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: circleSize,
-                  height: circleSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: circleGradientColors,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final circleLeft = (constraints.maxWidth - circleSize) / 2;
+
+        return SizedBox(
+          height: headerHeight,
+          child: Stack(
+            fit: StackFit.expand,
+            clipBehavior: Clip.none,
+            children: [
+              ColoredBox(color: surfaceColor),
+              Positioned(
+                top: circleTop,
+                left: circleLeft,
+                width: circleSize,
+                height: circleSize,
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: circleSize,
+                      height: circleSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: circleGradientColors,
+                        ),
+                      ),
                     ),
-                  ),
+                    if (primaryType != null)
+                      PokemonPrimaryTypeBackdrop(
+                        type: primaryType!,
+                        size: typeIconSize,
+                        opacity: isDark
+                            ? PokemonPrimaryTypeBackdrop.detailOpacity
+                            : PokemonPrimaryTypeBackdrop.detailLightOpacity,
+                      ),
+                    _HeroSprite(
+                      pokemonId: pokemonId,
+                      pokemon: pokemon,
+                    ),
+                  ],
                 ),
-                if (primaryType != null)
-                  PokemonPrimaryTypeBackdrop(
-                    type: primaryType!,
-                    size: typeIconSize,
-                    opacity: isDark
-                        ? PokemonPrimaryTypeBackdrop.detailOpacity
-                        : PokemonPrimaryTypeBackdrop.detailLightOpacity,
+              ),
+              Positioned(
+                top: 4,
+                left: 4,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: headerActionColor,
                   ),
-                _HeroSprite(
-                  pokemonId: pokemonId,
-                  pokemon: pokemon,
+                  onPressed: () => context.pop(),
                 ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 4,
-            left: 4,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: headerActionColor,
               ),
-              onPressed: () => context.pop(),
-            ),
-          ),
-          Positioned(
-            top: 4,
-            right: 4,
-            child: IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : headerActionColor,
-                size: 28,
+              Positioned(
+                top: 4,
+                right: 4,
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : headerActionColor,
+                    size: 28,
+                  ),
+                  onPressed: onFavoriteTap,
+                ),
               ),
-              onPressed: onFavoriteTap,
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

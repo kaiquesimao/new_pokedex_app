@@ -34,3 +34,22 @@ class AuthHubLinkFrame extends StatelessWidget {
     return Align(child: child);
   }
 }
+
+/// Centers auth forms and secondary actions on web at action button width.
+class AuthHubNarrowFrame extends StatelessWidget {
+  const AuthHubNarrowFrame({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!kIsWeb) return child;
+
+    return Align(
+      child: SizedBox(
+        width: AuthWebActionMetrics.buttonWidth,
+        child: child,
+      ),
+    );
+  }
+}

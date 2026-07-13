@@ -114,9 +114,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                     ),
                     const SizedBox(height: 12),
                     Center(
-                      child: TextButton(
+                      child: AppSurfaceTextButton(
                         onPressed: _resend,
-                        child: Text(l10n.authVerifyEmailResendEmail),
+                        label: l10n.authVerifyEmailResendEmail,
                       ),
                     ),
                   ] else

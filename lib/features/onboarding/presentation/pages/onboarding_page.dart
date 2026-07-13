@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
@@ -70,7 +71,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     ];
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
       body: SafePageBody(
         child: Column(
           children: [
@@ -131,11 +131,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              child: AppButton(
-                label: isLastPage
-                    ? l10n.onboardingStartButton
-                    : l10n.onboardingContinueButton,
-                onPressed: _next,
+              child: AuthHubActionFrame(
+                child: AppButton(
+                  label: isLastPage
+                      ? l10n.onboardingStartButton
+                      : l10n.onboardingContinueButton,
+                  onPressed: _next,
+                ),
               ),
             ),
           ],

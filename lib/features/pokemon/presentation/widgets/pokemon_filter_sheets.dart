@@ -16,6 +16,7 @@ import 'package:pokedex_app/shared/widgets/sort_option_chip.dart';
 Future<void> showPokemonTypeSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const _PokemonTypeSheet(),
@@ -25,6 +26,7 @@ Future<void> showPokemonTypeSheet(BuildContext context) {
 Future<void> showPokemonFilterSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const _PokemonFilterSheet(),
@@ -34,6 +36,7 @@ Future<void> showPokemonFilterSheet(BuildContext context) {
 Future<void> showPokemonSortSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     useSafeArea: true,
     builder: (context) => const _PokemonSortSheet(),
   );
@@ -42,6 +45,7 @@ Future<void> showPokemonSortSheet(BuildContext context) {
 Future<void> showPokemonGenerationSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const _PokemonGenerationSheet(),

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/core/constants/responsive_layout.dart';
 
 /// Animated container for StatefulShellRoute branch navigators.
 ///
@@ -68,21 +70,31 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
 
     final fade = Tween<double>(begin: 0.55, end: 1).animate(curved);
 
+    final stack = IndexedStack(
+      index: widget.currentIndex,
+      sizing: StackFit.expand,
+      children: [
+        for (var index = 0; index < widget.children.length; index++)
+          _BranchPane(
+            isActive: index == widget.currentIndex,
+            child: widget.children[index],
+          ),
+      ],
+    );
+
+    final useSlide =
+        !kIsWeb ||
+        MediaQuery.sizeOf(context).width <= ResponsiveLayout.maxContentWidth;
+
+    if (!useSlide) {
+      return FadeTransition(opacity: fade, child: stack);
+    }
+
     return FadeTransition(
       opacity: fade,
       child: SlideTransition(
         position: slide,
-        child: IndexedStack(
-          index: widget.currentIndex,
-          sizing: StackFit.expand,
-          children: [
-            for (var index = 0; index < widget.children.length; index++)
-              _BranchPane(
-                isActive: index == widget.currentIndex,
-                child: widget.children[index],
-              ),
-          ],
-        ),
+        child: stack,
       ),
     );
   }

@@ -102,34 +102,34 @@ class _PokemonDetailSpriteCarouselState
           SizedBox(
             height: PokemonSpriteDisplaySizes.detail,
             width: double.infinity,
-            child: GestureDetector(
-              onTap: _onTap,
-              behavior: HitTestBehavior.opaque,
-              child: ScaleTransition(
-                scale: _tapScale,
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: widget.variants.length,
-                  onPageChanged: (index) => setState(() => _pageIndex = index),
-                  itemBuilder: (context, index) {
-                    final variant = widget.variants[index];
-                    final heroTag =
-                        !variant.isShiny &&
-                            variant.pokemonId == widget.routePokemonId
-                        ? PokemonHeroTags.sprite(widget.routePokemonId)
-                        : null;
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: widget.variants.length,
+              onPageChanged: (index) => setState(() => _pageIndex = index),
+              itemBuilder: (context, index) {
+                final variant = widget.variants[index];
+                final heroTag =
+                    !variant.isShiny &&
+                        variant.pokemonId == widget.routePokemonId
+                    ? PokemonHeroTags.sprite(widget.routePokemonId)
+                    : null;
 
-                    return PokemonSpriteImage(
+                return GestureDetector(
+                  onTap: _onTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: ScaleTransition(
+                    scale: _tapScale,
+                    child: PokemonSpriteImage(
                       imageUrl: variant.imageUrl,
                       height: PokemonSpriteDisplaySizes.detail,
                       maxCachePixels: PokemonSpriteCachePresets.detail,
                       heroTag: heroTag,
                       errorIconColor: Colors.white,
                       errorIconSize: 96,
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           if (showControls) ...[

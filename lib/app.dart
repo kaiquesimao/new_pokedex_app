@@ -5,11 +5,13 @@ import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/theme_provider.dart';
 import 'package:pokedex_app/core/router/app_router.dart';
+import 'package:pokedex_app/core/theme/app_scroll_behavior.dart';
 import 'package:pokedex_app/core/theme/app_theme.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_session_effects_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/google_sign_in_web_scope.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
+import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class PokedexApp extends ConsumerWidget {
   const PokedexApp({super.key});
@@ -25,6 +27,7 @@ class PokedexApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'PokeData',
+      scrollBehavior: const AppScrollBehavior(),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
@@ -37,7 +40,15 @@ class PokedexApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       routerConfig: router,
-      builder: (context, child) => AppOfflineShell(child: child),
+      builder: (context, child) => Stack(
+        fit: StackFit.expand,
+        children: [
+          const WideViewportBackdrop(),
+          WideViewportTheme(
+            child: AppOfflineShell(child: child),
+          ),
+        ],
+      ),
     );
   }
 }

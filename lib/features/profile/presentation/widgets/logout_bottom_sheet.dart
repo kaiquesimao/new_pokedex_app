@@ -5,6 +5,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 Future<bool?> showLogoutBottomSheet(BuildContext context) {
   return showModalBottomSheet<bool>(
     context: context,
+    useRootNavigator: true,
     useSafeArea: true,
     builder: (context) => const _LogoutBottomSheet(),
   );

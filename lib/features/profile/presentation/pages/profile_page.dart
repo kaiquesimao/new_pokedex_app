@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -47,10 +49,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.navAccount)),
-      body: SafePageBody.inTabShell(
+      body: SafePageBody(
+        bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            8,
+            16,
+            AppBottomNavBar.overlayHeight(context),
+          ),
           children: [
             if (auth.isAuthenticated) ...[
               _AccountSection(
@@ -187,15 +194,19 @@ class _GuestAccountSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
             children: [
-              AppButton(
-                label: l10n.authLoginButtonLabel,
-                onPressed: onLogin,
+              AuthHubActionFrame(
+                child: AppButton(
+                  label: l10n.authLoginButtonLabel,
+                  onPressed: onLogin,
+                ),
               ),
               const SizedBox(height: 12),
-              AppButton(
-                label: l10n.authWelcomeCreateAccount,
-                variant: AppButtonVariant.outline,
-                onPressed: onRegister,
+              AuthHubActionFrame(
+                child: AppButton(
+                  label: l10n.authWelcomeCreateAccount,
+                  variant: AppButtonVariant.outline,
+                  onPressed: onRegister,
+                ),
               ),
             ],
           ),
@@ -495,21 +506,26 @@ class _LogoutSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: OutlinedButton(
-            onPressed: onLogout,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: logoutRed,
-              side: const BorderSide(color: logoutRed, width: 2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        AuthHubNarrowFrame(
+          child: SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: OutlinedButton(
+              onPressed: onLogout,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: logoutRed,
+                side: const BorderSide(color: logoutRed, width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            child: Text(
-              l10n.profileLogoutButton,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              child: Text(
+                l10n.profileLogoutButton,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),

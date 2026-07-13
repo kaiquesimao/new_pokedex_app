@@ -1,13 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/app.dart';
 import 'package:pokedex_app/core/bootstrap/app_bootstrap.dart';
 import 'package:pokedex_app/core/bootstrap/firebase_config_error_app.dart';
+import 'package:pokedex_app/core/logging/browser_console_bridge.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  if (kDebugMode) {
+    installBrowserConsoleBridge();
+  }
 
   final coldStart = await runColdStart();
 

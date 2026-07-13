@@ -17,6 +17,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
+import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class RegionalPokedexPage extends ConsumerWidget {
@@ -30,44 +31,49 @@ class RegionalPokedexPage extends ConsumerWidget {
     final filters = ref.watch(regionalPokedexFiltersProvider(regionName));
     final title = RegionLabels.label(regionName);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+    return ResponsiveContentFrame(
+      expandHeight: true,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(title),
         ),
-        title: Text(title),
-      ),
-      body: SafePageBody.belowAppBar(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: PokemonSearchBar(
-                initialValue: filters.searchQuery,
-                onChanged: (query) => ref
-                    .read(regionalPokedexFiltersProvider(regionName).notifier)
-                    .update((current) => current.copyWith(searchQuery: query)),
+        body: SafePageBody.belowAppBar(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: PokemonSearchBar(
+                  initialValue: filters.searchQuery,
+                  onChanged: (query) => ref
+                      .read(regionalPokedexFiltersProvider(regionName).notifier)
+                      .update(
+                        (current) => current.copyWith(searchQuery: query),
+                      ),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Row(
-                children: [
-                  _TypeFilterChip(
-                    typeFilter: filters.typeFilter,
-                    onTap: () => showRegionalTypeSheet(context, regionName),
-                  ),
-                  const SizedBox(width: 8),
-                  _SortFilterChip(
-                    sort: filters.sort,
-                    onTap: () => showRegionalSortSheet(context, regionName),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Row(
+                  children: [
+                    _TypeFilterChip(
+                      typeFilter: filters.typeFilter,
+                      onTap: () => showRegionalTypeSheet(context, regionName),
+                    ),
+                    const SizedBox(width: 8),
+                    _SortFilterChip(
+                      sort: filters.sort,
+                      onTap: () => showRegionalSortSheet(context, regionName),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(child: _buildBody(context, ref, state, filters)),
-          ],
+              Expanded(child: _buildBody(context, ref, state, filters)),
+            ],
+          ),
         ),
       ),
     );

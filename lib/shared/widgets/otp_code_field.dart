@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/app_button.dart';
 
 class OtpCodeField extends StatefulWidget {
   const OtpCodeField({
@@ -165,9 +166,9 @@ class _OtpCodeFieldState extends State<OtpCodeField> {
             child: Semantics(
               label: AppLocalizations.of(context).otpResendSemantics,
               button: true,
-              child: TextButton(
+              child: AppSurfaceTextButton(
                 onPressed: widget.onResend,
-                child: Text(AppLocalizations.of(context).otpResendButton),
+                label: AppLocalizations.of(context).otpResendButton,
               ),
             ),
           ),

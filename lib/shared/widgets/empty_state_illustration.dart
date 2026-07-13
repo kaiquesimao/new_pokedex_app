@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/shared/widgets/trainer_avatar_image.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
@@ -18,9 +19,15 @@ class EmptyStateIllustration extends StatelessWidget {
   final Widget? action;
   final bool pixelArt;
 
+  static const _illustrationSizeMobile = 260.0;
+  static const _illustrationSizeWeb = 320.0;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const illustrationSize = kIsWeb
+        ? _illustrationSizeWeb
+        : _illustrationSizeMobile;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -28,38 +35,39 @@ class EmptyStateIllustration extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (pixelArt)
-            Expanded(
-              child: TrainerIllustrationSlot(
-                assetPath: imageAsset,
-                errorBuilder: _errorBuilder(theme, 120),
-              ),
+            TrainerIllustrationSlot(
+              assetPath: imageAsset,
+              slotSize: illustrationSize,
+              errorBuilder: _errorBuilder(theme, illustrationSize * 0.5),
             )
           else
             TrainerAvatarImage(
               assetPath: imageAsset,
-              height: 200,
+              height: illustrationSize,
               pixelArt: false,
-              errorBuilder: _errorBuilder(theme, 100),
+              errorBuilder: _errorBuilder(theme, illustrationSize * 0.45),
             ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           Text(
             title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              height: 1.3,
             ),
             textAlign: TextAlign.center,
           ),
           if (subtitle != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               subtitle!,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                height: 1.45,
               ),
               textAlign: TextAlign.center,
             ),
           ],
-          if (action != null) ...[const SizedBox(height: 24), action!],
+          if (action != null) ...[const SizedBox(height: 28), action!],
         ],
       ),
     );

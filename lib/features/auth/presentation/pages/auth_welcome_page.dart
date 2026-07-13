@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,16 +21,19 @@ class AuthWelcomePage extends ConsumerWidget {
       body: SafePageBody(
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () async {
-                  if (!await ensureLegalAccepted(context, ref)) return;
-                  if (context.mounted) context.go('/pokedex');
-                },
-                icon: const Icon(Icons.arrow_forward, size: 18),
-                iconAlignment: IconAlignment.end,
-                label: Text(l10n.authWelcomeSkipButton),
+            Padding(
+              padding: const EdgeInsets.only(top: 8, right: 16),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: AppSurfaceTextButton(
+                  onPressed: () async {
+                    if (!await ensureLegalAccepted(context, ref)) return;
+                    if (context.mounted) context.go('/pokedex');
+                  },
+                  icon: Icons.arrow_forward,
+                  iconAlignment: IconAlignment.end,
+                  label: l10n.authWelcomeSkipButton,
+                ),
               ),
             ),
             Expanded(
@@ -83,20 +85,14 @@ class AuthWelcomePage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  AuthHubLinkFrame(
-                    child: TextButton(
+                  AuthHubActionFrame(
+                    child: AppSurfaceTextButton(
+                      expand: true,
                       onPressed: () async {
                         if (!await ensureLegalAccepted(context, ref)) return;
                         if (context.mounted) await context.push('/login');
                       },
-                      child: Text(
-                        l10n.authWelcomeHaveAccount,
-                        style: TextStyle(
-                          fontSize: kIsWeb ? 14 : null,
-                          fontWeight: kIsWeb ? FontWeight.w600 : null,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
+                      label: l10n.authWelcomeHaveAccount,
                     ),
                   ),
                 ],

@@ -48,6 +48,10 @@ class PokemonListRowCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final primaryType = types.isNotEmpty ? types.first : PokemonType.normal;
     final typeColor = PokemonTypeColors.forType(primaryType, isDark: isDark);
+    final cardFill = Color.alphaBlend(
+      typeColor.withValues(alpha: isDark ? 0.34 : 0.22),
+      theme.colorScheme.surface,
+    );
 
     final l10n = AppLocalizations.of(context);
     final typeLabels = types.map((t) => t.label(l10n)).join(', ');
@@ -65,8 +69,11 @@ class PokemonListRowCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Ink(
             decoration: BoxDecoration(
-              color: typeColor.withValues(alpha: 0.12),
+              color: cardFill,
               borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: typeColor.withValues(alpha: isDark ? 0.4 : 0.28),
+              ),
             ),
             child: SizedBox(
               height: PokemonSpriteLayoutSizes.listRowHeight,

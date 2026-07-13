@@ -8,6 +8,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 Future<void> showLoginRequiredBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     useSafeArea: true,
     builder: (context) => const _LoginRequiredBottomSheet(),
   );

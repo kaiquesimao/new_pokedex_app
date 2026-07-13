@@ -16,6 +16,7 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filt
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_filter_sheets.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
@@ -32,6 +33,8 @@ class PokemonListPage extends ConsumerStatefulWidget {
 
 class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   final _scrollController = ScrollController();
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 120;
 
   @override
   void initState() {
@@ -46,7 +49,18 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
           !state.isLoadingSummaries) {
         unawaited(ref.read(pokemonListProvider.notifier).loadInitial());
       }
+      _measureHeader();
     });
+  }
+
+  void _measureHeader() {
+    final box = _headerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+
+    final height = box.size.height;
+    if ((height - _headerHeight).abs() > 0.5 && mounted) {
+      setState(() => _headerHeight = height);
+    }
   }
 
   @override
@@ -69,110 +83,92 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     final favorites = ref.watch(favoritesProvider);
     final l10n = AppLocalizations.of(context);
 
+    final bottomInset = AppBottomNavBar.overlayHeight(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeader());
+
     return Scaffold(
       body: SafePageBody(
         bottom: false,
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: PokemonSearchBar(
-                initialValue: filters.searchQuery,
-                onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+            Positioned.fill(
+              child: _buildBody(
+                l10n,
+                state,
+                favorites,
+                topPadding: _headerHeight,
+                bottomPadding: bottomInset,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _TypeFilterChip(
-                      typeFilter: filters.typeFilter,
-                      onTap: () => showPokemonTypeSheet(context),
-                    ),
-                    const SizedBox(width: 8),
-                    _SortFilterChip(
-                      sort: filters.sort,
-                      onTap: () => showPokemonSortSheet(context),
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterPillChip(
-                      label: l10n.filterGenerationLabel,
-                      icon: Icons.layers_outlined,
-                      onTap: () => showPokemonGenerationSheet(context),
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterPillChip(
-                      label: l10n.filterAdvancedLabel,
-                      icon: Icons.tune,
-                      badgeCount: _advancedFilterCount(filters),
-                      onTap: () => showPokemonFilterSheet(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (filters.generationId != null)
-              _ActiveFilterChip(
-                label: _generationLabel(l10n, filters.generationId!),
-                onClear: () => ref
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _PokemonListHeader(
+                key: _headerKey,
+                filters: filters,
+                l10n: l10n,
+                onGenerationClear: () => ref
                     .read(pokemonFiltersProvider.notifier)
                     .setGeneration(null),
               ),
-            Expanded(child: _buildBody(l10n, state, favorites)),
+            ),
           ],
         ),
       ),
     );
   }
 
-  int _advancedFilterCount(PokemonListFilters filters) {
-    var count = 0;
-    if (filters.weakness != null) count++;
-    if (filters.heightBucket != null) count++;
-    if (filters.weightBucket != null) count++;
-    return count;
-  }
-
-  String _generationLabel(AppLocalizations l10n, int id) {
-    if (kPokemonGenerationIds.contains(id)) {
-      return l10n.generationPickerLabel(id);
-    }
-    return l10n.generationFallbackLabel(id);
-  }
-
   Widget _buildBody(
     AppLocalizations l10n,
     PokemonListState state,
-    Set<int> favorites,
-  ) {
+    Set<int> favorites, {
+    required double topPadding,
+    required double bottomPadding,
+  }) {
+    final edgePadding = EdgeInsets.fromLTRB(
+      16,
+      topPadding,
+      16,
+      bottomPadding,
+    );
+
     if (state.showFullSkeleton) {
-      return const PokemonListSkeleton();
+      return Padding(
+        padding: edgePadding,
+        child: const PokemonListSkeleton(),
+      );
     }
 
     if (state.error != null &&
         state.items.isEmpty &&
         !state.isLoadingSummaries &&
         !state.isLoadingIds) {
-      return OfflineEmptyState(
-        message: state.error!,
-        isConnectivityFailure: state.errorIsConnectivityFailure,
-        onRetry: () => ref.read(pokemonListProvider.notifier).loadInitial(),
+      return Padding(
+        padding: edgePadding,
+        child: OfflineEmptyState(
+          message: state.error!,
+          isConnectivityFailure: state.errorIsConnectivityFailure,
+          onRetry: () => ref.read(pokemonListProvider.notifier).loadInitial(),
+        ),
       );
     }
 
     if (state.items.isEmpty &&
         !state.isLoadingSummaries &&
         !state.isLoadingIds) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.search_off, size: 48),
-            const SizedBox(height: 12),
-            Text(l10n.filterNoPokemonFound),
-          ],
+      return Padding(
+        padding: edgePadding,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.search_off, size: 48),
+              const SizedBox(height: 12),
+              Text(l10n.filterNoPokemonFound),
+            ],
+          ),
         ),
       );
     }
@@ -189,7 +185,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         controller: _scrollController,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: edgePadding,
             sliver: SliverList.separated(
               itemCount: state.items.length + skeletonCount,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -229,6 +225,88 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     ref
         .read(appAnalyticsProvider)
         .favoriteToggled(pokemonId: pokemonId, isFavorite: willFavorite);
+  }
+}
+
+class _PokemonListHeader extends ConsumerWidget {
+  const _PokemonListHeader({
+    required this.filters,
+    required this.l10n,
+    required this.onGenerationClear,
+    super.key,
+  });
+
+  final PokemonListFilters filters;
+  final AppLocalizations l10n;
+  final VoidCallback onGenerationClear;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: PokemonSearchBar(
+            initialValue: filters.searchQuery,
+            onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _TypeFilterChip(
+                  typeFilter: filters.typeFilter,
+                  onTap: () => showPokemonTypeSheet(context),
+                ),
+                const SizedBox(width: 8),
+                _SortFilterChip(
+                  sort: filters.sort,
+                  onTap: () => showPokemonSortSheet(context),
+                ),
+                const SizedBox(width: 8),
+                _FilterPillChip(
+                  label: l10n.filterGenerationLabel,
+                  icon: Icons.layers_outlined,
+                  onTap: () => showPokemonGenerationSheet(context),
+                ),
+                const SizedBox(width: 8),
+                _FilterPillChip(
+                  label: l10n.filterAdvancedLabel,
+                  icon: Icons.tune,
+                  badgeCount: _advancedFilterCount(filters),
+                  onTap: () => showPokemonFilterSheet(context),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (filters.generationId != null)
+          _ActiveFilterChip(
+            label: _generationLabel(l10n, filters.generationId!),
+            onClear: onGenerationClear,
+          ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  int _advancedFilterCount(PokemonListFilters filters) {
+    var count = 0;
+    if (filters.weakness != null) count++;
+    if (filters.heightBucket != null) count++;
+    if (filters.weightBucket != null) count++;
+    return count;
+  }
+
+  String _generationLabel(AppLocalizations l10n, int id) {
+    if (kPokemonGenerationIds.contains(id)) {
+      return l10n.generationPickerLabel(id);
+    }
+    return l10n.generationFallbackLabel(id);
   }
 }
 
