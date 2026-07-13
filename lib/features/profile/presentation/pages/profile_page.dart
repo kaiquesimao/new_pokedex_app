@@ -191,7 +191,7 @@ class _GuestAccountSection extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
           child: Column(
             children: [
               AuthHubActionFrame(
