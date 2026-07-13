@@ -329,6 +329,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  curved_navigation_bar_pro:
+    dependency: "direct main"
+    description:
+      name: curved_navigation_bar_pro
+      sha256: f4470c3553e651fe7db155b9f9de0ff8fb3515523fc78b86de4a1cce1558a131
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.11"
   dart_style:
     dependency: transitive
     description:

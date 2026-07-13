@@ -29,46 +29,67 @@ class EmptyStateIllustration extends StatelessWidget {
         ? _illustrationSizeWeb
         : _illustrationSizeMobile;
 
+    // ponytail: taller curved nav shrinks body; scroll instead of overflow.
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (pixelArt)
-            TrainerIllustrationSlot(
-              assetPath: imageAsset,
-              slotSize: illustrationSize,
-              errorBuilder: _errorBuilder(theme, illustrationSize * 0.5),
-            )
-          else
-            TrainerAvatarImage(
-              assetPath: imageAsset,
-              height: illustrationSize,
-              pixelArt: false,
-              errorBuilder: _errorBuilder(theme, illustrationSize * 0.45),
-            ),
-          const SizedBox(height: 28),
-          Text(
-            title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              subtitle!,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                height: 1.45,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (pixelArt)
+                    TrainerIllustrationSlot(
+                      assetPath: imageAsset,
+                      slotSize: illustrationSize,
+                      errorBuilder: _errorBuilder(
+                        theme,
+                        illustrationSize * 0.5,
+                      ),
+                    )
+                  else
+                    TrainerAvatarImage(
+                      assetPath: imageAsset,
+                      height: illustrationSize,
+                      pixelArt: false,
+                      errorBuilder: _errorBuilder(
+                        theme,
+                        illustrationSize * 0.45,
+                      ),
+                    ),
+                  const SizedBox(height: 28),
+                  Text(
+                    title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      subtitle!,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                        height: 1.45,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                  if (action != null) ...[
+                    const SizedBox(height: 28),
+                    action!,
+                  ],
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
-          ],
-          if (action != null) ...[const SizedBox(height: 28), action!],
-        ],
+          );
+        },
       ),
     );
   }
