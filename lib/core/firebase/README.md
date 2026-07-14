@@ -69,9 +69,12 @@ cd android && ./gradlew signingReport
 
 3. The app uses the Web client ID as `serverClientId` in `FirebaseAuthConfig` (required for Firebase Auth idToken on Android).
 
-4. **Web:** `web/index.html` uses `{{FIREBASE_GOOGLE_WEB_CLIENT_ID}}`. Pass
-   `--web-define=FIREBASE_GOOGLE_WEB_CLIENT_ID=...` (same value as in
-   `dart_defines.json`). CI and Chrome launch configs do this automatically.
+4. **Web:** Google Sign-In uses Firebase popup (non-isolated) or redirect
+   (COOP/COEP / multi-thread Wasm). Production uses a Pages Function proxy so
+   `/__/auth/*` is same-origin — required under COEP. Local Auth tests: run with
+   `--wasm --no-cross-origin-isolation`. Set Google OAuth redirect URI to
+   `https://<your-host>/__/auth/handler`. Authorized domains must include your
+   production host (e.g. `pokedata.kaique.site`).
 
 5. Rebuild after replacing config files:
 

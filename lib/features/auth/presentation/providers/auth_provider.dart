@@ -10,6 +10,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
+import 'package:pokedex_app/core/web/web_cross_origin.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
@@ -20,6 +21,9 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+/// Max wait for a leftover Firebase redirect session so cold start / splash
+/// never hangs (legacy redirect paths or accidental COEP pages).
+const _googleRedirectResultTimeout = Duration(seconds: 12);
 const _authKey = 'mock_auth_session';
 const _emailKey = 'mock_auth_email';
 const _nameKey = 'mock_auth_name';
@@ -168,6 +172,13 @@ class AuthNotifier extends Notifier<AuthState> {
         final preserveVerified = _shouldPreserveEmailVerified(user, next);
         state = preserveVerified ? next.copyWith(emailVerified: true) : next;
       });
+
+      // Never block cold start / splash on redirect completion (can hang under
+      // COOP/COEP while the Firebase Auth helper iframe is blocked).
+      if (kIsWeb) {
+        unawaited(_completeGoogleWebRedirect(firebaseAuth));
+      }
+
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       return;
     }
@@ -183,6 +194,16 @@ class AuthNotifier extends Notifier<AuthState> {
       email: prefs.getString(_emailKey),
       displayName: prefs.getString(_nameKey),
     );
+  }
+
+  Future<void> _completeGoogleWebRedirect(FirebaseAuth firebaseAuth) async {
+    try {
+      await firebaseAuth.getRedirectResult().timeout(
+        _googleRedirectResultTimeout,
+      );
+    } on Object {
+      // Cancelled, timed out (COEP/iframe), or no pending redirect.
+    }
   }
 
   Future<void> signIn({required String email, required String password}) async {
@@ -375,7 +396,8 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signOut() async {
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth != null) {
-      if (_googleSignInEnabled) {
+      // google_sign_in is used on mobile; web uses Firebase redirect only.
+      if (_googleSignInEnabled && !kIsWeb) {
         await FirebaseAuthConfig.ensureGoogleSignInInitialized();
         await GoogleSignIn.instance.signOut();
       }
@@ -746,6 +768,30 @@ class AuthNotifier extends Notifier<AuthState> {
 
     _requireOnline();
     try {
+      // Web + multi-thread Wasm (COOP/COEP): Auth helpers are same-origin via
+      // Pages Function proxy (`/__/auth/*`). COOP:same-origin breaks popup
+      // opener messaging → use redirect when isolated. Popup otherwise.
+      // Localhost has no proxy: refuse isolation and ask for
+      // `--no-cross-origin-isolation` (or test Auth on deployed Pages).
+      if (kIsWeb) {
+        final googleProvider = GoogleAuthProvider()..addScope('email');
+        if (isWebCrossOriginIsolated) {
+          final host = Uri.base.host;
+          if (host == 'localhost' || host == '127.0.0.1') {
+            throw AuthException(
+              lookupAppLocalizations(
+                ref.read(appLocaleProvider).materialLocale,
+              ).authGoogleSignInNeedsWasmWithoutIsolation,
+            );
+          }
+          await firebaseAuth.signInWithRedirect(googleProvider);
+          return;
+        }
+        await firebaseAuth.signInWithPopup(googleProvider);
+        state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
+        return;
+      }
+
       await FirebaseAuthConfig.ensureGoogleSignInInitialized();
       if (!GoogleSignIn.instance.supportsAuthenticate()) {
         throw AuthException(

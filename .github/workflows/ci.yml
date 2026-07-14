@@ -79,8 +79,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build web
-        run: flutter build web --release --dart-define-from-file=dart_defines.json
+      - name: Build web (Wasm + JS fallback)
+        run: >-
+          flutter build web --release --wasm
+          --dart-define-from-file=dart_defines.json
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v7
@@ -95,7 +97,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build/web --project-name=${{ env.PAGES_PROJECT }}
+          # Uses wrangler.toml (pages_build_output_dir + ./functions Auth proxy).
+          command: pages deploy --project-name=${{ env.PAGES_PROJECT }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Smoke check (Pages deployment URL)
@@ -108,11 +111,24 @@ jobs:
           fi
           echo "Checking $URL"
           curl -fsS --retry 8 --retry-delay 5 --retry-all-errors -o /dev/null "$URL"
+          echo "Checking Firebase Auth proxy $URL/__/auth/handler"
+          curl -fsS --retry 8 --retry-delay 5 --retry-all-errors \
+            -o /tmp/auth-handler.html "$URL/__/auth/handler"
+          if grep -qi 'flutter\|main.dart.js\|flutter_bootstrap' /tmp/auth-handler.html; then
+            echo "::error::Auth proxy served SPA instead of Firebase helper"
+            exit 1
+          fi
 
       - name: Smoke check (custom domain)
         run: |
           echo "Checking $PRODUCTION_URL"
           curl -fsS --retry 8 --retry-delay 5 --retry-all-errors -o /dev/null "$PRODUCTION_URL/"
+          curl -fsS --retry 8 --retry-delay 5 --retry-all-errors \
+            -o /tmp/auth-prod.html "$PRODUCTION_URL/__/auth/handler"
+          if grep -qi 'flutter\|main.dart.js\|flutter_bootstrap' /tmp/auth-prod.html; then
+            echo "::error::Production Auth proxy served SPA instead of Firebase helper"
+            exit 1
+          fi
 
   deploy-preview:
     name: Deploy web (PR preview)
@@ -153,8 +169,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build web
-        run: flutter build web --release --dart-define-from-file=dart_defines.json
+      - name: Build web (Wasm + JS fallback)
+        run: >-
+          flutter build web --release --wasm
+          --dart-define-from-file=dart_defines.json
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v7
@@ -170,7 +188,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: >-
-            pages deploy build/web
+            pages deploy
             --project-name=${{ env.PAGES_PROJECT }}
             --branch=pr-${{ github.event.pull_request.number }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -185,6 +203,13 @@ jobs:
           fi
           echo "Checking $URL"
           curl -fsS --retry 8 --retry-delay 5 --retry-all-errors -o /dev/null "$URL"
+          echo "Checking Firebase Auth proxy $URL/__/auth/handler"
+          curl -fsS --retry 8 --retry-delay 5 --retry-all-errors \
+            -o /tmp/auth-preview.html "$URL/__/auth/handler"
+          if grep -qi 'flutter\|main.dart.js\|flutter_bootstrap' /tmp/auth-preview.html; then
+            echo "::error::Preview Auth proxy served SPA instead of Firebase helper"
+            exit 1
+          fi
 
       - name: Comment preview URL on PR
         env:

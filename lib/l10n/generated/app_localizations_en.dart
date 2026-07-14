@@ -385,6 +385,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authLoginWithGoogleUnavailable => 'Google sign-in unavailable';
 
   @override
+  String get authGoogleSignInNeedsWasmWithoutIsolation =>
+      'Google Sign-In needs Wasm without cross-origin isolation. Use --wasm --no-cross-origin-isolation (see launch config Chrome Wasm).';
+
+  @override
   String get authUseGoogleButton => 'Use the Google button to sign in';
 
   @override

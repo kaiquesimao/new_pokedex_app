@@ -39,8 +39,9 @@ Always pass Firebase compile-time defines:
 # Android (Play Store)
 flutter build appbundle --release --dart-define-from-file=dart_defines.json
 
-# Web
-flutter build web --release --dart-define-from-file=dart_defines.json
+# Web (Wasm + JS fallback)
+flutter build web --release --wasm \
+  --dart-define-from-file=dart_defines.json
 ```
 
 Optional Android obfuscation:
@@ -66,10 +67,55 @@ cd android && ./gradlew signingReport
 
 ### Web Google Sign-In
 
-`FIREBASE_GOOGLE_WEB_CLIENT_ID` in `dart_defines.json` is used at runtime
-([`FirebaseAuthConfig`](lib/core/constants/firebase_auth_config.dart)). If you
-add a `google-signin-client_id` meta tag in [`web/index.html`](web/index.html),
-keep it in sync with that value.
+On web, Google uses Firebase Auth:
+
+* **Redirect** when the page is cross-origin isolated (production multi-thread Wasm)
+* **Popup** when it is not (local without COOP/COEP)
+
+Production enables **multi-thread Wasm** via `web/_headers` (`COOP: same-origin` +
+`COEP: credentialless`). Firebase Auth normally breaks under COEP because the
+helper iframe lives on `*.firebaseapp.com`. This project fixes that with a
+[same-origin reverse proxy](https://firebase.google.com/docs/auth/web/redirect-best-practices#proxy-requests):
+
+* Pages Function: [`functions/__/[[path]].js`](functions/__/[[path]].js) →
+  `https://<project>.firebaseapp.com/__/*`
+* Runtime `authDomain` = current host (`pokedata.kaique.site`, not firebaseapp.com)
+* `_routes.json` limits Functions to `/__/auth/*` and `/__/firebase/*`
+
+| Setup | Wasm | Google Sign-In |
+|-------|------|----------------|
+| Production / Pages preview (proxy + COOP/COEP) | ✅ multi-thread | ✅ redirect |
+| Local `Chrome Wasm :5000` (`--no-cross-origin-isolation`) | ✅ single-thread | ✅ popup |
+| Local `--wasm` sem `--no-cross-origin-isolation` (sem proxy) | ✅ multi-thread | ❌ |
+
+**Local Wasm + Google:** use **Chrome Wasm :5000**. Multi-thread + Google is
+validated on the deployed site.
+
+```bash
+flutter run -d chrome --web-port=5000 \
+  --dart-define-from-file=dart_defines.json \
+  --wasm --no-cross-origin-isolation
+```
+
+Mobile still uses `google_sign_in` + `GoogleSignIn.authenticate`.
+
+`FIREBASE_GOOGLE_WEB_CLIENT_ID` remains required in `dart_defines.json` as
+Android `serverClientId` (and Firebase web config).
+
+### WebAssembly + Google Sign-In (multi-thread)
+
+CI builds with `--wasm`. Production headers enable `SharedArrayBuffer`.
+
+**One-time OAuth / Firebase setup** (required for the proxy `authDomain`):
+
+1. **Google Cloud Console** → Credentials → Web client → Authorized redirect URIs:
+   * `https://pokedata.kaique.site/__/auth/handler`
+   * `https://pokedata-5fq.pages.dev/__/auth/handler` (optional, Pages default)
+2. Authorized JavaScript origins (same hosts + `http://localhost:5000`).
+3. **Firebase Console** → Authentication → Settings → Authorized domains:
+   `pokedata.kaique.site` (and `pokedata-5fq.pages.dev` if testing there).
+
+Smoke checks in CI assert `/__/auth/handler` is the Firebase helper, not the SPA.
 
 ## CI / CD (web → Cloudflare Pages)
 
@@ -79,12 +125,12 @@ keep it in sync with that value.
 | Trigger | What runs |
 |---------|-------------|
 | Every push / PR | `flutter analyze` + `flutter test` |
-| Push to `master` | Build web → deploy **production** (GitHub Environment `production`) → smoke checks |
-| PR (same repo) | Build web → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
+| Push to `master` | `flutter build web --wasm` → deploy **production** → smoke checks |
+| PR (same repo) | Same Wasm build → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
 
 Production URL: **https://pokedata.kaique.site**
 
-SPA deep links use [`web/_redirects`](web/_redirects) (copied into `build/web`).
+SPA deep links use [`web/_redirects`](web/_redirects). Headers: [`web/_headers`](web/_headers).
 Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
 ### GitHub Secrets (required)

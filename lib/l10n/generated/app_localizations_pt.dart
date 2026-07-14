@@ -386,6 +386,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get authLoginWithGoogleUnavailable => 'Login com Google indisponível';
 
   @override
+  String get authGoogleSignInNeedsWasmWithoutIsolation =>
+      'Login com Google exige Wasm sem isolamento cross-origin. Use --wasm --no-cross-origin-isolation (config Chrome Wasm).';
+
+  @override
   String get authUseGoogleButton => 'Use o botão do Google para entrar';
 
   @override

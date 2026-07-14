@@ -220,6 +220,10 @@
   "@authSignInToContinue": { "description": "Requires sign in to continue" },
   "authLoginWithGoogleUnavailable": "Login com Google indisponível",
   "@authLoginWithGoogleUnavailable": { "description": "Google sign-in unavailable message" },
+  "authGoogleSignInNeedsWasmWithoutIsolation": "Login com Google exige Wasm sem isolamento cross-origin. Use --wasm --no-cross-origin-isolation (config Chrome Wasm).",
+  "@authGoogleSignInNeedsWasmWithoutIsolation": {
+    "description": "Shown when COOP/COEP blocks Firebase Auth under Wasm"
+  },
   "authUseGoogleButton": "Use o botão do Google para entrar",
   "@authUseGoogleButton": { "description": "Prompt to use Google button" },
   "authLoginWithAppleUnavailable": "Login com Apple indisponível",

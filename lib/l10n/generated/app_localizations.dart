@@ -794,6 +794,12 @@ abstract class AppLocalizations {
   /// **'Google sign-in unavailable'**
   String get authLoginWithGoogleUnavailable;
 
+  /// Shown when COOP/COEP blocks Firebase Auth under Wasm
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In needs Wasm without cross-origin isolation. Use --wasm --no-cross-origin-isolation (see launch config Chrome Wasm).'**
+  String get authGoogleSignInNeedsWasmWithoutIsolation;
+
   /// Prompt to use Google button
   ///
   /// In en, this message translates to:

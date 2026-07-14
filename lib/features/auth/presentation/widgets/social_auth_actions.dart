@@ -19,22 +19,6 @@ final socialSignInLoadingProvider =
       SocialSignInLoadingNotifier.new,
     );
 
-class GoogleSignInUiErrorNotifier extends Notifier<String?> {
-  @override
-  String? build() => null;
-
-  String? get report => state;
-
-  set report(String? message) => state = message;
-
-  void clear() => state = null;
-}
-
-final googleSignInUiErrorProvider =
-    NotifierProvider<GoogleSignInUiErrorNotifier, String?>(
-      GoogleSignInUiErrorNotifier.new,
-    );
-
 Future<void> handleGoogleSignIn(BuildContext context, WidgetRef ref) async {
   if (!await ensureLegalAccepted(context, ref)) return;
   if (!context.mounted) return;
