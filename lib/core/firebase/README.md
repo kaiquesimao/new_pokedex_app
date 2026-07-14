@@ -69,7 +69,9 @@ cd android && ./gradlew signingReport
 
 3. The app uses the Web client ID as `serverClientId` in `FirebaseAuthConfig` (required for Firebase Auth idToken on Android).
 
-4. **Web:** `google-signin-client_id` in `web/index.html` must match `FIREBASE_GOOGLE_WEB_CLIENT_ID` in `dart_defines.json`.
+4. **Web:** `web/index.html` uses `{{FIREBASE_GOOGLE_WEB_CLIENT_ID}}`. Pass
+   `--web-define=FIREBASE_GOOGLE_WEB_CLIENT_ID=...` (same value as in
+   `dart_defines.json`). CI and Chrome launch configs do this automatically.
 
 5. Rebuild after replacing config files:
 

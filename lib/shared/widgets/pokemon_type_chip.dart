@@ -29,7 +29,7 @@ class PokemonTypeChip extends StatelessWidget {
         ? PokemonTypeColors.forType(type)
         : color;
 
-    return GestureDetector(
+    final chip = GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -67,6 +67,13 @@ class PokemonTypeChip extends StatelessWidget {
           ],
         ),
       ),
+    );
+
+    if (onTap == null) return chip;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: chip,
     );
   }
 }
