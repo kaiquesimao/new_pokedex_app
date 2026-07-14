@@ -57,7 +57,7 @@ firebase deploy --only firestore:rules
 
 Project default: `pokedex-app-c5e90` (`.firebaserc`).
 
-## Google Sign-In (Android + Web)
+## Google Sign-In (Android)
 
 1. Add **SHA-1** and **SHA-256** in Firebase Console → Project settings → Android app (`com.kaiquesimao.pokedex`).
 
@@ -69,12 +69,7 @@ cd android && ./gradlew signingReport
 
 3. The app uses the Web client ID as `serverClientId` in `FirebaseAuthConfig` (required for Firebase Auth idToken on Android).
 
-4. **Web:** Google Sign-In uses Firebase popup (non-isolated) or redirect
-   (COOP/COEP / multi-thread Wasm). Production uses a Pages Function proxy so
-   `/__/auth/*` is same-origin — required under COEP. Local Auth tests: run with
-   `--wasm --no-cross-origin-isolation`. Set Google OAuth redirect URI to
-   `https://<your-host>/__/auth/handler`. Authorized domains must include your
-   production host (e.g. `pokedata.kaique.site`).
+4. **Web:** Google Sign-In is not offered (Wasm COOP/COEP). Use email/password on web.
 
 5. Rebuild after replacing config files:
 
@@ -90,7 +85,8 @@ flutter clean && flutter run --dart-define-from-file=dart_defines.json
 | Email verification | Link + reload | 6-digit OTP (dev only) |
 | Password reset | `sendPasswordResetEmail` | OTP flow (dev only) |
 | Change password | reauth + `updatePassword` | local store (dev only) |
-| Google | OAuth credentials | Hidden |
+| Google (mobile) | OAuth credentials | Hidden |
+| Google (web) | Not available | Hidden |
 | Guest browsing | Allowed (`/pokedex` without login) | Allowed |
 
 Release builds require Firebase; mock auth is disabled in `kReleaseMode`.

@@ -48,29 +48,17 @@ class DefaultFirebaseOptions {
     }
   }
 
-  /// Web options. On deployed hosts, `authDomain` is the current host so Firebase
-  /// Auth helpers load same-origin via the Pages `/__/auth/*` proxy (required
-  /// for COOP/COEP multi-thread Wasm). Localhost keeps `Env.webAuthDomain`.
-  static FirebaseOptions get web => FirebaseOptions(
+  /// Web options. Google Sign-In is not offered on web (Wasm COOP/COEP);
+  /// email/password Auth uses [Env.webAuthDomain].
+  static const FirebaseOptions web = FirebaseOptions(
     apiKey: Env.webApiKey,
     appId: Env.webAppId,
     messagingSenderId: Env.messagingSenderId,
     projectId: Env.projectId,
-    authDomain: _webAuthDomain,
+    authDomain: Env.webAuthDomain,
     storageBucket: Env.storageBucket,
     measurementId: Env.webMeasurementId,
   );
-
-  static String get _webAuthDomain {
-    if (!kIsWeb) {
-      return Env.webAuthDomain;
-    }
-    final host = Uri.base.host;
-    if (host.isEmpty || host == 'localhost' || host == '127.0.0.1') {
-      return Env.webAuthDomain;
-    }
-    return host;
-  }
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: Env.androidApiKey,

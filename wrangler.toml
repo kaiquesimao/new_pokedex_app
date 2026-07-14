@@ -1,5 +1,4 @@
 # Cloudflare Pages — used by `wrangler pages deploy` (CI and local).
-# Functions in ./functions (Firebase Auth same-origin proxy) ship with the site.
 name = "pokedata"
 compatibility_date = "2026-07-13"
 pages_build_output_dir = "build/web"

@@ -6,7 +6,9 @@ flutter_launcher_icons:
 
   adaptive_icon_background: "#0D1B2A"
   adaptive_icon_foreground: assets/icon/app_icon_foreground.png
-  adaptive_icon_foreground_inset: 14
+  # Edge-to-edge circle → inset 16 overshoots the 66dp safe zone (~73dp).
+  # 20% ≈ logo ≤ 66dp of 108dp (Android Adaptive Icon guideline).
+  adaptive_icon_foreground_inset: 24
 
   remove_alpha_ios: true
   background_color_ios: "#0D1B2A"

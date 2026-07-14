@@ -1,7 +1,5 @@
 # Multi-thread Flutter Wasm (SharedArrayBuffer) needs COOP + COEP.
-# Firebase Auth helpers are same-origin via Pages Function proxy at /__/auth/*
-# (see functions/__/[[path]].js). Without that proxy, COEP blocks Auth.
-# https://github.com/firebase/firebase-js-sdk/issues/6199
 /*
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: credentialless
+

@@ -65,65 +65,37 @@ cd android && ./gradlew signingReport
 
 **Application ID:** `com.kaiquesimao.pokedex`
 
-### Web Google Sign-In
+### Web auth
 
-On web, Google uses Firebase Auth:
+Web supports **email/password** Firebase Auth. Google Sign-In is **mobile only**
+— Wasm multi-thread (COOP: same-origin + COEP: credentialless in
+[web/_headers](web/_headers)) is incompatible with Firebase Google Auth helpers.
 
-* **Redirect** when the page is cross-origin isolated (production multi-thread Wasm)
-* **Popup** when it is not (local without COOP/COEP)
+| Setup | Wasm | Email/password | Google |
+|-------|------|----------------|--------|
+| Production (COOP/COEP) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
+| Local **Chrome Wasm MT :5000** (--wasm) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
 
-Production enables **multi-thread Wasm** via `web/_headers` (`COOP: same-origin` +
-`COEP: credentialless`). Firebase Auth normally breaks under COEP because the
-helper iframe lives on `*.firebaseapp.com`. This project fixes that with a
-[same-origin reverse proxy](https://firebase.google.com/docs/auth/web/redirect-best-practices#proxy-requests):
-
-* Pages Function: [`functions/__/[[path]].js`](functions/__/[[path]].js) →
-  `https://<project>.firebaseapp.com/__/*`
-* Runtime `authDomain` = current host (`pokedata.kaique.site`, not firebaseapp.com)
-* `_routes.json` limits Functions to `/__/auth/*` and `/__/firebase/*`
-
-| Setup | Wasm | Google Sign-In |
-|-------|------|----------------|
-| Production / Pages preview (proxy + COOP/COEP) | ✅ multi-thread | ✅ redirect |
-| Local `Chrome Wasm :5000` (`--no-cross-origin-isolation`) | ✅ single-thread | ✅ popup |
-| Local `--wasm` sem `--no-cross-origin-isolation` (sem proxy) | ✅ multi-thread | ❌ |
-
-**Local Wasm + Google:** use **Chrome Wasm :5000**. Multi-thread + Google is
-validated on the deployed site.
-
-```bash
+`ash
 flutter run -d chrome --web-port=5000 \
   --dart-define-from-file=dart_defines.json \
-  --wasm --no-cross-origin-isolation
-```
+  --wasm
+`
 
-Mobile still uses `google_sign_in` + `GoogleSignIn.authenticate`.
+Mobile still uses google_sign_in + GoogleSignIn.authenticate.
 
-`FIREBASE_GOOGLE_WEB_CLIENT_ID` remains required in `dart_defines.json` as
-Android `serverClientId` (and Firebase web config).
+FIREBASE_GOOGLE_WEB_CLIENT_ID remains required in dart_defines.json as
+Android serverClientId.
 
-### WebAssembly + Google Sign-In (multi-thread)
+### WebAssembly (multi-thread)
 
-CI builds with `--wasm`. Production headers enable `SharedArrayBuffer`.
-
-**One-time OAuth / Firebase setup** (required for the proxy `authDomain`):
-
-1. **Google Cloud Console** → Credentials → Web client → Authorized redirect URIs:
-   * `https://pokedata.kaique.site/__/auth/handler`
-   * `https://pokedata-5fq.pages.dev/__/auth/handler` (optional, Pages default)
-2. Authorized JavaScript origins (same hosts + `http://localhost:5000`).
-3. **Firebase Console** → Authentication → Settings → Authorized domains:
-   `pokedata.kaique.site` (and `pokedata-5fq.pages.dev` if testing there).
-
-Smoke checks in CI assert `/__/auth/handler` is the Firebase helper, not the SPA.
+CI builds with --wasm. Production headers enable SharedArrayBuffer.
 
 ### Cloudflare zone (required for custom domain)
 
-`pokedata.kaique.site` is served through your **kaique.site** zone. Keep
-**Rocket Loader** and **Bot Fight Mode** off for this host — both rewrite or
-inject scripts into HTML (including `/__/auth/*`) and break Flutter + Firebase
-Auth on the custom domain (not on `*.pages.dev`). Also register the OAuth
-redirect URI `https://pokedata.kaique.site/__/auth/handler` in Google Cloud.
+pokedata.kaique.site is served through your **kaique.site** zone. Keep
+**Rocket Loader** and **Bot Fight Mode** off for this host — both break Flutter
+on the custom domain (not on *.pages.dev).
 
 ## CI / CD (web → Cloudflare Pages)
 

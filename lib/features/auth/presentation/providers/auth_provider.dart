@@ -10,7 +10,6 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
-import 'package:pokedex_app/core/web/web_cross_origin.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
@@ -21,10 +20,6 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-/// Max wait for Firebase redirect completion after Google OAuth return.
-/// On pokedata.kaique.site, Bot Fight can mangle `/__/auth` iframes and hang
-/// forever under COEP — keep this short so splash/cold start can finish.
-const _googleRedirectResultTimeout = Duration(seconds: 5);
 const _authKey = 'mock_auth_session';
 const _emailKey = 'mock_auth_email';
 const _nameKey = 'mock_auth_name';
@@ -174,13 +169,6 @@ class AuthNotifier extends Notifier<AuthState> {
         state = preserveVerified ? next.copyWith(emailVerified: true) : next;
       });
 
-      // Complete Google redirect before choosing the first route. Await with
-      // a hard timeout — unawaited completion races cold start and, when the
-      // Auth iframe is blocked on the custom domain, never settles.
-      if (kIsWeb) {
-        await _completeGoogleWebRedirect(firebaseAuth);
-      }
-
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
       return;
     }
@@ -196,16 +184,6 @@ class AuthNotifier extends Notifier<AuthState> {
       email: prefs.getString(_emailKey),
       displayName: prefs.getString(_nameKey),
     );
-  }
-
-  Future<void> _completeGoogleWebRedirect(FirebaseAuth firebaseAuth) async {
-    try {
-      await firebaseAuth.getRedirectResult().timeout(
-        _googleRedirectResultTimeout,
-      );
-    } on Object {
-      // Cancelled, timed out (COEP/iframe), or no pending redirect.
-    }
   }
 
   Future<void> signIn({required String email, required String password}) async {
@@ -759,6 +737,16 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
+    // Web + multi-thread Wasm (COOP/COEP) is incompatible with Firebase Google
+    // Auth helpers — Google Sign-In is mobile-only.
+    if (kIsWeb) {
+      throw AuthException(
+        lookupAppLocalizations(
+          ref.read(appLocaleProvider).materialLocale,
+        ).authLoginWithGoogleUnavailable,
+      );
+    }
+
     final firebaseAuth = _firebaseAuth;
     if (firebaseAuth == null || !_googleSignInEnabled) {
       throw AuthException(
@@ -770,30 +758,6 @@ class AuthNotifier extends Notifier<AuthState> {
 
     _requireOnline();
     try {
-      // Web + multi-thread Wasm (COOP/COEP): Auth helpers are same-origin via
-      // Pages Function proxy (`/__/auth/*`). COOP:same-origin breaks popup
-      // opener messaging → use redirect when isolated. Popup otherwise.
-      // Localhost has no proxy: refuse isolation and ask for
-      // `--no-cross-origin-isolation` (or test Auth on deployed Pages).
-      if (kIsWeb) {
-        final googleProvider = GoogleAuthProvider()..addScope('email');
-        if (isWebCrossOriginIsolated) {
-          final host = Uri.base.host;
-          if (host == 'localhost' || host == '127.0.0.1') {
-            throw AuthException(
-              lookupAppLocalizations(
-                ref.read(appLocaleProvider).materialLocale,
-              ).authGoogleSignInNeedsWasmWithoutIsolation,
-            );
-          }
-          await firebaseAuth.signInWithRedirect(googleProvider);
-          return;
-        }
-        await firebaseAuth.signInWithPopup(googleProvider);
-        state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
-        return;
-      }
-
       await FirebaseAuthConfig.ensureGoogleSignInInitialized();
       if (!GoogleSignIn.instance.supportsAuthenticate()) {
         throw AuthException(
@@ -816,6 +780,8 @@ class AuthNotifier extends Notifier<AuthState> {
           context: FirebaseAuthErrorContext.oauth,
         ),
       );
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw AuthException(
         firebaseAuthErrorMessageFromException(

@@ -11,7 +11,7 @@
             ]
         },
         {
-            "name": "pokedex_app (Chrome Wasm :5000)",
+            "name": "pokedex_app (Chrome Wasm MT :5000)",
             "request": "launch",
             "type": "dart",
             "deviceId": "chrome",
@@ -21,8 +21,7 @@
             "flutterMode": "debug",
             "toolArgs": [
                 "--dart-define-from-file=dart_defines.json",
-                "--wasm",
-                "--no-cross-origin-isolation"
+                "--wasm"
             ]
         }
     ]
