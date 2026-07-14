@@ -117,6 +117,12 @@ CI builds with `--wasm`. Production headers enable `SharedArrayBuffer`.
 
 Smoke checks in CI assert `/__/auth/handler` is the Firebase helper, not the SPA.
 
+### Cloudflare zone (required for custom domain)
+
+`pokedata.kaique.site` is served through your **kaique.site** zone. Keep
+**Rocket Loader** off for this host — it rewrites `<script>` tags and breaks
+Flutter boot + Firebase Auth helpers. `pages.dev` is unaffected.
+
 ## CI / CD (web → Cloudflare Pages)
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) + Dependabot

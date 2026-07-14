@@ -21,8 +21,6 @@ export async function onRequest(context) {
   const upstream = new Request(target, context.request);
   const response = await fetch(upstream);
 
-  // Same-origin to the browser after proxy — strip hop-by-hop / encoding
-  // surprises that can break streaming of handler HTML/JS.
   const headers = new Headers(response.headers);
   headers.delete('content-encoding');
   headers.delete('transfer-encoding');
