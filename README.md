@@ -73,13 +73,19 @@ keep it in sync with that value.
 
 ## CI / CD (web → Cloudflare Pages)
 
-On every push/PR, [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs
-`flutter analyze` and `flutter test`. On push to `master` (after CI green), it
-builds Flutter web and deploys `build/web` to **Cloudflare Pages** via Wrangler.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) + Dependabot
+([`.github/dependabot.yml`](.github/dependabot.yml)):
+
+| Trigger | What runs |
+|---------|-------------|
+| Every push / PR | `flutter analyze` + `flutter test` |
+| Push to `master` | Build web → deploy **production** (GitHub Environment `production`) → smoke checks |
+| PR (same repo) | Build web → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
 
 Production URL: **https://pokedata.kaique.site**
 
 SPA deep links use [`web/_redirects`](web/_redirects) (copied into `build/web`).
+Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
 ### GitHub Secrets (required)
 
@@ -103,12 +109,18 @@ Do **not** commit real `dart_defines.json` or Cloudflare credentials.
    `CLOUDFLARE_PROJECT_NAME`). Direct Upload / Wrangler is enough — GitHub
    Actions owns the build; you do not need a second Pages Git integration.
 2. **Custom domain:** attach `pokedata.kaique.site` to that Pages project
-   (Cloudflare Dashboard → Pages → Custom domains). DNS for `kaique.site`
-   should already be on Cloudflare.
+   (Cloudflare Dashboard → Pages → Custom domains). DNS: CNAME `pokedata` →
+   `pokedata-5fq.pages.dev` (proxied). This is **Pages**, not a Worker route
+   (Workers are for apps like a portfolio Worker — Flutter web stays on Pages).
 3. **GitHub Secrets:** add the secrets above
    (Settings → Secrets and variables → Actions).
-4. **Firebase Auth:** add `pokedata.kaique.site` under
+4. **GitHub Environment:** create Environment `production`
+   (Settings → Environments). Optional: add required reviewers for deploy.
+   Repo secrets still work; moving secrets into the environment is optional.
+5. **Firebase Auth:** add `pokedata.kaique.site` under
    Authentication → Settings → Authorized domains.
+   PR preview URLs (`*.pages.dev`) also need the Pages domain(s) if you test
+   Google Sign-In on previews — add those hostnames as needed.
 
 ## Verify
 
