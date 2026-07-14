@@ -21,9 +21,10 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-/// Max wait for a leftover Firebase redirect session so cold start / splash
-/// never hangs (legacy redirect paths or accidental COEP pages).
-const _googleRedirectResultTimeout = Duration(seconds: 12);
+/// Max wait for Firebase redirect completion after Google OAuth return.
+/// On pokedata.kaique.site, Bot Fight can mangle `/__/auth` iframes and hang
+/// forever under COEP — keep this short so splash/cold start can finish.
+const _googleRedirectResultTimeout = Duration(seconds: 5);
 const _authKey = 'mock_auth_session';
 const _emailKey = 'mock_auth_email';
 const _nameKey = 'mock_auth_name';
@@ -173,10 +174,11 @@ class AuthNotifier extends Notifier<AuthState> {
         state = preserveVerified ? next.copyWith(emailVerified: true) : next;
       });
 
-      // Never block cold start / splash on redirect completion (can hang under
-      // COOP/COEP while the Firebase Auth helper iframe is blocked).
+      // Complete Google redirect before choosing the first route. Await with
+      // a hard timeout — unawaited completion races cold start and, when the
+      // Auth iframe is blocked on the custom domain, never settles.
       if (kIsWeb) {
-        unawaited(_completeGoogleWebRedirect(firebaseAuth));
+        await _completeGoogleWebRedirect(firebaseAuth);
       }
 
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);

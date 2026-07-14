@@ -120,8 +120,10 @@ Smoke checks in CI assert `/__/auth/handler` is the Firebase helper, not the SPA
 ### Cloudflare zone (required for custom domain)
 
 `pokedata.kaique.site` is served through your **kaique.site** zone. Keep
-**Rocket Loader** off for this host — it rewrites `<script>` tags and breaks
-Flutter boot + Firebase Auth helpers. `pages.dev` is unaffected.
+**Rocket Loader** and **Bot Fight Mode** off for this host — both rewrite or
+inject scripts into HTML (including `/__/auth/*`) and break Flutter + Firebase
+Auth on the custom domain (not on `*.pages.dev`). Also register the OAuth
+redirect URI `https://pokedata.kaique.site/__/auth/handler` in Google Cloud.
 
 ## CI / CD (web → Cloudflare Pages)
 

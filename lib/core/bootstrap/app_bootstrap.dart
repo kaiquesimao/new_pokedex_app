@@ -88,10 +88,18 @@ Future<ColdStartResult> runColdStart() async {
     ],
   );
 
-  // Wave 3: depends on Firebase + connectivity
+  // Wave 3: depends on Firebase + connectivity.
+  // Auth init can hang on pokedata.kaique.site when Bot Fight mangles /__/auth
+  // iframes under COEP — never block the splash past a short budget.
   await Future.wait<void>([
     networkCoordinator.start(),
-    container.read(authProvider.notifier).initialize(),
+    container
+        .read(authProvider.notifier)
+        .initialize()
+        .timeout(
+          const Duration(seconds: 8),
+          onTimeout: () {},
+        ),
   ]);
 
   await _warmSplashResources(container);
