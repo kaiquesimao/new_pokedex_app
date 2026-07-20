@@ -428,15 +428,36 @@ class AuthNotifier extends Notifier<AuthState> {
             EmailAuthProvider.credential(email: email, password: password),
           );
         } else {
-          await FirebaseAuthConfig.ensureGoogleSignInInitialized();
-          final googleUser = await GoogleSignIn.instance.authenticate(
-            scopeHint: const ['email'],
+          final providerIds = user.providerData.map(
+            (provider) => provider.providerId,
           );
-          await user.reauthenticateWithCredential(
-            GoogleAuthProvider.credential(
-              idToken: googleUser.authentication.idToken,
-            ),
-          );
+          if (providerIds.contains('apple.com')) {
+            if (defaultTargetPlatform != TargetPlatform.iOS) {
+              throw AuthException(_l10n.authLoginWithAppleOnlyOnIOS);
+            }
+            final appleCredential = await SignInWithApple.getAppleIDCredential(
+              scopes: [
+                AppleIDAuthorizationScopes.email,
+                AppleIDAuthorizationScopes.fullName,
+              ],
+            );
+            await user.reauthenticateWithCredential(
+              OAuthProvider('apple.com').credential(
+                idToken: appleCredential.identityToken,
+                accessToken: appleCredential.authorizationCode,
+              ),
+            );
+          } else {
+            await FirebaseAuthConfig.ensureGoogleSignInInitialized();
+            final googleUser = await GoogleSignIn.instance.authenticate(
+              scopeHint: const ['email'],
+            );
+            await user.reauthenticateWithCredential(
+              GoogleAuthProvider.credential(
+                idToken: googleUser.authentication.idToken,
+              ),
+            );
+          }
         }
       } on AuthException {
         rethrow;
