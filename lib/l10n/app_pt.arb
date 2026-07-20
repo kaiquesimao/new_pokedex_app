@@ -282,6 +282,7 @@
   "profileVersionLabel": "Versão",
   "profileTermsLabel": "Termos de uso",
   "profilePrivacyLabel": "Política de privacidade",
+  "profileAccountDeletionLabel": "Exclusão de conta e dados",
   "profileHelpLabel": "Ajuda",
   "profileAboutLabel": "Sobre",
   "profileActionSuccess": "Ação realizada com sucesso"
@@ -373,6 +374,7 @@
 
   "legalLoadTermsError": "Não foi possível carregar os termos de uso.",
   "legalLoadPrivacyError": "Não foi possível carregar a política de privacidade.",
+  "legalLoadAccountDeletionError": "Não foi possível carregar as informações de exclusão de conta.",
 
   "helpFaqTitle": "Perguntas frequentes",
   "helpSupportTitle": "Suporte",

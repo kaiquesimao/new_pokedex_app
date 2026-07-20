@@ -6,8 +6,8 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/legal_document_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class TermsOfUsePage extends ConsumerWidget {
-  const TermsOfUsePage({super.key});
+class AccountDeletionPage extends ConsumerWidget {
+  const AccountDeletionPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,17 +15,17 @@ class TermsOfUsePage extends ConsumerWidget {
     final locale = ref.watch(appLocaleProvider);
     final assetPath = legalAssetPath(
       locale,
-      document: LegalDocument.terms,
+      document: LegalDocument.accountDeletion,
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.profileTermsLabel)),
+      appBar: AppBar(title: Text(l10n.profileAccountDeletionLabel)),
       body: SafePageBody.belowAppBar(
         child: FutureBuilder<String>(
           future: DefaultAssetBundle.of(context).loadString(assetPath),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: Text(l10n.legalLoadTermsError));
+              return Center(child: Text(l10n.legalLoadAccountDeletionError));
             }
             if (!snapshot.hasData) {
               return const LegalDocumentSkeleton();

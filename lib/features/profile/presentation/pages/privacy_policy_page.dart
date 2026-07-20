@@ -13,7 +13,10 @@ class PrivacyPolicyPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final locale = ref.watch(appLocaleProvider);
-    final assetPath = legalAssetPath(locale, privacy: true);
+    final assetPath = legalAssetPath(
+      locale,
+      document: LegalDocument.privacy,
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profilePrivacyLabel)),

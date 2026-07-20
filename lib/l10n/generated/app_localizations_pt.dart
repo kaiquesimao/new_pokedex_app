@@ -498,6 +498,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profilePrivacyLabel => 'Política de privacidade';
 
   @override
+  String get profileAccountDeletionLabel => 'Exclusão de conta e dados';
+
+  @override
   String get profileHelpLabel => 'Ajuda';
 
   @override
@@ -750,6 +753,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get legalLoadPrivacyError =>
       'Não foi possível carregar a política de privacidade.';
+
+  @override
+  String get legalLoadAccountDeletionError =>
+      'Não foi possível carregar as informações de exclusão de conta.';
 
   @override
   String get helpFaqTitle => 'Perguntas frequentes';

@@ -497,6 +497,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePrivacyLabel => 'Privacy policy';
 
   @override
+  String get profileAccountDeletionLabel => 'Account and data deletion';
+
+  @override
   String get profileHelpLabel => 'Help';
 
   @override
@@ -746,6 +749,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legalLoadPrivacyError => 'Could not load the privacy policy.';
+
+  @override
+  String get legalLoadAccountDeletionError =>
+      'Could not load the account deletion information.';
 
   @override
   String get helpFaqTitle => 'Frequently asked questions';

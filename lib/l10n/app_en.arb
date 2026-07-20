@@ -290,6 +290,7 @@
   "profileVersionLabel": "Version",
   "profileTermsLabel": "Terms of use",
   "profilePrivacyLabel": "Privacy policy",
+  "profileAccountDeletionLabel": "Account and data deletion",
   "profileHelpLabel": "Help",
   "profileAboutLabel": "About"
 ,
@@ -385,6 +386,7 @@
 
   "legalLoadTermsError": "Could not load the terms of use.",
   "legalLoadPrivacyError": "Could not load the privacy policy.",
+  "legalLoadAccountDeletionError": "Could not load the account deletion information.",
 
   "helpFaqTitle": "Frequently asked questions",
   "helpSupportTitle": "Support",

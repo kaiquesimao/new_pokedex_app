@@ -9,7 +9,9 @@ bool isPublicAuthRoute(String path) {
 }
 
 bool isPublicLegalRoute(String path) {
-  return path == '/legal/terms' || path == '/legal/privacy';
+  return path == '/legal/terms' ||
+      path == '/legal/privacy' ||
+      path == '/legal/account-deletion';
 }
 
 bool isGuestShellRoute(String path) {

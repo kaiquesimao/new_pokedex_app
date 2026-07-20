@@ -992,6 +992,12 @@ abstract class AppLocalizations {
   /// **'Privacy policy'**
   String get profilePrivacyLabel;
 
+  /// No description provided for @profileAccountDeletionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account and data deletion'**
+  String get profileAccountDeletionLabel;
+
   /// No description provided for @profileHelpLabel.
   ///
   /// In en, this message translates to:
@@ -1453,6 +1459,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load the privacy policy.'**
   String get legalLoadPrivacyError;
+
+  /// No description provided for @legalLoadAccountDeletionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the account deletion information.'**
+  String get legalLoadAccountDeletionError;
 
   /// No description provided for @helpFaqTitle.
   ///

@@ -21,6 +21,7 @@ import 'package:pokedex_app/features/onboarding/presentation/providers/onboardin
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart';
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/about_page.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/account_deletion_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/change_email_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/edit_name_page.dart';
@@ -167,6 +168,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
 
         builder: (_, _) => const PrivacyPolicyPage(),
+      ),
+
+      GoRoute(
+        path: '/legal/account-deletion',
+
+        parentNavigatorKey: _rootNavigatorKey,
+
+        builder: (_, _) => const AccountDeletionPage(),
       ),
 
       GoRoute(
