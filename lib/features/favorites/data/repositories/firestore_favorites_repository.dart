@@ -45,6 +45,7 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
       for (final doc in snapshot.docs) {
         await doc.reference.delete();
       }
+      await _firestore.collection(_collection).doc(userId).delete();
       // ponytail: O(n) deletes; upgrade to WriteBatch chunks if favorites grow large
     } on Object catch (_) {
       // Local already cleared; remote retry on next deleteAccount attempt

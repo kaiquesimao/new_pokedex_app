@@ -11,7 +11,7 @@ associados ao aplicativo **PokeData**, mantido pelo desenvolvedor do projeto
 1. Abra o PokeData e entre na conta.
 2. Vá em **Conta** (perfil).
 3. Toque em **Excluir conta** e confirme.
-4. Reautentique (senha ou Google, conforme o tipo de conta).
+4. Reautentique (senha, Google ou Apple, conforme o tipo de conta).
 5. A conta e os dados vinculados são apagados imediatamente.
 
 ## Solicitação por e-mail (até 30 dias)

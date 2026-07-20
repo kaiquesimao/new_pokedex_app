@@ -10,7 +10,7 @@ for the **PokeData** app, maintained by the project developer (contact below).
 1. Open PokeData and sign in.
 2. Go to **Account** (profile).
 3. Tap **Delete account** and confirm.
-4. Reauthenticate (password or Google, depending on account type).
+4. Reauthenticate (password, Google, or Apple, depending on account type).
 5. Your account and linked data are deleted immediately.
 
 ## Email request (within 30 days)
