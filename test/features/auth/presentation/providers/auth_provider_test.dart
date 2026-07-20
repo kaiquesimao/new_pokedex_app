@@ -275,4 +275,101 @@ void main() {
       );
     });
   });
+
+  group('AuthNotifier deleteAccount', () {
+    test('clears local session after password verification', () async {
+      SharedPreferences.setMockInitialValues({
+        'mock_auth_session': true,
+        'mock_auth_email': 'ash@pokemon.com',
+        'mock_auth_name': 'Ash',
+        'mock_auth_password': 'secret123',
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final container = ProviderContainer.test(
+        overrides: [
+          firebaseUnavailableOverride,
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => readStoredAuthState(prefs),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container
+          .read(authProvider.notifier)
+          .deleteAccount(currentPassword: 'secret123');
+
+      expect(container.read(authProvider).isAuthenticated, isFalse);
+      expect(prefs.getBool('mock_auth_session'), isNull);
+      expect(prefs.getString('mock_auth_email'), isNull);
+      expect(prefs.getString('mock_auth_name'), isNull);
+      expect(prefs.getString('mock_auth_password'), isNull);
+    });
+
+    test('rejects wrong local password without clearing session', () async {
+      SharedPreferences.setMockInitialValues({
+        'mock_auth_session': true,
+        'mock_auth_email': 'ash@pokemon.com',
+        'mock_auth_name': 'Ash',
+        'mock_auth_password': 'secret123',
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final container = ProviderContainer.test(
+        overrides: [
+          firebaseUnavailableOverride,
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => readStoredAuthState(prefs),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await expectLater(
+        container
+            .read(authProvider.notifier)
+            .deleteAccount(currentPassword: 'wrong'),
+        throwsA(isA<AuthException>()),
+      );
+
+      expect(container.read(authProvider).isAuthenticated, isTrue);
+      expect(prefs.getBool('mock_auth_session'), isTrue);
+    });
+
+    test('clears user data before clearing local session', () async {
+      SharedPreferences.setMockInitialValues({
+        'mock_auth_session': true,
+        'mock_auth_email': 'ash@pokemon.com',
+        'mock_auth_name': 'Ash',
+        'mock_auth_password': 'secret123',
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final container = ProviderContainer.test(
+        overrides: [
+          firebaseUnavailableOverride,
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          authProvider.overrideWithBuild(
+            (ref, notifier) => readStoredAuthState(prefs),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      var clearUserDataCalled = false;
+
+      await container
+          .read(authProvider.notifier)
+          .deleteAccount(
+            currentPassword: 'secret123',
+            clearUserData: () async {
+              clearUserDataCalled = true;
+              expect(container.read(authProvider).isAuthenticated, isTrue);
+              expect(prefs.getBool('mock_auth_session'), isTrue);
+            },
+          );
+
+      expect(clearUserDataCalled, isTrue);
+      expect(container.read(authProvider).isAuthenticated, isFalse);
+    });
+  });
 }
