@@ -988,6 +988,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLogoutConfirmNoSemantics => 'No, cancel sign out';
 
   @override
+  String get profileDeleteAccountButton => 'Delete account';
+
+  @override
+  String get profileDeleteAccountConfirmSemantics => 'Confirm account deletion';
+
+  @override
+  String get profileDeleteAccountConfirmTitle =>
+      'Delete your account permanently?';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'This removes your account and synced favorites. This cannot be undone.';
+
+  @override
+  String get profileDeleteAccountConfirmYes => 'Yes, delete account';
+
+  @override
+  String get profileDeleteAccountConfirmYesSemantics =>
+      'Yes, permanently delete account';
+
+  @override
+  String get profileDeleteAccountConfirmNo => 'No, cancel';
+
+  @override
+  String get profileDeleteAccountConfirmNoSemantics =>
+      'No, cancel account deletion';
+
+  @override
+  String get profileDeleteAccountPasswordHint => 'Current password';
+
+  @override
+  String get profileDeleteAccountError =>
+      'Could not delete account. Try again.';
+
+  @override
+  String get profileAccountDeletionLink => 'How account deletion works';
+
+  @override
   String get onboardingSlide1Title => 'All Pokémon in one place';
 
   @override

@@ -996,6 +996,45 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileLogoutConfirmNoSemantics => 'Não, cancelar saída';
 
   @override
+  String get profileDeleteAccountButton => 'Excluir conta';
+
+  @override
+  String get profileDeleteAccountConfirmSemantics =>
+      'Confirmação de exclusão da conta';
+
+  @override
+  String get profileDeleteAccountConfirmTitle =>
+      'Excluir sua conta permanentemente?';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'Isso remove sua conta e os favoritos sincronizados. Não é possível desfazer.';
+
+  @override
+  String get profileDeleteAccountConfirmYes => 'Sim, excluir conta';
+
+  @override
+  String get profileDeleteAccountConfirmYesSemantics =>
+      'Sim, excluir conta permanentemente';
+
+  @override
+  String get profileDeleteAccountConfirmNo => 'Não, cancelar';
+
+  @override
+  String get profileDeleteAccountConfirmNoSemantics =>
+      'Não, cancelar exclusão da conta';
+
+  @override
+  String get profileDeleteAccountPasswordHint => 'Senha atual';
+
+  @override
+  String get profileDeleteAccountError =>
+      'Não foi possível excluir a conta. Tente de novo.';
+
+  @override
+  String get profileAccountDeletionLink => 'Como funciona a exclusão de conta';
+
+  @override
   String get onboardingSlide1Title => 'Todos os Pokémon em um só Lugar';
 
   @override
