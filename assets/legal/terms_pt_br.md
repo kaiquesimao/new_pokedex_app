@@ -63,4 +63,5 @@ Estes Termos são regidos pelas leis do Brasil, sem prejuízo das proteções ob
 
 ## 12) Contato
 
-Para dúvidas legais ou de suporte relacionadas a estes Termos, entre em contato com o mantenedor do projeto pelo canal oficial do PokeData informado no app ou no repositório.
+Para dúvidas legais ou de suporte relacionadas a estes Termos, escreva para
+**pokedata.app@gmail.com**.

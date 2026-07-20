@@ -99,4 +99,5 @@ A versão mais recente ficará disponível no app e/ou nos arquivos legais do re
 
 ## 15) Contato
 
-Para solicitações de privacidade ou dúvidas, entre em contato com o mantenedor do projeto pelo canal oficial do PokeData informado no app ou no repositório.
+Para solicitações de privacidade ou dúvidas, escreva para
+**pokedata.app@gmail.com**.
