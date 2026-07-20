@@ -17,6 +17,10 @@ void main() {
     expect(await repo.getFavoriteIds(), isEmpty);
   });
 
+  test('clearAll is a no-op', () async {
+    await repo.clearAll();
+  });
+
   test('watchFavoriteIds emits empty set', () async {
     final values = <Set<int>>[];
     final sub = repo.watchFavoriteIds().listen(values.add);

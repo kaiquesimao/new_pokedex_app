@@ -388,12 +388,113 @@ class AuthNotifier extends Notifier<AuthState> {
 
     _requireLocalAuth();
 
+    await _clearLocalSession();
+  }
+
+  Future<void> _clearLocalSession() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_authKey);
     await prefs.remove(_emailKey);
     await prefs.remove(_nameKey);
     await prefs.remove(_passwordKey);
     state = const AuthState(isInitialized: true);
+  }
+
+  /// Permanently deletes the authenticated account and its user data.
+  Future<void> deleteAccount({
+    String? currentPassword,
+    Future<void> Function()? clearUserData,
+  }) async {
+    if (!state.isAuthenticated) {
+      throw AuthException(_l10n.authSignInToContinue);
+    }
+
+    final firebaseAuth = _firebaseAuth;
+    if (firebaseAuth != null) {
+      _requireOnline();
+      final user = firebaseAuth.currentUser;
+      if (user == null) {
+        throw AuthException(_l10n.authInvalidSession);
+      }
+
+      try {
+        if (state.canEditCredentials) {
+          final email = user.email;
+          final password = currentPassword ?? '';
+          if (email == null || email.isEmpty || password.isEmpty) {
+            throw AuthException(_l10n.authCurrentPasswordIncorrect);
+          }
+          await user.reauthenticateWithCredential(
+            EmailAuthProvider.credential(email: email, password: password),
+          );
+        } else {
+          final providerIds = user.providerData.map(
+            (provider) => provider.providerId,
+          );
+          if (providerIds.contains('apple.com')) {
+            if (defaultTargetPlatform != TargetPlatform.iOS) {
+              throw AuthException(_l10n.authLoginWithAppleOnlyOnIOS);
+            }
+            final appleCredential = await SignInWithApple.getAppleIDCredential(
+              scopes: [
+                AppleIDAuthorizationScopes.email,
+                AppleIDAuthorizationScopes.fullName,
+              ],
+            );
+            await user.reauthenticateWithCredential(
+              OAuthProvider('apple.com').credential(
+                idToken: appleCredential.identityToken,
+                accessToken: appleCredential.authorizationCode,
+              ),
+            );
+          } else {
+            await FirebaseAuthConfig.ensureGoogleSignInInitialized();
+            final googleUser = await GoogleSignIn.instance.authenticate(
+              scopeHint: const ['email'],
+            );
+            await user.reauthenticateWithCredential(
+              GoogleAuthProvider.credential(
+                idToken: googleUser.authentication.idToken,
+              ),
+            );
+          }
+        }
+      } on AuthException {
+        rethrow;
+      } catch (error) {
+        throw AuthException(
+          firebaseAuthErrorMessageFromException(_l10n, error),
+        );
+      }
+
+      await clearUserData?.call();
+
+      try {
+        await user.delete();
+      } catch (error) {
+        throw AuthException(
+          firebaseAuthErrorMessageFromException(_l10n, error),
+        );
+      }
+
+      try {
+        if (_googleSignInEnabled && !kIsWeb) {
+          await FirebaseAuthConfig.ensureGoogleSignInInitialized();
+          await GoogleSignIn.instance.signOut();
+        }
+      } on Object catch (_) {}
+      state = const AuthState(isInitialized: true);
+      return;
+    }
+
+    _requireLocalAuth();
+    final valid = await verifyCurrentPassword(currentPassword ?? '');
+    if (!valid) {
+      throw AuthException(_l10n.authCurrentPasswordIncorrect);
+    }
+
+    await clearUserData?.call();
+    await _clearLocalSession();
   }
 
   Future<bool> verifyCurrentPassword(String password) async {

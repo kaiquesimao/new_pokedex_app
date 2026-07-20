@@ -992,6 +992,12 @@ abstract class AppLocalizations {
   /// **'Privacy policy'**
   String get profilePrivacyLabel;
 
+  /// No description provided for @profileAccountDeletionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account and data deletion'**
+  String get profileAccountDeletionLabel;
+
   /// No description provided for @profileHelpLabel.
   ///
   /// In en, this message translates to:
@@ -1454,6 +1460,12 @@ abstract class AppLocalizations {
   /// **'Could not load the privacy policy.'**
   String get legalLoadPrivacyError;
 
+  /// No description provided for @legalLoadAccountDeletionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the account deletion information.'**
+  String get legalLoadAccountDeletionError;
+
   /// No description provided for @helpFaqTitle.
   ///
   /// In en, this message translates to:
@@ -1861,6 +1873,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No, cancel sign out'**
   String get profileLogoutConfirmNoSemantics;
+
+  /// No description provided for @profileDeleteAccountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccountButton;
+
+  /// No description provided for @profileDeleteAccountConfirmSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm account deletion'**
+  String get profileDeleteAccountConfirmSemantics;
+
+  /// No description provided for @profileDeleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account permanently?'**
+  String get profileDeleteAccountConfirmTitle;
+
+  /// No description provided for @profileDeleteAccountConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes your account and synced favorites. This cannot be undone.'**
+  String get profileDeleteAccountConfirmBody;
+
+  /// No description provided for @profileDeleteAccountConfirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, delete account'**
+  String get profileDeleteAccountConfirmYes;
+
+  /// No description provided for @profileDeleteAccountConfirmYesSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, permanently delete account'**
+  String get profileDeleteAccountConfirmYesSemantics;
+
+  /// No description provided for @profileDeleteAccountConfirmNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No, cancel'**
+  String get profileDeleteAccountConfirmNo;
+
+  /// No description provided for @profileDeleteAccountConfirmNoSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'No, cancel account deletion'**
+  String get profileDeleteAccountConfirmNoSemantics;
+
+  /// No description provided for @profileDeleteAccountPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get profileDeleteAccountPasswordHint;
+
+  /// No description provided for @profileDeleteAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete account. Try again.'**
+  String get profileDeleteAccountError;
+
+  /// No description provided for @profileAccountDeletionLink.
+  ///
+  /// In en, this message translates to:
+  /// **'How account deletion works'**
+  String get profileAccountDeletionLink;
 
   /// No description provided for @onboardingSlide1Title.
   ///

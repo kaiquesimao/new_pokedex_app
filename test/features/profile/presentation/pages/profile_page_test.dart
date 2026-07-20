@@ -47,6 +47,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Sair'), findsOneWidget);
+    expect(find.text('Excluir conta'), findsOneWidget);
+    expect(find.text('Como funciona a exclusão de conta'), findsOneWidget);
     expect(find.text('Você entrou como Ash'), findsOneWidget);
   });
 
@@ -90,6 +92,8 @@ void main() {
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Criar conta'), findsOneWidget);
     expect(find.text('Sair'), findsNothing);
+    expect(find.text('Excluir conta'), findsNothing);
+    expect(find.text('Como funciona a exclusão de conta'), findsNothing);
   });
 
   testWidgets('profile terms link navigates to terms page', (tester) async {

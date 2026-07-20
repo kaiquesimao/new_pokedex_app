@@ -282,6 +282,7 @@
   "profileVersionLabel": "Versão",
   "profileTermsLabel": "Termos de uso",
   "profilePrivacyLabel": "Política de privacidade",
+  "profileAccountDeletionLabel": "Exclusão de conta e dados",
   "profileHelpLabel": "Ajuda",
   "profileAboutLabel": "Sobre",
   "profileActionSuccess": "Ação realizada com sucesso"
@@ -373,6 +374,7 @@
 
   "legalLoadTermsError": "Não foi possível carregar os termos de uso.",
   "legalLoadPrivacyError": "Não foi possível carregar a política de privacidade.",
+  "legalLoadAccountDeletionError": "Não foi possível carregar as informações de exclusão de conta.",
 
   "helpFaqTitle": "Perguntas frequentes",
   "helpSupportTitle": "Suporte",
@@ -448,6 +450,17 @@
   "profileLogoutConfirmYesSemantics": "Sim, sair da conta",
   "profileLogoutConfirmNo": "Não, Cancelar",
   "profileLogoutConfirmNoSemantics": "Não, cancelar saída",
+  "profileDeleteAccountButton": "Excluir conta",
+  "profileDeleteAccountConfirmSemantics": "Confirmação de exclusão da conta",
+  "profileDeleteAccountConfirmTitle": "Excluir sua conta permanentemente?",
+  "profileDeleteAccountConfirmBody": "Isso remove sua conta e os favoritos sincronizados. Não é possível desfazer.",
+  "profileDeleteAccountConfirmYes": "Sim, excluir conta",
+  "profileDeleteAccountConfirmYesSemantics": "Sim, excluir conta permanentemente",
+  "profileDeleteAccountConfirmNo": "Não, cancelar",
+  "profileDeleteAccountConfirmNoSemantics": "Não, cancelar exclusão da conta",
+  "profileDeleteAccountPasswordHint": "Senha atual",
+  "profileDeleteAccountError": "Não foi possível excluir a conta. Tente de novo.",
+  "profileAccountDeletionLink": "Como funciona a exclusão de conta",
   "onboardingSlide1Title": "Todos os Pokémon em um só Lugar",
   "onboardingSlide1Subtitle": "Acesse uma vasta lista de Pokémon de todas as gerações já feitas pela Nintendo",
   "onboardingSlide2Title": "Mantenha sua PokeData atualizada",

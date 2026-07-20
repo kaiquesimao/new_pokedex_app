@@ -498,6 +498,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profilePrivacyLabel => 'Política de privacidade';
 
   @override
+  String get profileAccountDeletionLabel => 'Exclusão de conta e dados';
+
+  @override
   String get profileHelpLabel => 'Ajuda';
 
   @override
@@ -752,6 +755,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível carregar a política de privacidade.';
 
   @override
+  String get legalLoadAccountDeletionError =>
+      'Não foi possível carregar as informações de exclusão de conta.';
+
+  @override
   String get helpFaqTitle => 'Perguntas frequentes';
 
   @override
@@ -987,6 +994,45 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get profileLogoutConfirmNoSemantics => 'Não, cancelar saída';
+
+  @override
+  String get profileDeleteAccountButton => 'Excluir conta';
+
+  @override
+  String get profileDeleteAccountConfirmSemantics =>
+      'Confirmação de exclusão da conta';
+
+  @override
+  String get profileDeleteAccountConfirmTitle =>
+      'Excluir sua conta permanentemente?';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'Isso remove sua conta e os favoritos sincronizados. Não é possível desfazer.';
+
+  @override
+  String get profileDeleteAccountConfirmYes => 'Sim, excluir conta';
+
+  @override
+  String get profileDeleteAccountConfirmYesSemantics =>
+      'Sim, excluir conta permanentemente';
+
+  @override
+  String get profileDeleteAccountConfirmNo => 'Não, cancelar';
+
+  @override
+  String get profileDeleteAccountConfirmNoSemantics =>
+      'Não, cancelar exclusão da conta';
+
+  @override
+  String get profileDeleteAccountPasswordHint => 'Senha atual';
+
+  @override
+  String get profileDeleteAccountError =>
+      'Não foi possível excluir a conta. Tente de novo.';
+
+  @override
+  String get profileAccountDeletionLink => 'Como funciona a exclusão de conta';
 
   @override
   String get onboardingSlide1Title => 'Todos os Pokémon em um só Lugar';

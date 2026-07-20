@@ -36,6 +36,23 @@ class FirestoreFavoritesRepository implements FavoritesRepository {
   Future<bool> isFavorite(int pokemonId) => localCache.isFavorite(pokemonId);
 
   @override
+  Future<void> clearAll() async {
+    await localCache.clearAll();
+    if (!_connectivity.isOnline) return;
+
+    try {
+      final snapshot = await _favoritesCollection.get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+      await _firestore.collection(_collection).doc(userId).delete();
+      // ponytail: O(n) deletes; upgrade to WriteBatch chunks if favorites grow large
+    } on Object catch (_) {
+      // Local already cleared; remote retry on next deleteAccount attempt
+    }
+  }
+
+  @override
   Future<void> toggleFavorite(int pokemonId) async {
     final wasFavorite = await localCache.isFavorite(pokemonId);
     await localCache.toggleFavorite(pokemonId);

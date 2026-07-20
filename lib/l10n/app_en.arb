@@ -290,6 +290,7 @@
   "profileVersionLabel": "Version",
   "profileTermsLabel": "Terms of use",
   "profilePrivacyLabel": "Privacy policy",
+  "profileAccountDeletionLabel": "Account and data deletion",
   "profileHelpLabel": "Help",
   "profileAboutLabel": "About"
 ,
@@ -385,6 +386,7 @@
 
   "legalLoadTermsError": "Could not load the terms of use.",
   "legalLoadPrivacyError": "Could not load the privacy policy.",
+  "legalLoadAccountDeletionError": "Could not load the account deletion information.",
 
   "helpFaqTitle": "Frequently asked questions",
   "helpSupportTitle": "Support",
@@ -461,6 +463,17 @@
   "profileLogoutConfirmYesSemantics": "Yes, sign out of account",
   "profileLogoutConfirmNo": "No, cancel",
   "profileLogoutConfirmNoSemantics": "No, cancel sign out",
+  "profileDeleteAccountButton": "Delete account",
+  "profileDeleteAccountConfirmSemantics": "Confirm account deletion",
+  "profileDeleteAccountConfirmTitle": "Delete your account permanently?",
+  "profileDeleteAccountConfirmBody": "This removes your account and synced favorites. This cannot be undone.",
+  "profileDeleteAccountConfirmYes": "Yes, delete account",
+  "profileDeleteAccountConfirmYesSemantics": "Yes, permanently delete account",
+  "profileDeleteAccountConfirmNo": "No, cancel",
+  "profileDeleteAccountConfirmNoSemantics": "No, cancel account deletion",
+  "profileDeleteAccountPasswordHint": "Current password",
+  "profileDeleteAccountError": "Could not delete account. Try again.",
+  "profileAccountDeletionLink": "How account deletion works",
   "onboardingSlide1Title": "All Pokémon in one place",
   "onboardingSlide1Subtitle": "Browse a vast list of Pokémon from every generation by Nintendo",
   "onboardingSlide2Title": "Keep your Pokédex up to date",

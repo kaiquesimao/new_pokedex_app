@@ -99,4 +99,4 @@ The latest version will be available in the app and/or repository legal assets.
 
 ## 15) Contact
 
-For privacy requests or questions, contact the project maintainer through the official PokeData support channel provided in the app or repository.
+For privacy requests or questions, email **pokedata.app@gmail.com**.

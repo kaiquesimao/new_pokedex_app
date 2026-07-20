@@ -7,8 +7,10 @@ import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
+import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
+import 'package:pokedex_app/features/profile/presentation/widgets/delete_account_bottom_sheet.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
@@ -129,6 +131,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               _LogoutSection(
                 displayName: auth.displayName ?? l10n.authDefaultTrainerName,
                 onLogout: () => _handleLogout(context, ref),
+                onDeleteAccount: () => _handleDeleteAccount(context, ref),
+                onAccountDeletionInfo: () =>
+                    context.push('/legal/account-deletion'),
               ),
             ],
           ],
@@ -164,6 +169,41 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     if (context.mounted) {
       context.go('/welcome');
     }
+  }
+
+  static Future<void> _handleDeleteAccount(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final auth = ref.read(authProvider);
+    final result = await showDeleteAccountBottomSheet(
+      context,
+      requirePassword: auth.canEditCredentials,
+    );
+    if (result == null || !context.mounted) return;
+
+    try {
+      await ref
+          .read(authProvider.notifier)
+          .deleteAccount(
+            currentPassword: result.password,
+            clearUserData: () =>
+                ref.read(favoritesRepositoryProvider).clearAll(),
+          );
+    } on Object {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).profileDeleteAccountError,
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
+    if (context.mounted) context.go('/welcome');
   }
 }
 
@@ -485,10 +525,17 @@ class _ChevronRow extends StatelessWidget {
 }
 
 class _LogoutSection extends StatelessWidget {
-  const _LogoutSection({required this.displayName, required this.onLogout});
+  const _LogoutSection({
+    required this.displayName,
+    required this.onLogout,
+    required this.onDeleteAccount,
+    required this.onAccountDeletionInfo,
+  });
 
   final String displayName;
   final VoidCallback onLogout;
+  final VoidCallback onDeleteAccount;
+  final VoidCallback onAccountDeletionInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -528,6 +575,16 @@ class _LogoutSection extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: onDeleteAccount,
+          style: TextButton.styleFrom(foregroundColor: logoutRed),
+          child: Text(l10n.profileDeleteAccountButton),
+        ),
+        TextButton(
+          onPressed: onAccountDeletionInfo,
+          child: Text(l10n.profileAccountDeletionLink),
         ),
       ],
     );

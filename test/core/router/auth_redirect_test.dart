@@ -118,6 +118,18 @@ void main() {
       );
     });
 
+    test('guest can open legal account-deletion route', () {
+      expect(
+        resolveAuthRedirect(
+          auth: const AuthState(isInitialized: true),
+          onboardingCompleted: onboardingDone,
+          legalTermsAccepted: termsAccepted,
+          path: '/legal/account-deletion',
+        ),
+        isNull,
+      );
+    });
+
     test('legal terms route bypasses onboarding', () {
       expect(
         resolveAuthRedirect(
@@ -137,6 +149,18 @@ void main() {
           onboardingCompleted: false,
           legalTermsAccepted: false,
           path: '/legal/privacy',
+        ),
+        isNull,
+      );
+    });
+
+    test('legal account-deletion route bypasses onboarding', () {
+      expect(
+        resolveAuthRedirect(
+          auth: const AuthState(isInitialized: true),
+          onboardingCompleted: false,
+          legalTermsAccepted: false,
+          path: '/legal/account-deletion',
         ),
         isNull,
       );

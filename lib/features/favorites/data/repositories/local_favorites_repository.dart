@@ -33,6 +33,9 @@ class LocalFavoritesRepository implements FavoritesRepository {
   @override
   Future<bool> isFavorite(int pokemonId) async => _cache.contains(pokemonId);
 
+  @override
+  Future<void> clearAll() => replaceAll({});
+
   Future<void> replaceAll(Set<int> ids) async {
     _cache
       ..clear()

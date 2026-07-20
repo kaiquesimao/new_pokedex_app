@@ -1,6 +1,8 @@
 abstract class FavoritesRepository {
   Future<Set<int>> getFavoriteIds();
 
+  Future<void> clearAll();
+
   Future<void> toggleFavorite(int pokemonId);
 
   Future<bool> isFavorite(int pokemonId);

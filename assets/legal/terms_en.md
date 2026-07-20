@@ -63,4 +63,4 @@ These Terms are governed by the laws of Brazil, without prejudice to mandatory c
 
 ## 12) Contact
 
-For legal or support questions related to these Terms, contact the project maintainer through the official PokeData support channel provided in the app or repository.
+For legal or support questions related to these Terms, email **pokedata.app@gmail.com**.

@@ -13,6 +13,9 @@ class UnauthenticatedFavoritesRepository implements FavoritesRepository {
   Future<bool> isFavorite(int pokemonId) async => false;
 
   @override
+  Future<void> clearAll() async {}
+
+  @override
   Future<void> toggleFavorite(int pokemonId) async {}
 
   @override
