@@ -53,6 +53,7 @@ prototype/
 skills-lock.json
 docs/design
 docs/superpowers
+.superpowers/
 
 # Tool
 tool/
