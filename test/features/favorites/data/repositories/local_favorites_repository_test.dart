@@ -34,6 +34,18 @@ void main() {
     expect(await repo.getFavoriteIds(), {2, 3});
   });
 
+  test('clearAll removes all favorites', () async {
+    SharedPreferences.setMockInitialValues({
+      favoritesStorageKey: ['1', '25'],
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final repo = LocalFavoritesRepository(prefs);
+
+    await repo.clearAll();
+
+    expect(await repo.getFavoriteIds(), isEmpty);
+  });
+
   test('watchFavoriteIds emits after toggle', () async {
     final prefs = await SharedPreferences.getInstance();
     final repo = LocalFavoritesRepository(prefs);
