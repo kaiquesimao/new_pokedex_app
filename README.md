@@ -44,6 +44,13 @@ flutter build web --release --wasm \
   --dart-define-from-file=dart_defines.json
 ```
 
+### Google Play — account deletion URL
+
+`https://pokedata.kaique.site/legal/account-deletion`
+
+Data Safety → account deletion link. Optional “delete data without deleting
+account”: No.
+
 Optional Android obfuscation:
 
 ```bash
