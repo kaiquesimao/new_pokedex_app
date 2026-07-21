@@ -1,5 +1,11 @@
-# CI on every PR/push; web deploy to Cloudflare Pages (master + PR previews).
-name: CI
+# Analyze/test on every PR/push; web deploy to Cloudflare Pages (master + PR previews).
+name: CI Web
+run-name: >-
+  CI Web · ${{
+    github.event_name == 'pull_request'
+    && format('PR #{0}', github.event.pull_request.number)
+    || github.ref_name
+  }}
 
 on:
   push:
