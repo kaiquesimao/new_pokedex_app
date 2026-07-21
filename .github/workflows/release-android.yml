@@ -113,6 +113,20 @@ jobs:
           flutter build appbundle --release
           --dart-define-from-file=dart_defines.json
 
+      # Fail before Play upload if a dependency re-introduced advertising ID.
+      - name: Assert no advertising ID permission
+        run: |
+          manifest="build/app/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml"
+          if ! [ -f "$manifest" ]; then
+            echo "::error::Merged manifest not found at $manifest"
+            exit 1
+          fi
+          if grep -E 'com\.google\.android\.gms\.permission\.AD_ID|android\.permission\.ACCESS_ADSERVICES_AD_ID' "$manifest"; then
+            echo "::error::Advertising ID permission still present; update AndroidManifest tools:node=remove"
+            exit 1
+          fi
+          echo "OK: no AD_ID / ACCESS_ADSERVICES_AD_ID in merged manifest"
+
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v7
         with:
