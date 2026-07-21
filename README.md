@@ -144,14 +144,25 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 | Tag `v*` (e.g. `v1.0.1`) | analyze → test → signed AAB → upload **internal** track |
 | Manual (`workflow_dispatch`) | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
 
-Before tagging, bump `version:` in [`pubspec.yaml`](pubspec.yaml)
-(`x.y.z+build` — **build** / `versionCode` must increase every Play upload).
+**Preferred:** run the release script (bumps `pubspec.yaml`, commits, tags, pushes):
+
+```powershell
+# Working tree must be clean. Build number (+N) always increments.
+.\scripts\release.ps1 patch   # 1.0.0+4 → 1.0.1+5
+.\scripts\release.ps1 minor
+.\scripts\release.ps1 major
+.\scripts\release.ps1 patch -DryRun
+```
 
 ```bash
-# After bumping pubspec version:
-git tag v1.0.1
-git push origin v1.0.1
+# Git Bash / WSL / macOS / Linux
+./scripts/release.sh patch
+./scripts/release.sh minor --dry-run
 ```
+
+The workflow reads `version:` from `pubspec.yaml`, checks that tag `vX.Y.Z`
+matches the name part, and builds with `--build-name` / `--build-number`
+(`versionCode` must keep increasing on every Play upload; current Play is `+4`).
 
 Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
 
@@ -232,4 +243,7 @@ flutter test
 
 ## Version
 
-App version is defined in [`pubspec.yaml`](pubspec.yaml) (`version: x.y.z+build`) and shown in Profile via `package_info_plus`.
+App version lives in [`pubspec.yaml`](pubspec.yaml) (`version: x.y.z+build`) and is
+shown in Profile via `package_info_plus`. For releases, prefer
+[`scripts/release.ps1`](scripts/release.ps1) or [`scripts/release.sh`](scripts/release.sh)
+instead of editing by hand.
