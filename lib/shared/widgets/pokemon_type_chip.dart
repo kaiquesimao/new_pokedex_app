@@ -23,11 +23,6 @@ class PokemonTypeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = PokemonTypeColors.forType(type, isDark: isDark);
-    final labelColor = selected
-        ? Colors.white
-        : isDark
-        ? PokemonTypeColors.forType(type)
-        : color;
 
     final chip = GestureDetector(
       onTap: onTap,
@@ -35,28 +30,28 @@ class PokemonTypeChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected
-              ? color
-              : Color.alphaBlend(
-                  color.withValues(alpha: isDark ? 0.42 : 0.28),
-                  Theme.of(context).colorScheme.surface,
-                ),
+          color: color,
           borderRadius: BorderRadius.circular(21),
           border: Border.all(
-            color: selected ? color : color.withValues(alpha: 0.55),
-            width: selected ? 2 : 1,
+            color: selected
+                ? (Color.lerp(color, Colors.black, 0.4) ?? color)
+                : color,
+            width: selected ? 2.5 : 0,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PokemonTypeIcon(assetPath: type.assetPath),
+            PokemonTypeIcon(
+              assetPath: type.assetPath,
+              color: Colors.white,
+            ),
             if (showLabel) ...[
               const SizedBox(width: 6),
               Text(
                 type.label(AppLocalizations.of(context)),
-                style: TextStyle(
-                  color: labelColor,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
