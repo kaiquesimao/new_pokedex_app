@@ -84,6 +84,7 @@ void main() {
   test('getSummaryById returns cached data when offline', () async {
     final summary = await repository.getSummaryById(25);
 
-    expect(summary.name, 'pikachu');
+    expect(summary.slug, 'pikachu');
+    expect(summary.name, 'Pikachu');
   });
 }
