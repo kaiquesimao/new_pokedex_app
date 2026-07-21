@@ -102,6 +102,40 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Resolve app version
+        id: version
+        run: |
+          set -euo pipefail
+          line="$(grep -E '^version:' pubspec.yaml | head -n1)"
+          if [[ ! "$line" =~ ^version:[[:space:]]*([0-9]+)\.([0-9]+)\.([0-9]+)\+([0-9]+)[[:space:]]*$ ]]; then
+            echo "::error::Unexpected pubspec version: $line (expected x.y.z+build)"
+            exit 1
+          fi
+          name="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+          number="${BASH_REMATCH[4]}"
+
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            tag_name="${GITHUB_REF_NAME#v}"
+            if [[ ! "$tag_name" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::Tag must be vX.Y.Z (got ${{ github.ref_name }})"
+              exit 1
+            fi
+            if [[ "$tag_name" != "$name" ]]; then
+              echo "::error::Tag v$tag_name does not match pubspec name $name"
+              exit 1
+            fi
+            name="$tag_name"
+          fi
+
+          if (( number < 1 )); then
+            echo "::error::Build number must be >= 1 (got $number)"
+            exit 1
+          fi
+
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $name+$number"
+
       - name: Analyze
         run: flutter analyze
 
@@ -111,12 +145,14 @@ jobs:
       - name: Build app bundle
         run: >-
           flutter build appbundle --release
+          --build-name=${{ steps.version.outputs.name }}
+          --build-number=${{ steps.version.outputs.number }}
           --dart-define-from-file=dart_defines.json
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v7
         with:
-          name: app-release-${{ github.ref_name }}
+          name: app-release-${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
           path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
 
@@ -131,4 +167,4 @@ jobs:
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           tracks: ${{ inputs.track || 'internal' }}
           status: completed
-          releaseName: ${{ github.ref_name }}
+          releaseName: ${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
