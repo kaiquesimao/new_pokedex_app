@@ -23,4 +23,40 @@ void main() {
     expect(summary.spriteUrl, response.spriteUrl);
     expect(summary.spriteUrl, contains('other/home'));
   });
+
+  test('toSummary appends form label for non-default varieties', () {
+    final species = PokemonSpeciesResponse.withFlavorText(
+      id: 6,
+      flavorText: '',
+      names: [
+        {
+          'name': 'Charizard',
+          'language': {'name': 'en'},
+        },
+      ],
+    );
+    const response = PokemonResponse(
+      id: 10034,
+      name: 'charizard-mega-x',
+      height: 17,
+      weight: 1105,
+      types: [],
+      stats: [],
+      abilities: [],
+      spriteUrl: null,
+      listSpriteUrl: null,
+      isDefault: false,
+      isMega: true,
+      speciesId: 6,
+    );
+
+    final summary = PokemonMapper.toSummary(
+      response,
+      pokeApiCode: 'en',
+      species: species,
+    );
+
+    expect(summary.slug, 'charizard-mega-x');
+    expect(summary.name, 'Charizard Mega X');
+  });
 }

@@ -22,6 +22,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_sprite_variant.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_detail_sprite_variants.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_display_names.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
@@ -479,8 +480,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
         try {
           final species = await _getCachedSpecies(ref.id);
           if (generation != _nameIndexGeneration) return;
-          final localized =
-              species.localizedName(pokeApiCode) ?? ref.name;
+          final localized = species.localizedName(pokeApiCode) ?? ref.name;
           pending.add((
             id: ref.id,
             name: ref.name,
@@ -556,8 +556,11 @@ class PokemonRepositoryImpl implements PokemonRepository {
           if (speciesId == null) continue;
           final species = await speciesFor(speciesId);
           if (generation != _nameIndexGeneration) return;
-          final localized =
-              species.localizedName(pokeApiCode) ?? ref.name;
+          final localized = PokemonDisplayNames.resolve(
+            apiName: pokemon.name,
+            speciesLocalizedName: species.localizedName(pokeApiCode),
+            isDefault: pokemon.isDefault,
+          );
           pending.add((
             id: ref.id,
             name: ref.name,
@@ -1119,8 +1122,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
           // the index and species is already in memory — do not
           // fetchPokemonSpecies here (home cost ceiling).
           final speciesId = enriched.speciesId;
-          final species =
-              speciesId != null ? _speciesCache[speciesId] : null;
+          final species = speciesId != null ? _speciesCache[speciesId] : null;
           final summary = PokemonMapper.toSummary(
             enriched,
             species: species,
@@ -1129,8 +1131,11 @@ class PokemonRepositoryImpl implements PokemonRepository {
           await _local.saveSummary(summary);
           await _local.savePokemonResponse(enriched);
           if (nameIndexReady && species != null) {
-            final localized =
-                species.localizedName(pokeApiCode) ?? enriched.name;
+            final localized = PokemonDisplayNames.resolve(
+              apiName: enriched.name,
+              speciesLocalizedName: species.localizedName(pokeApiCode),
+              isDefault: enriched.isDefault,
+            );
             await _local.upsertNameIndex([
               (
                 id: enriched.id,

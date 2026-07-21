@@ -6,6 +6,7 @@ import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_display_names.dart';
 
 typedef PokemonNameIndexRef = ({int id, String name, String localizedName});
 
@@ -135,20 +136,29 @@ class PokemonLocalDataSource {
     bool? isDefault;
     var isMega = false;
     var spriteUrl = entry.spriteUrl;
+    var apiName = entry.name;
     if (entry.detailJson != null) {
       final detail = jsonDecode(entry.detailJson!) as Map<String, dynamic>;
       height = detail['height'] as int?;
       weight = detail['weight'] as int?;
       isDefault = detail['is_default'] as bool?;
       isMega = detail['is_mega'] as bool? ?? false;
+      final detailName = detail['name'] as String?;
+      if (detailName != null && detailName.isNotEmpty) {
+        apiName = detailName;
+      }
       spriteUrl =
           PokemonSprites.fromJson(detail['sprites']).displayUrl ?? spriteUrl;
     }
 
     return PokemonSummary(
       id: entry.id,
-      slug: entry.name,
-      name: entry.name,
+      slug: apiName,
+      name: _displayNameFromCache(
+        cachedName: entry.name,
+        apiName: apiName,
+        isDefault: isDefault,
+      ),
       types: types
           .map(PokemonType.fromApiName)
           .whereType<PokemonType>()
@@ -159,6 +169,40 @@ class PokemonLocalDataSource {
       isDefault: isDefault,
       isMega: isMega,
     );
+  }
+
+  /// Rebuilds form-aware labels; keeps localized species names from cache.
+  static String _displayNameFromCache({
+    required String cachedName,
+    required String apiName,
+    required bool? isDefault,
+  }) {
+    if (isDefault == true && !_looksLikeApiSlug(cachedName)) {
+      return cachedName;
+    }
+
+    return PokemonDisplayNames.resolve(
+      apiName: apiName,
+      speciesLocalizedName: _speciesHintFromCachedName(cachedName),
+      isDefault: isDefault,
+    );
+  }
+
+  /// Cached `name` may be an API slug or a localized display name.
+  static String? _speciesHintFromCachedName(String cachedName) {
+    if (_looksLikeApiSlug(cachedName)) return null;
+    final parts = cachedName
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    // Form-aware cache values look like "Charizard Mega X" — first token is
+    // the species label. Single-token values are species-only ("Charizard").
+    return parts.isEmpty ? null : parts.first;
+  }
+
+  static bool _looksLikeApiSlug(String value) {
+    if (value.isEmpty) return true;
+    return value == value.toLowerCase() && !value.contains(' ');
   }
 
   Map<String, dynamic> _responseToJson(PokemonResponse response) {

@@ -1,6 +1,7 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_display_names.dart';
 
 class PokemonMapper {
   static List<PokemonType> mapTypes(List<PokemonTypeSlot> slots) {
@@ -15,14 +16,14 @@ class PokemonMapper {
     required String pokeApiCode,
     PokemonSpeciesResponse? species,
   }) {
-    final displayName = (species?.localizedName(pokeApiCode) ?? '').isNotEmpty
-        ? species!.localizedName(pokeApiCode)!
-        : _capitalize(response.name);
-
     return PokemonSummary(
       id: response.id,
       slug: response.name,
-      name: displayName,
+      name: PokemonDisplayNames.resolve(
+        apiName: response.name,
+        speciesLocalizedName: species?.localizedName(pokeApiCode),
+        isDefault: response.isDefault,
+      ),
       types: mapTypes(response.types),
       spriteUrl: response.spriteUrl,
       height: response.height,
@@ -39,9 +40,11 @@ class PokemonMapper {
   }) {
     return PokemonDetail(
       id: response.id,
-      name: (species?.localizedName(pokeApiCode) ?? '').isNotEmpty
-          ? species!.localizedName(pokeApiCode)!
-          : _capitalize(response.name),
+      name: PokemonDisplayNames.resolve(
+        apiName: response.name,
+        speciesLocalizedName: species?.localizedName(pokeApiCode),
+        isDefault: response.isDefault,
+      ),
       height: response.height,
       weight: response.weight,
       types: mapTypes(response.types),
@@ -63,10 +66,5 @@ class PokemonMapper {
       flavorTextEntries: species?.flavorTextEntries ?? const [],
       generaEntries: species?.genera ?? const [],
     );
-  }
-
-  static String _capitalize(String value) {
-    if (value.isEmpty) return value;
-    return value[0].toUpperCase() + value.substring(1);
   }
 }
