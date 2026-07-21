@@ -1,6 +1,7 @@
 # Build signed AAB and upload to Play Store (internal testing by default).
 # Trigger: tag v* or Actions → Release Android → Run workflow.
 name: Release Android
+run-name: Release Android (${{ inputs.track || 'internal' }}) · ${{ github.ref_name }}
 
 on:
   push:
