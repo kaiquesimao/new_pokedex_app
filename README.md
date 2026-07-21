@@ -122,7 +122,7 @@ Dependabot: [`.github/dependabot.yml`](.github/dependabot.yml).
 
 ### Web → Cloudflare Pages
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml):
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (**CI Web**):
 
 | Trigger | What runs |
 |---------|-------------|
