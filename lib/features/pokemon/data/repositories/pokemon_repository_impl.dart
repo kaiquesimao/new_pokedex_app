@@ -396,7 +396,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
     final summaries = await _local.getSummaries(ids, allowStale: true);
     return summaries
-        .map((summary) => PokemonRef(id: summary.id, name: summary.name))
+        .map((summary) => PokemonRef(id: summary.id, name: summary.slug))
         .toList();
   }
 

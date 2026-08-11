@@ -74,16 +74,27 @@ class _FakePokemonRepository implements PokemonRepository {
 
   @override
   Future<PokemonSummary> getSummaryById(int id) async {
-    final name = refs
+    final apiName = refs
         .where((ref) => ref.id == id)
         .map((ref) => ref.name)
         .firstOrNull;
+    final slug = apiName ?? 'pokemon-$id';
+    // Mimic production: display name differs from API slug for forms.
+    final displayName = switch (slug) {
+      'charizard-gmax' => 'Charizard Gigantamax',
+      'rattata-alola' => 'Rattata Alola',
+      'venusaur-mega' => 'Venusaur Mega',
+      _ => slug,
+    };
+    final isDefault = !slug.contains('-');
     return PokemonSummary(
       id: id,
-      slug: name ?? 'pokemon-$id',
-      name: name ?? 'pokemon-$id',
+      slug: slug,
+      name: displayName,
       types: const [PokemonType.grass],
       spriteUrl: 'https://example.com/$id.png',
+      isDefault: isDefault,
+      isMega: slug.contains('-mega'),
     );
   }
 
@@ -148,8 +159,48 @@ void main() {
 
     expect(container.read(pokemonListProvider).items, hasLength(1));
     expect(
-      container.read(pokemonListProvider).items.single.name,
+      container.read(pokemonListProvider).items.single.slug,
       'venusaur-mega',
+    );
+  });
+
+  test('gigantamax and regional form filters return matching forms', () async {
+    final container = await _createContainer(
+      repository: _FakePokemonRepository(
+        sliceIds: const [6, 10195, 10091],
+        refs: const [
+          PokemonRef(id: 6, name: 'charizard'),
+          PokemonRef(id: 10195, name: 'charizard-gmax'),
+          PokemonRef(id: 10091, name: 'rattata-alola'),
+        ],
+      ),
+    );
+
+    final notifier = container.read(pokemonListProvider.notifier);
+    await notifier.loadInitial();
+    await Future<void>.delayed(Duration.zero);
+
+    container
+        .read(pokemonFiltersProvider.notifier)
+        .toggleFormCategory(PokemonFormCategory.gigantamax);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(
+      container.read(pokemonListProvider).items.map((e) => e.slug),
+      ['charizard-gmax'],
+    );
+
+    container
+        .read(pokemonFiltersProvider.notifier)
+        .toggleFormCategory(PokemonFormCategory.gigantamax);
+    container
+        .read(pokemonFiltersProvider.notifier)
+        .toggleFormCategory(PokemonFormCategory.regional);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(
+      container.read(pokemonListProvider).items.map((e) => e.slug),
+      ['rattata-alola'],
     );
   });
 }

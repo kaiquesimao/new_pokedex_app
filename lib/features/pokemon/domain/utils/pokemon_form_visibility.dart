@@ -41,7 +41,7 @@ class PokemonFormVisibility {
     }
 
     return includesNamed(
-      apiName: summary.name,
+      apiName: _apiNameFor(summary),
       showMegaEvolutions: showMegaEvolutions,
       showOtherForms: showOtherForms,
     );
@@ -142,7 +142,7 @@ class PokemonFormVisibility {
 
   static PokemonFormCategory? categoryForSummary(PokemonSummary summary) =>
       categoryFor(
-        apiName: summary.name,
+        apiName: _apiNameFor(summary),
         isDefault: summary.isDefault,
         isMega: summary.isMega,
       );
@@ -171,8 +171,12 @@ class PokemonFormVisibility {
   }) =>
       matchesListFormFilter(
         formCategories: formCategories,
-        apiName: summary.name,
+        apiName: _apiNameFor(summary),
         isDefault: summary.isDefault,
         isMega: summary.isMega,
       );
+
+  /// Prefer PokeAPI slug; display [PokemonSummary.name] is not form-suffix-safe.
+  static String _apiNameFor(PokemonSummary summary) =>
+      summary.slug.isNotEmpty ? summary.slug : summary.name;
 }
