@@ -5,26 +5,17 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_ref.dart';
 import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
-import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
-import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<ProviderContainer> _createContainer({
   required PokemonRepository repository,
-  ProfileSettings? initialSettings,
 }) async {
-  SharedPreferences.setMockInitialValues(
-    initialSettings == null
-        ? {}
-        : {
-            if (!initialSettings.showMegaEvolutions)
-              showMegaEvolutionsKey: false,
-            if (!initialSettings.showOtherForms) showOtherFormsKey: false,
-          },
-  );
+  SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
 
   return ProviderContainer.test(
@@ -103,7 +94,7 @@ class _FakePokemonRepository implements PokemonRepository {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('loadInitial clears loading flags and exposes summaries', () async {
+  test('loadInitial defaults to default forms only', () async {
     final container = await _createContainer(
       repository: _FakePokemonRepository(
         refs: const [
@@ -123,14 +114,14 @@ void main() {
     expect(state.isLoadingIds, isFalse);
     expect(state.isLoadingSummaries, isFalse);
     expect(state.showFullSkeleton, isFalse);
-    expect(state.items, hasLength(3));
+    expect(state.items, hasLength(2));
     expect(
       state.items.map((item) => item.name),
-      ['bulbasaur', 'ivysaur', 'venusaur-mega'],
+      ['bulbasaur', 'ivysaur'],
     );
   });
 
-  test('reloads when mega evolutions preference changes', () async {
+  test('reloads when mega form category is selected', () async {
     final container = await _createContainer(
       repository: _FakePokemonRepository(
         sliceIds: const [1, 10033],
@@ -139,23 +130,26 @@ void main() {
           PokemonRef(id: 10033, name: 'venusaur-mega'),
         ],
       ),
-      initialSettings: const ProfileSettings(),
     );
 
     final notifier = container.read(pokemonListProvider.notifier);
     await notifier.loadInitial();
     await Future<void>.delayed(Duration.zero);
-    expect(container.read(pokemonListProvider).items, hasLength(2));
+    expect(container.read(pokemonListProvider).items, hasLength(1));
+    expect(
+      container.read(pokemonListProvider).items.single.name,
+      'bulbasaur',
+    );
 
-    await container
-        .read(profileSettingsProvider.notifier)
-        .setShowMegaEvolutions(value: false);
+    container
+        .read(pokemonFiltersProvider.notifier)
+        .toggleFormCategory(PokemonFormCategory.mega);
     await Future<void>.delayed(Duration.zero);
 
     expect(container.read(pokemonListProvider).items, hasLength(1));
     expect(
       container.read(pokemonListProvider).items.single.name,
-      'bulbasaur',
+      'venusaur-mega',
     );
   });
 }

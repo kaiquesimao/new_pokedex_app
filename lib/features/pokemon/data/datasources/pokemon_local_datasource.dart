@@ -136,6 +136,7 @@ class PokemonLocalDataSource {
     bool? isDefault;
     var isMega = false;
     var spriteUrl = entry.spriteUrl;
+    String? shinySpriteUrl;
     var apiName = entry.name;
     if (entry.detailJson != null) {
       final detail = jsonDecode(entry.detailJson!) as Map<String, dynamic>;
@@ -147,8 +148,9 @@ class PokemonLocalDataSource {
       if (detailName != null && detailName.isNotEmpty) {
         apiName = detailName;
       }
-      spriteUrl =
-          PokemonSprites.fromJson(detail['sprites']).displayUrl ?? spriteUrl;
+      final sprites = PokemonSprites.fromJson(detail['sprites']);
+      spriteUrl = sprites.displayUrl ?? spriteUrl;
+      shinySpriteUrl = sprites.shinyDisplayUrl;
     }
 
     return PokemonSummary(
@@ -164,6 +166,7 @@ class PokemonLocalDataSource {
           .whereType<PokemonType>()
           .toList(),
       spriteUrl: spriteUrl,
+      shinySpriteUrl: shinySpriteUrl,
       height: height,
       weight: weight,
       isDefault: isDefault,

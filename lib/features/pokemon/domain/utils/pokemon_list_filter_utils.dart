@@ -1,6 +1,7 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 
 class PokemonListFilterUtils {
   static List<PokemonSummary> apply({
@@ -38,6 +39,13 @@ class PokemonListFilterUtils {
         if (weight == null || !filters.weightBucket!.matches(weight)) {
           return false;
         }
+      }
+
+      if (!PokemonFormVisibility.matchesListFormFilterSummary(
+        summary: pokemon,
+        formCategories: filters.formCategories,
+      )) {
+        return false;
       }
 
       return true;

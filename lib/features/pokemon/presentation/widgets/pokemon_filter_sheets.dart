@@ -52,6 +52,16 @@ Future<void> showPokemonGenerationSheet(BuildContext context) {
   );
 }
 
+Future<void> showPokemonFormsSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (context) => const _PokemonFormsSheet(),
+  );
+}
+
 class _PokemonTypeSheet extends ConsumerWidget {
   const _PokemonTypeSheet();
 
@@ -132,7 +142,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
 
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.65,
+      initialChildSize: 0.75,
       minChildSize: 0.4,
       maxChildSize: 0.9,
       builder: (context, scrollController) {
@@ -143,7 +153,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
             BottomSheetHeader(
               title: l10n.filterAdvancedTitle,
               onClear: () {
-                notifier.clearAll();
+                notifier.clearAdvancedFilters();
                 Navigator.pop(context);
               },
             ),
@@ -199,9 +209,61 @@ class _PokemonFilterSheet extends ConsumerWidget {
                 }).toList(),
               ),
             ),
+            const SizedBox(height: 12),
+            SwitchListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              title: Text(l10n.filterShowShinyLabel),
+              value: filters.showShiny,
+              onChanged: (value) => notifier.setShowShiny(value: value),
+            ),
           ],
         );
       },
+    );
+  }
+}
+
+class _PokemonFormsSheet extends ConsumerWidget {
+  const _PokemonFormsSheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filters = ref.watch(pokemonFiltersProvider);
+    final notifier = ref.read(pokemonFiltersProvider.notifier);
+    final l10n = AppLocalizations.of(context);
+
+    return Semantics(
+      label: l10n.filterFormsSemantics,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(
+              title: l10n.filterFormsTitle,
+              onClear: () {
+                notifier.clearFormCategories();
+                Navigator.pop(context);
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: PokemonFormCategory.values.map((category) {
+                  final selected = filters.formCategories.contains(category);
+                  return SortOptionChip(
+                    label: category.label(l10n),
+                    selected: selected,
+                    onTap: () => notifier.toggleFormCategory(category),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

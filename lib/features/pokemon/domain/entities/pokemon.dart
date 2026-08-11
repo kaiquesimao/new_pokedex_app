@@ -7,6 +7,7 @@ class PokemonSummary {
     required this.name,
     required this.types,
     this.spriteUrl,
+    this.shinySpriteUrl,
     this.height,
     this.weight,
     this.isDefault,
@@ -22,6 +23,7 @@ class PokemonSummary {
   final String name;
   final List<PokemonType> types;
   final String? spriteUrl;
+  final String? shinySpriteUrl;
   final int? height;
   final int? weight;
 

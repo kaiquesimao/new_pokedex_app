@@ -56,7 +56,7 @@ void main() {
         currentSpriteUrl: charizard.spriteUrl,
         currentShinySpriteUrl: 'https://example.com/6-shiny.png',
         varietySummaries: [charizard, megaX, megaY, gmax],
-        visibility: const PokemonFormVisibility(),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants, hasLength(5));
@@ -77,28 +77,27 @@ void main() {
         currentSpriteUrl: charizard.spriteUrl,
         currentShinySpriteUrl: null,
         varietySummaries: [charizard],
-        visibility: const PokemonFormVisibility(),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants, hasLength(1));
       expect(variants.single.labelKey, PokemonSpriteVariantLabelKeys.normal);
     });
 
-    test('respects mega and other-forms visibility toggles', () {
+    test('allowAll includes mega and alternate forms', () {
       final variants = buildPokemonDetailSpriteVariants(
         currentPokemonId: 6,
         currentSpriteUrl: charizard.spriteUrl,
         currentShinySpriteUrl: 'https://example.com/6-shiny.png',
         varietySummaries: [charizard, megaX, gmax],
-        visibility: const PokemonFormVisibility(
-          showMegaEvolutions: false,
-          showOtherForms: false,
-        ),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants.map((v) => v.labelKey), [
         PokemonSpriteVariantLabelKeys.normal,
         PokemonSpriteVariantLabelKeys.shiny,
+        PokemonSpriteVariantLabelKeys.megaX,
+        PokemonSpriteVariantLabelKeys.gigantamax,
       ]);
     });
 
@@ -117,7 +116,7 @@ void main() {
         currentSpriteUrl: charizard.spriteUrl,
         currentShinySpriteUrl: null,
         varietySummaries: [charizard, noSprite],
-        visibility: const PokemonFormVisibility(),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants, hasLength(1));
@@ -139,7 +138,7 @@ void main() {
           ),
           alola,
         ],
-        visibility: const PokemonFormVisibility(),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants[0].labelKey, PokemonSpriteVariantLabelKeys.alola);
@@ -153,7 +152,7 @@ void main() {
         currentSpriteUrl: null,
         currentShinySpriteUrl: 'https://example.com/6-shiny.png',
         varietySummaries: [charizard, megaX],
-        visibility: const PokemonFormVisibility(),
+        visibility: PokemonFormVisibility.allowAll,
       );
 
       expect(variants, isEmpty);

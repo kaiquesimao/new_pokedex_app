@@ -1,4 +1,5 @@
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 
 /// Catalog visibility for mega evolutions and alternate Pokémon forms.
 class PokemonFormVisibility {
@@ -6,6 +7,9 @@ class PokemonFormVisibility {
     this.showMegaEvolutions = true,
     this.showOtherForms = true,
   });
+
+  /// Detail carousel: include every variety form.
+  static const allowAll = PokemonFormVisibility();
 
   final bool showMegaEvolutions;
   final bool showOtherForms;
@@ -109,4 +113,66 @@ class PokemonFormVisibility {
 
     return false;
   }
+
+  /// List-filter category for a form, or `null` for default / unclassified.
+  static PokemonFormCategory? categoryFor({
+    required String apiName,
+    bool? isDefault,
+    bool isMega = false,
+  }) {
+    if (isDefault ?? false) return null;
+
+    if (isMega || isMegaForm(apiName)) {
+      return PokemonFormCategory.mega;
+    }
+    if (apiName.contains('-gmax')) {
+      return PokemonFormCategory.gigantamax;
+    }
+    if (isRegionalForm(apiName)) {
+      return PokemonFormCategory.regional;
+    }
+    if (isAlternateForm(apiName)) {
+      return PokemonFormCategory.otherSpecial;
+    }
+    if (isDefault == false) {
+      return PokemonFormCategory.otherSpecial;
+    }
+    return null;
+  }
+
+  static PokemonFormCategory? categoryForSummary(PokemonSummary summary) =>
+      categoryFor(
+        apiName: summary.name,
+        isDefault: summary.isDefault,
+        isMega: summary.isMega,
+      );
+
+  /// Empty [formCategories] ⇒ defaults only; non-empty ⇒ OR of categories.
+  static bool matchesListFormFilter({
+    required Set<PokemonFormCategory> formCategories,
+    required String apiName,
+    bool? isDefault,
+    bool isMega = false,
+  }) {
+    final category = categoryFor(
+      apiName: apiName,
+      isDefault: isDefault,
+      isMega: isMega,
+    );
+    if (formCategories.isEmpty) {
+      return category == null;
+    }
+    return category != null && formCategories.contains(category);
+  }
+
+  static bool matchesListFormFilterSummary({
+    required PokemonSummary summary,
+    required Set<PokemonFormCategory> formCategories,
+  }) =>
+      matchesListFormFilter(
+        formCategories: formCategories,
+        apiName: summary.name,
+        isDefault: summary.isDefault,
+        isMega: summary.isMega,
+      );
 }

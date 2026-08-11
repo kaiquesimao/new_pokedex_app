@@ -295,16 +295,11 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   @override
   Future<List<PokemonSpriteVariant>> getDetailSpriteVariants(
-    int pokemonId, {
-    required bool showMegaEvolutions,
-    required bool showOtherForms,
-  }) async {
+    int pokemonId,
+  ) async {
     final current = await _loadPokemonResponseForVariants(pokemonId);
     final sprites = PokemonSprites.fromJson(current.sprites);
-    final visibility = PokemonFormVisibility(
-      showMegaEvolutions: showMegaEvolutions,
-      showOtherForms: showOtherForms,
-    );
+    const visibility = PokemonFormVisibility.allowAll;
 
     var varietySummaries = <PokemonSummary>[];
     try {

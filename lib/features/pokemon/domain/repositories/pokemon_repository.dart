@@ -16,11 +16,7 @@ abstract class PokemonRepository {
   Future<PokemonDetail> getPokemonDetail(int id);
 
   /// Sprite carousel options for the detail hero (normal, shiny, forms).
-  Future<List<PokemonSpriteVariant>> getDetailSpriteVariants(
-    int pokemonId, {
-    required bool showMegaEvolutions,
-    required bool showOtherForms,
-  });
+  Future<List<PokemonSpriteVariant>> getDetailSpriteVariants(int pokemonId);
 
   Future<EvolutionChain> getEvolutionChain(int pokemonId);
 
