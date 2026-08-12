@@ -812,7 +812,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFilterAnswer =>
-      'Na aba Pokédex, use a barra de busca, o filtro Formas e os filtros avançados (incluindo sprites shiny) para refinar os resultados.';
+      'Na aba Pokédex, use a barra de busca, o filtro Formas (incluindo sprites shiny) e os filtros avançados para refinar os resultados.';
 
   @override
   String get helpMegaFormsQuestion =>

@@ -11,7 +11,7 @@ Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  if (kDebugMode) {
+  if (kDebugMode && kIsWeb) {
     installBrowserConsoleBridge();
   }
 

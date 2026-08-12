@@ -209,13 +209,6 @@ class _PokemonFilterSheet extends ConsumerWidget {
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 12),
-            SwitchListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              title: Text(l10n.filterShowShinyLabel),
-              value: filters.showShiny,
-              onChanged: (value) => notifier.setShowShiny(value: value),
-            ),
           ],
         );
       },
@@ -260,6 +253,13 @@ class _PokemonFormsSheet extends ConsumerWidget {
                   );
                 }).toList(),
               ),
+            ),
+            const SizedBox(height: 12),
+            SwitchListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              title: Text(l10n.filterShowShinyLabel),
+              value: filters.showShiny,
+              onChanged: (value) => notifier.setShowShiny(value: value),
             ),
           ],
         ),
