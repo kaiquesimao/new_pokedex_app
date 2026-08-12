@@ -43,6 +43,38 @@ class PokemonFiltersNotifier extends Notifier<PokemonListFilters> {
     state = state.copyWith(sort: sort);
   }
 
+  void toggleFormCategory(PokemonFormCategory category) {
+    final next = Set<PokemonFormCategory>.from(state.formCategories);
+    if (!next.add(category)) {
+      next.remove(category);
+    }
+    state = state.copyWith(formCategories: next);
+  }
+
+  void setShowShiny({required bool value}) {
+    state = state.copyWith(showShiny: value);
+  }
+
+  void clearFormCategory(PokemonFormCategory category) {
+    if (!state.formCategories.contains(category)) return;
+    final next = Set<PokemonFormCategory>.from(state.formCategories)
+      ..remove(category);
+    state = state.copyWith(formCategories: next);
+  }
+
+  void clearFormCategories() {
+    state = state.copyWith(clearFormCategories: true);
+  }
+
+  void clearAdvancedFilters() {
+    state = state.copyWith(
+      clearWeakness: true,
+      clearHeightBucket: true,
+      clearWeightBucket: true,
+      showShiny: false,
+    );
+  }
+
   void clearAll() {
     state = const PokemonListFilters();
   }

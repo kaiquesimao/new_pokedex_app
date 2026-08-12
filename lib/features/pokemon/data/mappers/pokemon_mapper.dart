@@ -1,3 +1,4 @@
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -26,6 +27,7 @@ class PokemonMapper {
       ),
       types: mapTypes(response.types),
       spriteUrl: response.spriteUrl,
+      shinySpriteUrl: PokemonSprites.fromJson(response.sprites).shinyDisplayUrl,
       height: response.height,
       weight: response.weight,
       isDefault: response.isDefault,

@@ -97,6 +97,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                 l10n,
                 state,
                 favorites,
+                filters: filters,
                 topPadding: _headerHeight,
                 bottomPadding: bottomInset,
               ),
@@ -124,6 +125,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     AppLocalizations l10n,
     PokemonListState state,
     Set<int> favorites, {
+    required PokemonListFilters filters,
     required double topPadding,
     required double bottomPadding,
   }) {
@@ -204,7 +206,9 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                   number: pokemon.id,
                   name: pokemon.displayName,
                   types: pokemon.types,
-                  spriteUrl: pokemon.spriteUrl,
+                  spriteUrl: filters.showShiny
+                      ? (pokemon.shinySpriteUrl ?? pokemon.spriteUrl)
+                      : pokemon.spriteUrl,
                   isFavorite: favorites.contains(pokemon.id),
                   heroShellTabIndex: 0,
                   onTap: () => context.push('/pokemon/${pokemon.id}'),
@@ -261,11 +265,21 @@ class _PokemonListHeader extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            // Badges on filter pills overhang the chip top edge; avoid
+            // clipping them (default is Clip.hardEdge).
+            clipBehavior: Clip.none,
             child: Row(
               children: [
                 _TypeFilterChip(
                   typeFilter: filters.typeFilter,
                   onTap: () => showPokemonTypeSheet(context),
+                ),
+                const SizedBox(width: 8),
+                _FilterPillChip(
+                  label: l10n.filterFormsLabel,
+                  icon: Icons.auto_awesome_outlined,
+                  badgeCount: filters.formCategories.length,
+                  onTap: () => showPokemonFormsSheet(context),
                 ),
                 const SizedBox(width: 8),
                 _SortFilterChip(
@@ -294,6 +308,20 @@ class _PokemonListHeader extends ConsumerWidget {
             label: _generationLabel(l10n, filters.generationId!),
             onClear: onGenerationClear,
           ),
+        for (final category in filters.formCategories)
+          _ActiveFilterChip(
+            label: category.label(l10n),
+            onClear: () => ref
+                .read(pokemonFiltersProvider.notifier)
+                .clearFormCategory(category),
+          ),
+        if (filters.showShiny)
+          _ActiveFilterChip(
+            label: l10n.filterShowShinyLabel,
+            onClear: () => ref
+                .read(pokemonFiltersProvider.notifier)
+                .setShowShiny(value: false),
+          ),
         const SizedBox(height: 8),
       ],
     );
@@ -304,6 +332,7 @@ class _PokemonListHeader extends ConsumerWidget {
     if (filters.weakness != null) count++;
     if (filters.heightBucket != null) count++;
     if (filters.weightBucket != null) count++;
+    if (filters.showShiny) count++;
     return count;
   }
 

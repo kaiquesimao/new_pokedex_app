@@ -1,5 +1,12 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 
+enum PokemonFormCategory {
+  mega,
+  gigantamax,
+  regional,
+  otherSpecial,
+}
+
 enum PokemonSortOption { numberAsc, numberDesc, nameAsc, nameDesc }
 
 enum PokemonHeightBucket {
@@ -34,6 +41,8 @@ class PokemonListFilters {
     this.heightBucket,
     this.weightBucket,
     this.generationId,
+    this.formCategories = const {},
+    this.showShiny = false,
     this.sort = PokemonSortOption.numberAsc,
   });
 
@@ -43,6 +52,8 @@ class PokemonListFilters {
   final PokemonHeightBucket? heightBucket;
   final PokemonWeightBucket? weightBucket;
   final int? generationId;
+  final Set<PokemonFormCategory> formCategories;
+  final bool showShiny;
   final PokemonSortOption sort;
 
   bool get hasSearch => searchQuery.trim().isNotEmpty;
@@ -52,12 +63,16 @@ class PokemonListFilters {
       weakness != null ||
       heightBucket != null ||
       weightBucket != null ||
-      generationId != null;
+      generationId != null ||
+      formCategories.isNotEmpty;
 
   bool get usesSearchOnlyMode => hasSearch && !hasStructuralFilters;
 
   bool get hasActiveFilters =>
-      hasSearch || hasStructuralFilters || sort != PokemonSortOption.numberAsc;
+      hasSearch ||
+      hasStructuralFilters ||
+      showShiny ||
+      sort != PokemonSortOption.numberAsc;
 
   bool get usesCatalogMode =>
       hasStructuralFilters || hasSearch || sort != PokemonSortOption.numberAsc;
@@ -69,6 +84,8 @@ class PokemonListFilters {
     if (heightBucket != null) count++;
     if (weightBucket != null) count++;
     if (generationId != null) count++;
+    count += formCategories.length;
+    if (showShiny) count++;
     if (sort != PokemonSortOption.numberAsc) count++;
     return count;
   }
@@ -85,6 +102,9 @@ class PokemonListFilters {
     bool clearWeightBucket = false,
     int? generationId,
     bool clearGeneration = false,
+    Set<PokemonFormCategory>? formCategories,
+    bool clearFormCategories = false,
+    bool? showShiny,
     PokemonSortOption? sort,
   }) {
     return PokemonListFilters(
@@ -100,6 +120,10 @@ class PokemonListFilters {
       generationId: clearGeneration
           ? null
           : (generationId ?? this.generationId),
+      formCategories: clearFormCategories
+          ? const {}
+          : (formCategories ?? this.formCategories),
+      showShiny: showShiny ?? this.showShiny,
       sort: sort ?? this.sort,
     );
   }

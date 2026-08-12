@@ -465,12 +465,6 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get profileMegaEvolutionsLabel => 'Mega evoluções';
-
-  @override
-  String get profileOtherFormsLabel => 'Outras formas';
-
-  @override
   String get profileNotificationsTitle => 'Notificações';
 
   @override
@@ -612,6 +606,30 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get filterWeightTitle => 'Peso';
+
+  @override
+  String get filterFormsLabel => 'Formas';
+
+  @override
+  String get filterFormsTitle => 'Formas';
+
+  @override
+  String get filterFormsSemantics => 'Filtro de categorias de forma de Pokémon';
+
+  @override
+  String get filterFormMega => 'Mega';
+
+  @override
+  String get filterFormGigantamax => 'Gigantamax';
+
+  @override
+  String get filterFormRegional => 'Regionais';
+
+  @override
+  String get filterFormOtherSpecial => 'Outras especiais';
+
+  @override
+  String get filterShowShinyLabel => 'Mostrar shiny na lista';
 
   @override
   String get filterSortTitle => 'Ordem';
@@ -794,7 +812,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFilterAnswer =>
-      'Na aba Pokédex, use a barra de busca e os filtros por tipo e geração para refinar os resultados exibidos.';
+      'Na aba Pokédex, use a barra de busca, o filtro Formas e os filtros avançados (incluindo sprites shiny) para refinar os resultados.';
 
   @override
   String get helpMegaFormsQuestion =>
@@ -802,7 +820,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpMegaFormsAnswer =>
-      'Em Conta → PokeData, use os interruptores para exibir ou ocultar mega evoluções e formas alternativas na lista.';
+      'Na aba Pokédex, abra o filtro Formas e selecione categorias (Mega, Gigantamax, Regionais, Outras especiais) para exibi-las na lista.';
 
   @override
   String get helpOfflineQuestion => 'O app funciona offline?';

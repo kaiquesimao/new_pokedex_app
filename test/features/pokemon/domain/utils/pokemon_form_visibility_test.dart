@@ -1,9 +1,217 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibility.dart';
 
 void main() {
+  group('PokemonFormVisibility.categoryFor', () {
+    test('defaults and partitions categories', () {
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'venusaur',
+          isDefault: true,
+        ),
+        isNull,
+      );
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'venusaur-mega',
+          isDefault: false,
+          isMega: true,
+        ),
+        PokemonFormCategory.mega,
+      );
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'charizard-gmax',
+          isDefault: false,
+        ),
+        PokemonFormCategory.gigantamax,
+      );
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'rattata-alola',
+          isDefault: false,
+        ),
+        PokemonFormCategory.regional,
+      );
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'greninja-battle-bond',
+          isDefault: false,
+        ),
+        PokemonFormCategory.otherSpecial,
+      );
+    });
+
+    test('matchesListFormFilter empty set keeps defaults only', () {
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'pikachu',
+          isDefault: true,
+          formCategories: {},
+        ),
+        isTrue,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'venusaur-mega',
+          isDefault: false,
+          isMega: true,
+          formCategories: {},
+        ),
+        isFalse,
+      );
+    });
+
+    test('matchesListFormFilter OR across categories', () {
+      const selected = {
+        PokemonFormCategory.mega,
+        PokemonFormCategory.regional,
+      };
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'venusaur-mega',
+          isDefault: false,
+          isMega: true,
+          formCategories: selected,
+        ),
+        isTrue,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'rattata-alola',
+          isDefault: false,
+          formCategories: selected,
+        ),
+        isTrue,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'charizard-gmax',
+          isDefault: false,
+          formCategories: selected,
+        ),
+        isFalse,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'venusaur',
+          isDefault: true,
+          formCategories: selected,
+        ),
+        isFalse,
+      );
+    });
+
+    test('charizard-gmax matches gigantamax filter', () {
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'charizard-gmax',
+          isDefault: false,
+        ),
+        PokemonFormCategory.gigantamax,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'charizard-gmax',
+          isDefault: false,
+          formCategories: {PokemonFormCategory.gigantamax},
+        ),
+        isTrue,
+      );
+    });
+
+    test('rattata-alola matches regional filter', () {
+      expect(
+        PokemonFormVisibility.categoryFor(
+          apiName: 'rattata-alola',
+          isDefault: false,
+        ),
+        PokemonFormCategory.regional,
+      );
+      expect(
+        PokemonFormVisibility.matchesListFormFilter(
+          apiName: 'rattata-alola',
+          isDefault: false,
+          formCategories: {PokemonFormCategory.regional},
+        ),
+        isTrue,
+      );
+    });
+
+    test(
+      'categoryForSummary uses slug not display name for gmax/regional',
+      () {
+        const gmax = PokemonSummary(
+          id: 10195,
+          slug: 'charizard-gmax',
+          name: 'Charizard Gigantamax',
+          types: [],
+          isDefault: false,
+        );
+        const regional = PokemonSummary(
+          id: 10091,
+          slug: 'rattata-alola',
+          name: 'Rattata Alola',
+          types: [],
+          isDefault: false,
+        );
+        const mega = PokemonSummary(
+          id: 10033,
+          slug: 'venusaur-mega',
+          name: 'Venusaur Mega',
+          types: [],
+          isDefault: false,
+          isMega: true,
+        );
+
+        expect(
+          PokemonFormVisibility.categoryForSummary(gmax),
+          PokemonFormCategory.gigantamax,
+        );
+        expect(
+          PokemonFormVisibility.categoryForSummary(regional),
+          PokemonFormCategory.regional,
+        );
+        expect(
+          PokemonFormVisibility.categoryForSummary(mega),
+          PokemonFormCategory.mega,
+        );
+
+        expect(
+          PokemonFormVisibility.matchesListFormFilterSummary(
+            summary: gmax,
+            formCategories: {PokemonFormCategory.gigantamax},
+          ),
+          isTrue,
+        );
+        expect(
+          PokemonFormVisibility.matchesListFormFilterSummary(
+            summary: regional,
+            formCategories: {PokemonFormCategory.regional},
+          ),
+          isTrue,
+        );
+        expect(
+          PokemonFormVisibility.matchesListFormFilterSummary(
+            summary: gmax,
+            formCategories: {PokemonFormCategory.otherSpecial},
+          ),
+          isFalse,
+        );
+        expect(
+          PokemonFormVisibility.matchesListFormFilterSummary(
+            summary: regional,
+            formCategories: {PokemonFormCategory.otherSpecial},
+          ),
+          isFalse,
+        );
+      },
+    );
+  });
+
   group('PokemonResponse catalog metadata', () {
     test('parses is_default and primary form from pokemon payload', () {
       final response = PokemonResponse.fromJson({

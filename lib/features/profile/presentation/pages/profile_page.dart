@@ -86,20 +86,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             _SettingsSections(
               settings: settings,
               versionLabel: versionLabel,
-              onToggleMega: (value) => _saveSetting(
-                context,
-                ref,
-                () => ref
-                    .read(profileSettingsProvider.notifier)
-                    .setShowMegaEvolutions(value: value),
-              ),
-              onToggleOtherForms: (value) => _saveSetting(
-                context,
-                ref,
-                () => ref
-                    .read(profileSettingsProvider.notifier)
-                    .setShowOtherForms(value: value),
-              ),
               onToggleNotifyNew: (value) => _saveSetting(
                 context,
                 ref,
@@ -307,8 +293,6 @@ class _SettingsSections extends StatelessWidget {
   const _SettingsSections({
     required this.settings,
     required this.versionLabel,
-    required this.onToggleMega,
-    required this.onToggleOtherForms,
     required this.onToggleNotifyNew,
     required this.onToggleNotifyUpdates,
     required this.onToggleAppLanguage,
@@ -320,8 +304,6 @@ class _SettingsSections extends StatelessWidget {
 
   final ProfileSettings settings;
   final String versionLabel;
-  final ValueChanged<bool> onToggleMega;
-  final ValueChanged<bool> onToggleOtherForms;
   final ValueChanged<bool> onToggleNotifyNew;
   final ValueChanged<bool> onToggleNotifyUpdates;
   final VoidCallback onToggleAppLanguage;
@@ -337,22 +319,6 @@ class _SettingsSections extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SettingsGroup(
-          title: l10n.navPokedex,
-          children: [
-            _ToggleRow(
-              label: l10n.profileMegaEvolutionsLabel,
-              value: settings.showMegaEvolutions,
-              onChanged: onToggleMega,
-            ),
-            _ToggleRow(
-              label: l10n.profileOtherFormsLabel,
-              value: settings.showOtherForms,
-              onChanged: onToggleOtherForms,
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
         _SettingsGroup(
           title: l10n.profileNotificationsTitle,
           children: [

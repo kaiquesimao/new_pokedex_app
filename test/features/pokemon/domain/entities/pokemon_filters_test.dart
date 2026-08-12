@@ -49,5 +49,30 @@ void main() {
       expect(filters.usesCatalogMode, isTrue);
       expect(filters.hasStructuralFilters, isFalse);
     });
+
+    test('formCategories are structural; showShiny is not', () {
+      const withForms = PokemonListFilters(
+        formCategories: {PokemonFormCategory.mega},
+      );
+      expect(withForms.hasStructuralFilters, isTrue);
+      expect(withForms.usesCatalogMode, isTrue);
+      expect(withForms.activeFilterCount, 1);
+
+      const shinyOnly = PokemonListFilters(showShiny: true);
+      expect(shinyOnly.hasStructuralFilters, isFalse);
+      expect(shinyOnly.usesCatalogMode, isFalse);
+      expect(shinyOnly.hasActiveFilters, isTrue);
+      expect(shinyOnly.activeFilterCount, 1);
+    });
+
+    test('cleared resets forms and shiny', () {
+      const filters = PokemonListFilters(
+        formCategories: {PokemonFormCategory.gigantamax},
+        showShiny: true,
+      );
+      final cleared = filters.cleared();
+      expect(cleared.formCategories, isEmpty);
+      expect(cleared.showShiny, isFalse);
+    });
   });
 }

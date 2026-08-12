@@ -926,18 +926,6 @@ abstract class AppLocalizations {
   /// **'You are signed in as {name}.'**
   String profileLoggedInAs(Object name);
 
-  /// No description provided for @profileMegaEvolutionsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Mega evolutions'**
-  String get profileMegaEvolutionsLabel;
-
-  /// No description provided for @profileOtherFormsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Other forms'**
-  String get profileOtherFormsLabel;
-
   /// No description provided for @profileNotificationsTitle.
   ///
   /// In en, this message translates to:
@@ -1207,6 +1195,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weight'**
   String get filterWeightTitle;
+
+  /// No description provided for @filterFormsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Forms'**
+  String get filterFormsLabel;
+
+  /// No description provided for @filterFormsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forms'**
+  String get filterFormsTitle;
+
+  /// No description provided for @filterFormsSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Pokémon form category filter'**
+  String get filterFormsSemantics;
+
+  /// No description provided for @filterFormMega.
+  ///
+  /// In en, this message translates to:
+  /// **'Mega'**
+  String get filterFormMega;
+
+  /// No description provided for @filterFormGigantamax.
+  ///
+  /// In en, this message translates to:
+  /// **'Gigantamax'**
+  String get filterFormGigantamax;
+
+  /// No description provided for @filterFormRegional.
+  ///
+  /// In en, this message translates to:
+  /// **'Regional'**
+  String get filterFormRegional;
+
+  /// No description provided for @filterFormOtherSpecial.
+  ///
+  /// In en, this message translates to:
+  /// **'Other specials'**
+  String get filterFormOtherSpecial;
+
+  /// No description provided for @filterShowShinyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show shiny in list'**
+  String get filterShowShinyLabel;
 
   /// No description provided for @filterSortTitle.
   ///
@@ -1529,7 +1565,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpFilterAnswer.
   ///
   /// In en, this message translates to:
-  /// **'On the Pokédex tab, use the search bar and filters by type and generation to refine the results.'**
+  /// **'On the Pokédex tab, use the search bar, Forms filter, and advanced filters (including shiny sprites) to refine the results.'**
   String get helpFilterAnswer;
 
   /// No description provided for @helpMegaFormsQuestion.
@@ -1541,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpMegaFormsAnswer.
   ///
   /// In en, this message translates to:
-  /// **'In Account → PokeData, use the toggles to show or hide mega evolutions and alternate forms in the list.'**
+  /// **'On the Pokédex tab, open the Forms filter and select categories (Mega, Gigantamax, Regional, Other specials) to show those forms in the list.'**
   String get helpMegaFormsAnswer;
 
   /// No description provided for @helpOfflineQuestion.

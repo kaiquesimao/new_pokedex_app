@@ -31,6 +31,15 @@ extension PokemonHeightBucketL10n on PokemonHeightBucket {
   };
 }
 
+extension PokemonFormCategoryL10n on PokemonFormCategory {
+  String label(AppLocalizations l10n) => switch (this) {
+    PokemonFormCategory.mega => l10n.filterFormMega,
+    PokemonFormCategory.gigantamax => l10n.filterFormGigantamax,
+    PokemonFormCategory.regional => l10n.filterFormRegional,
+    PokemonFormCategory.otherSpecial => l10n.filterFormOtherSpecial,
+  };
+}
+
 extension PokemonWeightBucketL10n on PokemonWeightBucket {
   String label(AppLocalizations l10n) => switch (this) {
     PokemonWeightBucket.light => l10n.weightBucketLight,

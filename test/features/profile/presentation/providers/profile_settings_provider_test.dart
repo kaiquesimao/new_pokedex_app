@@ -11,8 +11,6 @@ void main() {
 
     final settings = readStoredProfileSettings(prefs);
 
-    expect(settings.showMegaEvolutions, isTrue);
-    expect(settings.showOtherForms, isTrue);
     expect(settings.notifyNewPokemon, isTrue);
     expect(settings.notifyAppUpdates, isFalse);
     expect(settings.appLanguage, anyOf('pt-BR', 'en-US'));
@@ -68,8 +66,6 @@ void main() {
 
   test('readStoredProfileSettings returns persisted values', () async {
     SharedPreferences.setMockInitialValues({
-      showMegaEvolutionsKey: false,
-      showOtherFormsKey: false,
       notifyNewPokemonKey: false,
       notifyAppUpdatesKey: true,
       appLanguageKey: 'pt-BR',
@@ -78,10 +74,22 @@ void main() {
 
     final settings = readStoredProfileSettings(prefs);
 
-    expect(settings.showMegaEvolutions, isFalse);
-    expect(settings.showOtherForms, isFalse);
     expect(settings.notifyNewPokemon, isFalse);
     expect(settings.notifyAppUpdates, isTrue);
     expect(settings.appLanguage, 'pt-BR');
+  });
+
+  test('ignores leftover mega/other form preference keys', () async {
+    SharedPreferences.setMockInitialValues({
+      'profile_show_mega_evolutions': false,
+      'profile_show_other_forms': false,
+      appLanguageKey: 'en-US',
+    });
+    final prefs = await SharedPreferences.getInstance();
+
+    final settings = readStoredProfileSettings(prefs);
+
+    expect(settings.appLanguage, 'en-US');
+    expect(settings.notifyNewPokemon, isTrue);
   });
 }
