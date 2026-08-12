@@ -1565,7 +1565,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpFilterAnswer.
   ///
   /// In en, this message translates to:
-  /// **'On the Pokédex tab, use the search bar, Forms filter, and advanced filters (including shiny sprites) to refine the results.'**
+  /// **'On the Pokédex tab, use the search bar, the Forms filter (including shiny sprites), and advanced filters to refine the results.'**
   String get helpFilterAnswer;
 
   /// No description provided for @helpMegaFormsQuestion.

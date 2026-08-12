@@ -278,7 +278,7 @@ class _PokemonListHeader extends ConsumerWidget {
                 _FilterPillChip(
                   label: l10n.filterFormsLabel,
                   icon: Icons.auto_awesome_outlined,
-                  badgeCount: filters.formCategories.length,
+                  badgeCount: _formsFilterCount(filters),
                   onTap: () => showPokemonFormsSheet(context),
                 ),
                 const SizedBox(width: 8),
@@ -327,12 +327,17 @@ class _PokemonListHeader extends ConsumerWidget {
     );
   }
 
+  int _formsFilterCount(PokemonListFilters filters) {
+    var count = filters.formCategories.length;
+    if (filters.showShiny) count++;
+    return count;
+  }
+
   int _advancedFilterCount(PokemonListFilters filters) {
     var count = 0;
     if (filters.weakness != null) count++;
     if (filters.heightBucket != null) count++;
     if (filters.weightBucket != null) count++;
-    if (filters.showShiny) count++;
     return count;
   }
 

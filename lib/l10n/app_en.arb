@@ -404,7 +404,7 @@
   "helpFavoriteQuestion": "How do I favorite Pokémon?",
   "helpFavoriteAnswer": "Tap the heart icon in the list or on the detail page. You must sign in to save and sync favorites across devices.",
   "helpFilterQuestion": "How do I filter the Pokémon list?",
-  "helpFilterAnswer": "On the Pokédex tab, use the search bar, Forms filter, and advanced filters (including shiny sprites) to refine the results.",
+  "helpFilterAnswer": "On the Pokédex tab, use the search bar, the Forms filter (including shiny), and advanced filters to refine the results.",
   "helpMegaFormsQuestion": "What are mega evolutions and other forms?",
   "helpMegaFormsAnswer": "On the Pokédex tab, open the Forms filter and select categories (Mega, Gigantamax, Regional, Other specials) to show those forms in the list.",
   "helpOfflineQuestion": "Does the app work offline?",

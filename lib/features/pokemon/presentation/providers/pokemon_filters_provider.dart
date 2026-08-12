@@ -63,7 +63,10 @@ class PokemonFiltersNotifier extends Notifier<PokemonListFilters> {
   }
 
   void clearFormCategories() {
-    state = state.copyWith(clearFormCategories: true);
+    state = state.copyWith(
+      clearFormCategories: true,
+      showShiny: false,
+    );
   }
 
   void clearAdvancedFilters() {
@@ -71,7 +74,6 @@ class PokemonFiltersNotifier extends Notifier<PokemonListFilters> {
       clearWeakness: true,
       clearHeightBucket: true,
       clearWeightBucket: true,
-      showShiny: false,
     );
   }
 
