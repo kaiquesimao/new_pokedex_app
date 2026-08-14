@@ -2312,6 +2312,12 @@ abstract class AppLocalizations {
   /// **'{formLabel}, swipe to see other forms'**
   String pokemonFormCarouselSemantics(String formLabel);
 
+  /// Shown under the detail sprite while extra forms load
+  ///
+  /// In en, this message translates to:
+  /// **'Loading forms'**
+  String get pokemonFormsLoading;
+
   /// No description provided for @firebaseConfigErrorTitle.
   ///
   /// In en, this message translates to:

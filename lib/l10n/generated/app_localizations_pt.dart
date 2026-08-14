@@ -1239,6 +1239,9 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get pokemonFormsLoading => 'Carregando formas';
+
+  @override
   String get firebaseConfigErrorTitle => 'Configuração indisponível';
 
   @override

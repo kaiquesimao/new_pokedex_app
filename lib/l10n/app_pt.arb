@@ -549,6 +549,10 @@
       "formLabel": { "type": "String" }
     }
   },
+  "pokemonFormsLoading": "Carregando formas",
+  "@pokemonFormsLoading": {
+    "description": "Shown under the detail sprite while extra forms load"
+  },
 
   "firebaseConfigErrorTitle": "Configuração indisponível",
   "firebaseConfigErrorBody": "Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json."

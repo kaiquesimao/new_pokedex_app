@@ -1232,6 +1232,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pokemonFormsLoading => 'Loading forms';
+
+  @override
   String get firebaseConfigErrorTitle => 'Configuration unavailable';
 
   @override

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
-import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
@@ -19,7 +18,6 @@ import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dar
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
-import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_sprite_variants_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_sprite_carousel.dart';
@@ -316,7 +314,7 @@ class const _HeroSection({
                             ? PokemonPrimaryTypeBackdrop.detailOpacity
                             : PokemonPrimaryTypeBackdrop.detailLightOpacity,
                       ),
-                    _HeroSprite(
+                    PokemonDetailHeroSprite(
                       pokemonId: pokemonId,
                       pokemon: pokemon,
                     ),
@@ -356,64 +354,6 @@ class const _HeroSection({
           ),
         );
       },
-    );
-  }
-}
-
-class const _HeroSprite({
-  required final int pokemonId,
-  required final PokemonDetail pokemon,
-}) extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final variantsAsync = ref.watch(
-      pokemonDetailSpriteVariantsProvider(pokemonId),
-    );
-
-    return variantsAsync.when(
-      data: (variants) {
-        if (variants.length > 1) {
-          return PokemonDetailSpriteCarousel(
-            routePokemonId: pokemonId,
-            variants: variants,
-            fallbackCryUrl: pokemon.cryUrl,
-            fallbackLegacyCryUrl: pokemon.legacyCryUrl,
-          );
-        }
-        if (variants.length == 1) {
-          return PokemonDetailTappableSprite(
-            pokemonId: pokemonId,
-            imageUrl: variants.first.imageUrl,
-            cryUrl: pokemon.cryUrl,
-            legacyCryUrl: pokemon.legacyCryUrl,
-          );
-        }
-        return _fallbackSprite();
-      },
-      loading: _fallbackSprite,
-      error: (_, _) => _fallbackSprite(),
-    );
-  }
-
-  Widget _fallbackSprite() {
-    if (pokemon.spriteUrl != null) {
-      return PokemonDetailTappableSprite(
-        pokemonId: pokemonId,
-        imageUrl: pokemon.spriteUrl!,
-        cryUrl: pokemon.cryUrl,
-        legacyCryUrl: pokemon.legacyCryUrl,
-      );
-    }
-    return Hero(
-      tag: PokemonHeroTags.sprite(pokemonId),
-      child: const Material(
-        color: Colors.transparent,
-        child: Icon(
-          Icons.catching_pokemon,
-          size: 96,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 }

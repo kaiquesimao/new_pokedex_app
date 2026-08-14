@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
+import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_sprite_variant.dart';
+import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_sprite_variant_labels.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_sprite_variants_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_sprite_variant_label_localizer.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
@@ -127,25 +130,7 @@ class _PokemonDetailSpriteCarouselState
           ),
           if (showControls) ...[
             const SizedBox(height: 8),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.35),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                child: Text(
-                  formLabel,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
+            _SpriteVariantLabelChip(label: formLabel),
             const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -247,6 +232,136 @@ class _PokemonDetailTappableSpriteState
             heroTag: PokemonHeroTags.sprite(widget.pokemonId),
             errorIconColor: Colors.white,
             errorIconSize: 96,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hero sprite that shows a mini loader while extra forms are fetched.
+class const PokemonDetailHeroSprite({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+  super.key,
+}) extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final variantsAsync = ref.watch(
+      pokemonDetailSpriteVariantsProvider(pokemonId),
+    );
+
+    return variantsAsync.when(
+      data: (variants) {
+        if (variants.length > 1) {
+          return PokemonDetailSpriteCarousel(
+            routePokemonId: pokemonId,
+            variants: variants,
+            fallbackCryUrl: pokemon.cryUrl,
+            fallbackLegacyCryUrl: pokemon.legacyCryUrl,
+          );
+        }
+        if (variants.length == 1) {
+          return PokemonDetailTappableSprite(
+            pokemonId: pokemonId,
+            imageUrl: variants.first.imageUrl,
+            cryUrl: pokemon.cryUrl,
+            legacyCryUrl: pokemon.legacyCryUrl,
+          );
+        }
+        return _fallbackSprite();
+      },
+      loading: () {
+        final l10n = AppLocalizations.of(context);
+        final formLabel = PokemonSpriteVariantLabelLocalizer.label(
+          l10n,
+          PokemonSpriteVariantLabels.keyForApiName(pokemon.name),
+        );
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _fallbackSprite(),
+            const SizedBox(height: 8),
+            PokemonDetailFormsLoadingIndicator(formLabel: formLabel),
+          ],
+        );
+      },
+      error: (_, _) => _fallbackSprite(),
+    );
+  }
+
+  Widget _fallbackSprite() {
+    if (pokemon.spriteUrl != null) {
+      return PokemonDetailTappableSprite(
+        pokemonId: pokemonId,
+        imageUrl: pokemon.spriteUrl!,
+        cryUrl: pokemon.cryUrl,
+        legacyCryUrl: pokemon.legacyCryUrl,
+      );
+    }
+    return Hero(
+      tag: PokemonHeroTags.sprite(pokemonId),
+      child: const Material(
+        color: Colors.transparent,
+        child: Icon(
+          Icons.catching_pokemon,
+          size: 96,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+/// Mini loader in the form-label slot while variants are still loading.
+class const PokemonDetailFormsLoadingIndicator({
+  final String? formLabel,
+  super.key,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final label = formLabel;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (label != null) ...[
+          _SpriteVariantLabelChip(label: label),
+          const SizedBox(height: 6),
+        ],
+        Semantics(
+          label: l10n.pokemonFormsLoading,
+          child: const SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class const _SpriteVariantLabelChip({required final String label})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
