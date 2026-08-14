@@ -10,38 +10,25 @@ import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
-class PokemonListRowCard extends StatelessWidget {
-  const new({
-    required this.number,
-    required this.name,
-    required this.types,
-    super.key,
-    this.spriteUrl,
-    this.isFavorite = false,
-    this.heroShellTabIndex,
-    this.useHero = false,
-    this.heroPokemonId,
-    this.onTap,
-    this.onFavoriteTap,
-  });
-
-  final int number;
-  final String name;
-  final List<PokemonType> types;
-  final String? spriteUrl;
-  final bool isFavorite;
+class const PokemonListRowCard({
+  required final int number,
+  required final String name,
+  required final List<PokemonType> types,
+  super.key,
+  final String? spriteUrl,
+  final bool isFavorite = false,
 
   /// Shell tab that must be active for the list-to-detail hero animation.
-  final int? heroShellTabIndex;
+  final int? heroShellTabIndex,
 
   /// Enables hero on root-navigator lists (e.g. regional Pokédex).
-  final bool useHero;
+  final bool useHero = false,
 
   /// Pokémon id used for the hero tag; defaults to [number].
-  final int? heroPokemonId;
-  final VoidCallback? onTap;
-  final VoidCallback? onFavoriteTap;
-
+  final int? heroPokemonId,
+  final VoidCallback? onTap,
+  final VoidCallback? onFavoriteTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -137,29 +124,17 @@ class PokemonListRowCard extends StatelessWidget {
   }
 }
 
-class _TypePanel extends StatelessWidget {
-  const new({
-    required this.typeColor,
-    required this.primaryType,
-    required this.number,
-    this.spriteUrl,
-    this.isFavorite = false,
-    this.heroShellTabIndex,
-    this.useHero = false,
-    this.heroPokemonId,
-    this.onFavoriteTap,
-  });
-
-  final Color typeColor;
-  final PokemonType primaryType;
-  final int number;
-  final String? spriteUrl;
-  final bool isFavorite;
-  final int? heroShellTabIndex;
-  final bool useHero;
-  final int? heroPokemonId;
-  final VoidCallback? onFavoriteTap;
-
+class const _TypePanel({
+  required final Color typeColor,
+  required final PokemonType primaryType,
+  required final int number,
+  final String? spriteUrl,
+  final bool isFavorite = false,
+  final int? heroShellTabIndex,
+  final bool useHero = false,
+  final int? heroPokemonId,
+  final VoidCallback? onFavoriteTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

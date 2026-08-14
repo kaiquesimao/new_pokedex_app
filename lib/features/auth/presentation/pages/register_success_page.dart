@@ -10,9 +10,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class RegisterSuccessPage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const RegisterSuccessPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<RegisterSuccessPage> createState() =>
       _RegisterSuccessPageState();

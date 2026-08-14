@@ -11,9 +11,7 @@ Future<bool?> showLogoutBottomSheet(BuildContext context) {
   );
 }
 
-class _LogoutBottomSheet extends StatelessWidget {
-  const new();
-
+class const _LogoutBottomSheet() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -43,8 +43,8 @@ class CachedRegionalPokedexEntries extends Table {
     CachedRegionalPokedexEntries,
   ],
 )
-class AppDatabase extends _$AppDatabase {
-  new([QueryExecutor? executor]) : super(executor ?? _openConnection());
+class AppDatabase([QueryExecutor? executor]) extends _$AppDatabase {
+  this : super(executor ?? _openConnection());
 
   // Schema version and migration updated to v4 (adds localizedName).
   @override

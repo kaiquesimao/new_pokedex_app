@@ -44,7 +44,10 @@ void main() {
   group('formatAuthException', () {
     test('returns AuthException message directly', () {
       expect(
-        formatAuthException(l10n, const AuthException('Este e-mail já está em uso.')),
+        formatAuthException(
+          l10n,
+          const AuthException('Este e-mail já está em uso.'),
+        ),
         'Este e-mail já está em uso.',
       );
     });

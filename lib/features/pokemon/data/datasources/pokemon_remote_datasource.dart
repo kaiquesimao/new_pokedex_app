@@ -3,11 +3,7 @@ import 'package:pokedex_app/features/pokemon/data/models/evolution_models.dart';
 import 'package:pokedex_app/features/pokemon/data/models/filter_models.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 
-class PokemonRemoteDataSource {
-  new(this._client);
-
-  final PokeApiClient _client;
-
+class PokemonRemoteDataSource(final PokeApiClient _client) {
   Future<PokemonListResponse> fetchPokemonList({
     int offset = 0,
     int limit = 20,

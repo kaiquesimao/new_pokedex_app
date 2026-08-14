@@ -32,11 +32,8 @@ void main() {
   });
 }
 
-class _TestAssetBundle extends CachingAssetBundle {
-  new(this.files);
-
-  final Map<String, String> files;
-
+class _TestAssetBundle(final Map<String, String> files)
+    extends CachingAssetBundle {
   @override
   Future<String> loadString(String key, {bool cache = true}) async {
     final value = files[key];

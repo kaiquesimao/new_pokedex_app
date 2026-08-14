@@ -70,18 +70,12 @@ double resolveIllustrationSlotSize({
 }
 
 /// Lays out one or more trainer sprites in responsive square slots.
-class TrainerIllustrationGroup extends StatelessWidget {
-  const new({
-    required this.imageAssets,
-    super.key,
-    this.layout = TrainerIllustrationLayout.auto,
-    this.errorBuilder,
-  });
-
-  final List<String> imageAssets;
-  final TrainerIllustrationLayout layout;
-  final ImageErrorWidgetBuilder? errorBuilder;
-
+class const TrainerIllustrationGroup({
+  required final List<String> imageAssets,
+  super.key,
+  final TrainerIllustrationLayout layout = TrainerIllustrationLayout.auto,
+  final ImageErrorWidgetBuilder? errorBuilder,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final resolvedLayout = _resolveLayout();
@@ -147,17 +141,11 @@ class TrainerIllustrationGroup extends StatelessWidget {
   }
 }
 
-class _DualIllustrationStack extends StatelessWidget {
-  const new({
-    required this.imageAssets,
-    required this.slotSize,
-    this.errorBuilder,
-  });
-
-  final List<String> imageAssets;
-  final double slotSize;
-  final ImageErrorWidgetBuilder? errorBuilder;
-
+class const _DualIllustrationStack({
+  required final List<String> imageAssets,
+  required final double slotSize,
+  final ImageErrorWidgetBuilder? errorBuilder,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shift = slotSize * TrainerAvatars.illustrationDualCenterShift;
@@ -182,22 +170,14 @@ class _DualIllustrationStack extends StatelessWidget {
   }
 }
 
-class TrainerIllustrationSlot extends StatelessWidget {
-  const new({
-    required this.assetPath,
-    super.key,
-    this.slotSize,
-    this.dual = false,
-    this.alignment = Alignment.center,
-    this.errorBuilder,
-  });
-
-  final String assetPath;
-  final double? slotSize;
-  final bool dual;
-  final Alignment alignment;
-  final ImageErrorWidgetBuilder? errorBuilder;
-
+class const TrainerIllustrationSlot({
+  required final String assetPath,
+  super.key,
+  final double? slotSize,
+  final bool dual = false,
+  final Alignment alignment = Alignment.center,
+  final ImageErrorWidgetBuilder? errorBuilder,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (slotSize != null) {

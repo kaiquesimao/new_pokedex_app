@@ -19,9 +19,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class FavoritesPage extends ConsumerWidget {
-  const new({super.key});
-
+class const FavoritesPage({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
@@ -40,11 +38,8 @@ class FavoritesPage extends ConsumerWidget {
   }
 }
 
-class _GuestFavoritesBody extends StatelessWidget {
-  const new({required this.onAuth});
-
-  final VoidCallback onAuth;
-
+class const _GuestFavoritesBody({required final VoidCallback onAuth})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -69,9 +64,7 @@ class _GuestFavoritesBody extends StatelessWidget {
   }
 }
 
-class _EmptyFavoritesBody extends StatelessWidget {
-  const new();
-
+class const _EmptyFavoritesBody() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -88,11 +81,8 @@ class _EmptyFavoritesBody extends StatelessWidget {
   }
 }
 
-class _FavoritesListBody extends ConsumerWidget {
-  const new({required this.favoriteIds});
-
-  final List<int> favoriteIds;
-
+class const _FavoritesListBody({required final List<int> favoriteIds})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<List<PokemonDetail>>(
@@ -130,11 +120,8 @@ class _FavoritesListBody extends ConsumerWidget {
   }
 }
 
-class _DismissibleFavoriteCard extends ConsumerWidget {
-  const new({required this.pokemon});
-
-  final PokemonDetail pokemon;
-
+class const _DismissibleFavoriteCard({required final PokemonDetail pokemon})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);

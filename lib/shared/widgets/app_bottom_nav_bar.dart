@@ -4,16 +4,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class AppBottomNavBar extends StatelessWidget {
-  const new({
-    required this.currentIndex,
-    required this.onTap,
-    super.key,
-  });
-
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
+class const AppBottomNavBar({
+  required final int currentIndex,
+  required final ValueChanged<int> onTap,
+  super.key,
+}) extends StatelessWidget {
   // Compact geometry: sunk surface-matched FAB, shorter bar.
   static const double barHeight = 72;
   static const double fabRadius = 20;
@@ -109,17 +104,11 @@ class AppBottomNavBar extends StatelessWidget {
   }
 }
 
-class _NavSvg extends StatelessWidget {
-  const new({
-    required this.index,
-    required this.selected,
-    required this.size,
-  });
-
-  final int index;
-  final bool selected;
-  final double size;
-
+class const _NavSvg({
+  required final int index,
+  required final bool selected,
+  required final double size,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;

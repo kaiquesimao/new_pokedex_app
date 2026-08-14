@@ -3,9 +3,7 @@ import 'package:pokedex_app/core/theme/skeleton_shimmer_colors.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// Document-style loading placeholder for Privacy / Terms pages.
-class LegalDocumentSkeleton extends StatelessWidget {
-  const new({super.key});
-
+class const LegalDocumentSkeleton({super.key}) extends StatelessWidget {
   static const EdgeInsets contentPadding = EdgeInsets.fromLTRB(24, 8, 24, 32);
 
   static const List<double> _lineWidthFactors = [

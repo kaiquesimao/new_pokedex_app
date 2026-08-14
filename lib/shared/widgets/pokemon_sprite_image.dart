@@ -5,18 +5,12 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Lightweight native loading indicator sized for [PokemonSpriteImage] slots.
-class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
-  const new({
-    super.key,
-    this.width,
-    this.height,
-    this.indicatorColor,
-  });
-
-  final double? width;
-  final double? height;
-  final Color? indicatorColor;
-
+class const PokemonSpriteLoadingPlaceholder({
+  super.key,
+  final double? width,
+  final double? height,
+  final Color? indicatorColor,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color =
@@ -49,36 +43,21 @@ class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
   }
 }
 
-class PokemonSpriteImage extends StatefulWidget {
-  const new({
-    required this.imageUrl,
-    super.key,
-    this.fallbackImageUrl,
-    this.width,
-    this.height,
-    this.maxCachePixels = 256,
-    this.fit = BoxFit.contain,
-    this.filterQuality = FilterQuality.high,
-    this.heroTag,
-    this.semanticLabel,
-    this.errorIconSize = 48,
-    this.errorIconColor,
-    this.fadeInDuration = Duration.zero,
-  });
-
-  final String imageUrl;
-  final String? fallbackImageUrl;
-  final double? width;
-  final double? height;
-  final int maxCachePixels;
-  final BoxFit fit;
-  final FilterQuality filterQuality;
-  final Object? heroTag;
-  final String? semanticLabel;
-  final double errorIconSize;
-  final Color? errorIconColor;
-  final Duration fadeInDuration;
-
+class const PokemonSpriteImage({
+  required final String imageUrl,
+  super.key,
+  final String? fallbackImageUrl,
+  final double? width,
+  final double? height,
+  final int maxCachePixels = 256,
+  final BoxFit fit = BoxFit.contain,
+  final FilterQuality filterQuality = FilterQuality.high,
+  final Object? heroTag,
+  final String? semanticLabel,
+  final double errorIconSize = 48,
+  final Color? errorIconColor,
+  final Duration fadeInDuration = Duration.zero,
+}) extends StatefulWidget {
   @override
   State<PokemonSpriteImage> createState() => _PokemonSpriteImageState();
 }

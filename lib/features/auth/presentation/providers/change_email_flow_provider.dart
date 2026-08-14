@@ -7,21 +7,13 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum ChangeEmailStep { currentPassword, newEmail, verify, success }
 
-class ChangeEmailFlowState {
-  const new({
-    this.step = ChangeEmailStep.currentPassword,
-    this.loading = false,
-    this.error,
-    this.verifiedCurrentPassword = '',
-    this.pendingEmail = '',
-  });
-
-  final ChangeEmailStep step;
-  final bool loading;
-  final String? error;
-  final String verifiedCurrentPassword;
-  final String pendingEmail;
-
+class const ChangeEmailFlowState({
+  final ChangeEmailStep step = ChangeEmailStep.currentPassword,
+  final bool loading = false,
+  final String? error,
+  final String verifiedCurrentPassword = '',
+  final String pendingEmail = '',
+}) {
   ChangeEmailFlowState copyWith({
     ChangeEmailStep? step,
     bool? loading,

@@ -19,9 +19,7 @@ import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ProfilePage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const ProfilePage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
@@ -214,12 +212,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 }
 
-class _GuestAccountSection extends StatelessWidget {
-  const new({required this.onLogin, required this.onRegister});
-
-  final VoidCallback onLogin;
-  final VoidCallback onRegister;
-
+class const _GuestAccountSection({
+  required final VoidCallback onLogin,
+  required final VoidCallback onRegister,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -263,23 +259,14 @@ class _GuestAccountSection extends StatelessWidget {
   }
 }
 
-class _AccountSection extends StatelessWidget {
-  const new({
-    required this.name,
-    required this.email,
-    required this.canEditCredentials,
-    this.onEditName,
-    this.onEditEmail,
-    this.onChangePassword,
-  });
-
-  final String name;
-  final String email;
-  final bool canEditCredentials;
-  final VoidCallback? onEditName;
-  final VoidCallback? onEditEmail;
-  final VoidCallback? onChangePassword;
-
+class const _AccountSection({
+  required final String name,
+  required final String email,
+  required final bool canEditCredentials,
+  final VoidCallback? onEditName,
+  final VoidCallback? onEditEmail,
+  final VoidCallback? onChangePassword,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -310,31 +297,18 @@ class _AccountSection extends StatelessWidget {
   }
 }
 
-class _SettingsSections extends StatelessWidget {
-  const new({
-    required this.settings,
-    required this.versionLabel,
-    required this.onToggleNotifyNew,
-    required this.onToggleNotifyUpdates,
-    required this.onToggleAppLanguage,
-    required this.onTermsTap,
-    required this.onPrivacyTap,
-    required this.onRateTap,
-    required this.onHelpTap,
-    required this.onAboutTap,
-  });
-
-  final ProfileSettings settings;
-  final String versionLabel;
-  final ValueChanged<bool> onToggleNotifyNew;
-  final ValueChanged<bool> onToggleNotifyUpdates;
-  final VoidCallback onToggleAppLanguage;
-  final VoidCallback onTermsTap;
-  final VoidCallback onPrivacyTap;
-  final VoidCallback onRateTap;
-  final VoidCallback onHelpTap;
-  final VoidCallback onAboutTap;
-
+class const _SettingsSections({
+  required final ProfileSettings settings,
+  required final String versionLabel,
+  required final ValueChanged<bool> onToggleNotifyNew,
+  required final ValueChanged<bool> onToggleNotifyUpdates,
+  required final VoidCallback onToggleAppLanguage,
+  required final VoidCallback onTermsTap,
+  required final VoidCallback onPrivacyTap,
+  required final VoidCallback onRateTap,
+  required final VoidCallback onHelpTap,
+  required final VoidCallback onAboutTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -405,12 +379,10 @@ class _SettingsSections extends StatelessWidget {
   }
 }
 
-class _SettingsGroup extends StatelessWidget {
-  const new({required this.title, required this.children});
-
-  final String title;
-  final List<Widget> children;
-
+class const _SettingsGroup({
+  required final String title,
+  required final List<Widget> children,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -452,17 +424,11 @@ class _SettingsGroup extends StatelessWidget {
   }
 }
 
-class _ToggleRow extends StatelessWidget {
-  const new({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
+class const _ToggleRow({
+  required final String label,
+  required final bool value,
+  required final ValueChanged<bool> onChanged,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
@@ -474,19 +440,12 @@ class _ToggleRow extends StatelessWidget {
   }
 }
 
-class _ChevronRow extends StatelessWidget {
-  const new({
-    required this.label,
-    this.value,
-    this.onTap,
-    this.showChevron = true,
-  });
-
-  final String label;
-  final String? value;
-  final VoidCallback? onTap;
-  final bool showChevron;
-
+class const _ChevronRow({
+  required final String label,
+  final String? value,
+  final VoidCallback? onTap,
+  final bool showChevron = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -518,19 +477,12 @@ class _ChevronRow extends StatelessWidget {
   }
 }
 
-class _LogoutSection extends StatelessWidget {
-  const new({
-    required this.displayName,
-    required this.onLogout,
-    required this.onDeleteAccount,
-    required this.onAccountDeletionInfo,
-  });
-
-  final String displayName;
-  final VoidCallback onLogout;
-  final VoidCallback onDeleteAccount;
-  final VoidCallback onAccountDeletionInfo;
-
+class const _LogoutSection({
+  required final String displayName,
+  required final VoidCallback onLogout,
+  required final VoidCallback onDeleteAccount,
+  required final VoidCallback onAccountDeletionInfo,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

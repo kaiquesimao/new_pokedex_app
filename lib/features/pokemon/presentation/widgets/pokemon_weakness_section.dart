@@ -6,11 +6,10 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
-class PokemonWeaknessSection extends StatelessWidget {
-  const new({required this.types, super.key});
-
-  final List<PokemonType> types;
-
+class const PokemonWeaknessSection({
+  required final List<PokemonType> types,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

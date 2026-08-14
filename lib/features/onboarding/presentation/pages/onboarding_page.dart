@@ -12,9 +12,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class OnboardingPage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const OnboardingPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
 }
@@ -167,12 +165,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 }
 
-class _PageDots extends StatelessWidget {
-  const new({required this.count, required this.current});
-
-  final int count;
-  final int current;
-
+class const _PageDots({required final int count, required final int current})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -9,15 +9,10 @@ typedef FetchResourceEntries = Future<List<dynamic>> Function(
   String slug,
 );
 
-class GameTextResolver {
-  new({
-    required this._machineTranslation,
-    required this._fetchResourceEntries,
-  });
-
-  final MachineTranslationBackend _machineTranslation;
-  final FetchResourceEntries _fetchResourceEntries;
-
+class GameTextResolver({
+  required final MachineTranslationBackend _machineTranslation,
+  required final FetchResourceEntries _fetchResourceEntries,
+}) {
   void clearCache() => _machineTranslation.clearCache();
 
   Future<ResolvedGameText> resolveFromEntries({

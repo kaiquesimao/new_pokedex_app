@@ -2,17 +2,12 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 
 /// Catalog visibility for mega evolutions and alternate Pokémon forms.
-class PokemonFormVisibility {
-  const new({
-    this.showMegaEvolutions = true,
-    this.showOtherForms = true,
-  });
-
+class const PokemonFormVisibility({
+  final bool showMegaEvolutions = true,
+  final bool showOtherForms = true,
+}) {
   /// Detail carousel: include every variety form.
   static const allowAll = PokemonFormVisibility();
-
-  final bool showMegaEvolutions;
-  final bool showOtherForms;
 
   bool includesSummary(PokemonSummary summary) => includesSummaryNamed(
     summary: summary,

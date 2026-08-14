@@ -2,18 +2,16 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 
 /// Renders trainer character assets from [assets/images/characters/].
-class TrainerAvatarImage extends StatelessWidget {
-  const new({
-    required this.assetPath,
-    super.key,
-    this.width,
-    this.height,
-    this.fit = BoxFit.contain,
-    this.alignment = Alignment.center,
-    this.errorBuilder,
-    this.pixelArt = true,
-  });
-
+class const TrainerAvatarImage({
+  required final String assetPath,
+  super.key,
+  final double? width,
+  final double? height,
+  final BoxFit fit = BoxFit.contain,
+  final Alignment alignment = Alignment.center,
+  final ImageErrorWidgetBuilder? errorBuilder,
+  final bool pixelArt = true,
+}) extends StatelessWidget {
   new forSlug({
     required String slug,
     required double size,
@@ -29,14 +27,6 @@ class TrainerAvatarImage extends StatelessWidget {
          pixelArt: pixelArt,
          errorBuilder: (_, _, _) => Icon(Icons.person, size: size * 0.8),
        );
-
-  final String assetPath;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
-  final Alignment alignment;
-  final ImageErrorWidgetBuilder? errorBuilder;
-  final bool pixelArt;
 
   @override
   Widget build(BuildContext context) {

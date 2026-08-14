@@ -5,26 +5,16 @@ import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_f
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class AuthHubLayout extends StatelessWidget {
-  const new({
-    required this.appBarTitle,
-    required this.headline,
-    required this.subtitle,
-    required this.actions,
-    super.key,
-    this.illustrationAsset = AppAssets.characterHilbert,
-    this.footer,
-    this.showBackButton = true,
-  });
-
-  final String appBarTitle;
-  final String headline;
-  final String subtitle;
-  final List<Widget> actions;
-  final String illustrationAsset;
-  final Widget? footer;
-  final bool showBackButton;
-
+class const AuthHubLayout({
+  required final String appBarTitle,
+  required final String headline,
+  required final String subtitle,
+  required final List<Widget> actions,
+  super.key,
+  final String illustrationAsset = AppAssets.characterHilbert,
+  final Widget? footer,
+  final bool showBackButton = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

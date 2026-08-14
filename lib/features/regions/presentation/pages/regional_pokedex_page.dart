@@ -20,11 +20,8 @@ import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
 import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class RegionalPokedexPage extends ConsumerWidget {
-  const new({required this.regionName, super.key});
-
-  final String regionName;
-
+class const RegionalPokedexPage({required final String regionName, super.key})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(regionalPokedexProvider(regionName));
@@ -137,12 +134,10 @@ class RegionalPokedexPage extends ConsumerWidget {
   }
 }
 
-class _TypeFilterChip extends StatelessWidget {
-  const new({required this.typeFilter, required this.onTap});
-
-  final PokemonType? typeFilter;
-  final VoidCallback onTap;
-
+class const _TypeFilterChip({
+  required final PokemonType? typeFilter,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -187,12 +182,10 @@ class _TypeFilterChip extends StatelessWidget {
   }
 }
 
-class _SortFilterChip extends StatelessWidget {
-  const new({required this.sort, required this.onTap});
-
-  final PokemonSortOption sort;
-  final VoidCallback onTap;
-
+class const _SortFilterChip({
+  required final PokemonSortOption sort,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

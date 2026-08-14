@@ -29,11 +29,8 @@ Color wideViewportAwareScaffoldColor(BuildContext context) {
 }
 
 /// Transparent scaffold theme on wide web so [WideViewportBackdrop] is visible.
-class WideViewportTheme extends StatelessWidget {
-  const new({required this.child, super.key});
-
-  final Widget child;
-
+class const WideViewportTheme({required final Widget child, super.key})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!showsWideViewportBackdrop(context)) return child;
@@ -47,9 +44,7 @@ class WideViewportTheme extends StatelessWidget {
 }
 
 /// Decorative backdrop for empty side margins on wide web viewports.
-class WideViewportBackdrop extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const WideViewportBackdrop({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<WideViewportBackdrop> createState() =>
       _WideViewportBackdropState();
@@ -126,16 +121,11 @@ class _WideViewportBackdropState extends ConsumerState<WideViewportBackdrop>
   }
 }
 
-class _BackdropImage extends StatelessWidget {
-  const new({
-    required this.assetPath,
-    required this.reduceMotion,
-    super.key,
-  });
-
-  final String assetPath;
-  final bool reduceMotion;
-
+class const _BackdropImage({
+  required final String assetPath,
+  required final bool reduceMotion,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = Opacity(

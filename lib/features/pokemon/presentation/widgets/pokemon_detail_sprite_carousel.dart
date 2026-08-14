@@ -11,20 +11,13 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 /// Horizontal form/shiny carousel for the detail hero sprite.
-class PokemonDetailSpriteCarousel extends ConsumerStatefulWidget {
-  const new({
-    required this.routePokemonId,
-    required this.variants,
-    this.fallbackCryUrl,
-    this.fallbackLegacyCryUrl,
-    super.key,
-  });
-
-  final int routePokemonId;
-  final List<PokemonSpriteVariant> variants;
-  final String? fallbackCryUrl;
-  final String? fallbackLegacyCryUrl;
-
+class const PokemonDetailSpriteCarousel({
+  required final int routePokemonId,
+  required final List<PokemonSpriteVariant> variants,
+  final String? fallbackCryUrl,
+  final String? fallbackLegacyCryUrl,
+  super.key,
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<PokemonDetailSpriteCarousel> createState() =>
       _PokemonDetailSpriteCarouselState();
@@ -180,20 +173,13 @@ class _PokemonDetailSpriteCarouselState
 }
 
 /// Single tappable sprite used when only one visual variant exists.
-class PokemonDetailTappableSprite extends ConsumerStatefulWidget {
-  const new({
-    required this.pokemonId,
-    required this.imageUrl,
-    this.cryUrl,
-    this.legacyCryUrl,
-    super.key,
-  });
-
-  final int pokemonId;
-  final String imageUrl;
-  final String? cryUrl;
-  final String? legacyCryUrl;
-
+class const PokemonDetailTappableSprite({
+  required final int pokemonId,
+  required final String imageUrl,
+  final String? cryUrl,
+  final String? legacyCryUrl,
+  super.key,
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<PokemonDetailTappableSprite> createState() =>
       _PokemonDetailTappableSpriteState();

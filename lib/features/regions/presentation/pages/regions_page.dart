@@ -9,9 +9,7 @@ import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/region_generation_card.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class RegionsPage extends ConsumerWidget {
-  const new({super.key});
-
+class const RegionsPage({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(

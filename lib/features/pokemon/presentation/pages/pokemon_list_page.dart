@@ -24,9 +24,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class PokemonListPage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const PokemonListPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<PokemonListPage> createState() => _PokemonListPageState();
 }
@@ -232,18 +230,12 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
   }
 }
 
-class _PokemonListHeader extends ConsumerWidget {
-  const new({
-    required this.filters,
-    required this.l10n,
-    required this.onGenerationClear,
-    super.key,
-  });
-
-  final PokemonListFilters filters;
-  final AppLocalizations l10n;
-  final VoidCallback onGenerationClear;
-
+class const _PokemonListHeader({
+  required final PokemonListFilters filters,
+  required final AppLocalizations l10n,
+  required final VoidCallback onGenerationClear,
+  super.key,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
@@ -344,12 +336,10 @@ class _PokemonListHeader extends ConsumerWidget {
   }
 }
 
-class _TypeFilterChip extends StatelessWidget {
-  const new({required this.typeFilter, required this.onTap});
-
-  final PokemonType? typeFilter;
-  final VoidCallback onTap;
-
+class const _TypeFilterChip({
+  required final PokemonType? typeFilter,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -394,12 +384,10 @@ class _TypeFilterChip extends StatelessWidget {
   }
 }
 
-class _SortFilterChip extends StatelessWidget {
-  const new({required this.sort, required this.onTap});
-
-  final PokemonSortOption sort;
-  final VoidCallback onTap;
-
+class const _SortFilterChip({
+  required final PokemonSortOption sort,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -438,19 +426,12 @@ class _SortFilterChip extends StatelessWidget {
   }
 }
 
-class _FilterPillChip extends StatelessWidget {
-  const new({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.badgeCount = 0,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final int badgeCount;
-
+class const _FilterPillChip({
+  required final String label,
+  required final IconData icon,
+  required final VoidCallback onTap,
+  final int badgeCount = 0,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = MouseRegion(
@@ -491,12 +472,10 @@ class _FilterPillChip extends StatelessWidget {
   }
 }
 
-class _ActiveFilterChip extends StatelessWidget {
-  const new({required this.label, required this.onClear});
-
-  final String label;
-  final VoidCallback onClear;
-
+class const _ActiveFilterChip({
+  required final String label,
+  required final VoidCallback onClear,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(

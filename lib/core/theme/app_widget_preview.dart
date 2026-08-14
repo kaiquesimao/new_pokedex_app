@@ -17,10 +17,7 @@ PreviewLocalizationsData appPreviewLocalizations() {
 }
 
 /// Applies [AppTheme] inside the Widget Preview environment.
-final class AppPreviewThemeData extends PreviewThemeData {
-  /// Creates a preview theme that tracks [MediaQuery] brightness.
-  const new();
-
+final class const AppPreviewThemeData() extends PreviewThemeData {
   @override
   Widget apply(BuildContext context, Widget child) {
     final brightness = MediaQuery.maybePlatformBrightnessOf(context);

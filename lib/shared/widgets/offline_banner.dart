@@ -44,11 +44,8 @@ class const OfflineBanner({
 }
 
 /// Wraps the entire app so the offline banner stays fixed above all routes.
-class AppOfflineShell extends ConsumerWidget {
-  const new({required this.child, super.key});
-
-  final Widget? child;
-
+class const AppOfflineShell({required final Widget? child, super.key})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
@@ -60,16 +57,11 @@ class AppOfflineShell extends ConsumerWidget {
   }
 }
 
-class ConnectivityOfflineBanner extends ConsumerWidget {
-  const new({
-    super.key,
-    this.message,
-    this.compact = false,
-  });
-
-  final String? message;
-  final bool compact;
-
+class const ConnectivityOfflineBanner({
+  super.key,
+  final String? message,
+  final bool compact = false,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isOnline = ref.watch(isDeviceOnlineProvider);
@@ -83,18 +75,12 @@ class ConnectivityOfflineBanner extends ConsumerWidget {
   }
 }
 
-class OfflineEmptyState extends StatelessWidget {
-  const new({
-    required this.message,
-    required this.onRetry,
-    super.key,
-    this.isConnectivityFailure = true,
-  });
-
-  final String message;
-  final VoidCallback onRetry;
-  final bool isConnectivityFailure;
-
+class const OfflineEmptyState({
+  required final String message,
+  required final VoidCallback onRetry,
+  super.key,
+  final bool isConnectivityFailure = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -284,11 +284,10 @@ void main() {
 }
 
 /// Delays empty [replaceNameIndex] so locale-clear vs warm races can be tested.
-class _GatedClearLocal extends PokemonLocalDataSource {
-  new(super._db, {required this.onEmptyClear});
-
-  final Future<void> Function() onEmptyClear;
-
+class _GatedClearLocal(
+  super._db, {
+  required final Future<void> Function() onEmptyClear,
+}) extends PokemonLocalDataSource {
   @override
   Future<void> replaceNameIndex(List<Object> refs) async {
     if (refs.isEmpty) {

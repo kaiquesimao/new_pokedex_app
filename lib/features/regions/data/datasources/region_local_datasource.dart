@@ -3,11 +3,7 @@ import 'dart:convert';
 import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 
-class RegionLocalDataSource {
-  new(this._db);
-
-  final AppDatabase _db;
-
+class RegionLocalDataSource(final AppDatabase _db) {
   Future<void> saveRegionalEntries(
     String regionName,
     List<RegionalPokedexEntry> entries,

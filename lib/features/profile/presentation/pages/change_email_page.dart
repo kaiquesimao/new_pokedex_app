@@ -16,9 +16,7 @@ import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ChangeEmailPage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const ChangeEmailPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<ChangeEmailPage> createState() => _ChangeEmailPageState();
 }
@@ -255,11 +253,8 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
   };
 }
 
-class _VerifyEmailBody extends StatelessWidget {
-  const new({this.errorText});
-
-  final String? errorText;
-
+class const _VerifyEmailBody({final String? errorText})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -286,12 +281,10 @@ class _VerifyEmailBody extends StatelessWidget {
   }
 }
 
-class _StepIndicator extends StatelessWidget {
-  const new({required this.current, required this.total});
-
-  final int current;
-  final int total;
-
+class const _StepIndicator({
+  required final int current,
+  required final int total,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -314,17 +307,11 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-class _SuccessBody extends StatelessWidget {
-  const new({
-    required this.l10n,
-    required this.email,
-    required this.onDone,
-  });
-
-  final AppLocalizations l10n;
-  final String email;
-  final VoidCallback onDone;
-
+class const _SuccessBody({
+  required final AppLocalizations l10n,
+  required final String email,
+  required final VoidCallback onDone,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

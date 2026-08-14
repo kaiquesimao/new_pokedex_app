@@ -7,19 +7,12 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum ChangePasswordStep { current, newPassword, confirm, success }
 
-class ChangePasswordFlowState {
-  const new({
-    this.step = ChangePasswordStep.current,
-    this.loading = false,
-    this.error,
-    this.verifiedCurrentPassword = '',
-  });
-
-  final ChangePasswordStep step;
-  final bool loading;
-  final String? error;
-  final String verifiedCurrentPassword;
-
+class const ChangePasswordFlowState({
+  final ChangePasswordStep step = ChangePasswordStep.current,
+  final bool loading = false,
+  final String? error,
+  final String verifiedCurrentPassword = '',
+}) {
   ChangePasswordFlowState copyWith({
     ChangePasswordStep? step,
     bool? loading,

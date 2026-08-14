@@ -6,22 +6,14 @@ import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
-class PokemonListCard extends StatelessWidget {
-  const new({
-    required this.number,
-    required this.name,
-    required this.types,
-    super.key,
-    this.spriteUrl,
-    this.onTap,
-  });
-
-  final int number;
-  final String name;
-  final List<PokemonType> types;
-  final String? spriteUrl;
-  final VoidCallback? onTap;
-
+class const PokemonListCard({
+  required final int number,
+  required final String name,
+  required final List<PokemonType> types,
+  super.key,
+  final String? spriteUrl,
+  final VoidCallback? onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -4,11 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 
-class AuthLoadingOverlay extends StatelessWidget {
-  const new({super.key, this.message});
-
-  final String? message;
-
+class const AuthLoadingOverlay({super.key, final String? message})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
@@ -38,11 +35,8 @@ class AuthLoadingOverlay extends StatelessWidget {
   }
 }
 
-class _PokeballSpinner extends StatefulWidget {
-  const new({required this.size});
-
-  final double size;
-
+class const _PokeballSpinner({required final double size})
+    extends StatefulWidget {
   @override
   State<_PokeballSpinner> createState() => _PokeballSpinnerState();
 }

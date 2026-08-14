@@ -11,9 +11,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class EditNamePage extends ConsumerStatefulWidget {
-  const new({super.key});
-
+class const EditNamePage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<EditNamePage> createState() => _EditNamePageState();
 }

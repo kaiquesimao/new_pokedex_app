@@ -6,17 +6,11 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class VerifyEmailUiState {
-  const new({
-    this.loading = false,
-    this.error,
-    this.resent = false,
-  });
-
-  final bool loading;
-  final String? error;
-  final bool resent;
-
+class const VerifyEmailUiState({
+  final bool loading = false,
+  final String? error,
+  final bool resent = false,
+}) {
   VerifyEmailUiState copyWith({
     bool? loading,
     String? error,

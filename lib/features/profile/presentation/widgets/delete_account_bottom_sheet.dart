@@ -23,11 +23,8 @@ Future<DeleteAccountSheetResult?> showDeleteAccountBottomSheet(
   );
 }
 
-class _DeleteAccountBottomSheet extends StatefulWidget {
-  const new({required this.requirePassword});
-
-  final bool requirePassword;
-
+class const _DeleteAccountBottomSheet({required final bool requirePassword})
+    extends StatefulWidget {
   @override
   State<_DeleteAccountBottomSheet> createState() =>
       _DeleteAccountBottomSheetState();

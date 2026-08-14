@@ -1,14 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
-class ShellTabScope extends InheritedWidget {
-  const new({
-    required this.currentIndex,
-    required super.child,
-    super.key,
-  });
-
-  final int currentIndex;
-
+class const ShellTabScope({
+  required final int currentIndex,
+  required super.child,
+  super.key,
+}) extends InheritedWidget {
   static int of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<ShellTabScope>();
     assert(scope != null, 'ShellTabScope not found in context');
@@ -22,12 +18,11 @@ class ShellTabScope extends InheritedWidget {
 }
 
 /// Defers building [child] until its tab is visited for the first time.
-class LazyShellTab extends StatefulWidget {
-  const new({required this.tabIndex, required this.child, super.key});
-
-  final int tabIndex;
-  final Widget child;
-
+class const LazyShellTab({
+  required final int tabIndex,
+  required final Widget child,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<LazyShellTab> createState() => _LazyShellTabState();
 }

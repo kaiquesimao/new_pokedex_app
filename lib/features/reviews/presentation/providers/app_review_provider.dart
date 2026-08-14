@@ -7,15 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 const inAppReviewPromptedKey = 'in_app_review_prompted';
 
 /// Coordinates when to ask for a Play Store review.
-class AppReviewController {
-  new({
-    required this.prefs,
-    required this.service,
-  });
-
-  final SharedPreferences prefs;
-  final AppReviewService service;
-
+class AppReviewController({
+  required final SharedPreferences prefs,
+  required final AppReviewService service,
+}) {
   /// Settings row: in-app review, or the public listing if unavailable.
   Future<void> rateFromSettings() => service.rateFromSettings();
 

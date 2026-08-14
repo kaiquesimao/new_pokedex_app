@@ -36,11 +36,8 @@ import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
-class PokemonDetailPage extends ConsumerWidget {
-  const new({required this.pokemonId, super.key});
-
-  final int pokemonId;
-
+class const PokemonDetailPage({required final int pokemonId, super.key})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
@@ -96,19 +93,12 @@ bool shouldReloadPokemonDetailOnConnectivityRestore(
       : current.hasValue && current.requireValue.isOfflineMode;
 }
 
-class _PokemonDetailContent extends ConsumerStatefulWidget {
-  const new({
-    required this.pokemonId,
-    required this.pokemon,
-    required this.evolution,
-    this.flavorTextEntries = const [],
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-  final EvolutionChain evolution;
-  final List<dynamic> flavorTextEntries;
-
+class const _PokemonDetailContent({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+  required final EvolutionChain evolution,
+  final List<dynamic> flavorTextEntries = const [],
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<_PokemonDetailContent> createState() =>
       _PokemonDetailContentState();
@@ -257,23 +247,14 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   }
 }
 
-class _HeroSection extends ConsumerWidget {
-  const new({
-    required this.pokemonId,
-    required this.pokemon,
-    required this.primaryType,
-    required this.headerColor,
-    required this.isFavorite,
-    required this.onFavoriteTap,
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-  final PokemonType? primaryType;
-  final Color headerColor;
-  final bool isFavorite;
-  final VoidCallback onFavoriteTap;
-
+class const _HeroSection({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+  required final PokemonType? primaryType,
+  required final Color headerColor,
+  required final bool isFavorite,
+  required final VoidCallback onFavoriteTap,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final headerActionColor = Theme.of(context).colorScheme.onSurface;
@@ -379,15 +360,10 @@ class _HeroSection extends ConsumerWidget {
   }
 }
 
-class _HeroSprite extends ConsumerWidget {
-  const new({
-    required this.pokemonId,
-    required this.pokemon,
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-
+class const _HeroSprite({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final variantsAsync = ref.watch(
@@ -442,12 +418,10 @@ class _HeroSprite extends ConsumerWidget {
   }
 }
 
-class _EvolutionSection extends StatelessWidget {
-  const new({required this.pokemonId, required this.evolution});
-
-  final int pokemonId;
-  final EvolutionChain evolution;
-
+class const _EvolutionSection({
+  required final int pokemonId,
+  required final EvolutionChain evolution,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -500,17 +474,11 @@ class _EvolutionSection extends StatelessWidget {
   }
 }
 
-class _CollapsibleStats extends StatelessWidget {
-  const new({
-    required this.pokemon,
-    required this.expanded,
-    required this.onToggle,
-  });
-
-  final PokemonDetail pokemon;
-  final bool expanded;
-  final VoidCallback onToggle;
-
+class const _CollapsibleStats({
+  required final PokemonDetail pokemon,
+  required final bool expanded,
+  required final VoidCallback onToggle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const maxStat = 255;

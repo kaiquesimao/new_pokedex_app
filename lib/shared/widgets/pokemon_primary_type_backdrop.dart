@@ -3,18 +3,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 
 /// Faded white type icon centered behind a Pokémon sprite.
-class PokemonPrimaryTypeBackdrop extends StatelessWidget {
-  const new({
-    required this.type,
-    super.key,
-    this.size = listRowSize,
-    this.opacity = 0.35,
-  });
-
-  final PokemonType type;
-  final double size;
-  final double opacity;
-
+class const PokemonPrimaryTypeBackdrop({
+  required final PokemonType type,
+  super.key,
+  final double size = listRowSize,
+  final double opacity = 0.35,
+}) extends StatelessWidget {
   static const double listRowSize = 100;
   static const double detailSize = 230;
   static const double detailOpacity = 0.3;

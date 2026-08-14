@@ -5,9 +5,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutPage extends ConsumerWidget {
-  const new({super.key});
-
+class const AboutPage({super.key}) extends ConsumerWidget {
   static const _kaiqueLinkedInUrl = 'https://www.linkedin.com/in/kaique-simao/';
   static const _juniorLinkedInUrl =
       'https://www.linkedin.com/in/junior-saraiva/';
@@ -166,17 +164,11 @@ Future<void> _openExternalUrl(String url) async {
   }
 }
 
-class _AcknowledgmentCard extends StatelessWidget {
-  const new({
-    required this.title,
-    required this.body,
-    required this.links,
-  });
-
-  final String title;
-  final String body;
-  final List<({String label, String url})> links;
-
+class const _AcknowledgmentCard({
+  required final String title,
+  required final String body,
+  required final List<({String label, String url})> links,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -224,12 +216,10 @@ class _AcknowledgmentCard extends StatelessWidget {
   }
 }
 
-class _CreditTile extends StatelessWidget {
-  const new({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
+class const _CreditTile({
+  required final String title,
+  required final String body,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -272,12 +262,10 @@ class _CreditTile extends StatelessWidget {
   }
 }
 
-class _DisclaimerCard extends StatelessWidget {
-  const new({required this.theme, required this.text});
-
-  final ThemeData theme;
-  final String text;
-
+class const _DisclaimerCard({
+  required final ThemeData theme,
+  required final String text,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
