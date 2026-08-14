@@ -1,5 +1,5 @@
 # Build signed AAB and upload to Play Store (internal testing by default).
-# Trigger: tag v* or Actions → Release Android → Run workflow.
+# Trigger: tag v* on master, or Actions → Release Android from a master commit.
 name: Release Android
 run-name: Release Android (${{ inputs.track || 'internal' }}) · ${{ github.ref_name }}
 
@@ -37,6 +37,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Ensure commit is on master
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin master
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+            echo "::error::Android release is only allowed for commits on master."
+            echo "Commit $GITHUB_SHA (${GITHUB_REF}) is not on origin/master."
+            exit 1
+          fi
 
       - uses: actions/setup-java@v5
         with:

@@ -148,10 +148,13 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
 | Trigger | What runs |
 |---------|-------------|
-| Tag `v*` (e.g. `v1.0.1`) | analyze → test → signed AAB → upload **internal** track |
-| Manual (`workflow_dispatch`) | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
+| Tag `v*` on a commit that is on `master` | analyze → test → signed AAB → upload **internal** track |
+| Manual (`workflow_dispatch`) from a `master` commit | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
 
-**Preferred:** run the release script (bumps `pubspec.yaml`, commits, tags, pushes):
+Tags (and manual runs) whose commit is **not** on `master` fail immediately.
+
+**Preferred:** run the release script **on `master`** (clean tree, in sync with
+`origin/master`; bumps `pubspec.yaml`, commits, tags, pushes):
 
 ```powershell
 # Working tree must be clean. Build number (+N) always increments.

@@ -5,7 +5,8 @@
 
 .DESCRIPTION
   Updates pubspec.yaml (x.y.z+build), commits, creates tag vX.Y.Z, and pushes
-  branch + tag to origin. The Release Android workflow runs on the tag.
+  master + tag to origin. Must run from master in sync with origin/master.
+  The Release Android workflow runs on the tag.
 
 .PARAMETER Bump
   Semver part to bump: patch | minor | major.
@@ -62,12 +63,22 @@ $branch = (git rev-parse --abbrev-ref HEAD).Trim()
 if ($branch -eq 'HEAD') {
   throw 'Detached HEAD - check out a branch before releasing.'
 }
+if ($branch -ne 'master') {
+  throw "Releases must be created from master (current: $branch)."
+}
 
 if (-not $DryRun) {
   $gitStatus = git status --porcelain
   if ($gitStatus) {
     throw "Working tree is not clean. Commit or stash changes first.`n$gitStatus"
   }
+}
+
+git fetch --no-tags origin master
+$headSha = (git rev-parse HEAD).Trim()
+$originMasterSha = (git rev-parse origin/master).Trim()
+if ($headSha -ne $originMasterSha) {
+  throw 'Local master is not in sync with origin/master. Pull/push before releasing.'
 }
 
 $current = Get-PubspecVersion
