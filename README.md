@@ -148,13 +148,14 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
 | Trigger | What runs |
 |---------|-------------|
-| Tag `v*` on a commit that is on `master` | analyze → test → signed AAB → upload **internal** track |
-| Manual (`workflow_dispatch`) from a `master` commit | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
+| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **internal** track |
+| Manual (`workflow_dispatch`) from `master` | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
 
-Tags (and manual runs) whose commit is **not** on `master` fail immediately.
+Tags do **not** start the workflow. Create them on a PR branch with the
+release script; Android deploys only after that version is merged to `master`.
 
-**Preferred:** run the release script **on `master`** (clean tree, in sync with
-`origin/master`; bumps `pubspec.yaml`, commits, tags, pushes):
+**Preferred:** run the release script on the PR branch (clean tree; bumps
+`pubspec.yaml`, commits, tags, pushes), then merge to `master`:
 
 ```powershell
 # Working tree must be clean. Build number (+N) always increments.
@@ -170,9 +171,9 @@ Tags (and manual runs) whose commit is **not** on `master` fail immediately.
 ./scripts/release.sh minor --dry-run
 ```
 
-The workflow reads `version:` from `pubspec.yaml`, checks that tag `vX.Y.Z`
-matches the name part, and builds with `--build-name` / `--build-number`
-(`versionCode` must keep increasing on every Play upload; current Play is `+4`).
+The workflow reads `version:` from `pubspec.yaml` and builds with
+`--build-name` / `--build-number` (`versionCode` must keep increasing on
+every Play upload; current Play is `+4`).
 
 Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
 

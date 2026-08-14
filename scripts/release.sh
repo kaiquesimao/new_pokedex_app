@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Bump app version, commit, tag, and push from master (triggers Android release).
+# Bump app version, commit, tag, and push from the current branch.
+# Android deploy runs after that version reaches master.
 #
 # Usage:
 #   ./scripts/release.sh patch|minor|major [--dry-run]
@@ -29,10 +30,6 @@ if [[ "$branch" == "HEAD" ]]; then
   echo "Detached HEAD - check out a branch before releasing." >&2
   exit 1
 fi
-if [[ "$branch" != "master" ]]; then
-  echo "Releases must be created from master (current: ${branch})." >&2
-  exit 1
-fi
 
 if [[ "$dry_run" -eq 0 ]]; then
   if [[ -n "$(git status --porcelain)" ]]; then
@@ -40,14 +37,6 @@ if [[ "$dry_run" -eq 0 ]]; then
     git status --porcelain >&2
     exit 1
   fi
-fi
-
-git fetch --no-tags origin master
-head_sha="$(git rev-parse HEAD)"
-origin_master_sha="$(git rev-parse origin/master)"
-if [[ "$head_sha" != "$origin_master_sha" ]]; then
-  echo "Local master is not in sync with origin/master. Pull/push before releasing." >&2
-  exit 1
 fi
 
 line="$(grep -E '^version:' pubspec.yaml | head -n1)"
@@ -116,6 +105,7 @@ git push origin "$tag"
 
 cat <<EOF
 
-Done. Release Android should start for ${tag}.
+Done. Pushed ${tag} from ${branch}.
+Android release runs after this version reaches master (merge the PR).
 Track: internal (default). Monitor: Actions → Release Android
 EOF

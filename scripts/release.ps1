@@ -1,12 +1,12 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Bump app version, commit, tag, and push (triggers Android release).
+  Bump app version, commit, tag, and push (Android deploys after merge to master).
 
 .DESCRIPTION
   Updates pubspec.yaml (x.y.z+build), commits, creates tag vX.Y.Z, and pushes
-  master + tag to origin. Must run from master in sync with origin/master.
-  The Release Android workflow runs on the tag.
+  the current branch + tag to origin. Run from any branch (typically a PR
+  branch). Release Android deploys only after that version reaches master.
 
 .PARAMETER Bump
   Semver part to bump: patch | minor | major.
@@ -63,22 +63,12 @@ $branch = (git rev-parse --abbrev-ref HEAD).Trim()
 if ($branch -eq 'HEAD') {
   throw 'Detached HEAD - check out a branch before releasing.'
 }
-if ($branch -ne 'master') {
-  throw "Releases must be created from master (current: $branch)."
-}
 
 if (-not $DryRun) {
   $gitStatus = git status --porcelain
   if ($gitStatus) {
     throw "Working tree is not clean. Commit or stash changes first.`n$gitStatus"
   }
-}
-
-git fetch --no-tags origin master
-$headSha = (git rev-parse HEAD).Trim()
-$originMasterSha = (git rev-parse origin/master).Trim()
-if ($headSha -ne $originMasterSha) {
-  throw 'Local master is not in sync with origin/master. Pull/push before releasing.'
 }
 
 $current = Get-PubspecVersion
@@ -143,6 +133,7 @@ git push origin $tag
 
 Write-Host @"
 
-Done. Release Android should start for $tag.
+Done. Pushed $tag from $branch.
+Android release runs after this version reaches master (merge the PR).
 Track: internal (default). Monitor: Actions → Release Android
 "@
