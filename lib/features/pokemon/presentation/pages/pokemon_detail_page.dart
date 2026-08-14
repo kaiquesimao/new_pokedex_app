@@ -13,6 +13,7 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
+import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
@@ -252,13 +253,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
       return;
     }
 
-    final willFavorite = !ref
-        .read(favoritesProvider)
-        .contains(widget.pokemonId);
-    unawaited(ref.read(favoritesProvider.notifier).toggle(widget.pokemonId));
-    ref
-        .read(appAnalyticsProvider)
-        .favoriteToggled(pokemonId: widget.pokemonId, isFavorite: willFavorite);
+    toggleAuthenticatedFavorite(ref, pokemonId: widget.pokemonId);
   }
 }
 

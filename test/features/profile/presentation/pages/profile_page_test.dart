@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
+import 'package:pokedex_app/features/reviews/domain/app_review_service.dart';
+import 'package:pokedex_app/features/reviews/presentation/providers/app_review_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
 import '../../../../helpers/l10n_test_helper.dart';
@@ -241,6 +245,51 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('profile shows rate app row and opens review flow', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final reviewService = _FakeReviewService();
+
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        appReviewServiceProvider.overrideWithValue(reviewService),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+      ],
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Avaliar o app'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Avaliar o app'));
+    await tester.pumpAndSettle();
+
+    expect(reviewService.settingsCalls, 1);
+  });
+}
+
+class _FakeReviewService implements AppReviewService {
+  int settingsCalls = 0;
+
+  @override
+  Future<bool> requestInAppReviewIfAvailable() async => false;
+
+  @override
+  Future<void> rateFromSettings() async {
+    settingsCalls++;
+  }
 }
 
 class _TestAssetBundle extends CachingAssetBundle {

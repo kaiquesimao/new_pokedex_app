@@ -290,7 +290,9 @@
   "profilePrivacyLabel": "Privacy policy",
   "profileAccountDeletionLabel": "Account and data deletion",
   "profileHelpLabel": "Help",
-  "profileAboutLabel": "About"
+  "profileAboutLabel": "About",
+  "profileRateAppLabel": "Rate the app",
+  "profileRateAppError": "Could not open the store listing. Try again later."
 ,
   "profileActionSuccess": "Action completed"
 ,
@@ -482,8 +484,11 @@
   "profileAccountDeletionLink": "How account deletion works",
   "onboardingSlide1Title": "All Pokémon in one place",
   "onboardingSlide1Subtitle": "Browse a vast list of Pokémon from every generation by Nintendo",
-  "onboardingSlide2Title": "Keep your Pokédex up to date",
-  "onboardingSlide2Subtitle": "Sign up and keep your profile, favorite Pokémon, settings, and more saved in the app, even without an internet connection.",
+  "onboardingSlide2Title": "Search by type and region",
+  "onboardingSlide2Subtitle": "Filter Pokémon by type, generation, and region to find what you need in seconds.",
+  "onboardingSlide3Title": "Keep your Pokédex up to date",
+  "onboardingSlide3Subtitle": "Sign up and keep your profile, favorite Pokémon, settings, and more saved in the app, even without an internet connection.",
+  "onboardingSkipButton": "Skip",
   "onboardingContinueButton": "Continue",
   "onboardingStartButton": "Let's get started!",
 

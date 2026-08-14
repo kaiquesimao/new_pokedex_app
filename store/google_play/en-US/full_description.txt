@@ -1,0 +1,60 @@
+PokeData is a modern pokedex for fans: look up Pokémon, regions, and details in a fast, easy-to-use app. Whether you are filling a living dex, planning a team, or just browsing for fun, this pokedex keeps the information you need close at hand.
+
+WHY CHOOSE POKEDATA?
+
+PokeData is built for everyday use. Open the app, search a name, and get types, stats, evolution, and flavor in a clean layout. Sign in to sync favorites across devices, or explore as a guest when you only want a quick lookup. Offline browsing keeps recently viewed Pokémon available when you have no signal.
+
+This pokedex is made for Pokémon fans who want a reference that feels current: clear type icons, readable text, and navigation that stays out of the way. No cluttered menus. No keyword stuffing. Just a pokedex you can actually use.
+
+KEY FEATURES
+
+• Complete pokedex browsing
+Scroll a vast list of Pokémon from every generation. Each row shows the National Dex number, name, types, and sprite so you can scan quickly.
+
+• Fast search
+Type a name in the search bar to jump straight to the Pokémon you have in mind. Useful when you only remember part of a name.
+
+• Filters by type and generation
+Narrow the list by type, generation, and other filters so you can answer questions like “which Water Pokémon are in this generation?” without leaving the pokedex.
+
+• Regions
+Open a region to see which Pokémon belong there. Handy when you are playing a specific game or comparing Pokédex entries across regions.
+
+• Detailed profiles
+Open any Pokémon for height, weight, abilities, base stats, weaknesses, evolution chain, and game text. The detail screen is the heart of this pokedex.
+
+• Favorites
+Save the Pokémon you care about. Favorites are there for team ideas, shiny hunting targets, or your personal living dex. An account is required to persist favorites.
+
+• Guest mode
+Explore the pokedex without creating an account. Sign in later if you want favorites and synced settings.
+
+• Offline-friendly cache
+The app stores data locally so browsing stays smooth and you can still open Pokémon you have already loaded when you are offline.
+
+• Language
+Switch the app language between Portuguese and English from Account. Game text from the PokéAPI follows the language you choose whenever a translation is available.
+
+HOW TO USE THIS POKEDEX
+
+1. Open the Pokédex tab and scroll or search.
+2. Use type and generation filters when you are exploring, not hunting a single name.
+3. Open a Pokémon to read stats, weaknesses, and evolution.
+4. Visit Regions when you want a map of the Pokédex by place.
+5. Sign in and tap the heart to keep favorites.
+
+WHO IT IS FOR
+
+Casual players who need a pokedex during a playthrough. Competitive fans who want a quick stat and type check. Collectors tracking favorites. Anyone who prefers a focused Pokémon reference over a social feed.
+
+IMPORTANT NOTES
+
+PokeData is a fan-made pokedex. It is not developed, endorsed, or affiliated with Nintendo, The Pokémon Company, Game Freak, or Creatures Inc. Pokémon and Pokémon character names are trademarks of their respective owners. Data is sourced from PokéAPI and may change as that project updates.
+
+Privacy and terms are available in the app under Account. Read them before you create an account. Favorites and profile data are tied to your sign-in.
+
+FUTURE UPDATES
+
+We ship small, regular updates: performance, copy, and quality-of-life improvements to the pokedex experience. Check What’s New on the store listing after each release.
+
+If PokeData helps you on a playthrough, a rating on Google Play tells other fans that this pokedex is worth installing. Thank you for using PokeData.

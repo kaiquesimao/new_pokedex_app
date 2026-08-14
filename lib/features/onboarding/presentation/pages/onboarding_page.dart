@@ -25,6 +25,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   static const List<List<String>> _slideAssets = [
     [AppAssets.characterBugcatcher, AppAssets.characterBirch],
+    [AppAssets.characterHilbert],
     [AppAssets.characterHilda],
   ];
 
@@ -39,6 +40,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
     await ref.read(onboardingProvider.notifier).complete();
     if (mounted) context.go('/welcome');
+  }
+
+  void _skipToLast() {
+    unawaited(
+      _pageController.animateToPage(
+        _slideAssets.length - 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      ),
+    );
   }
 
   void _next() {
@@ -68,12 +79,25 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         title: l10n.onboardingSlide2Title,
         subtitle: l10n.onboardingSlide2Subtitle,
       ),
+      (
+        title: l10n.onboardingSlide3Title,
+        subtitle: l10n.onboardingSlide3Subtitle,
+      ),
     ];
 
     return Scaffold(
       body: SafePageBody(
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: isLastPage
+                  ? const SizedBox(height: 48)
+                  : TextButton(
+                      onPressed: _skipToLast,
+                      child: Text(l10n.onboardingSkipButton),
+                    ),
+            ),
             Expanded(
               child: PageView.builder(
                 controller: _pageController,

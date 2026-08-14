@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import 'package:pokedex_app/features/profile/domain/entities/profile_settings.da
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/delete_account_bottom_sheet.dart';
 import 'package:pokedex_app/features/profile/presentation/widgets/logout_bottom_sheet.dart';
+import 'package:pokedex_app/features/reviews/presentation/providers/app_review_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -109,6 +111,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
               onTermsTap: () => context.push('/legal/terms'),
               onPrivacyTap: () => context.push('/legal/privacy'),
+              onRateTap: () => _handleRateApp(context, ref),
               onHelpTap: () => context.push('/profile/help'),
               onAboutTap: () => context.push('/profile/about'),
             ),
@@ -126,6 +129,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ),
       ),
     );
+  }
+
+  static Future<void> _handleRateApp(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      await ref.read(appReviewControllerProvider).rateFromSettings();
+    } on Object {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).profileRateAppError,
+          ),
+        ),
+      );
+    }
   }
 
   static Future<void> _saveSetting(
@@ -298,6 +319,7 @@ class _SettingsSections extends StatelessWidget {
     required this.onToggleAppLanguage,
     required this.onTermsTap,
     required this.onPrivacyTap,
+    required this.onRateTap,
     required this.onHelpTap,
     required this.onAboutTap,
   });
@@ -309,6 +331,7 @@ class _SettingsSections extends StatelessWidget {
   final VoidCallback onToggleAppLanguage;
   final VoidCallback onTermsTap;
   final VoidCallback onPrivacyTap;
+  final VoidCallback onRateTap;
   final VoidCallback onHelpTap;
   final VoidCallback onAboutTap;
 
@@ -362,6 +385,11 @@ class _SettingsSections extends StatelessWidget {
               label: l10n.profilePrivacyLabel,
               onTap: onPrivacyTap,
             ),
+            if (!kIsWeb)
+              _ChevronRow(
+                label: l10n.profileRateAppLabel,
+                onTap: onRateTap,
+              ),
             _ChevronRow(
               label: l10n.profileHelpLabel,
               onTap: onHelpTap,

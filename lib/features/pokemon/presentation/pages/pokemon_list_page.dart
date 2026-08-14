@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
+import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
@@ -228,12 +228,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
       return;
     }
 
-    final favorites = ref.read(favoritesProvider);
-    final willFavorite = !favorites.contains(pokemonId);
-    unawaited(ref.read(favoritesProvider.notifier).toggle(pokemonId));
-    ref
-        .read(appAnalyticsProvider)
-        .favoriteToggled(pokemonId: pokemonId, isFavorite: willFavorite);
+    toggleAuthenticatedFavorite(ref, pokemonId: pokemonId);
   }
 }
 

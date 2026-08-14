@@ -501,6 +501,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileAboutLabel => 'Sobre';
 
   @override
+  String get profileRateAppLabel => 'Avaliar o app';
+
+  @override
+  String get profileRateAppError =>
+      'Não foi possível abrir a loja. Tente de novo mais tarde.';
+
+  @override
   String get profileActionSuccess => 'Ação realizada com sucesso';
 
   @override
@@ -812,7 +819,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpFilterAnswer =>
-      'Na aba Pokédex, use a barra de busca, o filtro Formas (incluindo sprites shiny) e os filtros avançados para refinar os resultados.';
+      'Na aba Pokédex, use a barra de busca, o filtro Formas (incluindo shiny) e os filtros avançados para refinar os resultados.';
 
   @override
   String get helpMegaFormsQuestion =>
@@ -1060,11 +1067,21 @@ class AppLocalizationsPt extends AppLocalizations {
       'Acesse uma vasta lista de Pokémon de todas as gerações já feitas pela Nintendo';
 
   @override
-  String get onboardingSlide2Title => 'Mantenha sua PokeData atualizada';
+  String get onboardingSlide2Title => 'Busque por tipo e região';
 
   @override
   String get onboardingSlide2Subtitle =>
+      'Filtre Pokémon por tipo, geração e região para encontrar o que precisa em segundos.';
+
+  @override
+  String get onboardingSlide3Title => 'Mantenha sua PokeData atualizada';
+
+  @override
+  String get onboardingSlide3Subtitle =>
       'Cadastre-se e mantenha seu perfil, Pokémon favoritos, configurações e muito mais, salvos no aplicativo, mesmo sem conexão com a internet.';
+
+  @override
+  String get onboardingSkipButton => 'Pular';
 
   @override
   String get onboardingContinueButton => 'Continuar';
