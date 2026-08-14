@@ -1,7 +1,7 @@
 name: pokedex_app
 description: "PokeData - Pokedéx para fãs"
 publish_to: 'none'
-version: 1.1.1+9
+version: 1.2.0+10
 environment:
   sdk: ^3.13.0
   flutter: '>=3.47.0'
