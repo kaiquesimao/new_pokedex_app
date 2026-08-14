@@ -1,24 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 
-class OtpCodeField extends StatefulWidget {
-  const OtpCodeField({
-    required this.onCompleted,
-    super.key,
-    this.onChanged,
-    this.length = 6,
-    this.errorText,
-    this.onResend,
-  });
-
-  final ValueChanged<String> onCompleted;
-  final ValueChanged<String>? onChanged;
-  final int length;
-  final String? errorText;
-  final VoidCallback? onResend;
-
+class const OtpCodeField({
+  required final ValueChanged<String> onCompleted,
+  super.key,
+  final ValueChanged<String>? onChanged,
+  final int length = 6,
+  final String? errorText,
+  final VoidCallback? onResend,
+}) extends StatefulWidget {
   @override
   State<OtpCodeField> createState() => _OtpCodeFieldState();
 }

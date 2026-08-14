@@ -1,86 +1,44 @@
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 
-class PokemonSummary {
-  const PokemonSummary({
-    required this.id,
-    required this.slug,
-    required this.name,
-    required this.types,
-    this.spriteUrl,
-    this.shinySpriteUrl,
-    this.height,
-    this.weight,
-    this.isDefault,
-    this.isMega = false,
-  });
-
-  final int id;
-
-  /// PokeAPI resource name (e.g. `pikachu`, `charizard-mega-x`).
-  final String slug;
-
-  /// Localized or formatted display name.
-  final String name;
-  final List<PokemonType> types;
-  final String? spriteUrl;
-  final String? shinySpriteUrl;
-  final int? height;
-  final int? weight;
-
-  /// From PokeAPI `pokemon.is_default`; null when cache predates metadata.
-  final bool? isDefault;
-
-  /// From PokeAPI `pokemon-form.is_mega` when [isDefault] is false.
-  final bool isMega;
-
+class const PokemonSummary({
+  required final int id,
+  required final String slug,
+  required final String name,
+  required final List<PokemonType> types,
+  final String? spriteUrl,
+  final String? shinySpriteUrl,
+  final int? height,
+  final int? weight,
+  final bool? isDefault,
+  final bool isMega = false,
+}) {
+  /// PokeAPI resource name lives in [slug] (e.g. `pikachu`).
   String get displayName => name.isEmpty
       ? (slug.isEmpty ? '' : slug[0].toUpperCase() + slug.substring(1))
       : name;
 }
 
-class PokemonDetail {
-  const PokemonDetail({
-    required this.id,
-    required this.name,
-    required this.height,
-    required this.weight,
-    required this.types,
-    required this.stats,
-    required this.abilities,
-    this.spriteUrl,
-    this.cryUrl,
-    this.legacyCryUrl,
-    this.flavorText,
-    this.genderRate = -1,
-    this.captureRate = 0,
-    this.baseHappiness = 0,
-    this.hatchCounter = 0,
-    this.eggGroups = const [],
-    this.category,
-    this.flavorTextEntries = const [],
-    this.generaEntries = const [],
-  });
-
-  final int id;
-  final String name;
-  final int height;
-  final int weight;
-  final List<PokemonType> types;
-  final List<PokemonStat> stats;
-  final List<PokemonAbility> abilities;
-  final String? spriteUrl;
-  final String? cryUrl;
-  final String? legacyCryUrl;
-  final String? flavorText;
-  final int genderRate;
-  final int captureRate;
-  final int baseHappiness;
-  final int hatchCounter;
-  final List<String> eggGroups;
-  final String? category;
-  final List<dynamic> flavorTextEntries;
-  final List<dynamic> generaEntries;
-
+class const PokemonDetail({
+  required final int id,
+  required final String name,
+  required final int height,
+  required final int weight,
+  required final List<PokemonType> types,
+  required final List<PokemonStat> stats,
+  required final List<PokemonAbility> abilities,
+  final String? spriteUrl,
+  final String? cryUrl,
+  final String? legacyCryUrl,
+  final String? flavorText,
+  final int genderRate = -1,
+  final int captureRate = 0,
+  final int baseHappiness = 0,
+  final int hatchCounter = 0,
+  final List<String> eggGroups = const [],
+  final String? category,
+  final List<dynamic> flavorTextEntries = const [],
+  final List<dynamic> generaEntries = const [],
+}) {
   String get displayName =>
       name.isEmpty ? '' : name[0].toUpperCase() + name.substring(1);
 
@@ -88,15 +46,13 @@ class PokemonDetail {
   double get weightKg => weight / 10;
 }
 
-class PokemonStat {
-  const PokemonStat({required this.name, required this.baseStat});
-
-  final String name;
-  final int baseStat;
-}
+class const PokemonStat({
+  required final String name,
+  required final int baseStat,
+});
 
 class PokemonAbility {
-  const PokemonAbility({
+  const new({
     required this.name,
     required this.isHidden,
     String? slug,
@@ -109,32 +65,17 @@ class PokemonAbility {
   final String slug;
 }
 
-class PokemonPage {
-  const PokemonPage({
-    required this.items,
-    required this.totalCount,
-    required this.hasMore,
-    required this.nextOffset,
-  });
+class const PokemonPage({
+  required final List<PokemonSummary> items,
+  required final int totalCount,
+  required final bool hasMore,
+  required final int nextOffset,
+});
 
-  final List<PokemonSummary> items;
-  final int totalCount;
-  final bool hasMore;
-  final int nextOffset;
-}
-
-class PokemonListSlice {
-  const PokemonListSlice({
-    required this.ids,
-    required this.totalCount,
-    required this.hasMore,
-    required this.nextOffset,
-    this.fromCache = false,
-  });
-
-  final List<int> ids;
-  final int totalCount;
-  final bool hasMore;
-  final int nextOffset;
-  final bool fromCache;
-}
+class const PokemonListSlice({
+  required final List<int> ids,
+  required final int totalCount,
+  required final bool hasMore,
+  required final int nextOffset,
+  final bool fromCache = false,
+});

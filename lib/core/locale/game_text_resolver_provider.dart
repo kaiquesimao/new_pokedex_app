@@ -13,15 +13,24 @@ final gameTextResolverProvider = Provider<GameTextResolver>((ref) {
 
   Future<List<dynamic>> fetchEntries(ApiLoadTarget resource, String slug) {
     return switch (resource) {
-      ApiLoadTarget.ability => remote.fetchAbility(slug).then(
-        (json) => json['names'] as List<dynamic>? ?? [],
-      ),
-      ApiLoadTarget.eggGroup => remote.fetchEggGroup(slug).then(
-        (json) => json['names'] as List<dynamic>? ?? [],
-      ),
-      ApiLoadTarget.item => remote.fetchItem(slug).then(
-        (json) => json['names'] as List<dynamic>? ?? [],
-      ),
+      ApiLoadTarget.ability =>
+        remote
+            .fetchAbility(slug)
+            .then(
+              (json) => json['names'] as List<dynamic>? ?? [],
+            ),
+      ApiLoadTarget.eggGroup =>
+        remote
+            .fetchEggGroup(slug)
+            .then(
+              (json) => json['names'] as List<dynamic>? ?? [],
+            ),
+      ApiLoadTarget.item =>
+        remote
+            .fetchItem(slug)
+            .then(
+              (json) => json['names'] as List<dynamic>? ?? [],
+            ),
       _ => Future.value([]),
     };
   }

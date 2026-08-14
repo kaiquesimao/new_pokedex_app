@@ -1,18 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class PokemonSearchBar extends StatefulWidget {
-  const PokemonSearchBar({
-    required this.onChanged,
-    super.key,
-    this.initialValue = '',
-  });
-
-  final ValueChanged<String> onChanged;
-  final String initialValue;
-
+class const PokemonSearchBar({
+  required final ValueChanged<String> onChanged,
+  super.key,
+  final String initialValue = '',
+}) extends StatefulWidget {
   @override
   State<PokemonSearchBar> createState() => _PokemonSearchBarState();
 }

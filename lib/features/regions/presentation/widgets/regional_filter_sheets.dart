@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
@@ -27,11 +27,8 @@ Future<void> showRegionalSortSheet(BuildContext context, String regionName) {
   );
 }
 
-class _RegionalTypeSheet extends ConsumerWidget {
-  const _RegionalTypeSheet({required this.regionName});
-
-  final String regionName;
-
+class const _RegionalTypeSheet({required final String regionName})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(regionalPokedexFiltersProvider(regionName));
@@ -100,11 +97,8 @@ class _RegionalTypeSheet extends ConsumerWidget {
   }
 }
 
-class _RegionalSortSheet extends ConsumerWidget {
-  const _RegionalSortSheet({required this.regionName});
-
-  final String regionName;
-
+class const _RegionalSortSheet({required final String regionName})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(regionalPokedexFiltersProvider(regionName));
@@ -144,17 +138,11 @@ class _RegionalSortSheet extends ConsumerWidget {
   }
 }
 
-class _SortPill extends StatelessWidget {
-  const _SortPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
+class const _SortPill({
+  required final String label,
+  required final bool selected,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(

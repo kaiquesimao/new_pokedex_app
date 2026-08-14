@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show unawaited;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,11 +6,9 @@ import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_cry_urls
 
 enum PokemonCryPlayerStatus { idle, playing, error }
 
-class PokemonCryPlayerState {
-  const PokemonCryPlayerState({this.status = PokemonCryPlayerStatus.idle});
-
-  final PokemonCryPlayerStatus status;
-}
+class const PokemonCryPlayerState({
+  final PokemonCryPlayerStatus status = PokemonCryPlayerStatus.idle,
+});
 
 class PokemonCryPlayerNotifier extends Notifier<PokemonCryPlayerState> {
   AudioPlayer? _player;

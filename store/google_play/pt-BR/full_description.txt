@@ -1,0 +1,60 @@
+O PokeData é uma pokedex moderna para fãs: consulte Pokémon, regiões e detalhes num app rápido e fácil de usar. Seja para montar um living dex, planejar um time ou só explorar, esta pokedex deixa a informação à mão.
+
+POR QUE ESCOLHER O POKEDATA?
+
+O PokeData foi feito para o uso do dia a dia. Abra o app, busque um nome e veja tipos, stats, evolução e texto de jogo numa tela limpa. Entre na conta para sincronizar favoritos entre dispositivos, ou explore sem conta quando quiser só uma consulta rápida. A navegação offline mantém Pokémon já vistos disponíveis sem sinal.
+
+Esta pokedex é para fãs de Pokémon que querem uma referência atual: ícones de tipo claros, texto legível e navegação discreta. Sem menus lotados. Sem lista de palavras-chave. Só uma pokedex que dá para usar de verdade.
+
+RECURSOS PRINCIPAIS
+
+• Navegação completa da pokedex
+Role uma lista vasta de Pokémon de todas as gerações. Cada linha mostra o número da National Dex, nome, tipos e sprite para varrer a lista rápido.
+
+• Busca rápida
+Digite um nome na barra de pesquisa para ir direto ao Pokémon. Útil quando você lembra só parte do nome.
+
+• Filtros por tipo e geração
+Afine a lista por tipo, geração e outros filtros para responder perguntas como “quais Pokémon de Água estão nesta geração?” sem sair da pokedex.
+
+• Regiões
+Abra uma região para ver quais Pokémon pertencem a ela. Prático quando você está jogando um título específico ou comparando entradas da Pokédex entre regiões.
+
+• Perfis detalhados
+Abra qualquer Pokémon para altura, peso, habilidades, stats base, fraquezas, cadeia de evolução e texto de jogo. A tela de detalhe é o coração desta pokedex.
+
+• Favoritos
+Salve os Pokémon que importam. Favoritos servem para ideias de time, alvos de shiny hunt ou o seu living dex. É preciso uma conta para persistir favoritos.
+
+• Modo convidado
+Explore a pokedex sem criar conta. Entre depois se quiser favoritos e configurações sincronizadas.
+
+• Cache para uso offline
+O app guarda dados no aparelho para a navegação continuar fluida e para você abrir Pokémon já carregados mesmo offline.
+
+• Idioma
+Alterne o idioma do app entre português e inglês em Conta. O texto de jogo da PokéAPI segue o idioma escolhido quando a tradução existe.
+
+COMO USAR ESTA POKEDEX
+
+1. Abra a aba da Pokédex e role ou busque.
+2. Use filtros de tipo e geração quando estiver explorando, não caçando um único nome.
+3. Abra um Pokémon para ler stats, fraquezas e evolução.
+4. Visite Regiões quando quiser a Pokédex organizada por lugar.
+5. Entre na conta e toque no coração para guardar favoritos.
+
+PARA QUEM É
+
+Jogadores casuais que precisam de uma pokedex durante a jornada. Fãs competitivos que querem checar tipo e stats rápido. Colecionadores que acompanham favoritos. Quem prefere uma referência de Pokémon focada, sem feed social.
+
+NOTAS IMPORTANTES
+
+O PokeData é uma pokedex feita por fãs. Não é desenvolvido, endossado nem afiliado à Nintendo, The Pokémon Company, Game Freak ou Creatures Inc. Pokémon e os nomes dos personagens são marcas de seus respectivos donos. Os dados vêm da PokéAPI e podem mudar conforme esse projeto atualiza.
+
+Política de privacidade e termos de uso estão no app, em Conta. Leia antes de criar uma conta. Favoritos e dados de perfil estão ligados ao seu login.
+
+PRÓXIMAS ATUALIZAÇÕES
+
+Publicamos atualizações pequenas e regulares: desempenho, textos e melhorias de uso da pokedex. Veja Novidades na ficha da loja após cada versão.
+
+Se o PokeData te ajuda numa jornada, uma avaliação no Google Play mostra a outros fãs que esta pokedex vale a pena. Obrigado por usar o PokeData.

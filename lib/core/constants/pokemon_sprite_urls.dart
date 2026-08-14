@@ -1,15 +1,13 @@
 /// Parsed Pokémon sprite URLs from a PokéAPI `sprites` object.
-class PokemonSprites {
-  const PokemonSprites({
-    this.frontDefault,
-    this.officialArtwork,
-    this.home,
-    this.frontShiny,
-    this.officialArtworkShiny,
-    this.homeShiny,
-  });
-
-  factory PokemonSprites.fromJson(dynamic sprites) {
+class const PokemonSprites({
+  final String? frontDefault,
+  final String? officialArtwork,
+  final String? home,
+  final String? frontShiny,
+  final String? officialArtworkShiny,
+  final String? homeShiny,
+}) {
+  factory fromJson(dynamic sprites) {
     if (sprites is! Map) return const PokemonSprites();
 
     final map = Map<String, dynamic>.from(sprites);
@@ -32,13 +30,6 @@ class PokemonSprites {
       homeShiny: homeMap['front_shiny'] as String?,
     );
   }
-
-  final String? frontDefault;
-  final String? officialArtwork;
-  final String? home;
-  final String? frontShiny;
-  final String? officialArtworkShiny;
-  final String? homeShiny;
 
   /// Primary display URL: home → official-artwork → front_default.
   String? get displayUrl => home ?? officialArtwork ?? frontDefault;

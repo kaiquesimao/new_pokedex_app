@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class TransientRetryInterceptor extends Interceptor {
-  TransientRetryInterceptor({Dio? dio}) : _dio = dio ?? Dio();
+  new({Dio? dio}) : _dio = dio ?? Dio();
 
   final Dio _dio;
 

@@ -7,19 +7,12 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum ChangePasswordStep { current, newPassword, confirm, success }
 
-class ChangePasswordFlowState {
-  const ChangePasswordFlowState({
-    this.step = ChangePasswordStep.current,
-    this.loading = false,
-    this.error,
-    this.verifiedCurrentPassword = '',
-  });
-
-  final ChangePasswordStep step;
-  final bool loading;
-  final String? error;
-  final String verifiedCurrentPassword;
-
+class const ChangePasswordFlowState({
+  final ChangePasswordStep step = ChangePasswordStep.current,
+  final bool loading = false,
+  final String? error,
+  final String verifiedCurrentPassword = '',
+}) {
   ChangePasswordFlowState copyWith({
     ChangePasswordStep? step,
     bool? loading,
@@ -114,7 +107,10 @@ class ChangePasswordFlowNotifier extends Notifier<ChangePasswordFlowState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     }
   }
 

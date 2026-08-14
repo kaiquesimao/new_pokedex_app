@@ -12,7 +12,7 @@ import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repositor
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 
 class _CharizardMegaRemote extends PokemonRemoteDataSource {
-  _CharizardMegaRemote() : super(_RecordingClient());
+  new() : super(_RecordingClient());
 
   @override
   Future<PokemonResponse> fetchPokemon(int id) async {
@@ -249,7 +249,7 @@ void main() {
 }
 
 class _GrimerAlolaRemote extends PokemonRemoteDataSource {
-  _GrimerAlolaRemote() : super(_RecordingClient());
+  new() : super(_RecordingClient());
 
   int speciesFetchCount = 0;
 

@@ -4,18 +4,15 @@ import 'package:pokedex_app/core/locale/machine_translation_backend.dart';
 import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 import 'package:pokedex_app/core/locale/resolved_game_text.dart';
 
-typedef FetchResourceEntries =
-    Future<List<dynamic>> Function(ApiLoadTarget resource, String slug);
+typedef FetchResourceEntries = Future<List<dynamic>> Function(
+  ApiLoadTarget resource,
+  String slug,
+);
 
-class GameTextResolver {
-  GameTextResolver({
-    required this._machineTranslation,
-    required this._fetchResourceEntries,
-  });
-
-  final MachineTranslationBackend _machineTranslation;
-  final FetchResourceEntries _fetchResourceEntries;
-
+class GameTextResolver({
+  required final MachineTranslationBackend _machineTranslation,
+  required final FetchResourceEntries _fetchResourceEntries,
+}) {
   void clearCache() => _machineTranslation.clearCache();
 
   Future<ResolvedGameText> resolveFromEntries({
@@ -27,7 +24,11 @@ class GameTextResolver {
   }) async {
     final key = textKey ?? _textKeyFor(kind);
 
-    final official = PokeApiLocalizedText.pickOfficial(entries, targetLang, key);
+    final official = PokeApiLocalizedText.pickOfficial(
+      entries,
+      targetLang,
+      key,
+    );
     if (official != null) {
       final text = kind == GameTextKind.flavorText
           ? _normalizeFlavor(official)

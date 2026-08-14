@@ -1,13 +1,12 @@
 import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
 
-class PokemonListResponse {
-  const PokemonListResponse({
-    required this.count,
-    required this.results,
-    this.next,
-  });
-  factory PokemonListResponse.fromJson(Map<String, dynamic> json) {
+class const PokemonListResponse({
+  required final int count,
+  required final List<NamedApiResource> results,
+  final String? next,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final results = (json['results'] as List<dynamic>? ?? [])
         .map((e) => NamedApiResource.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -18,23 +17,23 @@ class PokemonListResponse {
       results: results,
     );
   }
-
-  final int count;
-  final String? next;
-  final List<NamedApiResource> results;
 }
 
-class NamedApiResource {
-  const NamedApiResource({required this.name, required this.url});
-  factory NamedApiResource.fromJson(Map<String, dynamic> json) {
-    return NamedApiResource(
-      name: json['name'] as String? ?? '',
-      url: json['url'] as String? ?? '',
-    );
+class const NamedApiResource({
+  required final String name,
+  required final String url,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {'name': final String name, 'url': final String url} => NamedApiResource(
+        name: name,
+        url: url,
+      ),
+      {'name': final String name} => NamedApiResource(name: name, url: ''),
+      {'url': final String url} => NamedApiResource(name: '', url: url),
+      _ => const NamedApiResource(name: '', url: ''),
+    };
   }
-
-  final String name;
-  final String url;
 
   int? get id {
     final match = RegExp(r'/(\d+)/?$').firstMatch(url);
@@ -42,51 +41,45 @@ class NamedApiResource {
   }
 }
 
-class PokemonCries {
-  const PokemonCries({this.latest, this.legacy});
-
-  factory PokemonCries.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return const PokemonCries();
-    return PokemonCries(
-      latest: json['latest'] as String?,
-      legacy: json['legacy'] as String?,
-    );
+class const PokemonCries({final String? latest, final String? legacy}) {
+  factory fromJson(Map<String, dynamic>? json) {
+    return switch (json) {
+      null => const PokemonCries(),
+      {'latest': final String? latest, 'legacy': final String? legacy} =>
+        PokemonCries(latest: latest, legacy: legacy),
+      {'latest': final String? latest} => PokemonCries(latest: latest),
+      {'legacy': final String? legacy} => PokemonCries(legacy: legacy),
+      _ => const PokemonCries(),
+    };
   }
-
-  final String? latest;
-  final String? legacy;
 }
 
-class PokemonFormResponse {
-  const PokemonFormResponse({required this.isMega});
-
-  factory PokemonFormResponse.fromJson(Map<String, dynamic> json) {
+class const PokemonFormResponse({required final bool isMega}) {
+  factory fromJson(Map<String, dynamic> json) {
     return PokemonFormResponse(isMega: json['is_mega'] as bool? ?? false);
   }
-
-  final bool isMega;
 }
 
-class PokemonResponse {
-  const PokemonResponse({
-    required this.id,
-    required this.name,
-    required this.height,
-    required this.weight,
-    required this.types,
-    required this.stats,
-    required this.abilities,
-    required this.spriteUrl,
-    required this.listSpriteUrl,
-    this.sprites,
-    this.isDefault = true,
-    this.primaryFormId,
-    this.isMega,
-    this.speciesId,
-    this.cries = const PokemonCries(),
-  });
+class const PokemonResponse({
+  required final int id,
+  required final String name,
+  required final int height,
+  required final int weight,
+  required final List<PokemonTypeSlot> types,
+  required final List<PokemonStatSlot> stats,
+  required final List<PokemonAbilitySlot> abilities,
+  required final String? spriteUrl,
+  required final String? listSpriteUrl,
+  final Map<String, dynamic>? sprites,
+  final bool isDefault = true,
+  final int? primaryFormId,
+  final bool? isMega,
 
-  factory PokemonResponse.fromJson(Map<String, dynamic> json) {
+  /// Species id from `pokemon.species` (differs from [id] for forms/megas).
+  final int? speciesId,
+  final PokemonCries cries = const PokemonCries(),
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final spritesJson = json['sprites'];
     final spritesMap = spritesJson is Map<Object?, Object?>
         ? Map<String, dynamic>.from(spritesJson)
@@ -117,24 +110,6 @@ class PokemonResponse {
       cries: PokemonCries.fromJson(json['cries'] as Map<String, dynamic>?),
     );
   }
-
-  final int id;
-  final String name;
-  final int height;
-  final int weight;
-  final List<PokemonTypeSlot> types;
-  final List<PokemonStatSlot> stats;
-  final List<PokemonAbilitySlot> abilities;
-  final String? spriteUrl;
-  final String? listSpriteUrl;
-  final Map<String, dynamic>? sprites;
-  final bool isDefault;
-  final int? primaryFormId;
-  final bool? isMega;
-
-  /// Species id from `pokemon.species` (differs from [id] for forms/megas).
-  final int? speciesId;
-  final PokemonCries cries;
 
   PokemonResponse copyWith({bool? isMega}) {
     return PokemonResponse(
@@ -173,56 +148,51 @@ class PokemonResponse {
   }
 }
 
-class PokemonTypeSlot {
-  const PokemonTypeSlot({required this.slot, required this.name});
-  factory PokemonTypeSlot.fromJson(Map<String, dynamic> json) {
+class const PokemonTypeSlot({
+  required final int slot,
+  required final String name,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final type = json['type'] as Map<String, dynamic>? ?? {};
     return PokemonTypeSlot(
       slot: json['slot'] as int? ?? 0,
       name: type['name'] as String? ?? '',
     );
   }
-
-  final int slot;
-  final String name;
 }
 
-class PokemonStatSlot {
-  const PokemonStatSlot({required this.name, required this.baseStat});
-  factory PokemonStatSlot.fromJson(Map<String, dynamic> json) {
+class const PokemonStatSlot({
+  required final String name,
+  required final int baseStat,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final stat = json['stat'] as Map<String, dynamic>? ?? {};
     return PokemonStatSlot(
       name: stat['name'] as String? ?? '',
       baseStat: json['base_stat'] as int? ?? 0,
     );
   }
-
-  final String name;
-  final int baseStat;
 }
 
-class PokemonAbilitySlot {
-  const PokemonAbilitySlot({required this.name, required this.isHidden});
-  factory PokemonAbilitySlot.fromJson(Map<String, dynamic> json) {
+class const PokemonAbilitySlot({
+  required final String name,
+  required final bool isHidden,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final ability = json['ability'] as Map<String, dynamic>? ?? {};
     return PokemonAbilitySlot(
       name: ability['name'] as String? ?? '',
       isHidden: json['is_hidden'] as bool? ?? false,
     );
   }
-
-  final String name;
-  final bool isHidden;
 }
 
-class PokemonSpeciesVariety {
-  const PokemonSpeciesVariety({
-    required this.isDefault,
-    required this.pokemonId,
-    required this.pokemonName,
-  });
-
-  factory PokemonSpeciesVariety.fromJson(Map<String, dynamic> json) {
+class const PokemonSpeciesVariety({
+  required final bool isDefault,
+  required final int pokemonId,
+  required final String pokemonName,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     final pokemon = NamedApiResource.fromJson(
       json['pokemon'] as Map<String, dynamic>? ?? {},
     );
@@ -232,30 +202,24 @@ class PokemonSpeciesVariety {
       pokemonName: pokemon.name,
     );
   }
-
-  final bool isDefault;
-  final int pokemonId;
-  final String pokemonName;
 }
 
-class PokemonSpeciesResponse {
-  const PokemonSpeciesResponse({
-    required this.id,
-    required this.names,
-    required this.genderRate,
-    required this.captureRate,
-    required this.baseHappiness,
-    required this.hatchCounter,
-    required this.eggGroups,
-    required this.evolutionChainUrl,
-    this.flavorTextEntries = const [],
-    this.legacyFlavorText,
-    this.varieties = const [],
-    this.genera = const [],
-  });
-
+class const PokemonSpeciesResponse({
+  required final int id,
+  required final List<dynamic> names,
+  required final int genderRate,
+  required final int captureRate,
+  required final int baseHappiness,
+  required final int hatchCounter,
+  required final List<String> eggGroups,
+  required final String? evolutionChainUrl,
+  final List<dynamic> flavorTextEntries = const [],
+  final String? legacyFlavorText,
+  final List<PokemonSpeciesVariety> varieties = const [],
+  final List<dynamic> genera = const [],
+}) {
   /// ponytail: test/fixture shorthand — not from API JSON.
-  factory PokemonSpeciesResponse.withFlavorText({
+  factory withFlavorText({
     required int id,
     required String flavorText,
     int genderRate = -1,
@@ -282,7 +246,7 @@ class PokemonSpeciesResponse {
       genera: genera,
     );
   }
-  factory PokemonSpeciesResponse.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final names = json['names'] as List<dynamic>? ?? [];
     final flavorTextEntries =
         json['flavor_text_entries'] as List<dynamic>? ?? [];
@@ -309,19 +273,6 @@ class PokemonSpeciesResponse {
       genera: json['genera'] as List<dynamic>? ?? [],
     );
   }
-
-  final int id;
-  final List<dynamic> names;
-  final List<dynamic> genera;
-  final List<dynamic> flavorTextEntries;
-  final String? legacyFlavorText;
-  final int genderRate;
-  final int captureRate;
-  final int baseHappiness;
-  final int hatchCounter;
-  final List<String> eggGroups;
-  final String? evolutionChainUrl;
-  final List<PokemonSpeciesVariety> varieties;
 
   String? localizedName(String pokeApiCode) {
     // Use PokeApiLocalizedText helper to pick localized name.

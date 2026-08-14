@@ -1,28 +1,27 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutPage extends ConsumerWidget {
-  const AboutPage({super.key});
-
+class const AboutPage({super.key}) extends ConsumerWidget {
   static const _kaiqueLinkedInUrl = 'https://www.linkedin.com/in/kaique-simao/';
   static const _juniorLinkedInUrl =
       'https://www.linkedin.com/in/junior-saraiva/';
   static const _figmaDesignUrl =
       'https://www.figma.com/community/file/1202971127473077147';
 
-  static List<({String title, String body})> _credits(AppLocalizations l10n) =>
-      [
-        (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
-        (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
-        (
-          title: l10n.aboutCreditFirebaseTitle,
-          body: l10n.aboutCreditFirebaseBody,
-        ),
-      ];
+  static List<({String title, String body})> _credits(
+    AppLocalizations l10n,
+  ) => [
+    (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
+    (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
+    (
+      title: l10n.aboutCreditFirebaseTitle,
+      body: l10n.aboutCreditFirebaseBody,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -165,17 +164,11 @@ Future<void> _openExternalUrl(String url) async {
   }
 }
 
-class _AcknowledgmentCard extends StatelessWidget {
-  const _AcknowledgmentCard({
-    required this.title,
-    required this.body,
-    required this.links,
-  });
-
-  final String title;
-  final String body;
-  final List<({String label, String url})> links;
-
+class const _AcknowledgmentCard({
+  required final String title,
+  required final String body,
+  required final List<({String label, String url})> links,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -223,12 +216,10 @@ class _AcknowledgmentCard extends StatelessWidget {
   }
 }
 
-class _CreditTile extends StatelessWidget {
-  const _CreditTile({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
+class const _CreditTile({
+  required final String title,
+  required final String body,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -271,12 +262,10 @@ class _CreditTile extends StatelessWidget {
   }
 }
 
-class _DisclaimerCard extends StatelessWidget {
-  const _DisclaimerCard({required this.theme, required this.text});
-
-  final ThemeData theme;
-  final String text;
-
+class const _DisclaimerCard({
+  required final ThemeData theme,
+  required final String text,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

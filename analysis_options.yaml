@@ -3,8 +3,23 @@ include: package:very_good_analysis/analysis_options.yaml
 analyzer:
   errors:
     deprecated_member_use: error
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
+    # Dart 3.13 — primary constructors and related style.
+    use_declaring_parameters: true
+    empty_container_bodies: true
+    initialize_in_field_declaration: true
+    unnecessary_const_in_enum_constructor: true
+    unnecessary_primary_constructor_body: true
+    unnecessary_type_name_in_constructor: true

@@ -11,14 +11,15 @@ typedef AbilityInput = ({
 });
 
 final FutureProviderFamily<ResolvedGameText, AbilityInput>
-localizedAbilityProvider = FutureProvider.family<ResolvedGameText, AbilityInput>(
-  (ref, input) async {
-    final resolver = ref.watch(gameTextResolverProvider);
-    return resolver.resolveResource(
-      resource: ApiLoadTarget.ability,
-      slug: input.slug,
-      kind: GameTextKind.name,
-      targetLang: input.targetLang,
+localizedAbilityProvider =
+    FutureProvider.family<ResolvedGameText, AbilityInput>(
+      (ref, input) async {
+        final resolver = ref.watch(gameTextResolverProvider);
+        return resolver.resolveResource(
+          resource: ApiLoadTarget.ability,
+          slug: input.slug,
+          kind: GameTextKind.name,
+          targetLang: input.targetLang,
+        );
+      },
     );
-  },
-);

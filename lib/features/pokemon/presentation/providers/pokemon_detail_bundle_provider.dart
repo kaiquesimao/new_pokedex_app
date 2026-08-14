@@ -4,19 +4,12 @@ import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dar
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:riverpod/misc.dart';
 
-class PokemonDetailBundle {
-  const PokemonDetailBundle({
-    required this.detail,
-    required this.evolution,
-    this.flavorTextEntries = const [],
-    this.isOfflineMode = false,
-  });
-
-  final PokemonDetail detail;
-  final EvolutionChain evolution;
-  final List<dynamic> flavorTextEntries;
-  final bool isOfflineMode;
-}
+class const PokemonDetailBundle({
+  required final PokemonDetail detail,
+  required final EvolutionChain evolution,
+  final List<dynamic> flavorTextEntries = const [],
+  final bool isOfflineMode = false,
+});
 
 final FutureProviderFamily<PokemonDetailBundle, int>
 pokemonDetailBundleProvider = FutureProvider.family<PokemonDetailBundle, int>((

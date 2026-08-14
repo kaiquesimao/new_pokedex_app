@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/responsive_layout.dart';
 import 'package:pokedex_app/core/constants/wide_viewport_backdrop_assets.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop_provider.dart';
@@ -29,11 +29,8 @@ Color wideViewportAwareScaffoldColor(BuildContext context) {
 }
 
 /// Transparent scaffold theme on wide web so [WideViewportBackdrop] is visible.
-class WideViewportTheme extends StatelessWidget {
-  const WideViewportTheme({required this.child, super.key});
-
-  final Widget child;
-
+class const WideViewportTheme({required final Widget child, super.key})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!showsWideViewportBackdrop(context)) return child;
@@ -47,9 +44,7 @@ class WideViewportTheme extends StatelessWidget {
 }
 
 /// Decorative backdrop for empty side margins on wide web viewports.
-class WideViewportBackdrop extends ConsumerStatefulWidget {
-  const WideViewportBackdrop({super.key});
-
+class const WideViewportBackdrop({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<WideViewportBackdrop> createState() =>
       _WideViewportBackdropState();
@@ -126,16 +121,11 @@ class _WideViewportBackdropState extends ConsumerState<WideViewportBackdrop>
   }
 }
 
-class _BackdropImage extends StatelessWidget {
-  const _BackdropImage({
-    required this.assetPath,
-    required this.reduceMotion,
-    super.key,
-  });
-
-  final String assetPath;
-  final bool reduceMotion;
-
+class const _BackdropImage({
+  required final String assetPath,
+  required final bool reduceMotion,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = Opacity(

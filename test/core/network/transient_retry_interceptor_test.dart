@@ -57,11 +57,8 @@ void main() {
   });
 }
 
-class _StatusSequenceAdapter implements HttpClientAdapter {
-  _StatusSequenceAdapter({required this.onFetch});
-
-  final int Function() onFetch;
-
+class _StatusSequenceAdapter({required final int Function() onFetch})
+    implements HttpClientAdapter {
   @override
   void close({bool force = false}) {}
 
@@ -82,8 +79,12 @@ class _StatusSequenceAdapter implements HttpClientAdapter {
         ),
       );
     }
-    return ResponseBody.fromString('{}', 200, headers: {
-      Headers.contentTypeHeader: [Headers.jsonContentType],
-    });
+    return ResponseBody.fromString(
+      '{}',
+      200,
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      },
+    );
   }
 }

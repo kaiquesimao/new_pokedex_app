@@ -998,6 +998,18 @@ abstract class AppLocalizations {
   /// **'About'**
   String get profileAboutLabel;
 
+  /// No description provided for @profileRateAppLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app'**
+  String get profileRateAppLabel;
+
+  /// No description provided for @profileRateAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the store listing. Try again later.'**
+  String get profileRateAppError;
+
   /// No description provided for @profileActionSuccess.
   ///
   /// In en, this message translates to:
@@ -1565,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpFilterAnswer.
   ///
   /// In en, this message translates to:
-  /// **'On the Pokédex tab, use the search bar, the Forms filter (including shiny sprites), and advanced filters to refine the results.'**
+  /// **'On the Pokédex tab, use the search bar, the Forms filter (including shiny), and advanced filters to refine the results.'**
   String get helpFilterAnswer;
 
   /// No description provided for @helpMegaFormsQuestion.
@@ -1991,14 +2003,32 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSlide2Title.
   ///
   /// In en, this message translates to:
-  /// **'Keep your Pokédex up to date'**
+  /// **'Search by type and region'**
   String get onboardingSlide2Title;
 
   /// No description provided for @onboardingSlide2Subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Sign up and keep your profile, favorite Pokémon, settings, and more saved in the app, even without an internet connection.'**
+  /// **'Filter Pokémon by type, generation, and region to find what you need in seconds.'**
   String get onboardingSlide2Subtitle;
+
+  /// No description provided for @onboardingSlide3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your Pokédex up to date'**
+  String get onboardingSlide3Title;
+
+  /// No description provided for @onboardingSlide3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up and keep your profile, favorite Pokémon, settings, and more saved in the app, even without an internet connection.'**
+  String get onboardingSlide3Subtitle;
+
+  /// No description provided for @onboardingSkipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkipButton;
 
   /// No description provided for @onboardingContinueButton.
   ///
@@ -2281,6 +2311,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{formLabel}, swipe to see other forms'**
   String pokemonFormCarouselSemantics(String formLabel);
+
+  /// Shown under the detail sprite while extra forms load
+  ///
+  /// In en, this message translates to:
+  /// **'Loading forms'**
+  String get pokemonFormsLoading;
 
   /// No description provided for @firebaseConfigErrorTitle.
   ///

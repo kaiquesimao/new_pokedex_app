@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/app.dart';
 import 'package:pokedex_app/core/bootstrap/app_bootstrap.dart';
 import 'package:pokedex_app/core/bootstrap/firebase_config_error_app.dart';

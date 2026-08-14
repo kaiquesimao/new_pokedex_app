@@ -1,19 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 
 /// Opaque surface chrome for content blocks on the Pokémon detail page.
-class DetailSurfaceCard extends StatelessWidget {
-  const DetailSurfaceCard({
-    required this.child,
-    super.key,
-    this.padding = const EdgeInsets.all(16),
-    this.width = double.infinity,
-  });
-
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-  final double? width;
-
+class const DetailSurfaceCard({
+  required final Widget child,
+  super.key,
+  final EdgeInsetsGeometry padding = const EdgeInsets.all(16),
+  final double? width = double.infinity,
+}) extends StatelessWidget {
   /// Section title style shared across the Pokémon detail page.
   static TextStyle? titleStyle(BuildContext context) {
     return Theme.of(context).textTheme.titleMedium?.copyWith(

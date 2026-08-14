@@ -8,11 +8,10 @@ import 'package:pokedex_app/features/regions/data/models/region_models.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
 
-class RegionRepositoryImpl implements RegionRepository {
-  RegionRepositoryImpl({required this._client, required this._local});
-
-  final PokeApiClient _client;
-  final RegionLocalDataSource _local;
+class RegionRepositoryImpl({
+  required final PokeApiClient _client,
+  required final RegionLocalDataSource _local,
+}) implements RegionRepository {
   bool _usedOfflineFallback = false;
 
   @override

@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop_provider.dart';
 
-class MainShellPage extends ConsumerStatefulWidget {
-  const MainShellPage({required this.navigationShell, super.key});
-
-  final StatefulNavigationShell navigationShell;
-
+class const MainShellPage({
+  required final StatefulNavigationShell navigationShell,
+  super.key,
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<MainShellPage> createState() => _MainShellPageState();
 }

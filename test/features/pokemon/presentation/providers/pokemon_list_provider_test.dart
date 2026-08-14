@@ -45,7 +45,7 @@ class _OnlineConnectivity implements ConnectivityService {
 }
 
 class _FakePokemonRepository implements PokemonRepository {
-  _FakePokemonRepository({
+  new({
     this.refs = const [],
     this.sliceIds = const [1, 2, 10033],
   });

@@ -1,19 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class PokemonStatBar extends StatelessWidget {
-  const PokemonStatBar({
-    required this.label,
-    required this.value,
-    required this.maxValue,
-    super.key,
-    this.color,
-  });
-
-  final String label;
-  final int value;
-  final int maxValue;
-  final Color? color;
-
+class const PokemonStatBar({
+  required final String label,
+  required final int value,
+  required final int maxValue,
+  super.key,
+  final Color? color,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

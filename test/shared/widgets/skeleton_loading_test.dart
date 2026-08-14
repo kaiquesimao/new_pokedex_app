@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/shared/widgets/legal_document_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';

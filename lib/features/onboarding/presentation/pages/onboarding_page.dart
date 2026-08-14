@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
@@ -12,9 +12,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class OnboardingPage extends ConsumerStatefulWidget {
-  const OnboardingPage({super.key});
-
+class const OnboardingPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
 }
@@ -25,6 +23,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   static const List<List<String>> _slideAssets = [
     [AppAssets.characterBugcatcher, AppAssets.characterBirch],
+    [AppAssets.characterHilbert],
     [AppAssets.characterHilda],
   ];
 
@@ -41,13 +40,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     if (mounted) context.go('/welcome');
   }
 
+  void _skipToLast() {
+    _pageController.animateToPage(
+      _slideAssets.length - 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   void _next() {
     if (_currentPage < _slideAssets.length - 1) {
-      unawaited(
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        ),
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
       );
       return;
     }
@@ -68,12 +73,25 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         title: l10n.onboardingSlide2Title,
         subtitle: l10n.onboardingSlide2Subtitle,
       ),
+      (
+        title: l10n.onboardingSlide3Title,
+        subtitle: l10n.onboardingSlide3Subtitle,
+      ),
     ];
 
     return Scaffold(
       body: SafePageBody(
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: isLastPage
+                  ? const SizedBox(height: 48)
+                  : TextButton(
+                      onPressed: _skipToLast,
+                      child: Text(l10n.onboardingSkipButton),
+                    ),
+            ),
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -147,12 +165,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 }
 
-class _PageDots extends StatelessWidget {
-  const _PageDots({required this.count, required this.current});
-
-  final int count;
-  final int current;
-
+class const _PageDots({required final int count, required final int current})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -2,17 +2,12 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 
 /// Catalog visibility for mega evolutions and alternate Pokémon forms.
-class PokemonFormVisibility {
-  const PokemonFormVisibility({
-    this.showMegaEvolutions = true,
-    this.showOtherForms = true,
-  });
-
+class const PokemonFormVisibility({
+  final bool showMegaEvolutions = true,
+  final bool showOtherForms = true,
+}) {
   /// Detail carousel: include every variety form.
   static const allowAll = PokemonFormVisibility();
-
-  final bool showMegaEvolutions;
-  final bool showOtherForms;
 
   bool includesSummary(PokemonSummary summary) => includesSummaryNamed(
     summary: summary,
@@ -168,13 +163,12 @@ class PokemonFormVisibility {
   static bool matchesListFormFilterSummary({
     required PokemonSummary summary,
     required Set<PokemonFormCategory> formCategories,
-  }) =>
-      matchesListFormFilter(
-        formCategories: formCategories,
-        apiName: _apiNameFor(summary),
-        isDefault: summary.isDefault,
-        isMega: summary.isMega,
-      );
+  }) => matchesListFormFilter(
+    formCategories: formCategories,
+    apiName: _apiNameFor(summary),
+    isDefault: summary.isDefault,
+    isMega: summary.isMega,
+  );
 
   /// Prefer PokeAPI slug; display [PokemonSummary.name] is not form-suffix-safe.
   static String _apiNameFor(PokemonSummary summary) =>

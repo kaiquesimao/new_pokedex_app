@@ -283,6 +283,8 @@
   "profileAccountDeletionLabel": "Exclusão de conta e dados",
   "profileHelpLabel": "Ajuda",
   "profileAboutLabel": "Sobre",
+  "profileRateAppLabel": "Avaliar o app",
+  "profileRateAppError": "Não foi possível abrir a loja. Tente de novo mais tarde.",
   "profileActionSuccess": "Ação realizada com sucesso"
 ,
   "evolutionTriggerLevel": "Nível {minLevel}",
@@ -469,8 +471,11 @@
   "profileAccountDeletionLink": "Como funciona a exclusão de conta",
   "onboardingSlide1Title": "Todos os Pokémon em um só Lugar",
   "onboardingSlide1Subtitle": "Acesse uma vasta lista de Pokémon de todas as gerações já feitas pela Nintendo",
-  "onboardingSlide2Title": "Mantenha sua PokeData atualizada",
-  "onboardingSlide2Subtitle": "Cadastre-se e mantenha seu perfil, Pokémon favoritos, configurações e muito mais, salvos no aplicativo, mesmo sem conexão com a internet.",
+  "onboardingSlide2Title": "Busque por tipo e região",
+  "onboardingSlide2Subtitle": "Filtre Pokémon por tipo, geração e região para encontrar o que precisa em segundos.",
+  "onboardingSlide3Title": "Mantenha sua PokeData atualizada",
+  "onboardingSlide3Subtitle": "Cadastre-se e mantenha seu perfil, Pokémon favoritos, configurações e muito mais, salvos no aplicativo, mesmo sem conexão com a internet.",
+  "onboardingSkipButton": "Pular",
   "onboardingContinueButton": "Continuar",
   "onboardingStartButton": "Vamos começar!",
 
@@ -543,6 +548,10 @@
     "placeholders": {
       "formLabel": { "type": "String" }
     }
+  },
+  "pokemonFormsLoading": "Carregando formas",
+  "@pokemonFormsLoading": {
+    "description": "Shown under the detail sprite while extra forms load"
   },
 
   "firebaseConfigErrorTitle": "Configuração indisponível",

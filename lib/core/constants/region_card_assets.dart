@@ -1,24 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class RegionCardData {
-  const RegionCardData({
-    required this.apiName,
-    required this.displayName,
-    required this.generationNumber,
-    required this.gradientStart,
-    required this.gradientEnd,
-    required this.starterIds,
-    this.landscapeAsset,
-  });
-
-  final String apiName;
-  final String displayName;
-  final int generationNumber;
-  final Color gradientStart;
-  final Color gradientEnd;
-  final List<int> starterIds;
-  final String? landscapeAsset;
-}
+class const RegionCardData({
+  required final String apiName,
+  required final String displayName,
+  required final int generationNumber,
+  required final Color gradientStart,
+  required final Color gradientEnd,
+  required final List<int> starterIds,
+  final String? landscapeAsset,
+});
 
 abstract final class RegionCardAssets {
   static const _landscapePath = 'assets/images/regions';

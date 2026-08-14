@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 
 import '../../helpers/l10n_test_helper.dart';

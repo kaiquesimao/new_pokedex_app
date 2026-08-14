@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/skeleton_shimmer_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
-class PokemonDetailSkeleton extends StatelessWidget {
-  const PokemonDetailSkeleton({super.key});
-
+class const PokemonDetailSkeleton({super.key}) extends StatelessWidget {
   static const Key headerKey = Key('pokemon_detail_skeleton_header');
 
   static Key sectionKey(int index) =>
@@ -129,9 +127,7 @@ class PokemonDetailSkeleton extends StatelessWidget {
   }
 }
 
-class _ActionStub extends StatelessWidget {
-  const _ActionStub();
-
+class const _ActionStub() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -145,17 +141,11 @@ class _ActionStub extends StatelessWidget {
   }
 }
 
-class _SectionBlock extends StatelessWidget {
-  const _SectionBlock({
-    required this.index,
-    required this.color,
-    required this.bodyHeight,
-  });
-
-  final int index;
-  final Color color;
-  final double bodyHeight;
-
+class const _SectionBlock({
+  required final int index,
+  required final Color color,
+  required final double bodyHeight,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -177,15 +167,10 @@ class _SectionBlock extends StatelessWidget {
 }
 
 /// Silhouette of DetailSurfaceCard: radius 16, padding 16.
-class _SurfaceCardStub extends StatelessWidget {
-  const _SurfaceCardStub({
-    required this.color,
-    required this.child,
-  });
-
-  final Color color;
-  final Widget child;
-
+class const _SurfaceCardStub({
+  required final Color color,
+  required final Widget child,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -200,19 +185,12 @@ class _SurfaceCardStub extends StatelessWidget {
   }
 }
 
-class _Bone extends StatelessWidget {
-  const _Bone({
-    required this.height,
-    required this.color,
-    this.width,
-    this.radius = 4,
-  });
-
-  final double? width;
-  final double height;
-  final Color color;
-  final double radius;
-
+class const _Bone({
+  required final double height,
+  required final Color color,
+  final double? width,
+  final double radius = 4,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

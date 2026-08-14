@@ -1,17 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class AppPasswordField extends StatefulWidget {
-  const AppPasswordField({
-    required this.label,
-    super.key,
-    this.controller,
-    this.errorText,
-  });
-
-  final String label;
-  final TextEditingController? controller;
-  final String? errorText;
-
+class const AppPasswordField({
+  required final String label,
+  super.key,
+  final TextEditingController? controller,
+  final String? errorText,
+}) extends StatefulWidget {
   @override
   State<AppPasswordField> createState() => _AppPasswordFieldState();
 }

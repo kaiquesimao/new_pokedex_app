@@ -10,11 +10,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_display_names.
 
 typedef PokemonNameIndexRef = ({int id, String name, String localizedName});
 
-class PokemonLocalDataSource {
-  PokemonLocalDataSource(this._db);
-
-  final AppDatabase _db;
-
+class PokemonLocalDataSource(final AppDatabase _db) {
   Future<PokemonSummary?> getSummary(int id, {bool allowStale = false}) async {
     final entry = await _db.getEntry(id);
     if (entry == null) return null;

@@ -1,18 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class OfflineBanner extends StatelessWidget {
-  const OfflineBanner({
-    super.key,
-    this.message,
-    this.compact = false,
-  });
-
-  final String? message;
-  final bool compact;
-
+class const OfflineBanner({
+  super.key,
+  final String? message,
+  final bool compact = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -49,11 +44,8 @@ class OfflineBanner extends StatelessWidget {
 }
 
 /// Wraps the entire app so the offline banner stays fixed above all routes.
-class AppOfflineShell extends ConsumerWidget {
-  const AppOfflineShell({required this.child, super.key});
-
-  final Widget? child;
-
+class const AppOfflineShell({required final Widget? child, super.key})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
@@ -65,16 +57,11 @@ class AppOfflineShell extends ConsumerWidget {
   }
 }
 
-class ConnectivityOfflineBanner extends ConsumerWidget {
-  const ConnectivityOfflineBanner({
-    super.key,
-    this.message,
-    this.compact = false,
-  });
-
-  final String? message;
-  final bool compact;
-
+class const ConnectivityOfflineBanner({
+  super.key,
+  final String? message,
+  final bool compact = false,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isOnline = ref.watch(isDeviceOnlineProvider);
@@ -88,18 +75,12 @@ class ConnectivityOfflineBanner extends ConsumerWidget {
   }
 }
 
-class OfflineEmptyState extends StatelessWidget {
-  const OfflineEmptyState({
-    required this.message,
-    required this.onRetry,
-    super.key,
-    this.isConnectivityFailure = true,
-  });
-
-  final String message;
-  final VoidCallback onRetry;
-  final bool isConnectivityFailure;
-
+class const OfflineEmptyState({
+  required final String message,
+  required final VoidCallback onRetry,
+  super.key,
+  final bool isConnectivityFailure = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

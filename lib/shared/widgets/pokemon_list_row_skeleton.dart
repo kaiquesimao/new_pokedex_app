@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/skeleton_shimmer_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
-class PokemonListRowSkeleton extends StatelessWidget {
-  const PokemonListRowSkeleton({super.key});
-
+class const PokemonListRowSkeleton({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final base = SkeletonShimmerColors.base(context);
@@ -75,19 +73,12 @@ class PokemonListRowSkeleton extends StatelessWidget {
   }
 }
 
-class _Bone extends StatelessWidget {
-  const _Bone({
-    required this.width,
-    required this.height,
-    required this.color,
-    this.radius = 4,
-  });
-
-  final double width;
-  final double height;
-  final Color color;
-  final double radius;
-
+class const _Bone({
+  required final double width,
+  required final double height,
+  required final Color color,
+  final double radius = 4,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

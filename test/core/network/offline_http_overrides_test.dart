@@ -4,11 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_http_overrides.dart';
 
-class _FakeConnectivityService extends ConnectivityService {
-  _FakeConnectivityService({required this._isOnline});
-
-  final bool _isOnline;
-
+class _FakeConnectivityService({required final bool _isOnline})
+    extends ConnectivityService {
   @override
   bool get isOnline => _isOnline;
 

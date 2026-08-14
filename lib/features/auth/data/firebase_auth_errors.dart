@@ -4,11 +4,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum FirebaseAuthErrorContext { emailSignIn, emailSignUp, oauth, general }
 
-class AuthException implements Exception {
-  AuthException(this.message);
-
-  final String message;
-
+class const AuthException(final String message) implements Exception {
   @override
   String toString() => message;
 }
@@ -61,36 +57,23 @@ String firebaseAuthErrorMessage(AppLocalizations l10n, String code) {
 }
 
 String firebaseAuthErrorMessageLocalized(AppLocalizations l10n, String code) {
-  switch (code) {
-    case 'invalid-email':
-      return l10n.authInvalidEmail;
-    case 'user-disabled':
-      return l10n.authUserDisabled;
-    case 'user-not-found':
-      return l10n.authUserNotFoundSignIn;
-    case 'wrong-password':
-      return l10n.authWrongPassword;
-    case 'email-already-in-use':
-      return l10n.authEmailAlreadyInUse;
-    case 'weak-password':
-      return l10n.authWeakPassword;
-    case 'too-many-requests':
-      return l10n.authTooManyRequests;
-    case 'network-request-failed':
-      return l10n.authNetworkRequestFailed;
-    case 'requires-recent-login':
-      return l10n.authRequiresRecentLogin;
-    case 'invalid-credential':
-      return l10n.authInvalidCredentialEmailSignIn;
-    case 'invalid-credential-oauth':
-      return l10n.authInvalidCredentialOauth;
-    case 'account-exists-with-different-credential':
-      return l10n.authAccountExistsWithDifferentCredential;
-    case 'operation-not-allowed':
-      return l10n.authOperationNotAllowed;
-    default:
-      return l10n.authGenericError;
-  }
+  return switch (code) {
+    'invalid-email' => l10n.authInvalidEmail,
+    'user-disabled' => l10n.authUserDisabled,
+    'user-not-found' => l10n.authUserNotFoundSignIn,
+    'wrong-password' => l10n.authWrongPassword,
+    'email-already-in-use' => l10n.authEmailAlreadyInUse,
+    'weak-password' => l10n.authWeakPassword,
+    'too-many-requests' => l10n.authTooManyRequests,
+    'network-request-failed' => l10n.authNetworkRequestFailed,
+    'requires-recent-login' => l10n.authRequiresRecentLogin,
+    'invalid-credential' => l10n.authInvalidCredentialEmailSignIn,
+    'invalid-credential-oauth' => l10n.authInvalidCredentialOauth,
+    'account-exists-with-different-credential' =>
+      l10n.authAccountExistsWithDifferentCredential,
+    'operation-not-allowed' => l10n.authOperationNotAllowed,
+    _ => l10n.authGenericError,
+  };
 }
 
 String emailAlreadyInUseMessage(

@@ -1,17 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/region_generation_card.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class RegionsPage extends ConsumerWidget {
-  const RegionsPage({super.key});
-
+class const RegionsPage({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(

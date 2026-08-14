@@ -27,7 +27,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibilit
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
 class PokemonRepositoryImpl implements PokemonRepository {
-  PokemonRepositoryImpl({
+  new({
     required this._remote,
     required this._local,
     required this._gameTextResolver,
@@ -153,7 +153,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
       final species = await _getCachedSpecies(speciesId);
       final chainUrl = species.evolutionChainUrl;
       if (chainUrl == null) {
-        return _singleNodeEvolutionChain(pokemonId);
+        return await _singleNodeEvolutionChain(pokemonId);
       }
 
       final chainId = _extractIdFromUrl(chainUrl);
@@ -351,7 +351,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
     try {
       final response = await _remote.fetchPokemon(pokemonId);
       await _local.savePokemonResponse(response);
-      return _enrichWithFormMetadata(response);
+      return await _enrichWithFormMetadata(response);
     } catch (error) {
       if (!isNetworkError(error)) rethrow;
       _markOfflineFallback();

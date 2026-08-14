@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
@@ -11,9 +11,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ChangePasswordPage extends ConsumerStatefulWidget {
-  const ChangePasswordPage({super.key});
-
+class const ChangePasswordPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
@@ -203,13 +201,12 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   String _primaryButtonLabel(
     ChangePasswordStep step,
     AppLocalizations l10n,
-  ) =>
-      switch (step) {
-        ChangePasswordStep.current => l10n.authContinueButton,
-        ChangePasswordStep.newPassword => l10n.authContinueButton,
-        ChangePasswordStep.confirm => l10n.changePasswordSaveButton,
-        ChangePasswordStep.success => l10n.profileFinishButton,
-      };
+  ) => switch (step) {
+    ChangePasswordStep.current => l10n.authContinueButton,
+    ChangePasswordStep.newPassword => l10n.authContinueButton,
+    ChangePasswordStep.confirm => l10n.changePasswordSaveButton,
+    ChangePasswordStep.success => l10n.profileFinishButton,
+  };
 
   VoidCallback? _onPrimaryPressed(ChangePasswordStep step) => switch (step) {
     ChangePasswordStep.current => _submitCurrent,
@@ -219,12 +216,10 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   };
 }
 
-class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
-
-  final int current;
-  final int total;
-
+class const _StepIndicator({
+  required final int current,
+  required final int total,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -247,12 +242,10 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.l10n, required this.onDone});
-
-  final AppLocalizations l10n;
-  final VoidCallback onDone;
-
+class const _SuccessBody({
+  required final AppLocalizations l10n,
+  required final VoidCallback onDone,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

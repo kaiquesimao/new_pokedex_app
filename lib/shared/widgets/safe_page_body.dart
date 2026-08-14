@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart'
     show MainShellPage;
 
@@ -7,37 +7,42 @@ import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.da
 /// Use [SafePageBody.belowAppBar] when the scaffold has an [AppBar] (top inset
 /// is already handled by the app bar). Use [SafePageBody.inTabShell] for tab
 /// pages inside [MainShellPage] (bottom inset handled by the navigation bar).
-class SafePageBody extends StatelessWidget {
-  const SafePageBody({
-    required this.child,
-    super.key,
-    this.top = true,
-    this.bottom = true,
-    this.left = true,
-    this.right = true,
-  });
+class const SafePageBody({
+  required final Widget child,
+  super.key,
+  final bool top = true,
+  final bool bottom = true,
+  final bool left = true,
+  final bool right = true,
+}) extends StatelessWidget {
+  const new belowAppBar({
+    required Widget child,
+    Key? key,
+    bool bottom = true,
+    bool left = true,
+    bool right = true,
+  }) : this(
+         key: key,
+         child: child,
+         top: false,
+         bottom: bottom,
+         left: left,
+         right: right,
+       );
 
-  const SafePageBody.belowAppBar({
-    required this.child,
-    super.key,
-    this.bottom = true,
-    this.left = true,
-    this.right = true,
-  }) : top = false;
-
-  const SafePageBody.inTabShell({
-    required this.child,
-    super.key,
-    this.left = true,
-    this.right = true,
-  }) : top = false,
-       bottom = false;
-
-  final Widget child;
-  final bool top;
-  final bool bottom;
-  final bool left;
-  final bool right;
+  const new inTabShell({
+    required Widget child,
+    Key? key,
+    bool left = true,
+    bool right = true,
+  }) : this(
+         key: key,
+         child: child,
+         top: false,
+         bottom: false,
+         left: left,
+         right: right,
+       );
 
   @override
   Widget build(BuildContext context) {

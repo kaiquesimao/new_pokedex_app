@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
@@ -8,16 +8,11 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum SocialAuthProvider { apple, google, email }
 
-class SocialAuthButton extends StatelessWidget {
-  const SocialAuthButton({
-    required this.provider,
-    required this.onPressed,
-    super.key,
-  });
-
-  final SocialAuthProvider provider;
-  final VoidCallback onPressed;
-
+class const SocialAuthButton({
+  required final SocialAuthProvider provider,
+  required final VoidCallback onPressed,
+  super.key,
+}) extends StatelessWidget {
   static const _pillRadius = 28.0;
   static const _height = 52.0;
   static const _webPillRadius = 24.0;
@@ -129,11 +124,7 @@ class SocialAuthButton extends StatelessWidget {
   }
 }
 
-class _GoogleGlyph extends StatelessWidget {
-  const _GoogleGlyph({this.size = 20});
-
-  final double size;
-
+class const _GoogleGlyph({final double size = 20}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(AppAssets.iconGoogle, width: size, height: size);

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
@@ -11,9 +11,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class EditNamePage extends ConsumerStatefulWidget {
-  const EditNamePage({super.key});
-
+class const EditNamePage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<EditNamePage> createState() => _EditNamePageState();
 }

@@ -1,6 +1,1 @@
-class PokemonRef {
-  const PokemonRef({required this.id, required this.name});
-
-  final int id;
-  final String name;
-}
+class const PokemonRef({required final int id, required final String name});

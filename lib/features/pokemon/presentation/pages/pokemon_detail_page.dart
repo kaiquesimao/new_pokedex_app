@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
-import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
@@ -13,12 +12,12 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
+import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
-import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_sprite_variants_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_sprite_carousel.dart';
@@ -35,11 +34,8 @@ import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
-class PokemonDetailPage extends ConsumerWidget {
-  const PokemonDetailPage({required this.pokemonId, super.key});
-
-  final int pokemonId;
-
+class const PokemonDetailPage({required final int pokemonId, super.key})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue<bool>>(connectivityStatusProvider, (previous, next) {
@@ -95,19 +91,12 @@ bool shouldReloadPokemonDetailOnConnectivityRestore(
       : current.hasValue && current.requireValue.isOfflineMode;
 }
 
-class _PokemonDetailContent extends ConsumerStatefulWidget {
-  const _PokemonDetailContent({
-    required this.pokemonId,
-    required this.pokemon,
-    required this.evolution,
-    this.flavorTextEntries = const [],
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-  final EvolutionChain evolution;
-  final List<dynamic> flavorTextEntries;
-
+class const _PokemonDetailContent({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+  required final EvolutionChain evolution,
+  final List<dynamic> flavorTextEntries = const [],
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<_PokemonDetailContent> createState() =>
       _PokemonDetailContentState();
@@ -252,33 +241,18 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
       return;
     }
 
-    final willFavorite = !ref
-        .read(favoritesProvider)
-        .contains(widget.pokemonId);
-    unawaited(ref.read(favoritesProvider.notifier).toggle(widget.pokemonId));
-    ref
-        .read(appAnalyticsProvider)
-        .favoriteToggled(pokemonId: widget.pokemonId, isFavorite: willFavorite);
+    toggleAuthenticatedFavorite(ref, pokemonId: widget.pokemonId);
   }
 }
 
-class _HeroSection extends ConsumerWidget {
-  const _HeroSection({
-    required this.pokemonId,
-    required this.pokemon,
-    required this.primaryType,
-    required this.headerColor,
-    required this.isFavorite,
-    required this.onFavoriteTap,
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-  final PokemonType? primaryType;
-  final Color headerColor;
-  final bool isFavorite;
-  final VoidCallback onFavoriteTap;
-
+class const _HeroSection({
+  required final int pokemonId,
+  required final PokemonDetail pokemon,
+  required final PokemonType? primaryType,
+  required final Color headerColor,
+  required final bool isFavorite,
+  required final VoidCallback onFavoriteTap,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final headerActionColor = Theme.of(context).colorScheme.onSurface;
@@ -340,7 +314,7 @@ class _HeroSection extends ConsumerWidget {
                             ? PokemonPrimaryTypeBackdrop.detailOpacity
                             : PokemonPrimaryTypeBackdrop.detailLightOpacity,
                       ),
-                    _HeroSprite(
+                    PokemonDetailHeroSprite(
                       pokemonId: pokemonId,
                       pokemon: pokemon,
                     ),
@@ -384,75 +358,10 @@ class _HeroSection extends ConsumerWidget {
   }
 }
 
-class _HeroSprite extends ConsumerWidget {
-  const _HeroSprite({
-    required this.pokemonId,
-    required this.pokemon,
-  });
-
-  final int pokemonId;
-  final PokemonDetail pokemon;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final variantsAsync = ref.watch(
-      pokemonDetailSpriteVariantsProvider(pokemonId),
-    );
-
-    return variantsAsync.when(
-      data: (variants) {
-        if (variants.length > 1) {
-          return PokemonDetailSpriteCarousel(
-            routePokemonId: pokemonId,
-            variants: variants,
-            fallbackCryUrl: pokemon.cryUrl,
-            fallbackLegacyCryUrl: pokemon.legacyCryUrl,
-          );
-        }
-        if (variants.length == 1) {
-          return PokemonDetailTappableSprite(
-            pokemonId: pokemonId,
-            imageUrl: variants.first.imageUrl,
-            cryUrl: pokemon.cryUrl,
-            legacyCryUrl: pokemon.legacyCryUrl,
-          );
-        }
-        return _fallbackSprite();
-      },
-      loading: _fallbackSprite,
-      error: (_, _) => _fallbackSprite(),
-    );
-  }
-
-  Widget _fallbackSprite() {
-    if (pokemon.spriteUrl != null) {
-      return PokemonDetailTappableSprite(
-        pokemonId: pokemonId,
-        imageUrl: pokemon.spriteUrl!,
-        cryUrl: pokemon.cryUrl,
-        legacyCryUrl: pokemon.legacyCryUrl,
-      );
-    }
-    return Hero(
-      tag: PokemonHeroTags.sprite(pokemonId),
-      child: const Material(
-        color: Colors.transparent,
-        child: Icon(
-          Icons.catching_pokemon,
-          size: 96,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-class _EvolutionSection extends StatelessWidget {
-  const _EvolutionSection({required this.pokemonId, required this.evolution});
-
-  final int pokemonId;
-  final EvolutionChain evolution;
-
+class const _EvolutionSection({
+  required final int pokemonId,
+  required final EvolutionChain evolution,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -505,17 +414,11 @@ class _EvolutionSection extends StatelessWidget {
   }
 }
 
-class _CollapsibleStats extends StatelessWidget {
-  const _CollapsibleStats({
-    required this.pokemon,
-    required this.expanded,
-    required this.onToggle,
-  });
-
-  final PokemonDetail pokemon;
-  final bool expanded;
-  final VoidCallback onToggle;
-
+class const _CollapsibleStats({
+  required final PokemonDetail pokemon,
+  required final bool expanded,
+  required final VoidCallback onToggle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const maxStat = 255;

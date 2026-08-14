@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -19,9 +19,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_row_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class FavoritesPage extends ConsumerWidget {
-  const FavoritesPage({super.key});
-
+class const FavoritesPage({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
@@ -40,11 +38,8 @@ class FavoritesPage extends ConsumerWidget {
   }
 }
 
-class _GuestFavoritesBody extends StatelessWidget {
-  const _GuestFavoritesBody({required this.onAuth});
-
-  final VoidCallback onAuth;
-
+class const _GuestFavoritesBody({required final VoidCallback onAuth})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -69,9 +64,7 @@ class _GuestFavoritesBody extends StatelessWidget {
   }
 }
 
-class _EmptyFavoritesBody extends StatelessWidget {
-  const _EmptyFavoritesBody();
-
+class const _EmptyFavoritesBody() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -88,11 +81,8 @@ class _EmptyFavoritesBody extends StatelessWidget {
   }
 }
 
-class _FavoritesListBody extends ConsumerWidget {
-  const _FavoritesListBody({required this.favoriteIds});
-
-  final List<int> favoriteIds;
-
+class const _FavoritesListBody({required final List<int> favoriteIds})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<List<PokemonDetail>>(
@@ -130,11 +120,8 @@ class _FavoritesListBody extends ConsumerWidget {
   }
 }
 
-class _DismissibleFavoriteCard extends ConsumerWidget {
-  const _DismissibleFavoriteCard({required this.pokemon});
-
-  final PokemonDetail pokemon;
-
+class const _DismissibleFavoriteCard({required final PokemonDetail pokemon})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);

@@ -1,11 +1,12 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Bump app version, commit, tag, and push (triggers Android release).
+  Bump app version, commit, tag, and push (Android deploys after merge to master).
 
 .DESCRIPTION
   Updates pubspec.yaml (x.y.z+build), commits, creates tag vX.Y.Z, and pushes
-  branch + tag to origin. The Release Android workflow runs on the tag.
+  the current branch + tag to origin. Run from any branch (typically a PR
+  branch). Release Android deploys only after that version reaches master.
 
 .PARAMETER Bump
   Semver part to bump: patch | minor | major.
@@ -132,6 +133,7 @@ git push origin $tag
 
 Write-Host @"
 
-Done. Release Android should start for $tag.
+Done. Pushed $tag from $branch.
+Android release runs after this version reaches master (merge the PR).
 Track: internal (default). Monitor: Actions → Release Android
 "@

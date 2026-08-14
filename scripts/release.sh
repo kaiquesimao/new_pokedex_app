@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Bump app version, commit, tag, and push (triggers Android release).
+# Bump app version, commit, tag, and push from the current branch.
+# Android deploy runs after that version reaches master.
 #
 # Usage:
 #   ./scripts/release.sh patch|minor|major [--dry-run]
@@ -104,6 +105,7 @@ git push origin "$tag"
 
 cat <<EOF
 
-Done. Release Android should start for ${tag}.
+Done. Pushed ${tag} from ${branch}.
+Android release runs after this version reaches master (merge the PR).
 Track: internal (default). Monitor: Actions → Release Android
 EOF

@@ -4,12 +4,10 @@ import 'package:pokedex_app/features/auth/data/firebase_auth_errors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class LoginEmailFormState {
-  const LoginEmailFormState({this.loading = false, this.error});
-
-  final bool loading;
-  final String? error;
-
+class const LoginEmailFormState({
+  final bool loading = false,
+  final String? error,
+}) {
   LoginEmailFormState copyWith({
     bool? loading,
     String? error,
@@ -42,7 +40,10 @@ class LoginEmailFormNotifier extends Notifier<LoginEmailFormState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     } finally {
       if (state.loading) {
         state = state.copyWith(loading: false);

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/forgot_password_flow_provider.dart';
@@ -12,9 +12,7 @@ import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ForgotPasswordPage extends ConsumerStatefulWidget {
-  const ForgotPasswordPage({super.key});
-
+class const ForgotPasswordPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
@@ -241,12 +239,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   };
 }
 
-class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
-
-  final int current;
-  final int total;
-
+class const _StepIndicator({
+  required final int current,
+  required final int total,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -269,11 +265,8 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.onDone});
-
-  final VoidCallback onDone;
-
+class const _SuccessBody({required final VoidCallback onDone})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -310,12 +303,10 @@ class _SuccessBody extends StatelessWidget {
   }
 }
 
-class _EmailSentBody extends StatelessWidget {
-  const _EmailSentBody({required this.email, required this.onDone});
-
-  final String email;
-  final VoidCallback onDone;
-
+class const _EmailSentBody({
+  required final String email,
+  required final VoidCallback onDone,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

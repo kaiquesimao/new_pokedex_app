@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 
@@ -11,9 +11,7 @@ Future<bool?> showLogoutBottomSheet(BuildContext context) {
   );
 }
 
-class _LogoutBottomSheet extends StatelessWidget {
-  const _LogoutBottomSheet();
-
+class const _LogoutBottomSheet() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

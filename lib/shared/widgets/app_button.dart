@@ -1,23 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 
 enum AppButtonVariant { filled, outline, disabled }
 
-class AppButton extends StatelessWidget {
-  const AppButton({
-    required this.label,
-    super.key,
-    this.onPressed,
-    this.variant = AppButtonVariant.filled,
-    this.isLoading = false,
-  });
-
-  final String label;
-  final VoidCallback? onPressed;
-  final AppButtonVariant variant;
-  final bool isLoading;
-
+class const AppButton({
+  required final String label,
+  super.key,
+  final VoidCallback? onPressed,
+  final AppButtonVariant variant = AppButtonVariant.filled,
+  final bool isLoading = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -75,22 +68,14 @@ class AppButton extends StatelessWidget {
 }
 
 /// Text action with an opaque surface background for readability on imagery.
-class AppSurfaceTextButton extends StatelessWidget {
-  const AppSurfaceTextButton({
-    required this.label,
-    super.key,
-    this.onPressed,
-    this.icon,
-    this.iconAlignment = IconAlignment.start,
-    this.expand = false,
-  });
-
-  final String label;
-  final VoidCallback? onPressed;
-  final IconData? icon;
-  final IconAlignment iconAlignment;
-  final bool expand;
-
+class const AppSurfaceTextButton({
+  required final String label,
+  super.key,
+  final VoidCallback? onPressed,
+  final IconData? icon,
+  final IconAlignment iconAlignment = IconAlignment.start,
+  final bool expand = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 
-class PokemonListSkeleton extends StatelessWidget {
-  const PokemonListSkeleton({super.key, this.itemCount = 6});
-
-  final int itemCount;
-
+class const PokemonListSkeleton({super.key, final int itemCount = 6})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(

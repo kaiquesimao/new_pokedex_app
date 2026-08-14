@@ -6,7 +6,7 @@ import 'package:pokedex_app/core/network/connectivity_reachability.dart';
 
 /// Tracks whether the device can reach the network.
 class ConnectivityService {
-  ConnectivityService({
+  new({
     Connectivity? connectivity,
     Future<bool> Function()? reachabilityProbe,
   }) : _connectivity = connectivity ?? Connectivity(),

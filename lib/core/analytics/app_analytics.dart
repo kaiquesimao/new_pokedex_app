@@ -20,9 +20,7 @@ abstract class AppAnalytics {
   void regionOpened({required String regionName});
 }
 
-class NoOpAppAnalytics implements AppAnalytics {
-  const NoOpAppAnalytics();
-
+class const NoOpAppAnalytics() implements AppAnalytics {
   @override
   void pokemonViewed({required int pokemonId, required String name}) {
     _log('pokemon_viewed', {'pokemon_id': pokemonId, 'name': name});
@@ -58,12 +56,10 @@ class NoOpAppAnalytics implements AppAnalytics {
   }
 }
 
-class FirebaseAppAnalytics implements AppAnalytics {
-  FirebaseAppAnalytics(this._analytics, this._connectivity);
-
-  final FirebaseAnalytics _analytics;
-  final ConnectivityService _connectivity;
-
+class FirebaseAppAnalytics(
+  final FirebaseAnalytics _analytics,
+  final ConnectivityService _connectivity,
+) implements AppAnalytics {
   void _logEvent({required String name, Map<String, Object>? parameters}) {
     if (!_connectivity.isOnline) return;
     unawaited(_analytics.logEvent(name: name, parameters: parameters));

@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_app/core/analytics/app_analytics.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
+import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
@@ -24,9 +24,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class PokemonListPage extends ConsumerStatefulWidget {
-  const PokemonListPage({super.key});
-
+class const PokemonListPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<PokemonListPage> createState() => _PokemonListPageState();
 }
@@ -228,27 +226,16 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
       return;
     }
 
-    final favorites = ref.read(favoritesProvider);
-    final willFavorite = !favorites.contains(pokemonId);
-    unawaited(ref.read(favoritesProvider.notifier).toggle(pokemonId));
-    ref
-        .read(appAnalyticsProvider)
-        .favoriteToggled(pokemonId: pokemonId, isFavorite: willFavorite);
+    toggleAuthenticatedFavorite(ref, pokemonId: pokemonId);
   }
 }
 
-class _PokemonListHeader extends ConsumerWidget {
-  const _PokemonListHeader({
-    required this.filters,
-    required this.l10n,
-    required this.onGenerationClear,
-    super.key,
-  });
-
-  final PokemonListFilters filters;
-  final AppLocalizations l10n;
-  final VoidCallback onGenerationClear;
-
+class const _PokemonListHeader({
+  required final PokemonListFilters filters,
+  required final AppLocalizations l10n,
+  required final VoidCallback onGenerationClear,
+  super.key,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
@@ -349,12 +336,10 @@ class _PokemonListHeader extends ConsumerWidget {
   }
 }
 
-class _TypeFilterChip extends StatelessWidget {
-  const _TypeFilterChip({required this.typeFilter, required this.onTap});
-
-  final PokemonType? typeFilter;
-  final VoidCallback onTap;
-
+class const _TypeFilterChip({
+  required final PokemonType? typeFilter,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -399,12 +384,10 @@ class _TypeFilterChip extends StatelessWidget {
   }
 }
 
-class _SortFilterChip extends StatelessWidget {
-  const _SortFilterChip({required this.sort, required this.onTap});
-
-  final PokemonSortOption sort;
-  final VoidCallback onTap;
-
+class const _SortFilterChip({
+  required final PokemonSortOption sort,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -443,19 +426,12 @@ class _SortFilterChip extends StatelessWidget {
   }
 }
 
-class _FilterPillChip extends StatelessWidget {
-  const _FilterPillChip({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.badgeCount = 0,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final int badgeCount;
-
+class const _FilterPillChip({
+  required final String label,
+  required final IconData icon,
+  required final VoidCallback onTap,
+  final int badgeCount = 0,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = MouseRegion(
@@ -496,12 +472,10 @@ class _FilterPillChip extends StatelessWidget {
   }
 }
 
-class _ActiveFilterChip extends StatelessWidget {
-  const _ActiveFilterChip({required this.label, required this.onClear});
-
-  final String label;
-  final VoidCallback onClear;
-
+class const _ActiveFilterChip({
+  required final String label,
+  required final VoidCallback onClear,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(

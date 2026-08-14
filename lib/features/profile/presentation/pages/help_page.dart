@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HelpPage extends StatelessWidget {
-  const HelpPage({super.key});
-
+class const HelpPage({super.key}) extends StatelessWidget {
   static const supportEmail = 'pokedata.app@gmail.com';
 
   static List<({String question, String answer})> _faqItems(
@@ -138,11 +136,9 @@ Future<void> _openSupportEmail(
   }
 }
 
-class _FaqTile extends StatelessWidget {
-  const _FaqTile({required this.item});
-
-  final ({String question, String answer}) item;
-
+class const _FaqTile({
+  required final ({String question, String answer}) item,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

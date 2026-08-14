@@ -6,17 +6,11 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class VerifyEmailUiState {
-  const VerifyEmailUiState({
-    this.loading = false,
-    this.error,
-    this.resent = false,
-  });
-
-  final bool loading;
-  final String? error;
-  final bool resent;
-
+class const VerifyEmailUiState({
+  final bool loading = false,
+  final String? error,
+  final bool resent = false,
+}) {
   VerifyEmailUiState copyWith({
     bool? loading,
     String? error,
@@ -94,7 +88,10 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
         final l10n = lookupAppLocalizations(
           ref.read(appLocaleProvider).materialLocale,
         );
-        state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+        state = state.copyWith(
+          loading: false,
+          error: formatAuthException(l10n, e),
+        );
       }
       return false;
     }

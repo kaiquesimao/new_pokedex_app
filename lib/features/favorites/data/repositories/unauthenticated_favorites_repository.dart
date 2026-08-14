@@ -1,9 +1,8 @@
 import 'package:pokedex_app/features/favorites/domain/repositories/favorites_repository.dart';
 
 /// Read-only empty favorites for unauthenticated users.
-class UnauthenticatedFavoritesRepository implements FavoritesRepository {
-  const UnauthenticatedFavoritesRepository();
-
+class const UnauthenticatedFavoritesRepository()
+    implements FavoritesRepository {
   static const _empty = <int>{};
 
   @override

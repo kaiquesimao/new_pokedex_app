@@ -71,18 +71,21 @@ void main() {
       expect(variants[4].labelKey, PokemonSpriteVariantLabelKeys.gigantamax);
     });
 
-    test('omits shiny when URL is null and hides carousel extras when alone', () {
-      final variants = buildPokemonDetailSpriteVariants(
-        currentPokemonId: 6,
-        currentSpriteUrl: charizard.spriteUrl,
-        currentShinySpriteUrl: null,
-        varietySummaries: [charizard],
-        visibility: PokemonFormVisibility.allowAll,
-      );
+    test(
+      'omits shiny when URL is null and hides carousel extras when alone',
+      () {
+        final variants = buildPokemonDetailSpriteVariants(
+          currentPokemonId: 6,
+          currentSpriteUrl: charizard.spriteUrl,
+          currentShinySpriteUrl: null,
+          varietySummaries: [charizard],
+          visibility: PokemonFormVisibility.allowAll,
+        );
 
-      expect(variants, hasLength(1));
-      expect(variants.single.labelKey, PokemonSpriteVariantLabelKeys.normal);
-    });
+        expect(variants, hasLength(1));
+        expect(variants.single.labelKey, PokemonSpriteVariantLabelKeys.normal);
+      },
+    );
 
     test('allowAll includes mega and alternate forms', () {
       final variants = buildPokemonDetailSpriteVariants(

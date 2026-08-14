@@ -10,7 +10,7 @@ import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
 
 class _ZygardeMegaRemote extends PokemonRemoteDataSource {
-  _ZygardeMegaRemote() : super(_RecordingClient());
+  new() : super(_RecordingClient());
 
   int? lastSpeciesIdRequested;
 
@@ -61,7 +61,10 @@ class _ZygardeMegaRemote extends PokemonRemoteDataSource {
   Future<Map<String, dynamic>> fetchEggGroup(String name) async {
     return {
       'names': [
-        {'language': {'name': 'en'}, 'name': 'Dragon'},
+        {
+          'language': {'name': 'en'},
+          'name': 'Dragon',
+        },
       ],
     };
   }
@@ -119,13 +122,13 @@ void main() {
       final local = PokemonLocalDataSource(db);
       final remote = _ZygardeMegaRemote();
       final repository = PokemonRepositoryImpl(
-      remote: remote,
-      local: local,
-      gameTextResolver: GameTextResolver(
-        machineTranslation: InMemoryMachineTranslationBackend(),
-        fetchResourceEntries: (_, _) async => [],
-      ),
-    );
+        remote: remote,
+        local: local,
+        gameTextResolver: GameTextResolver(
+          machineTranslation: InMemoryMachineTranslationBackend(),
+          fetchResourceEntries: (_, _) async => [],
+        ),
+      );
 
       await local.savePokemonResponse(
         PokemonResponse.fromJson({

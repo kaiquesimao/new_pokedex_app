@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_guard_interceptor.dart';
 
 class _FakeConnectivityService extends ConnectivityService {
-  _FakeConnectivityService({required this._isOnline});
+  new({required this._isOnline});
 
   bool _isOnline;
 

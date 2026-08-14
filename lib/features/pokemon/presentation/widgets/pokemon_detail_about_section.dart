@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/locale/poke_api_localized_text.dart';
@@ -12,16 +12,11 @@ import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_f
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 
-class PokemonDetailAboutSection extends ConsumerWidget {
-  const PokemonDetailAboutSection({
-    required this.pokemon,
-    this.flavorTextEntries = const [],
-    super.key,
-  });
-
-  final PokemonDetail pokemon;
-  final List<dynamic> flavorTextEntries;
-
+class const PokemonDetailAboutSection({
+  required final PokemonDetail pokemon,
+  final List<dynamic> flavorTextEntries = const [],
+  super.key,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -248,19 +243,12 @@ Widget _loadingIndicator(ThemeData theme, String semanticsLabel) {
   );
 }
 
-class _InfoTile extends StatelessWidget {
-  const _InfoTile({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.wrapValue = false,
-  });
-
-  final IconData icon;
-  final String label;
-  final Widget value;
-  final bool wrapValue;
-
+class const _InfoTile({
+  required final IconData icon,
+  required final String label,
+  required final Widget value,
+  final bool wrapValue = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = DetailSurfaceCard.titleStyle(context);
@@ -301,17 +289,11 @@ class _InfoTile extends StatelessWidget {
   }
 }
 
-class _GenderBar extends StatelessWidget {
-  const _GenderBar({
-    required this.genderRate,
-    required this.l10n,
-    required this.locale,
-  });
-
-  final int genderRate;
-  final AppLocalizations l10n;
-  final AppLocale locale;
-
+class const _GenderBar({
+  required final int genderRate,
+  required final AppLocalizations l10n,
+  required final AppLocale locale,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -372,18 +354,12 @@ class _GenderBar extends StatelessWidget {
   }
 }
 
-class _GenderBarTrack extends StatelessWidget {
-  const _GenderBarTrack({
-    required this.malePercent,
-    required this.femalePercent,
-    required this.maleColor,
-    required this.femaleColor,
-  });
-
-  final double malePercent;
-  final double femalePercent;
-  final Color maleColor;
-  final Color femaleColor;
+class const _GenderBarTrack({
+  required final double malePercent,
+  required final double femalePercent,
+  required final Color maleColor,
+  required final Color femaleColor,
+}) extends StatelessWidget {
   static const _height = 12.0;
 
   @override

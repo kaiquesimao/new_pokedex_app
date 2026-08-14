@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
@@ -16,9 +16,7 @@ import 'package:pokedex_app/shared/widgets/app_text_field.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class ChangeEmailPage extends ConsumerStatefulWidget {
-  const ChangeEmailPage({super.key});
-
+class const ChangeEmailPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<ChangeEmailPage> createState() => _ChangeEmailPageState();
 }
@@ -216,38 +214,36 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
     required AppLocalizations l10n,
     required bool usesFirebase,
     required String email,
-  }) =>
-      switch (step) {
-        ChangeEmailStep.currentPassword =>
-          l10n.profileSecurityPasswordSubtitle,
-        ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
-          l10n,
-          usesFirebase
-              ? l10n.changeEmailSubtitleNewEmailFirebase
-              : l10n.changeEmailSubtitleNewEmailMock,
-        ),
-        ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
-          l10n,
-          usesFirebase
-              ? l10n.changeEmailSubtitleVerifyFirebase(email)
-              : l10n.authForgotSubtitleOtp(email),
-        ),
-        ChangeEmailStep.success => '',
-      };
+  }) => switch (step) {
+    ChangeEmailStep.currentPassword => l10n.profileSecurityPasswordSubtitle,
+    ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
+      l10n,
+      usesFirebase
+          ? l10n.changeEmailSubtitleNewEmailFirebase
+          : l10n.changeEmailSubtitleNewEmailMock,
+    ),
+    ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
+      l10n,
+      usesFirebase
+          ? l10n.changeEmailSubtitleVerifyFirebase(email)
+          : l10n.authForgotSubtitleOtp(email),
+    ),
+    ChangeEmailStep.success => '',
+  };
 
   String _primaryButtonLabel(
     ChangeEmailStep step, {
     required AppLocalizations l10n,
     required bool usesFirebase,
-  }) =>
-      switch (step) {
-        ChangeEmailStep.currentPassword => l10n.authContinueButton,
-        ChangeEmailStep.newEmail => l10n.changeEmailSendVerificationButton,
-        ChangeEmailStep.verify => usesFirebase
-            ? l10n.authVerifyEmailAlreadyConfirmedButton
-            : l10n.changeEmailConfirmCodeButton,
-        ChangeEmailStep.success => l10n.profileFinishButton,
-      };
+  }) => switch (step) {
+    ChangeEmailStep.currentPassword => l10n.authContinueButton,
+    ChangeEmailStep.newEmail => l10n.changeEmailSendVerificationButton,
+    ChangeEmailStep.verify =>
+      usesFirebase
+          ? l10n.authVerifyEmailAlreadyConfirmedButton
+          : l10n.changeEmailConfirmCodeButton,
+    ChangeEmailStep.success => l10n.profileFinishButton,
+  };
 
   VoidCallback? _onPrimaryPressed(ChangeEmailStep step) => switch (step) {
     ChangeEmailStep.currentPassword => _submitCurrentPassword,
@@ -257,11 +253,8 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
   };
 }
 
-class _VerifyEmailBody extends StatelessWidget {
-  const _VerifyEmailBody({this.errorText});
-
-  final String? errorText;
-
+class const _VerifyEmailBody({final String? errorText})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -288,12 +281,10 @@ class _VerifyEmailBody extends StatelessWidget {
   }
 }
 
-class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
-
-  final int current;
-  final int total;
-
+class const _StepIndicator({
+  required final int current,
+  required final int total,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -316,17 +307,11 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({
-    required this.l10n,
-    required this.email,
-    required this.onDone,
-  });
-
-  final AppLocalizations l10n;
-  final String email;
-  final VoidCallback onDone;
-
+class const _SuccessBody({
+  required final AppLocalizations l10n,
+  required final String email,
+  required final VoidCallback onDone,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
@@ -62,9 +62,7 @@ Future<void> showPokemonFormsSheet(BuildContext context) {
   );
 }
 
-class _PokemonTypeSheet extends ConsumerWidget {
-  const _PokemonTypeSheet();
-
+class const _PokemonTypeSheet() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
@@ -131,9 +129,7 @@ class _PokemonTypeSheet extends ConsumerWidget {
   }
 }
 
-class _PokemonFilterSheet extends ConsumerWidget {
-  const _PokemonFilterSheet();
-
+class const _PokemonFilterSheet() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
@@ -216,9 +212,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
   }
 }
 
-class _PokemonFormsSheet extends ConsumerWidget {
-  const _PokemonFormsSheet();
-
+class const _PokemonFormsSheet() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
@@ -268,9 +262,7 @@ class _PokemonFormsSheet extends ConsumerWidget {
   }
 }
 
-class _PokemonSortSheet extends ConsumerWidget {
-  const _PokemonSortSheet();
-
+class const _PokemonSortSheet() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
@@ -315,17 +307,11 @@ class _PokemonSortSheet extends ConsumerWidget {
   }
 }
 
-class _SortPill extends StatelessWidget {
-  const _SortPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
+class const _SortPill({
+  required final String label,
+  required final bool selected,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -356,9 +342,7 @@ class _SortPill extends StatelessWidget {
   }
 }
 
-class _PokemonGenerationSheet extends ConsumerWidget {
-  const _PokemonGenerationSheet();
-
+class const _PokemonGenerationSheet() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filters = ref.watch(pokemonFiltersProvider);
@@ -405,11 +389,8 @@ class _PokemonGenerationSheet extends ConsumerWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-
-  final String title;
-
+class const _SectionTitle({required final String title})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(

@@ -1,24 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/trainer_avatar_image.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class EmptyStateIllustration extends StatelessWidget {
-  const EmptyStateIllustration({
-    required this.imageAsset,
-    required this.title,
-    super.key,
-    this.subtitle,
-    this.action,
-    this.pixelArt = false,
-  });
-
-  final String imageAsset;
-  final String title;
-  final String? subtitle;
-  final Widget? action;
-  final bool pixelArt;
-
+class const EmptyStateIllustration({
+  required final String imageAsset,
+  required final String title,
+  super.key,
+  final String? subtitle,
+  final Widget? action,
+  final bool pixelArt = false,
+}) extends StatelessWidget {
   static const _illustrationSizeMobile = 260.0;
   static const _illustrationSizeWeb = 320.0;
 

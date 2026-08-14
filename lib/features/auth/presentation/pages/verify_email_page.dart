@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_email_verification_copy.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
@@ -11,9 +11,7 @@ import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class VerifyEmailPage extends ConsumerStatefulWidget {
-  const VerifyEmailPage({super.key});
-
+class const VerifyEmailPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }

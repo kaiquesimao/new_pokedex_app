@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -500,6 +501,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAboutLabel => 'About';
 
   @override
+  String get profileRateAppLabel => 'Rate the app';
+
+  @override
+  String get profileRateAppError =>
+      'Could not open the store listing. Try again later.';
+
+  @override
   String get profileActionSuccess => 'Action completed';
 
   @override
@@ -807,7 +815,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpFilterAnswer =>
-      'On the Pokédex tab, use the search bar, the Forms filter (including shiny sprites), and advanced filters to refine the results.';
+      'On the Pokédex tab, use the search bar, the Forms filter (including shiny), and advanced filters to refine the results.';
 
   @override
   String get helpMegaFormsQuestion =>
@@ -1051,11 +1059,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Browse a vast list of Pokémon from every generation by Nintendo';
 
   @override
-  String get onboardingSlide2Title => 'Keep your Pokédex up to date';
+  String get onboardingSlide2Title => 'Search by type and region';
 
   @override
   String get onboardingSlide2Subtitle =>
+      'Filter Pokémon by type, generation, and region to find what you need in seconds.';
+
+  @override
+  String get onboardingSlide3Title => 'Keep your Pokédex up to date';
+
+  @override
+  String get onboardingSlide3Subtitle =>
       'Sign up and keep your profile, favorite Pokémon, settings, and more saved in the app, even without an internet connection.';
+
+  @override
+  String get onboardingSkipButton => 'Skip';
 
   @override
   String get onboardingContinueButton => 'Continue';
@@ -1212,6 +1230,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String pokemonFormCarouselSemantics(String formLabel) {
     return '$formLabel, swipe to see other forms';
   }
+
+  @override
+  String get pokemonFormsLoading => 'Loading forms';
 
   @override
   String get firebaseConfigErrorTitle => 'Configuration unavailable';

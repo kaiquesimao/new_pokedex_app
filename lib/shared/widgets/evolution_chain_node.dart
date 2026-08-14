@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
@@ -8,20 +8,13 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
-class EvolutionChainNodeCard extends StatelessWidget {
-  const EvolutionChainNodeCard({
-    required this.node,
-    required this.isCurrent,
-    super.key,
-    this.isFinalStage = false,
-    this.onTap,
-  });
-
-  final EvolutionChainNode node;
-  final bool isCurrent;
-  final bool isFinalStage;
-  final VoidCallback? onTap;
-
+class const EvolutionChainNodeCard({
+  required final EvolutionChainNode node,
+  required final bool isCurrent,
+  super.key,
+  final bool isFinalStage = false,
+  final VoidCallback? onTap,
+}) extends StatelessWidget {
   static const double _cardHeight = 96;
   static const double _spritePanelWidth = 108;
 
@@ -118,11 +111,8 @@ class EvolutionChainNodeCard extends StatelessWidget {
   }
 }
 
-class _EvolutionTypeBadge extends StatelessWidget {
-  const _EvolutionTypeBadge({required this.type});
-
-  final PokemonType type;
-
+class const _EvolutionTypeBadge({required final PokemonType type})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -142,11 +132,8 @@ class _EvolutionTypeBadge extends StatelessWidget {
   }
 }
 
-class EvolutionChainConnector extends StatelessWidget {
-  const EvolutionChainConnector({super.key, this.label});
-
-  final String? label;
-
+class const EvolutionChainConnector({super.key, final String? label})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -176,20 +163,13 @@ class EvolutionChainConnector extends StatelessWidget {
   }
 }
 
-class EvolutionChainTree extends StatelessWidget {
-  const EvolutionChainTree({
-    required this.root,
-    required this.currentSpeciesId,
-    super.key,
-    this.onNodeTap,
-    this.embedded = false,
-  });
-
-  final EvolutionChainNode root;
-  final int currentSpeciesId;
-  final ValueChanged<int>? onNodeTap;
-  final bool embedded;
-
+class const EvolutionChainTree({
+  required final EvolutionChainNode root,
+  required final int currentSpeciesId,
+  super.key,
+  final ValueChanged<int>? onNodeTap,
+  final bool embedded = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = _buildNode(context, root);

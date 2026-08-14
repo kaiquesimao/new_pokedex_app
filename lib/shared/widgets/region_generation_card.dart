@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -8,12 +8,11 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:riverpod/misc.dart';
 
-class RegionGenerationCard extends StatelessWidget {
-  const RegionGenerationCard({required this.data, super.key, this.onTap});
-
-  final RegionCardData data;
-  final VoidCallback? onTap;
-
+class const RegionGenerationCard({
+  required final RegionCardData data,
+  super.key,
+  final VoidCallback? onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -96,11 +95,8 @@ class RegionGenerationCard extends StatelessWidget {
   }
 }
 
-class _StarterSprites extends ConsumerWidget {
-  const _StarterSprites({required this.starterIds});
-
-  final List<int> starterIds;
-
+class const _StarterSprites({required final List<int> starterIds})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Row(
@@ -116,16 +112,11 @@ class _StarterSprites extends ConsumerWidget {
   }
 }
 
-class _StarterSprite extends ConsumerWidget {
-  const _StarterSprite({required this.pokemonId});
-
-  final int pokemonId;
-
+class const _StarterSprite({required final int pokemonId})
+    extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spriteUrl = ref
-        .watch(pokemonSpriteUrlProvider(pokemonId))
-        .value;
+    final spriteUrl = ref.watch(pokemonSpriteUrlProvider(pokemonId)).value;
 
     if (spriteUrl == null) {
       return const SizedBox(

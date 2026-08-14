@@ -7,7 +7,7 @@ import 'package:pokedex_app/features/favorites/domain/repositories/favorites_rep
 
 /// Firestore-backed favorites repository with offline-first local cache.
 class FirestoreFavoritesRepository implements FavoritesRepository {
-  FirestoreFavoritesRepository({
+  new({
     required this.userId,
     required this.localCache,
     required this._connectivity,

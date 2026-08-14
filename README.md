@@ -6,7 +6,7 @@ Flutter app targeting **Android** and **Web** (mobile-first).
 
 ## Prerequisites
 
-- Flutter SDK (stable)
+- Flutter SDK **3.47+** (stable, Dart 3.13)
 - Firebase project with Authentication and Cloud Firestore
 - Local secret files (not in git):
   - `dart_defines.json` — copy from [`dart_defines.example.json`](dart_defines.example.json)
@@ -30,6 +30,13 @@ flutter run -d chrome --web-port=5000 --dart-define-from-file=dart_defines.json
 ```
 
 Guest browsing: on the welcome screen tap **Explorar sem conta** to use the Pokédex without logging in.
+
+Widget Previews (Flutter 3.47, isolated UI without a full app run):
+
+```bash
+flutter widget-preview start
+```
+
 
 ## Production builds
 
@@ -141,10 +148,14 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
 | Trigger | What runs |
 |---------|-------------|
-| Tag `v*` (e.g. `v1.0.1`) | analyze → test → signed AAB → upload **internal** track |
-| Manual (`workflow_dispatch`) | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
+| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **internal** track |
+| Manual (`workflow_dispatch`) from `master` | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
 
-**Preferred:** run the release script (bumps `pubspec.yaml`, commits, tags, pushes):
+Tags do **not** start the workflow. Create them on a PR branch with the
+release script; Android deploys only after that version is merged to `master`.
+
+**Preferred:** run the release script on the PR branch (clean tree; bumps
+`pubspec.yaml`, commits, tags, pushes), then merge to `master`:
 
 ```powershell
 # Working tree must be clean. Build number (+N) always increments.
@@ -160,9 +171,9 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 ./scripts/release.sh minor --dry-run
 ```
 
-The workflow reads `version:` from `pubspec.yaml`, checks that tag `vX.Y.Z`
-matches the name part, and builds with `--build-name` / `--build-number`
-(`versionCode` must keep increasing on every Play upload; current Play is `+4`).
+The workflow reads `version:` from `pubspec.yaml` and builds with
+`--build-name` / `--build-number` (`versionCode` must keep increasing on
+every Play upload; current Play is `+4`).
 
 Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
 

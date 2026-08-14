@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show unawaited;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
@@ -15,25 +15,15 @@ import 'package:pokedex_app/features/regions/domain/repositories/region_reposito
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:riverpod/misc.dart';
 
-class RegionalPokedexState {
-  const RegionalPokedexState({
-    this.items = const [],
-    this.isLoadingEntries = false,
-    this.isLoadingSummaries = false,
-    this.totalCount = 0,
-    this.error,
-    this.errorIsConnectivityFailure = false,
-    this.isOfflineMode = false,
-  });
-
-  final List<RegionalPokemon> items;
-  final bool isLoadingEntries;
-  final bool isLoadingSummaries;
-  final int totalCount;
-  final String? error;
-  final bool errorIsConnectivityFailure;
-  final bool isOfflineMode;
-
+class const RegionalPokedexState({
+  final List<RegionalPokemon> items = const [],
+  final bool isLoadingEntries = false,
+  final bool isLoadingSummaries = false,
+  final int totalCount = 0,
+  final String? error,
+  final bool errorIsConnectivityFailure = false,
+  final bool isOfflineMode = false,
+}) {
   bool get hasMore => items.length < totalCount;
 
   bool get showFullSkeleton =>
@@ -63,11 +53,8 @@ class RegionalPokedexState {
   }
 }
 
-class RegionalPokedexNotifier extends Notifier<RegionalPokedexState> {
-  RegionalPokedexNotifier(this.regionName);
-
-  final String regionName;
-
+class RegionalPokedexNotifier(final String regionName)
+    extends Notifier<RegionalPokedexState> {
   RegionRepository get _regionRepository => ref.read(regionRepositoryProvider);
   PokemonRepository get _pokemonRepository =>
       ref.read(pokemonRepositoryProvider);

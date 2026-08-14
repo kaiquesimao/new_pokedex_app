@@ -1,23 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/responsive_layout.dart';
 
 /// Animated container for StatefulShellRoute branch navigators.
 ///
 /// Uses IndexedStack (same as go_router's default shell container) so branch
 /// navigators stay mounted and goBranch can restore prior locations.
-class AnimatedBranchContainer extends StatefulWidget {
-  const AnimatedBranchContainer({
-    required this.currentIndex,
-    required this.children,
-    super.key,
-  });
-
-  final int currentIndex;
-  final List<Widget> children;
-
+class const AnimatedBranchContainer({
+  required final int currentIndex,
+  required final List<Widget> children,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<AnimatedBranchContainer> createState() =>
       _AnimatedBranchContainerState();
@@ -45,7 +38,7 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentIndex != widget.currentIndex) {
       _previousIndex = oldWidget.currentIndex;
-      unawaited(_controller.forward(from: 0));
+      _controller.forward(from: 0);
     }
   }
 
@@ -100,12 +93,10 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
   }
 }
 
-class _BranchPane extends StatelessWidget {
-  const _BranchPane({required this.isActive, required this.child});
-
-  final bool isActive;
-  final Widget child;
-
+class const _BranchPane({
+  required final bool isActive,
+  required final Widget child,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Offstage(

@@ -1,14 +1,12 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/social_auth_actions.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
 /// Google sign-in control (mobile only; hidden on web under Wasm COOP/COEP).
-class GoogleSignInActionButton extends ConsumerWidget {
-  const GoogleSignInActionButton({super.key});
-
+class const GoogleSignInActionButton({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (kIsWeb) {

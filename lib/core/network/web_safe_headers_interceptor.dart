@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Headers that browsers block on XHR/fetch (see fetch spec forbidden header names).
 const forbiddenWebRequestHeaders = <String>{

@@ -2,11 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:pokedex_app/firebase_options.dart';
 
 /// Firebase initialization (M2).
-class FirebaseBootstrapResult {
-  const FirebaseBootstrapResult({required this.isAvailable});
-
-  final bool isAvailable;
-}
+class const FirebaseBootstrapResult({required final bool isAvailable});
 
 Future<FirebaseBootstrapResult> bootstrapFirebase() async {
   if (!DefaultFirebaseOptions.isConfigured) {

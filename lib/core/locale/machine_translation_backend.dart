@@ -17,7 +17,7 @@ typedef TranslateFn = Future<String> Function(
 );
 
 class InMemoryMachineTranslationBackend implements MachineTranslationBackend {
-  InMemoryMachineTranslationBackend({TranslateFn? translateFn})
+  new({TranslateFn? translateFn})
     : _translateFn = translateFn ?? _defaultTranslate;
 
   final TranslateFn _translateFn;

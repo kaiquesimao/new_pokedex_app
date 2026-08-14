@@ -1,8 +1,10 @@
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 
-class EvolutionChainResponse {
-  const EvolutionChainResponse({required this.id, required this.chain});
-  factory EvolutionChainResponse.fromJson(Map<String, dynamic> json) {
+class const EvolutionChainResponse({
+  required final int id,
+  required final ChainLinkResponse chain,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     return EvolutionChainResponse(
       id: json['id'] as int? ?? 0,
       chain: ChainLinkResponse.fromJson(
@@ -10,18 +12,14 @@ class EvolutionChainResponse {
       ),
     );
   }
-
-  final int id;
-  final ChainLinkResponse chain;
 }
 
-class ChainLinkResponse {
-  const ChainLinkResponse({
-    required this.species,
-    required this.evolvesTo,
-    required this.evolutionDetails,
-  });
-  factory ChainLinkResponse.fromJson(Map<String, dynamic> json) {
+class const ChainLinkResponse({
+  required final NamedApiResource species,
+  required final List<ChainLinkResponse> evolvesTo,
+  required final List<EvolutionDetailResponse> evolutionDetails,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     return ChainLinkResponse(
       species: NamedApiResource.fromJson(
         json['species'] as Map<String, dynamic>? ?? {},
@@ -36,21 +34,16 @@ class ChainLinkResponse {
           .toList(),
     );
   }
-
-  final NamedApiResource species;
-  final List<ChainLinkResponse> evolvesTo;
-  final List<EvolutionDetailResponse> evolutionDetails;
 }
 
-class EvolutionDetailResponse {
-  const EvolutionDetailResponse({
-    this.minLevel,
-    this.trigger,
-    this.item,
-    this.timeOfDay,
-    this.heldItem,
-  });
-  factory EvolutionDetailResponse.fromJson(Map<String, dynamic> json) {
+class const EvolutionDetailResponse({
+  final int? minLevel,
+  final NamedApiResource? trigger,
+  final NamedApiResource? item,
+  final String? timeOfDay,
+  final NamedApiResource? heldItem,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     return EvolutionDetailResponse(
       minLevel: json['min_level'] as int?,
       trigger: json['trigger'] == null
@@ -67,10 +60,4 @@ class EvolutionDetailResponse {
             ),
     );
   }
-
-  final int? minLevel;
-  final NamedApiResource? trigger;
-  final NamedApiResource? item;
-  final String? timeOfDay;
-  final NamedApiResource? heldItem;
 }

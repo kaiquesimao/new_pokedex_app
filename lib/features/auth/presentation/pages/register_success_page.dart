@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
@@ -10,9 +10,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
-class RegisterSuccessPage extends ConsumerStatefulWidget {
-  const RegisterSuccessPage({super.key});
-
+class const RegisterSuccessPage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<RegisterSuccessPage> createState() =>
       _RegisterSuccessPageState();

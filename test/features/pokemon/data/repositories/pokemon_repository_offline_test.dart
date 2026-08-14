@@ -12,7 +12,7 @@ import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repositor
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 
 class _FailingRemoteDataSource extends PokemonRemoteDataSource {
-  _FailingRemoteDataSource() : super(_ThrowingClient());
+  new() : super(_ThrowingClient());
 
   @override
   Future<PokemonListResponse> fetchPokemonList({

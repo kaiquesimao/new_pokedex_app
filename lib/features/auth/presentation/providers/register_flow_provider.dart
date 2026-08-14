@@ -7,23 +7,14 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 enum RegisterStep { email, password, name }
 
-class RegisterFlowState {
-  const RegisterFlowState({
-    this.step = RegisterStep.email,
-    this.email = '',
-    this.password = '',
-    this.name = '',
-    this.loading = false,
-    this.error,
-  });
-
-  final RegisterStep step;
-  final String email;
-  final String password;
-  final String name;
-  final bool loading;
-  final String? error;
-
+class const RegisterFlowState({
+  final RegisterStep step = RegisterStep.email,
+  final String email = '',
+  final String password = '',
+  final String name = '',
+  final bool loading = false,
+  final String? error,
+}) {
   bool get isComplete =>
       email.isNotEmpty && password.isNotEmpty && name.isNotEmpty;
 

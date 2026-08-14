@@ -1,11 +1,5 @@
-class RegionalPokedexEntry {
-  const RegionalPokedexEntry({
-    required this.entryNumber,
-    required this.speciesId,
-    required this.speciesName,
-  });
-
-  final int entryNumber;
-  final int speciesId;
-  final String speciesName;
-}
+class const RegionalPokedexEntry({
+  required final int entryNumber,
+  required final int speciesId,
+  required final String speciesName,
+});

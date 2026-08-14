@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
@@ -28,9 +28,7 @@ Future<bool> ensureLegalAccepted(BuildContext context, WidgetRef ref) async {
 }
 
 /// Checkbox with links to legal pages. Hidden when terms were already accepted.
-class LegalAcceptanceField extends ConsumerWidget {
-  const LegalAcceptanceField({super.key});
-
+class const LegalAcceptanceField({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final accepted = ref.watch(legalAcceptanceProvider);
@@ -49,16 +47,11 @@ class LegalAcceptanceField extends ConsumerWidget {
   }
 }
 
-class LegalAcceptanceCheckbox extends StatelessWidget {
-  const LegalAcceptanceCheckbox({
-    required this.value,
-    required this.onChanged,
-    super.key,
-  });
-
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
+class const LegalAcceptanceCheckbox({
+  required final bool value,
+  required final ValueChanged<bool> onChanged,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -103,17 +96,11 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
   }
 }
 
-class _LegalLabel extends StatelessWidget {
-  const _LegalLabel({
-    required this.theme,
-    required this.linkStyle,
-    required this.l10n,
-  });
-
-  final ThemeData theme;
-  final TextStyle? linkStyle;
-  final AppLocalizations l10n;
-
+class const _LegalLabel({
+  required final ThemeData theme,
+  required final TextStyle? linkStyle,
+  required final AppLocalizations l10n,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -137,17 +124,11 @@ class _LegalLabel extends StatelessWidget {
   }
 }
 
-class _LegalLink extends StatelessWidget {
-  const _LegalLink({
-    required this.label,
-    required this.style,
-    required this.onTap,
-  });
-
-  final String label;
-  final TextStyle? style;
-  final VoidCallback onTap;
-
+class const _LegalLink({
+  required final String label,
+  required final TextStyle? style,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
