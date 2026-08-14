@@ -3,16 +3,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/legal_document_skeleton.dart';
 
 /// Loads a local legal Markdown asset and renders it with theming.
-class LegalDocumentView extends StatelessWidget {
-  const LegalDocumentView({
-    required this.assetPath,
-    required this.loadErrorMessage,
-    super.key,
-  });
-
-  final String assetPath;
-  final String loadErrorMessage;
-
+class const LegalDocumentView({
+  required final String assetPath,
+  required final String loadErrorMessage,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(

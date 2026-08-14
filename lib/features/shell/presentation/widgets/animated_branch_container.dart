@@ -8,7 +8,7 @@ import 'package:pokedex_app/core/constants/responsive_layout.dart';
 /// Uses IndexedStack (same as go_router's default shell container) so branch
 /// navigators stay mounted and goBranch can restore prior locations.
 class AnimatedBranchContainer extends StatefulWidget {
-  const AnimatedBranchContainer({
+  const new({
     required this.currentIndex,
     required this.children,
     super.key,
@@ -100,7 +100,7 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
 }
 
 class _BranchPane extends StatelessWidget {
-  const _BranchPane({required this.isActive, required this.child});
+  const new({required this.isActive, required this.child});
 
   final bool isActive;
   final Widget child;

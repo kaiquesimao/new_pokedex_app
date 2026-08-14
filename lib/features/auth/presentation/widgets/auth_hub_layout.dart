@@ -6,7 +6,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class AuthHubLayout extends StatelessWidget {
-  const AuthHubLayout({
+  const new({
     required this.appBarTitle,
     required this.headline,
     required this.subtitle,

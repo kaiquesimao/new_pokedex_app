@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show unawaited;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';

@@ -10,7 +10,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class LoginSuccessPage extends ConsumerWidget {
-  const LoginSuccessPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

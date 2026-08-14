@@ -29,19 +29,12 @@ String resolveInitialLocation({
   return '/welcome';
 }
 
-class ColdStartResult {
-  const ColdStartResult({
-    required this.container,
-    required this.initialLocationHolder,
-    required this.networkCoordinator,
-    required this.firebaseConfigError,
-  });
-
-  final ProviderContainer container;
-  final AppInitialLocation initialLocationHolder;
-  final NetworkAccessCoordinator networkCoordinator;
-  final bool firebaseConfigError;
-}
+class const ColdStartResult({
+  required final ProviderContainer container,
+  required final AppInitialLocation initialLocationHolder,
+  required final NetworkAccessCoordinator networkCoordinator,
+  required final bool firebaseConfigError,
+});
 
 /// Runs the full cold-start pipeline with parallel waves where safe.
 Future<ColdStartResult> runColdStart() async {

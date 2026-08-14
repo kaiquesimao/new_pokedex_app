@@ -10,7 +10,7 @@ typedef FetchResourceEntries = Future<List<dynamic>> Function(
 );
 
 class GameTextResolver {
-  GameTextResolver({
+  new({
     required this._machineTranslation,
     required this._fetchResourceEntries,
   });

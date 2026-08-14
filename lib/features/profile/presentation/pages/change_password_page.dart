@@ -12,7 +12,7 @@ import 'package:pokedex_app/shared/widgets/app_password_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ChangePasswordPage extends ConsumerStatefulWidget {
-  const ChangePasswordPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -219,7 +219,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
 }
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
+  const new({required this.current, required this.total});
 
   final int current;
   final int total;
@@ -247,7 +247,7 @@ class _StepIndicator extends StatelessWidget {
 }
 
 class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.l10n, required this.onDone});
+  const new({required this.l10n, required this.onDone});
 
   final AppLocalizations l10n;
   final VoidCallback onDone;

@@ -8,7 +8,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 enum RegisterStep { email, password, name }
 
 class RegisterFlowState {
-  const RegisterFlowState({
+  const new({
     this.step = RegisterStep.email,
     this.email = '',
     this.password = '',

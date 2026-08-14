@@ -2,7 +2,7 @@ import 'package:pokedex_app/features/favorites/domain/repositories/favorites_rep
 
 /// Read-only empty favorites for unauthenticated users.
 class UnauthenticatedFavoritesRepository implements FavoritesRepository {
-  const UnauthenticatedFavoritesRepository();
+  const new();
 
   static const _empty = <int>{};
 

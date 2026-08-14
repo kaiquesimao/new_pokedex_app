@@ -15,7 +15,7 @@ Future<void> showLoginRequiredBottomSheet(BuildContext context) {
 }
 
 class _LoginRequiredBottomSheet extends StatelessWidget {
-  const _LoginRequiredBottomSheet();
+  const new();
 
   @override
   Widget build(BuildContext context) {

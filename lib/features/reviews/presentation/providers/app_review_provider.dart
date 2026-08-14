@@ -8,7 +8,7 @@ const inAppReviewPromptedKey = 'in_app_review_prompted';
 
 /// Coordinates when to ask for a Play Store review.
 class AppReviewController {
-  AppReviewController({
+  new({
     required this.prefs,
     required this.service,
   });

@@ -7,7 +7,7 @@ import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonWeaknessSection extends StatelessWidget {
-  const PokemonWeaknessSection({required this.types, super.key});
+  const new({required this.types, super.key});
 
   final List<PokemonType> types;
 

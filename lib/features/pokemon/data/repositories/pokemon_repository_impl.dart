@@ -27,7 +27,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_form_visibilit
 import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_list_filter_utils.dart';
 
 class PokemonRepositoryImpl implements PokemonRepository {
-  PokemonRepositoryImpl({
+  new({
     required this._remote,
     required this._local,
     required this._gameTextResolver,

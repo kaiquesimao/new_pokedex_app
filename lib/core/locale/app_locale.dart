@@ -1,6 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 
-enum AppLocale {
+enum AppLocale({
+  required final String languageCode,
+  required final String countryCode,
+  required final String pokeApiCode,
+  required final String tag,
+}) {
   pt(
     languageCode: 'pt',
     countryCode: 'BR',
@@ -13,18 +18,6 @@ enum AppLocale {
     pokeApiCode: 'en',
     tag: 'en-US',
   );
-
-  const AppLocale({
-    required this.languageCode,
-    required this.countryCode,
-    required this.pokeApiCode,
-    required this.tag,
-  });
-
-  final String languageCode;
-  final String countryCode;
-  final String pokeApiCode;
-  final String tag;
 
   Locale get materialLocale => Locale(languageCode, countryCode);
 

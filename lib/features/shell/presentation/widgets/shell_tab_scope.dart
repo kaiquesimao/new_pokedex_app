@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 class ShellTabScope extends InheritedWidget {
-  const ShellTabScope({
+  const new({
     required this.currentIndex,
     required super.child,
     super.key,
@@ -23,7 +23,7 @@ class ShellTabScope extends InheritedWidget {
 
 /// Defers building [child] until its tab is visited for the first time.
 class LazyShellTab extends StatefulWidget {
-  const LazyShellTab({required this.tabIndex, required this.child, super.key});
+  const new({required this.tabIndex, required this.child, super.key});
 
   final int tabIndex;
   final Widget child;

@@ -7,7 +7,7 @@ import 'package:pokedex_app/shared/widgets/legal_document_view.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class TermsOfUsePage extends ConsumerWidget {
-  const TermsOfUsePage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

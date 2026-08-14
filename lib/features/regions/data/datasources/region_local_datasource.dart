@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/database/app_database.dart';
 import 'package:pokedex_app/features/regions/domain/entities/regional_pokedex_entry.dart';
 
 class RegionLocalDataSource {
-  RegionLocalDataSource(this._db);
+  new(this._db);
 
   final AppDatabase _db;
 

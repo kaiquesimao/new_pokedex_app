@@ -8,7 +8,7 @@ import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.da
 /// is already handled by the app bar). Use [SafePageBody.inTabShell] for tab
 /// pages inside [MainShellPage] (bottom inset handled by the navigation bar).
 class SafePageBody extends StatelessWidget {
-  const SafePageBody({
+  const new({
     required this.child,
     super.key,
     this.top = true,
@@ -17,7 +17,7 @@ class SafePageBody extends StatelessWidget {
     this.right = true,
   });
 
-  const SafePageBody.belowAppBar({
+  const new belowAppBar({
     required this.child,
     super.key,
     this.bottom = true,
@@ -25,7 +25,7 @@ class SafePageBody extends StatelessWidget {
     this.right = true,
   }) : top = false;
 
-  const SafePageBody.inTabShell({
+  const new inTabShell({
     required this.child,
     super.key,
     this.left = true,

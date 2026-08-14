@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PokemonDetailSkeleton extends StatelessWidget {
-  const PokemonDetailSkeleton({super.key});
+  const new({super.key});
 
   static const Key headerKey = Key('pokemon_detail_skeleton_header');
 
@@ -130,7 +130,7 @@ class PokemonDetailSkeleton extends StatelessWidget {
 }
 
 class _ActionStub extends StatelessWidget {
-  const _ActionStub();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +146,7 @@ class _ActionStub extends StatelessWidget {
 }
 
 class _SectionBlock extends StatelessWidget {
-  const _SectionBlock({
+  const new({
     required this.index,
     required this.color,
     required this.bodyHeight,
@@ -178,7 +178,7 @@ class _SectionBlock extends StatelessWidget {
 
 /// Silhouette of DetailSurfaceCard: radius 16, padding 16.
 class _SurfaceCardStub extends StatelessWidget {
-  const _SurfaceCardStub({
+  const new({
     required this.color,
     required this.child,
   });
@@ -201,7 +201,7 @@ class _SurfaceCardStub extends StatelessWidget {
 }
 
 class _Bone extends StatelessWidget {
-  const _Bone({
+  const new({
     required this.height,
     required this.color,
     this.width,

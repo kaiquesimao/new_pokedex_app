@@ -285,7 +285,7 @@ void main() {
 
 /// Delays empty [replaceNameIndex] so locale-clear vs warm races can be tested.
 class _GatedClearLocal extends PokemonLocalDataSource {
-  _GatedClearLocal(super._db, {required this.onEmptyClear});
+  new(super._db, {required this.onEmptyClear});
 
   final Future<void> Function() onEmptyClear;
 
@@ -358,7 +358,7 @@ class _NoopMachineTranslation implements MachineTranslationBackend {
 }
 
 class _CountingRemote extends PokemonRemoteDataSource {
-  _CountingRemote({
+  new({
     required this.listResults,
     this.speciesById = const {},
     this.pokemonById = const {},

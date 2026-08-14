@@ -21,7 +21,7 @@ import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class RegionalPokedexPage extends ConsumerWidget {
-  const RegionalPokedexPage({required this.regionName, super.key});
+  const new({required this.regionName, super.key});
 
   final String regionName;
 
@@ -138,7 +138,7 @@ class RegionalPokedexPage extends ConsumerWidget {
 }
 
 class _TypeFilterChip extends StatelessWidget {
-  const _TypeFilterChip({required this.typeFilter, required this.onTap});
+  const new({required this.typeFilter, required this.onTap});
 
   final PokemonType? typeFilter;
   final VoidCallback onTap;
@@ -188,7 +188,7 @@ class _TypeFilterChip extends StatelessWidget {
 }
 
 class _SortFilterChip extends StatelessWidget {
-  const _SortFilterChip({required this.sort, required this.onTap});
+  const new({required this.sort, required this.onTap});
 
   final PokemonSortOption sort;
   final VoidCallback onTap;

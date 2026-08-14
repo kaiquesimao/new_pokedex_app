@@ -11,7 +11,7 @@ import 'package:pokedex_app/features/pokemon/domain/utils/pokemon_display_names.
 typedef PokemonNameIndexRef = ({int id, String name, String localizedName});
 
 class PokemonLocalDataSource {
-  PokemonLocalDataSource(this._db);
+  new(this._db);
 
   final AppDatabase _db;
 

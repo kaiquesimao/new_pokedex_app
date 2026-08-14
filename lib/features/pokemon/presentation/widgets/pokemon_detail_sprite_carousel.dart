@@ -12,7 +12,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 /// Horizontal form/shiny carousel for the detail hero sprite.
 class PokemonDetailSpriteCarousel extends ConsumerStatefulWidget {
-  const PokemonDetailSpriteCarousel({
+  const new({
     required this.routePokemonId,
     required this.variants,
     this.fallbackCryUrl,
@@ -181,7 +181,7 @@ class _PokemonDetailSpriteCarouselState
 
 /// Single tappable sprite used when only one visual variant exists.
 class PokemonDetailTappableSprite extends ConsumerStatefulWidget {
-  const PokemonDetailTappableSprite({
+  const new({
     required this.pokemonId,
     required this.imageUrl,
     this.cryUrl,

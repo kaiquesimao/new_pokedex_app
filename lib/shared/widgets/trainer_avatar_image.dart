@@ -3,7 +3,7 @@ import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 
 /// Renders trainer character assets from [assets/images/characters/].
 class TrainerAvatarImage extends StatelessWidget {
-  const TrainerAvatarImage({
+  const new({
     required this.assetPath,
     super.key,
     this.width,
@@ -14,7 +14,7 @@ class TrainerAvatarImage extends StatelessWidget {
     this.pixelArt = true,
   });
 
-  TrainerAvatarImage.forSlug({
+  new forSlug({
     required String slug,
     required double size,
     Key? key,

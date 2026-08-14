@@ -3,7 +3,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dar
 import 'package:riverpod/misc.dart';
 
 class RegionalPokedexFiltersNotifier extends Notifier<PokemonListFilters> {
-  RegionalPokedexFiltersNotifier(this.regionName);
+  new(this.regionName);
 
   final String regionName;
 

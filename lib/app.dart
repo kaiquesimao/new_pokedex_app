@@ -11,9 +11,7 @@ import 'package:pokedex_app/l10n/app_localization_delegates.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
-class PokedexApp extends ConsumerWidget {
-  const PokedexApp({super.key});
-
+class const PokedexApp({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(authSessionEffectsProvider);

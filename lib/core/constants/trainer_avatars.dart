@@ -125,20 +125,12 @@ abstract final class TrainerAvatars {
   }
 }
 
-class TrainerAvatarOption {
-  const TrainerAvatarOption({
-    required this.slug,
-    required this.label,
-    required this.fileName,
-    this.illustrationScale = 1,
-  });
-
-  final String slug;
-  final String label;
-  final String fileName;
-
+class const TrainerAvatarOption({
+  required final String slug,
+  required final String label,
+  required final String fileName,
+  final double illustrationScale = 1,
+}) {
   /// Visual scale for character normalization (1 = default sprite framing).
-  final double illustrationScale;
-
   String get assetPath => '${TrainerAvatars.assetsBase}$fileName';
 }

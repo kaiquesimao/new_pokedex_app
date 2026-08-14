@@ -28,7 +28,7 @@ Future<void> showRegionalSortSheet(BuildContext context, String regionName) {
 }
 
 class _RegionalTypeSheet extends ConsumerWidget {
-  const _RegionalTypeSheet({required this.regionName});
+  const new({required this.regionName});
 
   final String regionName;
 
@@ -101,7 +101,7 @@ class _RegionalTypeSheet extends ConsumerWidget {
 }
 
 class _RegionalSortSheet extends ConsumerWidget {
-  const _RegionalSortSheet({required this.regionName});
+  const new({required this.regionName});
 
   final String regionName;
 
@@ -145,7 +145,7 @@ class _RegionalSortSheet extends ConsumerWidget {
 }
 
 class _SortPill extends StatelessWidget {
-  const _SortPill({
+  const new({
     required this.label,
     required this.selected,
     required this.onTap,

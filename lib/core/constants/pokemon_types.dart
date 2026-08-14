@@ -1,6 +1,6 @@
 import 'package:pokedex_app/core/constants/app_assets.dart';
 
-enum PokemonType {
+enum PokemonType(final String apiName) {
   normal('normal'),
   fire('fire'),
   water('water'),
@@ -19,9 +19,6 @@ enum PokemonType {
   dark('dark'),
   steel('steel'),
   fairy('fairy');
-
-  const PokemonType(this.apiName);
-  final String apiName;
 
   static PokemonType? fromApiName(String name) {
     final normalized = name.toLowerCase();

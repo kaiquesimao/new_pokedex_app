@@ -3,7 +3,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dar
 
 /// Catalog visibility for mega evolutions and alternate Pokémon forms.
 class PokemonFormVisibility {
-  const PokemonFormVisibility({
+  const new({
     this.showMegaEvolutions = true,
     this.showOtherForms = true,
   });

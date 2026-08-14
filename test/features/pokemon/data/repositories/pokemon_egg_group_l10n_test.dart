@@ -13,7 +13,7 @@ import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_dat
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
 
 class _EggGroupRemote extends PokemonRemoteDataSource {
-  _EggGroupRemote(this._eggGroupJson) : super(_StubClient());
+  new(this._eggGroupJson) : super(_StubClient());
 
   final Map<String, dynamic> _eggGroupJson;
 

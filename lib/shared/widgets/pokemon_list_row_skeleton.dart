@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PokemonListRowSkeleton extends StatelessWidget {
-  const PokemonListRowSkeleton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class PokemonListRowSkeleton extends StatelessWidget {
 }
 
 class _Bone extends StatelessWidget {
-  const _Bone({
+  const new({
     required this.width,
     required this.height,
     required this.color,

@@ -20,7 +20,7 @@ import 'package:pokedex_app/shared/widgets/app_button.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -215,7 +215,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 }
 
 class _GuestAccountSection extends StatelessWidget {
-  const _GuestAccountSection({required this.onLogin, required this.onRegister});
+  const new({required this.onLogin, required this.onRegister});
 
   final VoidCallback onLogin;
   final VoidCallback onRegister;
@@ -264,7 +264,7 @@ class _GuestAccountSection extends StatelessWidget {
 }
 
 class _AccountSection extends StatelessWidget {
-  const _AccountSection({
+  const new({
     required this.name,
     required this.email,
     required this.canEditCredentials,
@@ -311,7 +311,7 @@ class _AccountSection extends StatelessWidget {
 }
 
 class _SettingsSections extends StatelessWidget {
-  const _SettingsSections({
+  const new({
     required this.settings,
     required this.versionLabel,
     required this.onToggleNotifyNew,
@@ -406,7 +406,7 @@ class _SettingsSections extends StatelessWidget {
 }
 
 class _SettingsGroup extends StatelessWidget {
-  const _SettingsGroup({required this.title, required this.children});
+  const new({required this.title, required this.children});
 
   final String title;
   final List<Widget> children;
@@ -453,7 +453,7 @@ class _SettingsGroup extends StatelessWidget {
 }
 
 class _ToggleRow extends StatelessWidget {
-  const _ToggleRow({
+  const new({
     required this.label,
     required this.value,
     required this.onChanged,
@@ -475,7 +475,7 @@ class _ToggleRow extends StatelessWidget {
 }
 
 class _ChevronRow extends StatelessWidget {
-  const _ChevronRow({
+  const new({
     required this.label,
     this.value,
     this.onTap,
@@ -519,7 +519,7 @@ class _ChevronRow extends StatelessWidget {
 }
 
 class _LogoutSection extends StatelessWidget {
-  const _LogoutSection({
+  const new({
     required this.displayName,
     required this.onLogout,
     required this.onDeleteAccount,

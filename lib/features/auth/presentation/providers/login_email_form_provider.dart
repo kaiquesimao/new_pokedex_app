@@ -5,7 +5,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class LoginEmailFormState {
-  const LoginEmailFormState({this.loading = false, this.error});
+  const new({this.loading = false, this.error});
 
   final bool loading;
   final String? error;

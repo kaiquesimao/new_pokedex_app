@@ -3,7 +3,7 @@ import 'package:pokedex_app/features/reviews/domain/app_review_service.dart';
 
 /// Play Store listing and in-app review via `package:in_app_review`.
 class PlayAppReviewService implements AppReviewService {
-  PlayAppReviewService({InAppReview? inAppReview})
+  new({InAppReview? inAppReview})
     : _inAppReview = inAppReview ?? InAppReview.instance;
 
   final InAppReview _inAppReview;

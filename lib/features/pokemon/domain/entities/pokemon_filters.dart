@@ -33,29 +33,17 @@ enum PokemonWeightBucket {
   };
 }
 
-class PokemonListFilters {
-  const PokemonListFilters({
-    this.searchQuery = '',
-    this.typeFilter,
-    this.weakness,
-    this.heightBucket,
-    this.weightBucket,
-    this.generationId,
-    this.formCategories = const {},
-    this.showShiny = false,
-    this.sort = PokemonSortOption.numberAsc,
-  });
-
-  final String searchQuery;
-  final PokemonType? typeFilter;
-  final PokemonType? weakness;
-  final PokemonHeightBucket? heightBucket;
-  final PokemonWeightBucket? weightBucket;
-  final int? generationId;
-  final Set<PokemonFormCategory> formCategories;
-  final bool showShiny;
-  final PokemonSortOption sort;
-
+class const PokemonListFilters({
+  final String searchQuery = '',
+  final PokemonType? typeFilter,
+  final PokemonType? weakness,
+  final PokemonHeightBucket? heightBucket,
+  final PokemonWeightBucket? weightBucket,
+  final int? generationId,
+  final Set<PokemonFormCategory> formCategories = const {},
+  final bool showShiny = false,
+  final PokemonSortOption sort = PokemonSortOption.numberAsc,
+}) {
   bool get hasSearch => searchQuery.trim().isNotEmpty;
 
   bool get hasStructuralFilters =>

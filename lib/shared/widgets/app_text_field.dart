@@ -1,21 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 
-class AppTextField extends StatelessWidget {
-  const AppTextField({
-    required this.label,
-    super.key,
-    this.controller,
-    this.keyboardType,
-    this.errorText,
-    this.onChanged,
-  });
-
-  final String label;
-  final TextEditingController? controller;
-  final TextInputType? keyboardType;
-  final String? errorText;
-  final ValueChanged<String>? onChanged;
-
+class const AppTextField({
+  required final String label,
+  super.key,
+  final TextEditingController? controller,
+  final TextInputType? keyboardType,
+  final String? errorText,
+  final ValueChanged<String>? onChanged,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

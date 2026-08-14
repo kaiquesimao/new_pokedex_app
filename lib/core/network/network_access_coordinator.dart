@@ -5,16 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 
 /// Applies global network policies when connectivity changes.
-class NetworkAccessCoordinator {
-  NetworkAccessCoordinator({
-    required this._connectivity,
-    required this._firebaseAvailable,
-    this._firestore,
-  });
-
-  final ConnectivityService _connectivity;
-  final bool _firebaseAvailable;
-  final FirebaseFirestore? _firestore;
+class NetworkAccessCoordinator({
+  required final ConnectivityService _connectivity,
+  required final bool _firebaseAvailable,
+  final FirebaseFirestore? _firestore,
+}) {
   StreamSubscription<bool>? _subscription;
 
   Future<void> start() async {

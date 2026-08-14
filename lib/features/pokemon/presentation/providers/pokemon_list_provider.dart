@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show unawaited;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
@@ -17,37 +17,21 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filt
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class PokemonListState {
-  const PokemonListState({
-    this.items = const [],
-    this.isLoadingIds = false,
-    this.isLoadingSummaries = false,
-    this.isLoadingMore = false,
-    this.hasMore = true,
-    this.nextOffset = 0,
-    this.lockedItemCount = 0,
-    this.batchTarget = 0,
-    this.error,
-    this.errorIsConnectivityFailure = false,
-    this.isOfflineMode = false,
-    this.catalogIds = const [],
-    this.catalogCursor = 0,
-  });
-
-  final List<PokemonSummary> items;
-  final bool isLoadingIds;
-  final bool isLoadingSummaries;
-  final bool isLoadingMore;
-  final bool hasMore;
-  final int nextOffset;
-  final int lockedItemCount;
-  final int batchTarget;
-  final String? error;
-  final bool errorIsConnectivityFailure;
-  final bool isOfflineMode;
-  final List<int> catalogIds;
-  final int catalogCursor;
-
+class const PokemonListState({
+  final List<PokemonSummary> items = const [],
+  final bool isLoadingIds = false,
+  final bool isLoadingSummaries = false,
+  final bool isLoadingMore = false,
+  final bool hasMore = true,
+  final int nextOffset = 0,
+  final int lockedItemCount = 0,
+  final int batchTarget = 0,
+  final String? error,
+  final bool errorIsConnectivityFailure = false,
+  final bool isOfflineMode = false,
+  final List<int> catalogIds = const [],
+  final int catalogCursor = 0,
+}) {
   bool get isInitialLoading => isLoadingIds && items.isEmpty;
 
   bool get showFullSkeleton =>

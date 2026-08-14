@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 
-class OfflineGuardInterceptor extends Interceptor {
-  OfflineGuardInterceptor(this._connectivity);
-
-  final ConnectivityService _connectivity;
-
+class OfflineGuardInterceptor(final ConnectivityService _connectivity)
+    extends Interceptor {
   static const offlineMessage = 'Device is offline';
 
   @override

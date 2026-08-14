@@ -12,7 +12,7 @@ Future<bool?> showLogoutBottomSheet(BuildContext context) {
 }
 
 class _LogoutBottomSheet extends StatelessWidget {
-  const _LogoutBottomSheet();
+  const new();
 
   @override
   Widget build(BuildContext context) {

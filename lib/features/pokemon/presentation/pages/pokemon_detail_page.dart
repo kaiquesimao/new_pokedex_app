@@ -37,7 +37,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class PokemonDetailPage extends ConsumerWidget {
-  const PokemonDetailPage({required this.pokemonId, super.key});
+  const new({required this.pokemonId, super.key});
 
   final int pokemonId;
 
@@ -97,7 +97,7 @@ bool shouldReloadPokemonDetailOnConnectivityRestore(
 }
 
 class _PokemonDetailContent extends ConsumerStatefulWidget {
-  const _PokemonDetailContent({
+  const new({
     required this.pokemonId,
     required this.pokemon,
     required this.evolution,
@@ -258,7 +258,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
 }
 
 class _HeroSection extends ConsumerWidget {
-  const _HeroSection({
+  const new({
     required this.pokemonId,
     required this.pokemon,
     required this.primaryType,
@@ -380,7 +380,7 @@ class _HeroSection extends ConsumerWidget {
 }
 
 class _HeroSprite extends ConsumerWidget {
-  const _HeroSprite({
+  const new({
     required this.pokemonId,
     required this.pokemon,
   });
@@ -443,7 +443,7 @@ class _HeroSprite extends ConsumerWidget {
 }
 
 class _EvolutionSection extends StatelessWidget {
-  const _EvolutionSection({required this.pokemonId, required this.evolution});
+  const new({required this.pokemonId, required this.evolution});
 
   final int pokemonId;
   final EvolutionChain evolution;
@@ -501,7 +501,7 @@ class _EvolutionSection extends StatelessWidget {
 }
 
 class _CollapsibleStats extends StatelessWidget {
-  const _CollapsibleStats({
+  const new({
     required this.pokemon,
     required this.expanded,
     required this.onToggle,

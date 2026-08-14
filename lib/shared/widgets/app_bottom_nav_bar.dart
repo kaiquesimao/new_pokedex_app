@@ -5,7 +5,7 @@ import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class AppBottomNavBar extends StatelessWidget {
-  const AppBottomNavBar({
+  const new({
     required this.currentIndex,
     required this.onTap,
     super.key,
@@ -110,7 +110,7 @@ class AppBottomNavBar extends StatelessWidget {
 }
 
 class _NavSvg extends StatelessWidget {
-  const _NavSvg({
+  const new({
     required this.index,
     required this.selected,
     required this.size,

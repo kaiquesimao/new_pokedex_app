@@ -4,7 +4,7 @@ import 'package:shimmer/shimmer.dart';
 
 /// Document-style loading placeholder for Privacy / Terms pages.
 class LegalDocumentSkeleton extends StatelessWidget {
-  const LegalDocumentSkeleton({super.key});
+  const new({super.key});
 
   static const EdgeInsets contentPadding = EdgeInsets.fromLTRB(24, 8, 24, 32);
 

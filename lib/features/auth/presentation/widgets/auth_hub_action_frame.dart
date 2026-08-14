@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 
 /// Centers auth actions on web with a shared fixed size.
 class AuthHubActionFrame extends StatelessWidget {
-  const AuthHubActionFrame({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -24,7 +24,7 @@ class AuthHubActionFrame extends StatelessWidget {
 
 /// Centers secondary auth links on web without forcing button height.
 class AuthHubLinkFrame extends StatelessWidget {
-  const AuthHubLinkFrame({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -37,7 +37,7 @@ class AuthHubLinkFrame extends StatelessWidget {
 
 /// Centers auth forms and secondary actions on web at action button width.
 class AuthHubNarrowFrame extends StatelessWidget {
-  const AuthHubNarrowFrame({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 

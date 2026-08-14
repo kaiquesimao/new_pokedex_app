@@ -4,7 +4,7 @@ import 'package:pokedex_app/features/pokemon/data/models/filter_models.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 
 class PokemonRemoteDataSource {
-  PokemonRemoteDataSource(this._client);
+  new(this._client);
 
   final PokeApiClient _client;
 

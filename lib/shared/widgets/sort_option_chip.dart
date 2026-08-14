@@ -1,17 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 
-class SortOptionChip extends StatelessWidget {
-  const SortOptionChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    super.key,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
+class const SortOptionChip({
+  required final String label,
+  required final bool selected,
+  required final VoidCallback onTap,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

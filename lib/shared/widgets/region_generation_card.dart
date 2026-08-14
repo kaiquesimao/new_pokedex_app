@@ -9,7 +9,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:riverpod/misc.dart';
 
 class RegionGenerationCard extends StatelessWidget {
-  const RegionGenerationCard({required this.data, super.key, this.onTap});
+  const new({required this.data, super.key, this.onTap});
 
   final RegionCardData data;
   final VoidCallback? onTap;
@@ -97,7 +97,7 @@ class RegionGenerationCard extends StatelessWidget {
 }
 
 class _StarterSprites extends ConsumerWidget {
-  const _StarterSprites({required this.starterIds});
+  const new({required this.starterIds});
 
   final List<int> starterIds;
 
@@ -117,7 +117,7 @@ class _StarterSprites extends ConsumerWidget {
 }
 
 class _StarterSprite extends ConsumerWidget {
-  const _StarterSprite({required this.pokemonId});
+  const new({required this.pokemonId});
 
   final int pokemonId;
 

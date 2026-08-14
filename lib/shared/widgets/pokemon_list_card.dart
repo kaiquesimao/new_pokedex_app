@@ -7,7 +7,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonListCard extends StatelessWidget {
-  const PokemonListCard({
+  const new({
     required this.number,
     required this.name,
     required this.types,

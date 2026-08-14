@@ -13,7 +13,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 
 class PokemonDetailAboutSection extends ConsumerWidget {
-  const PokemonDetailAboutSection({
+  const new({
     required this.pokemon,
     this.flavorTextEntries = const [],
     super.key,
@@ -249,7 +249,7 @@ Widget _loadingIndicator(ThemeData theme, String semanticsLabel) {
 }
 
 class _InfoTile extends StatelessWidget {
-  const _InfoTile({
+  const new({
     required this.icon,
     required this.label,
     required this.value,
@@ -302,7 +302,7 @@ class _InfoTile extends StatelessWidget {
 }
 
 class _GenderBar extends StatelessWidget {
-  const _GenderBar({
+  const new({
     required this.genderRate,
     required this.l10n,
     required this.locale,
@@ -373,7 +373,7 @@ class _GenderBar extends StatelessWidget {
 }
 
 class _GenderBarTrack extends StatelessWidget {
-  const _GenderBarTrack({
+  const new({
     required this.malePercent,
     required this.femalePercent,
     required this.maleColor,

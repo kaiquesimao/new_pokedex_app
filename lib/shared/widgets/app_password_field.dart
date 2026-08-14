@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 class AppPasswordField extends StatefulWidget {
-  const AppPasswordField({
+  const new({
     required this.label,
     super.key,
     this.controller,

@@ -16,7 +16,7 @@ import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
 class RegisterPage extends ConsumerWidget {
-  const RegisterPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

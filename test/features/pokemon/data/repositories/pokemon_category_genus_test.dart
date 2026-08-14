@@ -14,7 +14,7 @@ import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
 
 class _PikachuGeneraRemote extends PokemonRemoteDataSource {
-  _PikachuGeneraRemote(this._speciesJson) : super(_StubClient());
+  new(this._speciesJson) : super(_StubClient());
 
   final Map<String, dynamic> _speciesJson;
 

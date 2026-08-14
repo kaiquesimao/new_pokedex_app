@@ -9,7 +9,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 enum SocialAuthProvider { apple, google, email }
 
 class SocialAuthButton extends StatelessWidget {
-  const SocialAuthButton({
+  const new({
     required this.provider,
     required this.onPressed,
     super.key,
@@ -130,7 +130,7 @@ class SocialAuthButton extends StatelessWidget {
 }
 
 class _GoogleGlyph extends StatelessWidget {
-  const _GoogleGlyph({this.size = 20});
+  const new({this.size = 20});
 
   final double size;
 

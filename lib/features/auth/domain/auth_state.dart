@@ -1,26 +1,16 @@
 import 'package:pokedex_app/features/auth/domain/auth_registration_config.dart';
 
-class AuthState {
-  const AuthState({
-    this.isInitialized = false,
-    this.isAuthenticated = false,
-    this.emailVerified = true,
-    this.uid,
-    this.email,
-    this.displayName,
-    this.canEditCredentials = true,
-  });
-
-  final bool isInitialized;
-  final bool isAuthenticated;
-  final bool emailVerified;
-  final String? uid;
-  final String? email;
-  final String? displayName;
+class const AuthState({
+  final bool isInitialized = false,
+  final bool isAuthenticated = false,
+  final bool emailVerified = true,
+  final String? uid,
+  final String? email,
+  final String? displayName,
 
   /// Password, email, and display name edits — only for email/password accounts.
-  final bool canEditCredentials;
-
+  final bool canEditCredentials = true,
+}) {
   bool get needsEmailVerification =>
       AuthRegistrationConfig.requireEmailVerification &&
       isAuthenticated &&

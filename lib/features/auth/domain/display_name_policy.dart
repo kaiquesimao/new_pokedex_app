@@ -1,7 +1,7 @@
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class DisplayNamePolicy {
-  DisplayNamePolicy._();
+  new _();
 
   static const int maxLength = 64;
 

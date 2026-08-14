@@ -4,7 +4,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Shown when a release build starts without Firebase compile-time config.
 class FirebaseConfigErrorApp extends StatelessWidget {
-  const FirebaseConfigErrorApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

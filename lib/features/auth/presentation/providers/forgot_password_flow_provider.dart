@@ -9,7 +9,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 enum ForgotPasswordStep { email, otp, newPassword, success, emailSent }
 
 class ForgotPasswordFlowState {
-  const ForgotPasswordFlowState({
+  const new({
     this.step = ForgotPasswordStep.email,
     this.loading = false,
     this.error,

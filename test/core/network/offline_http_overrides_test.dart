@@ -5,7 +5,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_http_overrides.dart';
 
 class _FakeConnectivityService extends ConnectivityService {
-  _FakeConnectivityService({required this._isOnline});
+  new({required this._isOnline});
 
   final bool _isOnline;
 

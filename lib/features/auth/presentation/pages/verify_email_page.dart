@@ -12,7 +12,7 @@ import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class VerifyEmailPage extends ConsumerStatefulWidget {
-  const VerifyEmailPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<VerifyEmailPage> createState() => _VerifyEmailPageState();

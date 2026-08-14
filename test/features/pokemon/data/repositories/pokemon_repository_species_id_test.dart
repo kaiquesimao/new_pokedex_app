@@ -10,7 +10,7 @@ import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
 
 class _ZygardeMegaRemote extends PokemonRemoteDataSource {
-  _ZygardeMegaRemote() : super(_RecordingClient());
+  new() : super(_RecordingClient());
 
   int? lastSpeciesIdRequested;
 

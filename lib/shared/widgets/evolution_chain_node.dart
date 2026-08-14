@@ -9,7 +9,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
 class EvolutionChainNodeCard extends StatelessWidget {
-  const EvolutionChainNodeCard({
+  const new({
     required this.node,
     required this.isCurrent,
     super.key,
@@ -119,7 +119,7 @@ class EvolutionChainNodeCard extends StatelessWidget {
 }
 
 class _EvolutionTypeBadge extends StatelessWidget {
-  const _EvolutionTypeBadge({required this.type});
+  const new({required this.type});
 
   final PokemonType type;
 
@@ -143,7 +143,7 @@ class _EvolutionTypeBadge extends StatelessWidget {
 }
 
 class EvolutionChainConnector extends StatelessWidget {
-  const EvolutionChainConnector({super.key, this.label});
+  const new({super.key, this.label});
 
   final String? label;
 
@@ -177,7 +177,7 @@ class EvolutionChainConnector extends StatelessWidget {
 }
 
 class EvolutionChainTree extends StatelessWidget {
-  const EvolutionChainTree({
+  const new({
     required this.root,
     required this.currentSpeciesId,
     super.key,

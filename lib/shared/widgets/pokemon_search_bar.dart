@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class PokemonSearchBar extends StatefulWidget {
-  const PokemonSearchBar({
+  const new({
     required this.onChanged,
     super.key,
     this.initialValue = '',

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,7 +29,7 @@ Future<bool> ensureLegalAccepted(BuildContext context, WidgetRef ref) async {
 
 /// Checkbox with links to legal pages. Hidden when terms were already accepted.
 class LegalAcceptanceField extends ConsumerWidget {
-  const LegalAcceptanceField({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,7 +50,7 @@ class LegalAcceptanceField extends ConsumerWidget {
 }
 
 class LegalAcceptanceCheckbox extends StatelessWidget {
-  const LegalAcceptanceCheckbox({
+  const new({
     required this.value,
     required this.onChanged,
     super.key,
@@ -104,7 +104,7 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
 }
 
 class _LegalLabel extends StatelessWidget {
-  const _LegalLabel({
+  const new({
     required this.theme,
     required this.linkStyle,
     required this.l10n,
@@ -138,7 +138,7 @@ class _LegalLabel extends StatelessWidget {
 }
 
 class _LegalLink extends StatelessWidget {
-  const _LegalLink({
+  const new({
     required this.label,
     required this.style,
     required this.onTap,

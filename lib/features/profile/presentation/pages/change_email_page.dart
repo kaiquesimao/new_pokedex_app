@@ -17,7 +17,7 @@ import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ChangeEmailPage extends ConsumerStatefulWidget {
-  const ChangeEmailPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<ChangeEmailPage> createState() => _ChangeEmailPageState();
@@ -256,7 +256,7 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
 }
 
 class _VerifyEmailBody extends StatelessWidget {
-  const _VerifyEmailBody({this.errorText});
+  const new({this.errorText});
 
   final String? errorText;
 
@@ -287,7 +287,7 @@ class _VerifyEmailBody extends StatelessWidget {
 }
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
+  const new({required this.current, required this.total});
 
   final int current;
   final int total;
@@ -315,7 +315,7 @@ class _StepIndicator extends StatelessWidget {
 }
 
 class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({
+  const new({
     required this.l10n,
     required this.email,
     required this.onDone,

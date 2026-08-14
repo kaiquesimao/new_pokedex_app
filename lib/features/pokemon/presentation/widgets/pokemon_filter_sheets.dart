@@ -63,7 +63,7 @@ Future<void> showPokemonFormsSheet(BuildContext context) {
 }
 
 class _PokemonTypeSheet extends ConsumerWidget {
-  const _PokemonTypeSheet();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -132,7 +132,7 @@ class _PokemonTypeSheet extends ConsumerWidget {
 }
 
 class _PokemonFilterSheet extends ConsumerWidget {
-  const _PokemonFilterSheet();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -217,7 +217,7 @@ class _PokemonFilterSheet extends ConsumerWidget {
 }
 
 class _PokemonFormsSheet extends ConsumerWidget {
-  const _PokemonFormsSheet();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -269,7 +269,7 @@ class _PokemonFormsSheet extends ConsumerWidget {
 }
 
 class _PokemonSortSheet extends ConsumerWidget {
-  const _PokemonSortSheet();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -316,7 +316,7 @@ class _PokemonSortSheet extends ConsumerWidget {
 }
 
 class _SortPill extends StatelessWidget {
-  const _SortPill({
+  const new({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -357,7 +357,7 @@ class _SortPill extends StatelessWidget {
 }
 
 class _PokemonGenerationSheet extends ConsumerWidget {
-  const _PokemonGenerationSheet();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -406,7 +406,7 @@ class _PokemonGenerationSheet extends ConsumerWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+  const new({required this.title});
 
   final String title;
 

@@ -6,7 +6,7 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Lightweight native loading indicator sized for [PokemonSpriteImage] slots.
 class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
-  const PokemonSpriteLoadingPlaceholder({
+  const new({
     super.key,
     this.width,
     this.height,
@@ -50,7 +50,7 @@ class PokemonSpriteLoadingPlaceholder extends StatelessWidget {
 }
 
 class PokemonSpriteImage extends StatefulWidget {
-  const PokemonSpriteImage({
+  const new({
     required this.imageUrl,
     super.key,
     this.fallbackImageUrl,

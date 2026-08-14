@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const favoritesStorageKey = 'favorite_pokemon_ids';
 
 class LocalFavoritesRepository implements FavoritesRepository {
-  LocalFavoritesRepository(this._prefs) : _cache = _readFromPrefs(_prefs) {
+  new(this._prefs) : _cache = _readFromPrefs(_prefs) {
     _controller.add(_cache);
   }
 

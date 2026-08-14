@@ -1,12 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class BottomSheetHeader extends StatelessWidget {
-  const BottomSheetHeader({required this.title, super.key, this.onClear});
-
-  final String title;
-  final VoidCallback? onClear;
-
+class const BottomSheetHeader({
+  required final String title,
+  super.key,
+  final VoidCallback? onClear,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(

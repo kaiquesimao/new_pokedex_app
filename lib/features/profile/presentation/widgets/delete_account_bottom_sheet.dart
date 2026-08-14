@@ -3,13 +3,10 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
 
 /// Data confirmed by the account deletion sheet.
-class DeleteAccountSheetResult {
-  /// Creates a deletion confirmation result.
-  const DeleteAccountSheetResult({this.password});
-
+class const DeleteAccountSheetResult({
   /// Current password when password reauthentication is required.
-  final String? password;
-}
+  final String? password,
+});
 
 /// Shows the account deletion confirmation sheet.
 Future<DeleteAccountSheetResult?> showDeleteAccountBottomSheet(
@@ -27,7 +24,7 @@ Future<DeleteAccountSheetResult?> showDeleteAccountBottomSheet(
 }
 
 class _DeleteAccountBottomSheet extends StatefulWidget {
-  const _DeleteAccountBottomSheet({required this.requirePassword});
+  const new({required this.requirePassword});
 
   final bool requirePassword;
 

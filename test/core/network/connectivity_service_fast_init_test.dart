@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/network/connectivity_service.dart';
 
 class _FakeConnectivity implements Connectivity {
-  const _FakeConnectivity(this._results);
+  const new(this._results);
 
   final List<ConnectivityResult> _results;
 

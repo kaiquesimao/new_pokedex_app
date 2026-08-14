@@ -5,20 +5,13 @@ import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_icon.dart';
 
-class PokemonTypeChip extends StatelessWidget {
-  const PokemonTypeChip({
-    required this.type,
-    super.key,
-    this.selected = false,
-    this.onTap,
-    this.showLabel = true,
-  });
-
-  final PokemonType type;
-  final bool selected;
-  final VoidCallback? onTap;
-  final bool showLabel;
-
+class const PokemonTypeChip({
+  required final PokemonType type,
+  super.key,
+  final bool selected = false,
+  final VoidCallback? onTap,
+  final bool showLabel = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

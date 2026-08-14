@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 /// bars read clearly on scaffold backgrounds and the highlight sweeps in a
 /// visibly different direction (lighter grey) in light and dark mode.
 abstract final class SkeletonShimmerColors {
-  const SkeletonShimmerColors._();
+  const new _();
 
   /// Darker (light) / lighter (dark) grey for bones and shimmer base.
   static Color base(BuildContext context) {

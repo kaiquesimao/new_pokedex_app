@@ -18,7 +18,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class RegisterEmailPage extends ConsumerStatefulWidget {
-  const RegisterEmailPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<RegisterEmailPage> createState() => _RegisterEmailPageState();
@@ -206,7 +206,7 @@ class _RegisterEmailPageState extends ConsumerState<RegisterEmailPage> {
 }
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
+  const new({required this.current, required this.total});
 
   final int current;
   final int total;

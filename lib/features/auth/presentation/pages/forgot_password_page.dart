@@ -13,7 +13,7 @@ import 'package:pokedex_app/shared/widgets/otp_code_field.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
-  const ForgotPasswordPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -242,7 +242,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 }
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({required this.current, required this.total});
+  const new({required this.current, required this.total});
 
   final int current;
   final int total;
@@ -270,7 +270,7 @@ class _StepIndicator extends StatelessWidget {
 }
 
 class _SuccessBody extends StatelessWidget {
-  const _SuccessBody({required this.onDone});
+  const new({required this.onDone});
 
   final VoidCallback onDone;
 
@@ -311,7 +311,7 @@ class _SuccessBody extends StatelessWidget {
 }
 
 class _EmailSentBody extends StatelessWidget {
-  const _EmailSentBody({required this.email, required this.onDone});
+  const new({required this.email, required this.onDone});
 
   final String email;
   final VoidCallback onDone;

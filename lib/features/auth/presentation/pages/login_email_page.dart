@@ -14,7 +14,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 
 class LoginEmailPage extends ConsumerStatefulWidget {
-  const LoginEmailPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<LoginEmailPage> createState() => _LoginEmailPageState();

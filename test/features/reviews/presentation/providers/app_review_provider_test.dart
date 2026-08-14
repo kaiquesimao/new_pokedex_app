@@ -6,7 +6,7 @@ import 'package:pokedex_app/features/reviews/presentation/providers/app_review_p
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _FakeReviewService implements AppReviewService {
-  _FakeReviewService({this.inAppAvailable = true});
+  new({this.inAppAvailable = true});
 
   bool inAppAvailable;
   int inAppCalls = 0;

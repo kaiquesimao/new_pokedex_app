@@ -20,7 +20,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_list_skeleton.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class FavoritesPage extends ConsumerWidget {
-  const FavoritesPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +41,7 @@ class FavoritesPage extends ConsumerWidget {
 }
 
 class _GuestFavoritesBody extends StatelessWidget {
-  const _GuestFavoritesBody({required this.onAuth});
+  const new({required this.onAuth});
 
   final VoidCallback onAuth;
 
@@ -70,7 +70,7 @@ class _GuestFavoritesBody extends StatelessWidget {
 }
 
 class _EmptyFavoritesBody extends StatelessWidget {
-  const _EmptyFavoritesBody();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class _EmptyFavoritesBody extends StatelessWidget {
 }
 
 class _FavoritesListBody extends ConsumerWidget {
-  const _FavoritesListBody({required this.favoriteIds});
+  const new({required this.favoriteIds});
 
   final List<int> favoriteIds;
 
@@ -131,7 +131,7 @@ class _FavoritesListBody extends ConsumerWidget {
 }
 
 class _DismissibleFavoriteCard extends ConsumerWidget {
-  const _DismissibleFavoriteCard({required this.pokemon});
+  const new({required this.pokemon});
 
   final PokemonDetail pokemon;
 

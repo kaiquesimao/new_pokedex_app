@@ -71,7 +71,7 @@ double resolveIllustrationSlotSize({
 
 /// Lays out one or more trainer sprites in responsive square slots.
 class TrainerIllustrationGroup extends StatelessWidget {
-  const TrainerIllustrationGroup({
+  const new({
     required this.imageAssets,
     super.key,
     this.layout = TrainerIllustrationLayout.auto,
@@ -148,7 +148,7 @@ class TrainerIllustrationGroup extends StatelessWidget {
 }
 
 class _DualIllustrationStack extends StatelessWidget {
-  const _DualIllustrationStack({
+  const new({
     required this.imageAssets,
     required this.slotSize,
     this.errorBuilder,
@@ -183,7 +183,7 @@ class _DualIllustrationStack extends StatelessWidget {
 }
 
 class TrainerIllustrationSlot extends StatelessWidget {
-  const TrainerIllustrationSlot({
+  const new({
     required this.assetPath,
     super.key,
     this.slotSize,

@@ -19,7 +19,7 @@ PreviewLocalizationsData appPreviewLocalizations() {
 /// Applies [AppTheme] inside the Widget Preview environment.
 final class AppPreviewThemeData extends PreviewThemeData {
   /// Creates a preview theme that tracks [MediaQuery] brightness.
-  const AppPreviewThemeData();
+  const new();
 
   @override
   Widget apply(BuildContext context, Widget child) {

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 
 class AuthLoadingOverlay extends StatelessWidget {
-  const AuthLoadingOverlay({super.key, this.message});
+  const new({super.key, this.message});
 
   final String? message;
 
@@ -39,7 +39,7 @@ class AuthLoadingOverlay extends StatelessWidget {
 }
 
 class _PokeballSpinner extends StatefulWidget {
-  const _PokeballSpinner({required this.size});
+  const new({required this.size});
 
   final double size;
 

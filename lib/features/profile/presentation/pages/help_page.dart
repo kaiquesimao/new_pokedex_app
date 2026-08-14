@@ -4,7 +4,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatelessWidget {
-  const HelpPage({super.key});
+  const new({super.key});
 
   static const supportEmail = 'pokedata.app@gmail.com';
 
@@ -139,7 +139,7 @@ Future<void> _openSupportEmail(
 }
 
 class _FaqTile extends StatelessWidget {
-  const _FaqTile({required this.item});
+  const new({required this.item});
 
   final ({String question, String answer}) item;
 

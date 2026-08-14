@@ -13,7 +13,7 @@ import 'package:pokedex_app/shared/widgets/auth_loading_overlay.dart';
 import 'package:pokedex_app/shared/widgets/social_auth_button.dart';
 
 class LoginPage extends ConsumerWidget {
-  const LoginPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

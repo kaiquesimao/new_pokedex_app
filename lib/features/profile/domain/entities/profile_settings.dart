@@ -1,14 +1,8 @@
-class ProfileSettings {
-  const ProfileSettings({
-    this.notifyNewPokemon = true,
-    this.notifyAppUpdates = false,
-    this.appLanguage = 'pt-BR',
-  });
-
-  final bool notifyNewPokemon;
-  final bool notifyAppUpdates;
-  final String appLanguage;
-
+class const ProfileSettings({
+  final bool notifyNewPokemon = true,
+  final bool notifyAppUpdates = false,
+  final String appLanguage = 'pt-BR',
+}) {
   ProfileSettings copyWith({
     bool? notifyNewPokemon,
     bool? notifyAppUpdates,

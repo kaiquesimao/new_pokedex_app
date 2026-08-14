@@ -58,7 +58,7 @@ void main() {
 }
 
 class _StatusSequenceAdapter implements HttpClientAdapter {
-  _StatusSequenceAdapter({required this.onFetch});
+  new({required this.onFetch});
 
   final int Function() onFetch;
 

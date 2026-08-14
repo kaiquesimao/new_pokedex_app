@@ -25,7 +25,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_search_bar.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class PokemonListPage extends ConsumerStatefulWidget {
-  const PokemonListPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<PokemonListPage> createState() => _PokemonListPageState();
@@ -233,7 +233,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
 }
 
 class _PokemonListHeader extends ConsumerWidget {
-  const _PokemonListHeader({
+  const new({
     required this.filters,
     required this.l10n,
     required this.onGenerationClear,
@@ -345,7 +345,7 @@ class _PokemonListHeader extends ConsumerWidget {
 }
 
 class _TypeFilterChip extends StatelessWidget {
-  const _TypeFilterChip({required this.typeFilter, required this.onTap});
+  const new({required this.typeFilter, required this.onTap});
 
   final PokemonType? typeFilter;
   final VoidCallback onTap;
@@ -395,7 +395,7 @@ class _TypeFilterChip extends StatelessWidget {
 }
 
 class _SortFilterChip extends StatelessWidget {
-  const _SortFilterChip({required this.sort, required this.onTap});
+  const new({required this.sort, required this.onTap});
 
   final PokemonSortOption sort;
   final VoidCallback onTap;
@@ -439,7 +439,7 @@ class _SortFilterChip extends StatelessWidget {
 }
 
 class _FilterPillChip extends StatelessWidget {
-  const _FilterPillChip({
+  const new({
     required this.label,
     required this.icon,
     required this.onTap,
@@ -492,7 +492,7 @@ class _FilterPillChip extends StatelessWidget {
 }
 
 class _ActiveFilterChip extends StatelessWidget {
-  const _ActiveFilterChip({required this.label, required this.onClear});
+  const new({required this.label, required this.onClear});
 
   final String label;
   final VoidCallback onClear;

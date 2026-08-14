@@ -33,7 +33,7 @@ void main() {
 }
 
 class _TestAssetBundle extends CachingAssetBundle {
-  _TestAssetBundle(this.files);
+  new(this.files);
 
   final Map<String, String> files;
 

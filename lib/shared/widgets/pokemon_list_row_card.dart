@@ -11,7 +11,7 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 
 class PokemonListRowCard extends StatelessWidget {
-  const PokemonListRowCard({
+  const new({
     required this.number,
     required this.name,
     required this.types,
@@ -138,7 +138,7 @@ class PokemonListRowCard extends StatelessWidget {
 }
 
 class _TypePanel extends StatelessWidget {
-  const _TypePanel({
+  const new({
     required this.typeColor,
     required this.primaryType,
     required this.number,

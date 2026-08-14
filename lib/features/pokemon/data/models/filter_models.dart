@@ -1,12 +1,11 @@
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 
-class GenerationResponse {
-  const GenerationResponse({
-    required this.id,
-    required this.name,
-    required this.pokemonSpecies,
-  });
-  factory GenerationResponse.fromJson(Map<String, dynamic> json) {
+class const GenerationResponse({
+  required final int id,
+  required final String name,
+  required final List<NamedApiResource> pokemonSpecies,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     return GenerationResponse(
       id: json['id'] as int? ?? 0,
       name: json['name'] as String? ?? '',
@@ -15,15 +14,10 @@ class GenerationResponse {
           .toList(),
     );
   }
-
-  final int id;
-  final String name;
-  final List<NamedApiResource> pokemonSpecies;
 }
 
-class TypeDamageRelations {
-  const TypeDamageRelations({required this.doubleDamageTo});
-  factory TypeDamageRelations.fromJson(Map<String, dynamic> json) {
+class const TypeDamageRelations({required final List<String> doubleDamageTo}) {
+  factory fromJson(Map<String, dynamic> json) {
     final to = json['double_damage_to'] as List<dynamic>? ?? [];
     return TypeDamageRelations(
       doubleDamageTo: to
@@ -32,18 +26,15 @@ class TypeDamageRelations {
           .toList(),
     );
   }
-
-  final List<String> doubleDamageTo;
 }
 
-class TypeResponse {
-  const TypeResponse({
-    required this.id,
-    required this.name,
-    required this.pokemon,
-    required this.damageRelations,
-  });
-  factory TypeResponse.fromJson(Map<String, dynamic> json) {
+class const TypeResponse({
+  required final int id,
+  required final String name,
+  required final List<NamedApiResource> pokemon,
+  required final TypeDamageRelations damageRelations,
+}) {
+  factory fromJson(Map<String, dynamic> json) {
     return TypeResponse(
       id: json['id'] as int? ?? 0,
       name: json['name'] as String? ?? '',
@@ -60,9 +51,4 @@ class TypeResponse {
       ),
     );
   }
-
-  final int id;
-  final String name;
-  final List<NamedApiResource> pokemon;
-  final TypeDamageRelations damageRelations;
 }

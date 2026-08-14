@@ -7,7 +7,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/register_flow_p
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class VerifyEmailUiState {
-  const VerifyEmailUiState({
+  const new({
     this.loading = false,
     this.error,
     this.resent = false,

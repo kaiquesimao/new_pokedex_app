@@ -4,7 +4,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 
 /// Blocks every [HttpClient] socket connection while the device is offline.
 class OfflineHttpOverrides extends HttpOverrides {
-  OfflineHttpOverrides(this.connectivity);
+  new(this.connectivity);
 
   final ConnectivityService connectivity;
 

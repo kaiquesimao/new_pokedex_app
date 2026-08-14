@@ -1,6 +1,6 @@
 /// Parsed Pokémon sprite URLs from a PokéAPI `sprites` object.
 class PokemonSprites {
-  const PokemonSprites({
+  const new({
     this.frontDefault,
     this.officialArtwork,
     this.home,
@@ -9,7 +9,7 @@ class PokemonSprites {
     this.homeShiny,
   });
 
-  factory PokemonSprites.fromJson(dynamic sprites) {
+  factory fromJson(dynamic sprites) {
     if (sprites is! Map) return const PokemonSprites();
 
     final map = Map<String, dynamic>.from(sprites);

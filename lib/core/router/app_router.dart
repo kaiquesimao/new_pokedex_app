@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/core/router/auth_redirect.dart';
+import 'package:pokedex_app/core/router/deferred_page.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
@@ -18,17 +19,12 @@ import 'package:pokedex_app/features/favorites/presentation/pages/favorites_page
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart'
+    deferred as pokemon_detail;
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/about_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/account_deletion_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/change_email_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/change_password_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/edit_name_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/help_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/privacy_policy_page.dart';
+import 'package:pokedex_app/features/profile/presentation/pages/profile_extra_pages.dart'
+    deferred as profile_extras;
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
-import 'package:pokedex_app/features/profile/presentation/pages/terms_of_use_page.dart';
 import 'package:pokedex_app/features/regions/presentation/pages/regional_pokedex_page.dart';
 import 'package:pokedex_app/features/regions/presentation/pages/regions_page.dart';
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart';
@@ -119,7 +115,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const ChangePasswordPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.ChangePasswordPage(),
+        ),
       ),
 
       GoRoute(
@@ -127,7 +126,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const EditNamePage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.EditNamePage(),
+        ),
       ),
 
       GoRoute(
@@ -135,7 +137,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const ChangeEmailPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.ChangeEmailPage(),
+        ),
       ),
 
       GoRoute(
@@ -159,7 +164,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const TermsOfUsePage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.TermsOfUsePage(),
+        ),
       ),
 
       GoRoute(
@@ -167,7 +175,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const PrivacyPolicyPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.PrivacyPolicyPage(),
+        ),
       ),
 
       GoRoute(
@@ -175,7 +186,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const AccountDeletionPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.AccountDeletionPage(),
+        ),
       ),
 
       GoRoute(
@@ -183,7 +197,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const AboutPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.AboutPage(),
+        ),
       ),
 
       GoRoute(
@@ -191,7 +208,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         parentNavigatorKey: _rootNavigatorKey,
 
-        builder: (_, _) => const HelpPage(),
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.HelpPage(),
+        ),
       ),
 
       GoRoute(
@@ -207,7 +227,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
             transitionDuration: const Duration(milliseconds: 350),
 
-            child: PokemonDetailPage(pokemonId: id),
+            child: DeferredPage(
+              library: pokemon_detail.loadLibrary(),
+              builder: (_) => pokemon_detail.PokemonDetailPage(pokemonId: id),
+            ),
 
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

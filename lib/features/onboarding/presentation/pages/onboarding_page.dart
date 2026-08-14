@@ -13,7 +13,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
-  const OnboardingPage({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
@@ -168,7 +168,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 }
 
 class _PageDots extends StatelessWidget {
-  const _PageDots({required this.count, required this.current});
+  const new({required this.count, required this.current});
 
   final int count;
   final int current;

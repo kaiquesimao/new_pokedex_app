@@ -6,7 +6,7 @@ import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends ConsumerWidget {
-  const AboutPage({super.key});
+  const new({super.key});
 
   static const _kaiqueLinkedInUrl = 'https://www.linkedin.com/in/kaique-simao/';
   static const _juniorLinkedInUrl =
@@ -167,7 +167,7 @@ Future<void> _openExternalUrl(String url) async {
 }
 
 class _AcknowledgmentCard extends StatelessWidget {
-  const _AcknowledgmentCard({
+  const new({
     required this.title,
     required this.body,
     required this.links,
@@ -225,7 +225,7 @@ class _AcknowledgmentCard extends StatelessWidget {
 }
 
 class _CreditTile extends StatelessWidget {
-  const _CreditTile({required this.title, required this.body});
+  const new({required this.title, required this.body});
 
   final String title;
   final String body;
@@ -273,7 +273,7 @@ class _CreditTile extends StatelessWidget {
 }
 
 class _DisclaimerCard extends StatelessWidget {
-  const _DisclaimerCard({required this.theme, required this.text});
+  const new({required this.theme, required this.text});
 
   final ThemeData theme;
   final String text;

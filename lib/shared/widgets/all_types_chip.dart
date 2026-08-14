@@ -2,16 +2,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
-class AllTypesChip extends StatelessWidget {
-  const AllTypesChip({
-    required this.selected,
-    required this.onTap,
-    super.key,
-  });
-
-  final bool selected;
-  final VoidCallback onTap;
-
+class const AllTypesChip({
+  required final bool selected,
+  required final VoidCallback onTap,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

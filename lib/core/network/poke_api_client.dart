@@ -6,11 +6,7 @@ import 'package:pokedex_app/features/pokemon/data/models/filter_models.dart';
 import 'package:pokedex_app/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokedex_app/features/regions/data/models/region_models.dart';
 
-class PokeApiClient {
-  PokeApiClient(this._dio);
-
-  final Dio _dio;
-
+class PokeApiClient(final Dio _dio) {
   Future<PokemonListResponse> getPokemonList({
     int offset = 0,
     int limit = 20,

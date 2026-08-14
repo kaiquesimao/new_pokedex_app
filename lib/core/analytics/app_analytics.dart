@@ -21,7 +21,7 @@ abstract class AppAnalytics {
 }
 
 class NoOpAppAnalytics implements AppAnalytics {
-  const NoOpAppAnalytics();
+  const new();
 
   @override
   void pokemonViewed({required int pokemonId, required String name}) {
@@ -59,7 +59,7 @@ class NoOpAppAnalytics implements AppAnalytics {
 }
 
 class FirebaseAppAnalytics implements AppAnalytics {
-  FirebaseAppAnalytics(this._analytics, this._connectivity);
+  new(this._analytics, this._connectivity);
 
   final FirebaseAnalytics _analytics;
   final ConnectivityService _connectivity;

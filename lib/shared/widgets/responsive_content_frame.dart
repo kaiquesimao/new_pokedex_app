@@ -3,7 +3,7 @@ import 'package:pokedex_app/core/constants/responsive_layout.dart';
 
 /// Centers page content and caps its width on large viewports.
 class ResponsiveContentFrame extends StatelessWidget {
-  const ResponsiveContentFrame({
+  const new({
     required this.child,
     super.key,
     this.maxWidth = ResponsiveLayout.maxContentWidth,
