@@ -61,7 +61,10 @@ class _ZygardeMegaRemote extends PokemonRemoteDataSource {
   Future<Map<String, dynamic>> fetchEggGroup(String name) async {
     return {
       'names': [
-        {'language': {'name': 'en'}, 'name': 'Dragon'},
+        {
+          'language': {'name': 'en'},
+          'name': 'Dragon',
+        },
       ],
     };
   }
@@ -119,13 +122,13 @@ void main() {
       final local = PokemonLocalDataSource(db);
       final remote = _ZygardeMegaRemote();
       final repository = PokemonRepositoryImpl(
-      remote: remote,
-      local: local,
-      gameTextResolver: GameTextResolver(
-        machineTranslation: InMemoryMachineTranslationBackend(),
-        fetchResourceEntries: (_, _) async => [],
-      ),
-    );
+        remote: remote,
+        local: local,
+        gameTextResolver: GameTextResolver(
+          machineTranslation: InMemoryMachineTranslationBackend(),
+          fetchResourceEntries: (_, _) async => [],
+        ),
+      );
 
       await local.savePokemonResponse(
         PokemonResponse.fromJson({

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/region_card_assets.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
@@ -123,9 +123,7 @@ class _StarterSprite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spriteUrl = ref
-        .watch(pokemonSpriteUrlProvider(pokemonId))
-        .value;
+    final spriteUrl = ref.watch(pokemonSpriteUrlProvider(pokemonId)).value;
 
     if (spriteUrl == null) {
       return const SizedBox(

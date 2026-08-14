@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/skeleton_shimmer_colors.dart';
 import 'package:shimmer/shimmer.dart';
 

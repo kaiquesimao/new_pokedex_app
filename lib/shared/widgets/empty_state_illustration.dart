@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/trainer_avatar_image.dart';
 import 'package:pokedex_app/shared/widgets/trainer_illustration_group.dart';
 

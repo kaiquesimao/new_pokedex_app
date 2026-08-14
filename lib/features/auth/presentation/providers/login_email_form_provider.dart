@@ -42,7 +42,10 @@ class LoginEmailFormNotifier extends Notifier<LoginEmailFormState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     } finally {
       if (state.loading) {
         state = state.copyWith(loading: false);

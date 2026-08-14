@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/responsive_layout.dart';
 
 /// Centers page content and caps its width on large viewports.

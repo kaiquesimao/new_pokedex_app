@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_hero_tags.dart';
 import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_sprite_variant.dart';
@@ -70,7 +70,7 @@ class _PokemonDetailSpriteCarouselState
   PokemonSpriteVariant get _current => widget.variants[_pageIndex];
 
   Future<void> _onTap() async {
-    unawaited(_tapController.forward(from: 0));
+    _tapController.forward(from: 0);
     final variant = _current;
     final useRouteCry = variant.pokemonId == widget.routePokemonId;
     await ref
@@ -233,7 +233,7 @@ class _PokemonDetailTappableSpriteState
   }
 
   Future<void> _onTap() async {
-    unawaited(_tapController.forward(from: 0));
+    _tapController.forward(from: 0);
     await ref
         .read(pokemonCryPlayerProvider.notifier)
         .playCry(

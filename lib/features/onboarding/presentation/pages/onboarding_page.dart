@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/legal/presentation/legal_acceptance.dart';
@@ -43,22 +43,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   void _skipToLast() {
-    unawaited(
-      _pageController.animateToPage(
-        _slideAssets.length - 1,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      ),
+    _pageController.animateToPage(
+      _slideAssets.length - 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
     );
   }
 
   void _next() {
     if (_currentPage < _slideAssets.length - 1) {
-      unawaited(
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        ),
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
       );
       return;
     }

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
@@ -14,15 +14,16 @@ class AboutPage extends ConsumerWidget {
   static const _figmaDesignUrl =
       'https://www.figma.com/community/file/1202971127473077147';
 
-  static List<({String title, String body})> _credits(AppLocalizations l10n) =>
-      [
-        (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
-        (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
-        (
-          title: l10n.aboutCreditFirebaseTitle,
-          body: l10n.aboutCreditFirebaseBody,
-        ),
-      ];
+  static List<({String title, String body})> _credits(
+    AppLocalizations l10n,
+  ) => [
+    (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
+    (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
+    (
+      title: l10n.aboutCreditFirebaseTitle,
+      body: l10n.aboutCreditFirebaseBody,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

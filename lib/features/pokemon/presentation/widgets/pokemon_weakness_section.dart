@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/features/pokemon/domain/utils/type_weakness_utils.dart';

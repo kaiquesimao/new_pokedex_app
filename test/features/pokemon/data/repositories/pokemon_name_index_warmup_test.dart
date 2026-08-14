@@ -57,17 +57,19 @@ void main() {
     await db.close();
   });
 
-  test('warmPokemonNameIndex phase A uses a single list fetch and no per-id',
-      () async {
-    await repository.warmPokemonNameIndex();
+  test(
+    'warmPokemonNameIndex phase A uses a single list fetch and no per-id',
+    () async {
+      await repository.warmPokemonNameIndex();
 
-    expect(remote.listCallCount, 1);
-    expect(remote.pokemonCallCount, 0);
-    expect(await repository.isNameIndexReady(), isTrue);
+      expect(remote.listCallCount, 1);
+      expect(remote.pokemonCallCount, 0);
+      expect(await repository.isNameIndexReady(), isTrue);
 
-    final hits = await repository.searchPokemonRefsByName('pika');
-    expect(hits.map((r) => r.id), [25]);
-  });
+      final hits = await repository.searchPokemonRefsByName('pika');
+      expect(hits.map((r) => r.id), [25]);
+    },
+  );
 
   test('warm phase B fetches each species once for default-line ids', () async {
     await repository.warmPokemonNameIndex();
@@ -175,9 +177,9 @@ void main() {
       expect(await repository.isNameIndexReady(), isFalse);
 
       // Force _loadSummariesForIds network path with species already cached.
-      await (db.delete(db.cachedPokemonEntries)
-            ..where((t) => t.id.equals(25)))
-          .go();
+      await (db.delete(
+        db.cachedPokemonEntries,
+      )..where((t) => t.id.equals(25))).go();
       await repository.getSummariesByIds([25]);
 
       expect(await repository.isNameIndexReady(), isFalse);
@@ -226,9 +228,9 @@ void main() {
       await local.replaceNameIndex(const [
         (id: 25, name: 'pikachu', localizedName: 'pikachu'),
       ]);
-      await (db.delete(db.cachedPokemonEntries)
-            ..where((t) => t.id.equals(25)))
-          .go();
+      await (db.delete(
+        db.cachedPokemonEntries,
+      )..where((t) => t.id.equals(25))).go();
 
       await repository.getSummariesByIds([25]);
 
@@ -349,8 +351,7 @@ class _NoopMachineTranslation implements MachineTranslationBackend {
     required String text,
     required String fromLang,
     required String toLang,
-  }) async =>
-      null;
+  }) async => null;
 
   @override
   void clearCache() {}

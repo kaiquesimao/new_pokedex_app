@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/auth_web_action_metrics.dart';
 
 /// Centers auth actions on web with a shared fixed size.

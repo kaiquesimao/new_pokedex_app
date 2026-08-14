@@ -1,9 +1,7 @@
-import 'dart:async';
-
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 
 class AuthLoadingOverlay extends StatelessWidget {
@@ -60,7 +58,7 @@ class _PokeballSpinnerState extends State<_PokeballSpinner>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

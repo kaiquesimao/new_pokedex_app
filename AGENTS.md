@@ -13,7 +13,7 @@ In this Linux cloud VM the testable target is the **web** build (Chrome is insta
 
 ### Toolchain (already provisioned in the VM snapshot)
 
-- Flutter SDK is preinstalled at `$HOME/flutter` (Flutter 3.44.2 / Dart 3.12.2, stable) and is
+- Flutter SDK is preinstalled at `$HOME/flutter` (Flutter 3.47 / Dart 3.13, stable) and is
   on `PATH` via `~/.bashrc`. If `flutter` is not found in a non-interactive shell, call it
   directly: `"$HOME/flutter/bin/flutter"`.
 - The startup update script runs `flutter pub get`; dependencies are otherwise ready.

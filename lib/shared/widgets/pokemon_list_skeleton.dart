@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_list_row_skeleton.dart';
 
 class PokemonListSkeleton extends StatelessWidget {

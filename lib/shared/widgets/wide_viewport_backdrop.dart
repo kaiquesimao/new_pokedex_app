@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/responsive_layout.dart';
 import 'package:pokedex_app/core/constants/wide_viewport_backdrop_assets.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop_provider.dart';

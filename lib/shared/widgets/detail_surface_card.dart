@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 
 /// Opaque surface chrome for content blocks on the Pokémon detail page.

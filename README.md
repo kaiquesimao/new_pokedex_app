@@ -6,7 +6,7 @@ Flutter app targeting **Android** and **Web** (mobile-first).
 
 ## Prerequisites
 
-- Flutter SDK (stable)
+- Flutter SDK **3.47+** (stable, Dart 3.13)
 - Firebase project with Authentication and Cloud Firestore
 - Local secret files (not in git):
   - `dart_defines.json` — copy from [`dart_defines.example.json`](dart_defines.example.json)
@@ -30,6 +30,13 @@ flutter run -d chrome --web-port=5000 --dart-define-from-file=dart_defines.json
 ```
 
 Guest browsing: on the welcome screen tap **Explorar sem conta** to use the Pokédex without logging in.
+
+Widget Previews (Flutter 3.47, isolated UI without a full app run):
+
+```bash
+flutter widget-preview start
+```
+
 
 ## Production builds
 

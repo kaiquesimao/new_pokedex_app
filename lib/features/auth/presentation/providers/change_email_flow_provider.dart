@@ -78,7 +78,10 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     }
   }
 
@@ -109,7 +112,10 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     }
   }
 
@@ -142,7 +148,10 @@ class ChangeEmailFlowNotifier extends Notifier<ChangeEmailFlowState> {
       final l10n = lookupAppLocalizations(
         ref.read(appLocaleProvider).materialLocale,
       );
-      state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+      state = state.copyWith(
+        loading: false,
+        error: formatAuthException(l10n, e),
+      );
     }
   }
 

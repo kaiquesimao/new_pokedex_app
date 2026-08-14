@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/game_text_source.dart';
@@ -14,8 +14,10 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/localized_fl
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
+import 'package:pokedex_app/l10n/app_localization_delegates.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:riverpod/misc.dart';
+
 import '../../../../helpers/l10n_test_helper.dart';
 
 List<Override> _defaultGameTextOverrides() => [
@@ -120,7 +122,7 @@ void main() {
         child: MaterialApp(
           locale: AppLocale.pt.materialLocale,
           supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationDelegates,
           home: const Scaffold(
             body: SingleChildScrollView(
               child: PokemonDetailAboutSection(
@@ -236,7 +238,7 @@ void main() {
         child: MaterialApp(
           locale: AppLocale.pt.materialLocale,
           supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationDelegates,
           home: const Scaffold(
             body: SingleChildScrollView(
               child: PokemonDetailAboutSection(pokemon: pokemon),
@@ -293,7 +295,7 @@ void main() {
         child: MaterialApp(
           locale: AppLocale.pt.materialLocale,
           supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationDelegates,
           home: const Scaffold(
             body: SingleChildScrollView(
               child: PokemonDetailAboutSection(pokemon: pokemon),

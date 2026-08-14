@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
 import 'package:pokedex_app/features/auth/domain/password_policy.dart';
@@ -203,13 +203,12 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
   String _primaryButtonLabel(
     ChangePasswordStep step,
     AppLocalizations l10n,
-  ) =>
-      switch (step) {
-        ChangePasswordStep.current => l10n.authContinueButton,
-        ChangePasswordStep.newPassword => l10n.authContinueButton,
-        ChangePasswordStep.confirm => l10n.changePasswordSaveButton,
-        ChangePasswordStep.success => l10n.profileFinishButton,
-      };
+  ) => switch (step) {
+    ChangePasswordStep.current => l10n.authContinueButton,
+    ChangePasswordStep.newPassword => l10n.authContinueButton,
+    ChangePasswordStep.confirm => l10n.changePasswordSaveButton,
+    ChangePasswordStep.success => l10n.profileFinishButton,
+  };
 
   VoidCallback? _onPrimaryPressed(ChangePasswordStep step) => switch (step) {
     ChangePasswordStep.current => _submitCurrent,

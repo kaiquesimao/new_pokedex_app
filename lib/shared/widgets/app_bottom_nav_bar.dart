@@ -1,6 +1,6 @@
 import 'package:curved_navigation_bar_pro/curved_navigation_bar_pro.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
@@ -27,9 +27,7 @@ class AppBottomNavBar extends StatelessWidget {
 
   /// Bottom space taken by the floating nav over [Scaffold.extendBody].
   static double overlayHeight(BuildContext context) {
-    return barHeight +
-        _bottomInset +
-        MediaQuery.paddingOf(context).bottom;
+    return barHeight + _bottomInset + MediaQuery.paddingOf(context).bottom;
   }
 
   @override
@@ -132,9 +130,10 @@ class _NavSvg extends StatelessWidget {
     final asset = switch (index) {
       0 => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
       1 => selected ? AppAssets.navRegionsActive : AppAssets.navRegionsInactive,
-      2 => selected
-          ? AppAssets.navFavoritesActive
-          : AppAssets.navFavoritesInactive,
+      2 =>
+        selected
+            ? AppAssets.navFavoritesActive
+            : AppAssets.navFavoritesInactive,
       _ => selected ? AppAssets.navProfileActive : AppAssets.navProfileInactive,
     };
 

@@ -1,7 +1,6 @@
-import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/responsive_layout.dart';
 
 /// Animated container for StatefulShellRoute branch navigators.
@@ -45,7 +44,7 @@ class _AnimatedBranchContainerState extends State<AnimatedBranchContainer>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentIndex != widget.currentIndex) {
       _previousIndex = oldWidget.currentIndex;
-      unawaited(_controller.forward(from: 0));
+      _controller.forward(from: 0);
     }
   }
 

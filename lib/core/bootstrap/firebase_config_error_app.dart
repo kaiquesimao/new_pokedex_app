@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/l10n/app_localization_delegates.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Shown when a release build starts without Firebase compile-time config.
@@ -9,7 +10,7 @@ class FirebaseConfigErrorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PokeData',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: WidgetsBinding.instance.platformDispatcher.locale,
       home: Builder(

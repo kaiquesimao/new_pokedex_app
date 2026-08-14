@@ -49,24 +49,26 @@ void main() {
     expect(refs.map((ref) => ref.id), containsAll([7, 8]));
   });
 
-  test('upsertNameIndex updates localizedName without wiping other rows',
-      () async {
-    await local.replaceNameIndex(const [
-      (id: 25, name: 'pikachu', localizedName: 'pikachu'),
-      (id: 1, name: 'bulbasaur', localizedName: 'bulbasaur'),
-    ]);
+  test(
+    'upsertNameIndex updates localizedName without wiping other rows',
+    () async {
+      await local.replaceNameIndex(const [
+        (id: 25, name: 'pikachu', localizedName: 'pikachu'),
+        (id: 1, name: 'bulbasaur', localizedName: 'bulbasaur'),
+      ]);
 
-    await local.upsertNameIndex(const [
-      (id: 25, name: 'pikachu', localizedName: 'Pikachu'),
-    ]);
+      await local.upsertNameIndex(const [
+        (id: 25, name: 'pikachu', localizedName: 'Pikachu'),
+      ]);
 
-    expect(await local.isNameIndexReady(), isTrue);
-    final byPika = await local.searchRefsByName('Pikachu');
-    expect(byPika.map((r) => r.id), [25]);
+      expect(await local.isNameIndexReady(), isTrue);
+      final byPika = await local.searchRefsByName('Pikachu');
+      expect(byPika.map((r) => r.id), [25]);
 
-    final all = await local.getIndexedRefs();
-    expect(all.map((r) => r.id), containsAll([1, 25]));
-  });
+      final all = await local.getIndexedRefs();
+      expect(all.map((r) => r.id), containsAll([1, 25]));
+    },
+  );
 
   test('searchRefsByName matches localizedName', () async {
     await local.replaceNameIndex(const [

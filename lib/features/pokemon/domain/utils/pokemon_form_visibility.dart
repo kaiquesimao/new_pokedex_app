@@ -168,13 +168,12 @@ class PokemonFormVisibility {
   static bool matchesListFormFilterSummary({
     required PokemonSummary summary,
     required Set<PokemonFormCategory> formCategories,
-  }) =>
-      matchesListFormFilter(
-        formCategories: formCategories,
-        apiName: _apiNameFor(summary),
-        isDefault: summary.isDefault,
-        isMega: summary.isMega,
-      );
+  }) => matchesListFormFilter(
+    formCategories: formCategories,
+    apiName: _apiNameFor(summary),
+    isDefault: summary.isDefault,
+    isMega: summary.isMega,
+  );
 
   /// Prefer PokeAPI slug; display [PokemonSummary.name] is not form-suffix-safe.
   static String _apiNameFor(PokemonSummary summary) =>

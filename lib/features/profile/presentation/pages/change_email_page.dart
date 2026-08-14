@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/domain/auth_account_policy.dart';
@@ -216,38 +216,36 @@ class _ChangeEmailPageState extends ConsumerState<ChangeEmailPage> {
     required AppLocalizations l10n,
     required bool usesFirebase,
     required String email,
-  }) =>
-      switch (step) {
-        ChangeEmailStep.currentPassword =>
-          l10n.profileSecurityPasswordSubtitle,
-        ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
-          l10n,
-          usesFirebase
-              ? l10n.changeEmailSubtitleNewEmailFirebase
-              : l10n.changeEmailSubtitleNewEmailMock,
-        ),
-        ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
-          l10n,
-          usesFirebase
-              ? l10n.changeEmailSubtitleVerifyFirebase(email)
-              : l10n.authForgotSubtitleOtp(email),
-        ),
-        ChangeEmailStep.success => '',
-      };
+  }) => switch (step) {
+    ChangeEmailStep.currentPassword => l10n.profileSecurityPasswordSubtitle,
+    ChangeEmailStep.newEmail => AuthEmailVerificationCopy.withSpamReminder(
+      l10n,
+      usesFirebase
+          ? l10n.changeEmailSubtitleNewEmailFirebase
+          : l10n.changeEmailSubtitleNewEmailMock,
+    ),
+    ChangeEmailStep.verify => AuthEmailVerificationCopy.withSpamReminder(
+      l10n,
+      usesFirebase
+          ? l10n.changeEmailSubtitleVerifyFirebase(email)
+          : l10n.authForgotSubtitleOtp(email),
+    ),
+    ChangeEmailStep.success => '',
+  };
 
   String _primaryButtonLabel(
     ChangeEmailStep step, {
     required AppLocalizations l10n,
     required bool usesFirebase,
-  }) =>
-      switch (step) {
-        ChangeEmailStep.currentPassword => l10n.authContinueButton,
-        ChangeEmailStep.newEmail => l10n.changeEmailSendVerificationButton,
-        ChangeEmailStep.verify => usesFirebase
-            ? l10n.authVerifyEmailAlreadyConfirmedButton
-            : l10n.changeEmailConfirmCodeButton,
-        ChangeEmailStep.success => l10n.profileFinishButton,
-      };
+  }) => switch (step) {
+    ChangeEmailStep.currentPassword => l10n.authContinueButton,
+    ChangeEmailStep.newEmail => l10n.changeEmailSendVerificationButton,
+    ChangeEmailStep.verify =>
+      usesFirebase
+          ? l10n.authVerifyEmailAlreadyConfirmedButton
+          : l10n.changeEmailConfirmCodeButton,
+    ChangeEmailStep.success => l10n.profileFinishButton,
+  };
 
   VoidCallback? _onPrimaryPressed(ChangeEmailStep step) => switch (step) {
     ChangeEmailStep.currentPassword => _submitCurrentPassword,

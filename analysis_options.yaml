@@ -3,6 +3,14 @@ include: package:very_good_analysis/analysis_options.yaml
 analyzer:
   errors:
     deprecated_member_use: error
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:

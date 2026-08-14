@@ -94,7 +94,10 @@ class VerifyEmailUiNotifier extends Notifier<VerifyEmailUiState> {
         final l10n = lookupAppLocalizations(
           ref.read(appLocaleProvider).materialLocale,
         );
-        state = state.copyWith(loading: false, error: formatAuthException(l10n, e));
+        state = state.copyWith(
+          loading: false,
+          error: formatAuthException(l10n, e),
+        );
       }
       return false;
     }
