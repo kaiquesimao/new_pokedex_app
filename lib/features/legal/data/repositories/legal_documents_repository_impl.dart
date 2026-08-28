@@ -12,15 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Firestore-first legal documents with SharedPreferences + asset fallback.
 class LegalDocumentsRepositoryImpl implements LegalDocumentsRepository {
-  LegalDocumentsRepositoryImpl({
-    required LegalDocumentsLocalDataSource local,
-    required ConnectivityService connectivity,
-    required SharedPreferences prefs,
+  new({
+    required this._local,
+    required this._connectivity,
+    required this._prefs,
     FirebaseFirestore? firestore,
-  }) : _local = local,
-       _connectivity = connectivity,
-       _prefs = prefs,
-       _firestore = firestore == null
+  }) : _firestore = firestore == null
            ? null
            : LegalDocumentsFirestoreDataSource(firestore: firestore);
 

@@ -3,11 +3,9 @@ import 'package:pokedex_app/core/locale/legal_assets.dart';
 import 'package:pokedex_app/features/legal/domain/entities/legal_document_content.dart';
 import 'package:pokedex_app/features/legal/domain/repositories/legal_documents_repository.dart';
 
-class FakeLegalDocumentsRepository implements LegalDocumentsRepository {
-  FakeLegalDocumentsRepository(this._markdownByDocumentId);
-
-  final Map<String, String> _markdownByDocumentId;
-
+class FakeLegalDocumentsRepository(
+  final Map<String, String> _markdownByDocumentId,
+) implements LegalDocumentsRepository {
   @override
   Future<LegalDocumentContent> getDocument({
     required LegalDocument document,

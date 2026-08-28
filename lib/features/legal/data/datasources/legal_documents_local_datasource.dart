@@ -5,8 +5,7 @@ import 'package:pokedex_app/features/legal/domain/entities/legal_document_conten
 
 /// Loads bundled Markdown assets used as emergency fallback.
 class LegalDocumentsLocalDataSource {
-  LegalDocumentsLocalDataSource({AssetBundle? bundle})
-    : _bundle = bundle ?? rootBundle;
+  new({AssetBundle? bundle}) : _bundle = bundle ?? rootBundle;
 
   final AssetBundle _bundle;
 
@@ -24,7 +23,6 @@ class LegalDocumentsLocalDataSource {
       locale: legalFirestoreLocale(locale),
       markdown: markdown,
       version: bundledVersion,
-      source: LegalDocumentSource.asset,
     );
   }
 }

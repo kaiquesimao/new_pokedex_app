@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Play Store listing and in-app review via `package:in_app_review`.
 class PlayAppReviewService implements AppReviewService {
-  PlayAppReviewService({InAppReview? inAppReview})
+  new({InAppReview? inAppReview})
     : _inAppReview = inAppReview ?? InAppReview.instance;
 
   static const androidPackageId = 'com.kaiquesimao.pokedex';
