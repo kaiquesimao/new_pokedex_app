@@ -72,3 +72,6 @@ android/key.properties
 
 # Cloudflare Wrangler local cache
 .wrangler/
+
+# Node (seed scripts)
+scripts/node_modules/

@@ -1,10 +1,11 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/core/locale/legal_assets.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/account_deletion_page.dart';
 
+import '../../../../helpers/fake_legal_documents_repository.dart';
+import '../../../../helpers/legal_test_overrides.dart';
 import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
@@ -13,15 +14,14 @@ void main() {
   ) async {
     await pumpLocalizedApp(
       tester,
-      child: DefaultAssetBundle(
-        bundle: _TestAssetBundle({
-          'assets/legal/account_deletion_pt_br.md':
+      child: const AccountDeletionPage(),
+      overrides: legalRepositoryOverrides(
+        FakeLegalDocumentsRepository({
+          legalDocumentId(LegalDocument.accountDeletion, AppLocale.pt):
               '# Exclusão de conta e dados - PokeData\n\n'
               'Envie um e-mail para pokedata.app@gmail.com.',
         }),
-        child: const AccountDeletionPage(),
       ),
-      overrides: [],
     );
     await tester.pumpAndSettle();
 
@@ -30,26 +30,4 @@ void main() {
     expect(find.textContaining('pokedata.app@gmail.com'), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsOneWidget);
   });
-}
-
-class _TestAssetBundle(final Map<String, String> files)
-    extends CachingAssetBundle {
-  @override
-  Future<String> loadString(String key, {bool cache = true}) async {
-    final value = files[key];
-    if (value == null) {
-      throw FlutterError('Asset not found in test bundle: $key');
-    }
-    return value;
-  }
-
-  @override
-  Future<ByteData> load(String key) async {
-    final value = files[key];
-    if (value == null) {
-      throw FlutterError('Asset not found in test bundle: $key');
-    }
-    final bytes = Uint8List.fromList(utf8.encode(value));
-    return ByteData.view(bytes.buffer);
-  }
 }

@@ -1,9 +1,8 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/core/locale/legal_assets.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
@@ -15,7 +14,9 @@ import 'package:pokedex_app/features/reviews/domain/app_review_service.dart';
 import 'package:pokedex_app/features/reviews/presentation/providers/app_review_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../helpers/fake_legal_documents_repository.dart';
 import '../../../../helpers/firebase_test_overrides.dart';
+import '../../../../helpers/legal_test_overrides.dart';
 import '../../../../helpers/l10n_test_helper.dart';
 
 void main() {
@@ -118,20 +119,19 @@ void main() {
 
     await pumpLocalizedApp(
       tester,
-      child: DefaultAssetBundle(
-        bundle: _TestAssetBundle({
-          'assets/legal/terms_pt_br.md':
-              '# Termos de Uso - PokeData\n\n'
-              'não é desenvolvido, endossado ou afiliado',
-        }),
-        child: Router(
-          routerDelegate: router.routerDelegate,
-          routeInformationParser: router.routeInformationParser,
-          routeInformationProvider: router.routeInformationProvider,
-        ),
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
       overrides: [
-        firebaseUnavailableOverride,
+        ...legalRepositoryOverrides(
+          FakeLegalDocumentsRepository({
+            legalDocumentId(LegalDocument.terms, AppLocale.pt):
+                '# Termos de Uso - PokeData\n\n'
+                'não é desenvolvido, endossado ou afiliado',
+          }),
+        ),
         authProvider.overrideWithBuild(
           (ref, notifier) => const AuthState(isInitialized: true),
         ),
@@ -209,20 +209,19 @@ void main() {
 
     await pumpLocalizedApp(
       tester,
-      child: DefaultAssetBundle(
-        bundle: _TestAssetBundle({
-          'assets/legal/privacy_pt_br.md':
-              '# Política de Privacidade - PokeData\n\n'
-              'texto teste',
-        }),
-        child: Router(
-          routerDelegate: router.routerDelegate,
-          routeInformationParser: router.routeInformationParser,
-          routeInformationProvider: router.routeInformationProvider,
-        ),
+      child: Router(
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
       ),
       overrides: [
-        firebaseUnavailableOverride,
+        ...legalRepositoryOverrides(
+          FakeLegalDocumentsRepository({
+            legalDocumentId(LegalDocument.privacy, AppLocale.pt):
+                '# Política de Privacidade - PokeData\n\n'
+                'texto teste',
+          }),
+        ),
         authProvider.overrideWithBuild(
           (ref, notifier) => const AuthState(isInitialized: true),
         ),
@@ -289,27 +288,5 @@ class _FakeReviewService implements AppReviewService {
   @override
   Future<void> rateFromSettings() async {
     settingsCalls++;
-  }
-}
-
-class _TestAssetBundle(final Map<String, String> files)
-    extends CachingAssetBundle {
-  @override
-  Future<String> loadString(String key, {bool cache = true}) async {
-    final value = files[key];
-    if (value == null) {
-      throw FlutterError('Asset not found in test bundle: $key');
-    }
-    return value;
-  }
-
-  @override
-  Future<ByteData> load(String key) async {
-    final value = files[key];
-    if (value == null) {
-      throw FlutterError('Asset not found in test bundle: $key');
-    }
-    final bytes = Uint8List.fromList(utf8.encode(value));
-    return ByteData.view(bytes.buffer);
   }
 }

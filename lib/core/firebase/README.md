@@ -44,9 +44,36 @@ Release builds without `FIREBASE_PROJECT_ID` show a configuration error screen (
 
 **Android application ID:** `com.kaiquesimao.pokedex`
 
-## Firestore path
+## Firestore paths
+
+### Favorites
 
 `users/{uid}/favorites/{pokemonId}` — fields: `pokemonId` (int), `addedAt` (timestamp).
+
+### Legal documents
+
+`legal_documents/{docId}` — public read when `published == true`.
+
+| docId | slug | locale |
+|-------|------|--------|
+| `terms_pt_BR` | `terms` | `pt_BR` |
+| `terms_en` | `terms` | `en` |
+| `privacy_pt_BR` | `privacy` | `pt_BR` |
+| `privacy_en` | `privacy` | `en` |
+| `account_deletion_pt_BR` | `account_deletion` | `pt_BR` |
+| `account_deletion_en` | `account_deletion` | `en` |
+
+Fields: `slug`, `locale`, `markdown`, `version`, `updatedAt`, `published`.
+
+Seed from bundled assets (uses `firebase login` credentials):
+
+```bash
+cd scripts && npm install && cd ..
+firebase deploy --only firestore:rules
+node scripts/seed_legal_documents.cjs
+```
+
+The app falls back to bundled `assets/legal/*.md` when Firestore is unavailable.
 
 Deploy rules:
 

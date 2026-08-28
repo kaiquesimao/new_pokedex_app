@@ -5,6 +5,6 @@ abstract class AppReviewService {
   /// Returns `true` when the request was sent to the platform.
   Future<bool> requestInAppReviewIfAvailable();
 
-  /// Requests an in-app review, or opens the store listing as a fallback.
+  /// Opens the public store listing for an explicit user-initiated rating.
   Future<void> rateFromSettings();
 }
