@@ -11,7 +11,7 @@ class AppReviewController({
   required final SharedPreferences prefs,
   required final AppReviewService service,
 }) {
-  /// Settings row: in-app review, or the public listing if unavailable.
+  /// Settings row: opens the public store listing.
   Future<void> rateFromSettings() => service.rateFromSettings();
 
   /// One-shot in-app prompt after a positive action (adding a favorite).

@@ -907,8 +907,12 @@ class AuthNotifier extends Notifier<AuthState> {
     _requireOnline();
     try {
       final googleAuth = googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw AuthException(_l10n.authInvalidCredentialOauth);
+      }
       final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
+        idToken: idToken,
       );
       await firebaseAuth.signInWithCredential(credential);
       state = _authStateFromFirebaseUser(firebaseAuth.currentUser);
