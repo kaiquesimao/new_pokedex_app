@@ -522,6 +522,11 @@
   "pokemonCryPlaySemantics": "Reproduzir som do Pokémon",
   "@pokemonCryPlaySemantics": { "description": "Semantics: play Pokémon cry on sprite tap" },
 
+  "pokemonDescriptionTtsPlaySemantics": "Ouvir descrição",
+  "@pokemonDescriptionTtsPlaySemantics": { "description": "Semantics: play Pokémon flavor text TTS" },
+  "pokemonDescriptionTtsStopSemantics": "Parar leitura",
+  "@pokemonDescriptionTtsStopSemantics": { "description": "Semantics: stop Pokémon flavor text TTS" },
+
   "pokemonFormLabelNormal": "Normal",
   "@pokemonFormLabelNormal": { "description": "Detail sprite carousel: default form label" },
   "pokemonFormLabelShiny": "Shiny",

@@ -16,17 +16,35 @@ See [`lib/core/firebase/README.md`](lib/core/firebase/README.md) for Firebase se
 
 ## Run locally
 
-Configs in [`.vscode/launch.json`](.vscode/launch.json) pass `--dart-define-from-file=dart_defines.json`.
+Configs in [`.vscode/launch.json`](.vscode/launch.json) pass
+`--dart-define-from-file=dart_defines.json`. Prefer the named launch configs
+over ad-hoc CLI when debugging in VS Code / Cursor.
+
+| Launch config | Target | Notes |
+|---------------|--------|--------|
+| **pokedex_app** | device selecionado | Debug genérico (Android / web) |
+| **Chrome JS :5000** | Chrome (JS) | Debug + hot reload; compile mais rápido |
+| **Chrome Wasm debug :5000** | Chrome (Wasm) | Debug + Inspector + hot reload + multi-thread |
+| **Chrome Wasm profile :5000** | Chrome (Wasm) | Performance (sem hot reload) |
 
 ```bash
 flutter pub get
 flutter run --dart-define-from-file=dart_defines.json
 ```
 
-Web (port 5000):
+Web JS (port 5000):
 
 ```bash
-flutter run -d chrome --web-port=5000 --dart-define-from-file=dart_defines.json
+flutter run -d chrome --web-port=5000 \
+  --dart-define-from-file=dart_defines.json
+```
+
+Web Wasm (debug local; Chrome 119+):
+
+```bash
+flutter run -d chrome --web-port=5000 \
+  --dart-define-from-file=dart_defines.json \
+  --wasm
 ```
 
 Guest browsing: on the welcome screen tap **Explorar sem conta** to use the Pokédex without logging in.
@@ -100,13 +118,7 @@ Web supports **email/password** Firebase Auth. Google Sign-In is **mobile only**
 | Setup | Wasm | Email/password | Google |
 |-------|------|----------------|--------|
 | Production (COOP/COEP) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
-| Local **Chrome Wasm MT :5000** (--wasm) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
-
-```bash
-flutter run -d chrome --web-port=5000 \
-  --dart-define-from-file=dart_defines.json \
-  --wasm
-```
+| Local **Chrome Wasm debug/profile** (`--wasm`) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
 
 Mobile still uses google_sign_in + GoogleSignIn.authenticate.
 
@@ -115,7 +127,14 @@ Android serverClientId.
 
 ### WebAssembly (multi-thread)
 
-CI builds with --wasm. Production headers enable SharedArrayBuffer.
+- `web/index.html` uses modern `flutter_bootstrap.js` (Flutter 3.22+).
+- App/deps use `package:web` / `dart:js_interop` (no `dart:html` / `package:js`).
+- CI builds with `--wasm` (JS fallback when WasmGC is missing).
+- Production headers in [`web/_headers`](web/_headers) enable
+  `SharedArrayBuffer` (COOP + COEP) for multi-thread skwasm.
+- `flutter run --wasm` enables cross-origin isolation locally by default.
+- Staging/QA stack traces: `flutter build web --wasm --no-strip-wasm`
+  (or `--source-maps` for error monitoring).
 
 ### Cloudflare zone (required for custom domain)
 

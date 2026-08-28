@@ -17,6 +17,7 @@ import 'package:pokedex_app/features/favorites/presentation/providers/favorites_
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_description_tts_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
@@ -105,11 +106,13 @@ class const _PokemonDetailContent({
 class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   var _statsExpanded = true;
   PokemonCryPlayerNotifier? _cryPlayer;
+  PokemonDescriptionTtsNotifier? _descriptionTts;
 
   @override
   void initState() {
     super.initState();
     _cryPlayer = ref.read(pokemonCryPlayerProvider.notifier);
+    _descriptionTts = ref.read(pokemonDescriptionTtsProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(appAnalyticsProvider)
@@ -125,18 +128,22 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.pokemonId != widget.pokemonId) {
       unawaited(_cryPlayer?.stop());
+      unawaited(_descriptionTts?.stop());
     }
   }
 
   @override
   void dispose() {
     unawaited(_cryPlayer?.stop());
+    unawaited(_descriptionTts?.stop());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(pokemonCryPlayerProvider);
+    ref
+      ..watch(pokemonCryPlayerProvider)
+      ..watch(pokemonDescriptionTtsProvider);
     final favorites = ref.watch(favoritesProvider);
     final isFavorite = favorites.contains(widget.pokemonId);
     final pokemon = widget.pokemon;

@@ -11,6 +11,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_ability_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_category_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_description_tts_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
@@ -319,4 +320,106 @@ void main() {
 
     expect(find.text('Estaticidade'), findsOneWidget);
   });
+
+  testWidgets('shows TTS button when flavor text is available', (
+    tester,
+  ) async {
+    const pokemon = PokemonDetail(
+      id: 1,
+      name: 'bulbasaur',
+      height: 7,
+      weight: 69,
+      types: [PokemonType.grass],
+      stats: [PokemonStat(name: 'hp', baseStat: 45)],
+      abilities: [PokemonAbility(name: 'overgrow', isHidden: false)],
+      genderRate: 1,
+      eggGroups: ['monster'],
+      flavorText: 'A strange seed was planted on its back at birth.',
+    );
+
+    await pumpLocalizedApp(
+      tester,
+      overrides: [
+        ..._defaultGameTextOverrides(),
+        localizedFlavorTextProvider.overrideWith((ref, input) async => null),
+      ],
+      child: const Scaffold(
+        body: SingleChildScrollView(
+          child: PokemonDetailAboutSection(pokemon: pokemon),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const Key('pokemon_description_tts_button')), findsOneWidget);
+    expect(find.textContaining('strange seed'), findsOneWidget);
+  });
+
+  testWidgets('TTS button toggles play and stop via provider', (
+    tester,
+  ) async {
+    const pokemon = PokemonDetail(
+      id: 25,
+      name: 'pikachu',
+      height: 4,
+      weight: 60,
+      types: [PokemonType.electric],
+      stats: [PokemonStat(name: 'hp', baseStat: 35)],
+      abilities: [PokemonAbility(name: 'static', isHidden: false)],
+      genderRate: 4,
+      eggGroups: ['field'],
+      flavorText: 'When several electric Pokémon gather, a thunderstorm forms.',
+    );
+
+    final recorder = _RecordingDescriptionTtsForWidget();
+
+    await pumpLocalizedApp(
+      tester,
+      overrides: [
+        ..._defaultGameTextOverrides(),
+        localizedFlavorTextProvider.overrideWith((ref, input) async => null),
+        pokemonDescriptionTtsProvider.overrideWith(() => recorder),
+      ],
+      child: const Scaffold(
+        body: SingleChildScrollView(
+          child: PokemonDetailAboutSection(pokemon: pokemon),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('pokemon_description_tts_button')));
+    await tester.pumpAndSettle();
+
+    expect(recorder.speakCalls, hasLength(1));
+    expect(recorder.speakCalls.single.text, pokemon.flavorText);
+
+    await tester.tap(find.byKey(const Key('pokemon_description_tts_button')));
+    await tester.pumpAndSettle();
+
+    expect(recorder.stopCalls, hasLength(1));
+  });
+}
+
+class _RecordingDescriptionTtsForWidget extends PokemonDescriptionTtsNotifier {
+  final List<({String text, AppLocale locale})> speakCalls = [];
+  final List<void Function()> stopCalls = [];
+
+  @override
+  PokemonDescriptionTtsState build() => const PokemonDescriptionTtsState();
+
+  @override
+  Future<void> speak({
+    required String text,
+    required AppLocale locale,
+  }) async {
+    speakCalls.add((text: text, locale: locale));
+    state = const PokemonDescriptionTtsState(
+      status: PokemonDescriptionTtsStatus.speaking,
+    );
+  }
+
+  @override
+  Future<void> stop() async {
+    stopCalls.add(() {});
+    state = const PokemonDescriptionTtsState();
+  }
 }
