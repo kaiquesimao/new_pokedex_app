@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
@@ -8,6 +10,7 @@ import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_ability_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_category_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/localized_flavor_text_provider.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_description_tts_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
@@ -74,17 +77,29 @@ class const PokemonDetailAboutSection({
             pokemon.flavorText ??
             '';
         if (text.isEmpty) return null;
-        return Text(text, style: descriptionStyle);
+        return _FlavorDescriptionCard(
+          text: text,
+          locale: locale,
+          descriptionStyle: descriptionStyle,
+        );
       },
       data: (resolved) {
         final text = resolved?.text ?? pokemon.flavorText ?? '';
         if (text.isEmpty) return null;
-        return Text(text, style: descriptionStyle);
+        return _FlavorDescriptionCard(
+          text: text,
+          locale: locale,
+          descriptionStyle: descriptionStyle,
+        );
       },
       error: (_, _) {
         final text = pokemon.flavorText ?? '';
         if (text.isEmpty) return null;
-        return Text(text, style: descriptionStyle);
+        return _FlavorDescriptionCard(
+          text: text,
+          locale: locale,
+          descriptionStyle: descriptionStyle,
+        );
       },
     );
     final categoryValue = categoryAsync.when(
@@ -182,6 +197,62 @@ class const PokemonDetailAboutSection({
           ),
         ],
       ),
+    );
+  }
+}
+
+class const _FlavorDescriptionCard({
+  required final String text,
+  required final AppLocale locale,
+  required final TextStyle? descriptionStyle,
+}) extends ConsumerWidget {
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final ttsState = ref.watch(pokemonDescriptionTtsProvider);
+    final isSpeaking =
+        ttsState.status == PokemonDescriptionTtsStatus.speaking;
+    final semanticsLabel = isSpeaking
+        ? l10n.pokemonDescriptionTtsStopSemantics
+        : l10n.pokemonDescriptionTtsPlaySemantics;
+
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 36),
+          child: Text(text, style: descriptionStyle),
+        ),
+        Semantics(
+          button: true,
+          label: semanticsLabel,
+          child: IconButton(
+            key: const Key('pokemon_description_tts_button'),
+            tooltip: semanticsLabel,
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            onPressed: () {
+              unawaited(
+                ref.read(pokemonDescriptionTtsProvider.notifier).toggle(
+                  text: text,
+                  locale: locale,
+                ),
+              );
+            },
+            icon: Icon(
+              isSpeaking
+                  ? Icons.stop_circle_outlined
+                  : Icons.volume_up_outlined,
+              size: 22,
+              color: isSpeaking
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

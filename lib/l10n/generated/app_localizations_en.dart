@@ -1197,6 +1197,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pokemonCryPlaySemantics => 'Play Pokémon cry';
 
   @override
+  String get pokemonDescriptionTtsPlaySemantics => 'Listen to description';
+
+  @override
+  String get pokemonDescriptionTtsStopSemantics => 'Stop reading';
+
+  @override
   String get pokemonFormLabelNormal => 'Normal';
 
   @override

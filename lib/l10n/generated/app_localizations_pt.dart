@@ -1204,6 +1204,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get pokemonCryPlaySemantics => 'Reproduzir som do Pokémon';
 
   @override
+  String get pokemonDescriptionTtsPlaySemantics => 'Ouvir descrição';
+
+  @override
+  String get pokemonDescriptionTtsStopSemantics => 'Parar leitura';
+
+  @override
   String get pokemonFormLabelNormal => 'Normal';
 
   @override

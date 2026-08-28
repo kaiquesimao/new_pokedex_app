@@ -2246,6 +2246,18 @@ abstract class AppLocalizations {
   /// **'Play Pokémon cry'**
   String get pokemonCryPlaySemantics;
 
+  /// Semantics: play Pokémon flavor text TTS
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to description'**
+  String get pokemonDescriptionTtsPlaySemantics;
+
+  /// Semantics: stop Pokémon flavor text TTS
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get pokemonDescriptionTtsStopSemantics;
+
   /// Detail sprite carousel: default form label
   ///
   /// In en, this message translates to:
