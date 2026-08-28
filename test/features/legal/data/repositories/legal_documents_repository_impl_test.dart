@@ -16,10 +16,8 @@ class _OfflineConnectivity extends ConnectivityService {
   bool get isOnline => false;
 }
 
-class _TestAssetBundle extends CachingAssetBundle {
-  _TestAssetBundle(this.files);
-
-  final Map<String, String> files;
+class _TestAssetBundle(final Map<String, String> files)
+    extends CachingAssetBundle {
 
   @override
   Future<String> loadString(String key, {bool cache = true}) async {

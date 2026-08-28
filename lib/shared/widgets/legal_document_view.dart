@@ -7,16 +7,11 @@ import 'package:pokedex_app/features/legal/presentation/providers/legal_document
 import 'package:pokedex_app/shared/widgets/legal_document_skeleton.dart';
 
 /// Loads a legal Markdown document (Firestore with cache/asset fallback).
-class LegalDocumentView extends ConsumerWidget {
-  const LegalDocumentView({
-    required this.document,
-    required this.loadErrorMessage,
-    super.key,
-  });
-
-  final LegalDocument document;
-  final String loadErrorMessage;
-
+class const LegalDocumentView({
+  required final LegalDocument document,
+  required final String loadErrorMessage,
+  super.key,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(appLocaleProvider);
@@ -34,11 +29,9 @@ class LegalDocumentView extends ConsumerWidget {
   }
 }
 
-class _LegalMarkdownBody extends StatelessWidget {
-  const _LegalMarkdownBody({required this.markdown});
-
-  final String markdown;
-
+class const _LegalMarkdownBody({
+  required final String markdown,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -6,23 +6,14 @@ enum LegalDocumentSource {
 }
 
 /// Markdown legal document resolved for a slug and locale.
-class LegalDocumentContent {
-  const LegalDocumentContent({
-    required this.slug,
-    required this.locale,
-    required this.markdown,
-    required this.version,
-    this.source = LegalDocumentSource.asset,
-    this.updatedAt,
-  });
-
-  final String slug;
-  final String locale;
-  final String markdown;
-  final String version;
-  final LegalDocumentSource source;
-  final DateTime? updatedAt;
-
+class const LegalDocumentContent({
+  required final String slug,
+  required final String locale,
+  required final String markdown,
+  required final String version,
+  final LegalDocumentSource source = LegalDocumentSource.asset,
+  final DateTime? updatedAt,
+}) {
   LegalDocumentContent copyWith({
     LegalDocumentSource? source,
   }) {

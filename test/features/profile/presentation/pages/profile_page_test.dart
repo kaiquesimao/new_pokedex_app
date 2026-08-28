@@ -16,8 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/fake_legal_documents_repository.dart';
 import '../../../../helpers/firebase_test_overrides.dart';
-import '../../../../helpers/legal_test_overrides.dart';
 import '../../../../helpers/l10n_test_helper.dart';
+import '../../../../helpers/legal_test_overrides.dart';
 
 void main() {
   testWidgets('profile shows account rows and logout when authenticated', (

@@ -5,8 +5,8 @@ import 'package:pokedex_app/core/locale/legal_assets.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/account_deletion_page.dart';
 
 import '../../../../helpers/fake_legal_documents_repository.dart';
-import '../../../../helpers/legal_test_overrides.dart';
 import '../../../../helpers/l10n_test_helper.dart';
+import '../../../../helpers/legal_test_overrides.dart';
 
 void main() {
   testWidgets('account deletion page shows deletion instructions', (

@@ -2,12 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pokedex_app/features/legal/domain/entities/legal_document_content.dart';
 
 /// Reads published legal documents from Firestore.
-class LegalDocumentsFirestoreDataSource {
-  LegalDocumentsFirestoreDataSource({required FirebaseFirestore firestore})
-    : _firestore = firestore;
-
-  final FirebaseFirestore _firestore;
-
+class LegalDocumentsFirestoreDataSource({
+  required final FirebaseFirestore _firestore,
+}) {
   static const collection = 'legal_documents';
 
   Future<LegalDocumentContent?> fetchById(String documentId) async {
