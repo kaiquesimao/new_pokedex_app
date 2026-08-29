@@ -1,11 +1,9 @@
-import 'package:pokedex_app/core/locale/app_locale.dart';
-
 abstract final class PokemonTtsVoiceSelector {
   static Map<String, String>? select({
     required List<dynamic> voices,
-    required AppLocale locale,
+    required String locale,
   }) {
-    final requestedLocale = _normalizeLocale(locale.tag);
+    final requestedLocale = _normalizeLocale(locale);
     final requestedLanguage = _languageCode(requestedLocale);
     final candidates = <_VoiceCandidate>[];
 
@@ -18,6 +16,7 @@ abstract final class PokemonTtsVoiceSelector {
       if (voiceLocale == null || (name == null && identifier == null)) {
         continue;
       }
+      if (_isNotInstalled(voice['features'])) continue;
 
       final normalizedLocale = _normalizeLocale(voiceLocale);
       if (_languageCode(normalizedLocale) != requestedLanguage) continue;
@@ -75,13 +74,41 @@ abstract final class PokemonTtsVoiceSelector {
 
   static double _numericValue(dynamic value) {
     if (value is num) return value.toDouble();
-    if (value is String) return double.tryParse(value.trim()) ?? 0;
+    if (value is String) {
+      final normalizedValue = value.trim().toLowerCase();
+      final numericValue = double.tryParse(normalizedValue);
+      if (numericValue != null) return numericValue;
+      return switch (normalizedValue) {
+        'very high' || 'premium' => 5,
+        'high' || 'enhanced' => 4,
+        'normal' || 'default' => 3,
+        'low' => 2,
+        'very low' => 1,
+        _ => 0,
+      };
+    }
     return 0;
   }
 
   static bool _booleanValue(dynamic value) {
     if (value is bool) return value;
-    if (value is String) return value.trim().toLowerCase() == 'true';
+    if (value is num) return value != 0;
+    if (value is String) {
+      return switch (value.trim().toLowerCase()) {
+        '1' || 'true' || 'yes' => true,
+        _ => false,
+      };
+    }
+    return false;
+  }
+
+  static bool _isNotInstalled(dynamic features) {
+    if (features is Iterable) {
+      return features.any(_isNotInstalled);
+    }
+    if (features is String) {
+      return features.trim().toLowerCase() == 'notinstalled';
+    }
     return false;
   }
 }
@@ -97,10 +124,13 @@ final class const _VoiceCandidate({
   String get identity => name ?? identifier!;
 
   Map<String, String> get voice {
-    final voiceName = name;
-    if (voiceName != null) {
-      return {'name': voiceName, 'locale': locale};
+    if (name == null) return {'identifier': identifier!};
+
+    final result = <String, String>{'locale': locale};
+    result['name'] = name!;
+    if (identifier != null) {
+      result['identifier'] = identifier!;
     }
-    return {'identifier': identifier!};
+    return result;
   }
 }
