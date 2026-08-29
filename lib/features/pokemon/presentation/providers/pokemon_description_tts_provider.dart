@@ -15,7 +15,7 @@ abstract final class PokemonTtsQualityProfile {
 typedef PokemonTtsEngineFactory = PokemonTtsEngine Function();
 
 abstract interface class PokemonTtsEngine {
-  Future<dynamic> awaitSpeakCompletion(bool awaitCompletion);
+  Future<dynamic> awaitSpeakCompletion({required bool awaitCompletion});
   Future<void> configureIosAudio();
   Future<dynamic> get voices;
   void setCancelHandler(void Function() handler);
@@ -31,13 +31,11 @@ abstract interface class PokemonTtsEngine {
   Future<dynamic> stop();
 }
 
-final class _FlutterTtsEngine implements PokemonTtsEngine {
-  _FlutterTtsEngine() : _tts = FlutterTts();
-
-  final FlutterTts _tts;
+final class _FlutterTtsEngine() implements PokemonTtsEngine {
+  final FlutterTts _tts = FlutterTts();
 
   @override
-  Future<dynamic> awaitSpeakCompletion(bool awaitCompletion) =>
+  Future<dynamic> awaitSpeakCompletion({required bool awaitCompletion}) =>
       _tts.awaitSpeakCompletion(awaitCompletion);
 
   @override
@@ -111,13 +109,11 @@ class const PokemonDescriptionTtsState({
   final PokemonDescriptionTtsStatus status = PokemonDescriptionTtsStatus.idle,
 });
 
-class PokemonDescriptionTtsNotifier
-    extends Notifier<PokemonDescriptionTtsState> {
-  PokemonDescriptionTtsNotifier({
-    PokemonTtsEngineFactory? engineFactory,
-  }) : _engineFactory = engineFactory ?? _FlutterTtsEngine.new;
-
-  final PokemonTtsEngineFactory _engineFactory;
+class PokemonDescriptionTtsNotifier({
+  PokemonTtsEngineFactory? engineFactory,
+}) extends Notifier<PokemonDescriptionTtsState> {
+  final PokemonTtsEngineFactory _engineFactory =
+      engineFactory ?? _FlutterTtsEngine.new;
   PokemonTtsEngine? _tts;
   var _initialized = false;
 
@@ -138,7 +134,9 @@ class PokemonDescriptionTtsNotifier
     if (_initialized) return;
 
     final tts = _tts ??= _engineFactory();
-    await _tryApply(() => tts.awaitSpeakCompletion(true));
+    await _tryApply(
+      () => tts.awaitSpeakCompletion(awaitCompletion: true),
+    );
     await _tryApply(
       () => tts.setSpeechRate(PokemonTtsQualityProfile.speechRate),
     );

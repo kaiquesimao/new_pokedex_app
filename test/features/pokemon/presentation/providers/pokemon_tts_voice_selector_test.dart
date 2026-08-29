@@ -100,6 +100,23 @@ void main() {
     expect(result, {'name': 'Zulu Installed', 'locale': 'en-US'});
   });
 
+  test('ignores Android feature strings containing notInstalled', () {
+    final result = PokemonTtsVoiceSelector.select(
+      locale: AppLocale.en.tag,
+      voices: [
+        {
+          'name': 'Alpha Missing',
+          'locale': 'en-US',
+          'quality': 'very high',
+          'features': 'networkTts\tnotInstalled',
+        },
+        {'name': 'Zulu Installed', 'locale': 'en-US', 'quality': 'high'},
+      ],
+    );
+
+    expect(result, {'name': 'Zulu Installed', 'locale': 'en-US'});
+  });
+
   test('ignores malformed voices and uses a stable name tie-breaker', () {
     final result = PokemonTtsVoiceSelector.select(
       locale: AppLocale.en.tag,
