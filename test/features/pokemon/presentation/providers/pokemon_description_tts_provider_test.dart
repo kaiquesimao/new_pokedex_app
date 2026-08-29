@@ -29,6 +29,12 @@ class _RecordingDescriptionTts extends PokemonDescriptionTtsNotifier {
 }
 
 void main() {
+  test('uses the natural high-quality speech profile', () {
+    expect(PokemonTtsQualityProfile.speechRate, 0.45);
+    expect(PokemonTtsQualityProfile.volume, 1.0);
+    expect(PokemonTtsQualityProfile.pitch, 1.0);
+  });
+
   test('toggle starts speaking when idle', () async {
     final recorder = _RecordingDescriptionTts();
     final container = ProviderContainer(
