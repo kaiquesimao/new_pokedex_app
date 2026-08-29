@@ -37,11 +37,11 @@ class _FakeTtsEngine implements PokemonTtsEngine {
   final List<String> languages = [];
   final List<Map<String, String>> selectedVoices = [];
   final List<String> spokenTexts = [];
-  var throwWhenReadingVoices = false;
-  var throwWhenSelectingVoice = false;
+  bool throwWhenReadingVoices = false;
+  bool throwWhenSelectingVoice = false;
 
   @override
-  Future<void> awaitSpeakCompletion(bool awaitCompletion) async {}
+  Future<void> awaitSpeakCompletion({required bool awaitCompletion}) async {}
 
   @override
   Future<void> configureIosAudio() async {}

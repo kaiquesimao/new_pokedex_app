@@ -107,7 +107,9 @@ abstract final class PokemonTtsVoiceSelector {
       return features.any(_isNotInstalled);
     }
     if (features is String) {
-      return features.trim().toLowerCase() == 'notinstalled';
+      return features
+          .split(RegExp(r'[\t,]+'))
+          .any((feature) => feature.trim().toLowerCase() == 'notinstalled');
     }
     return false;
   }
@@ -121,7 +123,7 @@ final class const _VoiceCandidate({
   required final double quality,
   required final bool networkRequired,
 }) {
-  String get identity => name ?? identifier!;
+  String get identity => '${name ?? ''}|${identifier ?? ''}';
 
   Map<String, String> get voice {
     if (name == null) return {'identifier': identifier!};
