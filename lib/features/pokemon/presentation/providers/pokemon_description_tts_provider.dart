@@ -8,9 +8,10 @@ import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_tts_
 
 abstract final class PokemonTtsQualityProfile {
   /// flutter_tts maps rates differently per platform.
-  /// Android/iOS treat ~0.5 as normal; Web Speech API uses 1.0 as normal.
+  /// Android/iOS treat ~0.5 as normal; Web Speech API uses 1.0 as normal
+  /// (Chrome voices often feel sluggish at 1.0, so web runs slightly faster).
   static double get speechRate {
-    if (kIsWeb) return 0.9;
+    if (kIsWeb) return 1.1;
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
       case TargetPlatform.iOS:
