@@ -1,8 +1,123 @@
 import 'dart:async' show unawaited;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
+import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_tts_voice_selector.dart';
+
+abstract final class PokemonTtsQualityProfile {
+  /// flutter_tts maps rates differently per platform.
+  /// Android/iOS treat ~0.5 as normal; Web Speech API uses 1.0 as normal
+  /// (Chrome voices often feel sluggish at 1.0, so web runs slightly faster).
+  static double get speechRate {
+    if (kIsWeb) return 1.1;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        return 0.45;
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return 0.5;
+    }
+  }
+
+  static const double volume = 1;
+  static const double pitch = 1;
+}
+
+typedef PokemonTtsEngineFactory = PokemonTtsEngine Function();
+
+abstract interface class PokemonTtsEngine {
+  Future<dynamic> awaitSpeakCompletion({required bool awaitCompletion});
+  Future<void> configureIosAudio();
+  Future<dynamic> get voices;
+  void setCancelHandler(void Function() handler);
+  void setCompletionHandler(void Function() handler);
+  void setErrorHandler(void Function(dynamic message) handler);
+  Future<dynamic> isLanguageAvailable(String language);
+  Future<dynamic> setLanguage(String language);
+  Future<dynamic> setPitch(double pitch);
+  Future<dynamic> setSpeechRate(double rate);
+  Future<dynamic> setVoice(Map<String, String> voice);
+  Future<dynamic> setVolume(double volume);
+  Future<dynamic> speak(String text);
+  Future<dynamic> stop();
+}
+
+final class _FlutterTtsEngine() implements PokemonTtsEngine {
+  final FlutterTts _tts = FlutterTts();
+
+  @override
+  Future<dynamic> awaitSpeakCompletion({required bool awaitCompletion}) =>
+      _tts.awaitSpeakCompletion(awaitCompletion);
+
+  @override
+  Future<void> configureIosAudio() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return;
+
+    try {
+      await _tts.setIosAudioCategory(
+        IosTextToSpeechAudioCategory.playback,
+        const [
+          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+        ],
+        IosTextToSpeechAudioMode.voicePrompt,
+      );
+    } on Object {
+      // Audio category support is optional and must not block speech.
+    }
+
+    try {
+      await _tts.setSharedInstance(true);
+    } on Object {
+      // Shared audio session support is optional and must not block speech.
+    }
+  }
+
+  @override
+  Future<dynamic> get voices => _tts.getVoices;
+
+  @override
+  void setCancelHandler(void Function() handler) =>
+      _tts.setCancelHandler(handler);
+
+  @override
+  void setCompletionHandler(void Function() handler) =>
+      _tts.setCompletionHandler(handler);
+
+  @override
+  void setErrorHandler(void Function(dynamic message) handler) =>
+      _tts.setErrorHandler(handler);
+
+  @override
+  Future<dynamic> isLanguageAvailable(String language) =>
+      _tts.isLanguageAvailable(language);
+
+  @override
+  Future<dynamic> setLanguage(String language) => _tts.setLanguage(language);
+
+  @override
+  Future<dynamic> setPitch(double pitch) => _tts.setPitch(pitch);
+
+  @override
+  Future<dynamic> setSpeechRate(double rate) => _tts.setSpeechRate(rate);
+
+  @override
+  Future<dynamic> setVoice(Map<String, String> voice) => _tts.setVoice(voice);
+
+  @override
+  Future<dynamic> setVolume(double volume) => _tts.setVolume(volume);
+
+  @override
+  Future<dynamic> speak(String text) => _tts.speak(text);
+
+  @override
+  Future<dynamic> stop() => _tts.stop();
+}
 
 enum PokemonDescriptionTtsStatus { idle, speaking, error }
 
@@ -10,9 +125,12 @@ class const PokemonDescriptionTtsState({
   final PokemonDescriptionTtsStatus status = PokemonDescriptionTtsStatus.idle,
 });
 
-class PokemonDescriptionTtsNotifier
-    extends Notifier<PokemonDescriptionTtsState> {
-  FlutterTts? _tts;
+class PokemonDescriptionTtsNotifier({
+  PokemonTtsEngineFactory? engineFactory,
+}) extends Notifier<PokemonDescriptionTtsState> {
+  final PokemonTtsEngineFactory _engineFactory =
+      engineFactory ?? _FlutterTtsEngine.new;
+  PokemonTtsEngine? _tts;
   var _initialized = false;
 
   @override
@@ -31,14 +149,38 @@ class PokemonDescriptionTtsNotifier
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
 
-    final tts = _tts ??= FlutterTts();
-    await tts.awaitSpeakCompletion(true);
+    final tts = _tts ??= _engineFactory();
+    await _tryApply(
+      () => tts.awaitSpeakCompletion(awaitCompletion: true),
+    );
+    await _tryApply(
+      () => tts.setSpeechRate(PokemonTtsQualityProfile.speechRate),
+    );
+    await _tryApply(() => tts.setVolume(PokemonTtsQualityProfile.volume));
+    await _tryApply(() => tts.setPitch(PokemonTtsQualityProfile.pitch));
+    await _tryConfigureIosAudio(tts);
     tts
       ..setCompletionHandler(_onFinished)
       ..setCancelHandler(_onFinished)
       ..setErrorHandler((_) => _onFinished());
 
     _initialized = true;
+  }
+
+  Future<void> _tryApply(Future<dynamic> Function() operation) async {
+    try {
+      await operation();
+    } on Object {
+      // Optional engine configuration must not block speech.
+    }
+  }
+
+  Future<void> _tryConfigureIosAudio(PokemonTtsEngine tts) async {
+    try {
+      await tts.configureIosAudio();
+    } on Object {
+      // Audio category support is optional and must not block speech.
+    }
   }
 
   void _onFinished() {
@@ -77,6 +219,7 @@ class PokemonDescriptionTtsNotifier
 
     final language = await _resolveLanguage(locale);
     await tts.setLanguage(language);
+    await _trySelectVoice(tts, language);
 
     if (!ref.mounted) return;
     state = const PokemonDescriptionTtsState(
@@ -99,6 +242,29 @@ class PokemonDescriptionTtsNotifier
     }
   }
 
+  Future<void> _trySelectVoice(PokemonTtsEngine tts, String language) async {
+    dynamic availableVoices;
+    try {
+      availableVoices = await tts.voices;
+    } on Object {
+      return;
+    }
+
+    if (availableVoices is! List<dynamic>) return;
+
+    try {
+      final voice = PokemonTtsVoiceSelector.select(
+        voices: availableVoices,
+        locale: language,
+      );
+      if (voice != null) {
+        await tts.setVoice(voice);
+      }
+    } on Object {
+      // Voice selection is optional; setLanguage remains the fallback.
+    }
+  }
+
   Future<void> stop() async {
     await _tts?.stop();
     if (!ref.mounted) return;
@@ -117,7 +283,10 @@ class PokemonDescriptionTtsNotifier
   }
 }
 
-final NotifierProvider<PokemonDescriptionTtsNotifier, PokemonDescriptionTtsState>
+final NotifierProvider<
+  PokemonDescriptionTtsNotifier,
+  PokemonDescriptionTtsState
+>
 pokemonDescriptionTtsProvider =
     NotifierProvider<PokemonDescriptionTtsNotifier, PokemonDescriptionTtsState>(
       PokemonDescriptionTtsNotifier.new,
