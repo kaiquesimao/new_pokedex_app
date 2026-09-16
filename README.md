@@ -161,14 +161,14 @@ Production URL: **https://pokedata.kaique.site**
 SPA deep links use [`web/_redirects`](web/_redirects). Headers: [`web/_headers`](web/_headers).
 Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 
-### Android → Play Store (internal testing)
+### Android → Play Store (open testing / beta)
 
 [`.github/workflows/release-android.yml`](.github/workflows/release-android.yml):
 
 | Trigger | What runs |
 |---------|-------------|
-| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **internal** track |
-| Manual (`workflow_dispatch`) from `master` | Same; choose track (`internal` / `alpha` / `beta`) and whether to upload |
+| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **beta** (open testing) track |
+| Manual (`workflow_dispatch`) from `master` | Same; choose track (`beta` / `internal` / `alpha`) and whether to upload |
 
 Tags do **not** start the workflow. Create them on a PR branch with the
 release script; Android deploys only after that version is merged to `master`.

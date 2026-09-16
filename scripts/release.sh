@@ -107,5 +107,5 @@ cat <<EOF
 
 Done. Pushed ${tag} from ${branch}.
 Android release runs after this version reaches master (merge the PR).
-Track: internal (default). Monitor: Actions → Release Android
+Track: beta / open testing (default). Monitor: Actions → Release Android
 EOF
