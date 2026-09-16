@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
@@ -112,9 +113,22 @@ class _FakeTtsEngine implements PokemonTtsEngine {
 
 void main() {
   test('uses the natural high-quality speech profile', () {
-    expect(PokemonTtsQualityProfile.speechRate, 0.45);
     expect(PokemonTtsQualityProfile.volume, 1.0);
     expect(PokemonTtsQualityProfile.pitch, 1.0);
+  });
+
+  test('keeps a natural mobile speech rate near flutter_tts normal', () {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    expect(PokemonTtsQualityProfile.speechRate, 0.45);
+  });
+
+  test('uses a faster speech rate on desktop platforms', () {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    expect(PokemonTtsQualityProfile.speechRate, 0.5);
   });
 
   test('toggle starts speaking when idle', () async {

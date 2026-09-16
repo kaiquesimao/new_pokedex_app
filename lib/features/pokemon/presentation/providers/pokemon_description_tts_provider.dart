@@ -7,7 +7,22 @@ import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_tts_voice_selector.dart';
 
 abstract final class PokemonTtsQualityProfile {
-  static const double speechRate = 0.45;
+  /// flutter_tts maps rates differently per platform.
+  /// Android/iOS treat ~0.5 as normal; Web Speech API uses 1.0 as normal.
+  static double get speechRate {
+    if (kIsWeb) return 0.9;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        return 0.45;
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return 0.5;
+    }
+  }
+
   static const double volume = 1;
   static const double pitch = 1;
 }
