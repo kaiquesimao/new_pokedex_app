@@ -158,13 +158,29 @@ Dependabot: [`.github/dependabot.yml`](.github/dependabot.yml).
 | Trigger | What runs |
 |---------|-------------|
 | Every push / PR | `flutter analyze` + `flutter test` |
+| Every push / PR | Worker job: catalog/migrations validate + typecheck + vitest + dry-run |
 | Push to `master` | `flutter build web --wasm` → deploy **production** → smoke checks |
+| Push to `master` | Apply D1 migrations → deploy **guess-the-pokemon** Worker → API smoke |
 | PR (same repo) | Same Wasm build → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
 
-Production URL: **https://pokedata.kaique.site**
+Production URLs:
+
+- Web: **https://pokedata.kaique.site**
+- Worker API: **https://guess-the-pokemon.kaique-workspace.workers.dev**
 
 SPA deep links use [`web/_redirects`](web/_redirects). Headers: [`web/_headers`](web/_headers).
 Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
+
+### Free-tier monitor
+
+[`.github/workflows/free-tier-monitor.yml`](.github/workflows/free-tier-monitor.yml):
+
+| Trigger | What runs |
+|---------|-------------|
+| Every 6 hours + manual | GraphQL usage for Workers requests and D1 rows read/written |
+
+Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
+(100k requests, 5M D1 rows read, 100k D1 rows written). Limits reset at 00:00 UTC.
 
 ### Android → Play Store (open testing / beta)
 
@@ -207,8 +223,8 @@ Or: Actions → **Release Android** → Run workflow (upload optional for build-
 
 | Secret | Purpose |
 |--------|---------|
-| `DART_DEFINES_JSON` | Full contents of `dart_defines.json` (same shape as [`dart_defines.example.json`](dart_defines.example.json)) |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with **Account → Cloudflare Pages → Edit** |
+| `DART_DEFINES_JSON` | Full contents of `dart_defines.json` (same shape as [`dart_defines.example.json`](dart_defines.example.json)). Include `GAME_API_BASE_URL` = `https://guess-the-pokemon.kaique-workspace.workers.dev` for competitive mode. |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with **Account → Cloudflare Pages → Edit**, **Account → Workers Scripts → Edit**, **Account → D1 → Edit**, and **Account → Account Analytics → Read** |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
 
 **Android release (required for `release-android.yml`):**

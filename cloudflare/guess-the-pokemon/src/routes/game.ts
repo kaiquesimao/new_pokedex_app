@@ -101,10 +101,12 @@ async function rejectBody(request: Request, allowBody: boolean): Promise<void> {
   if (value && (!/^\d+$/.test(value) || Number(value) > MAX_REQUEST_BODY_BYTES)) {
     throw new HttpError('REQUEST_BODY_TOO_LARGE', 'Request body is too large', 413);
   }
-  if (request.body && (await request.arrayBuffer()).byteLength > MAX_REQUEST_BODY_BYTES) {
+  const bytes = request.body ? await request.arrayBuffer() : null;
+  const size = bytes?.byteLength ?? 0;
+  if (size > MAX_REQUEST_BODY_BYTES) {
     throw new HttpError('REQUEST_BODY_TOO_LARGE', 'Request body is too large', 413);
   }
-  if (!allowBody && request.body) {
+  if (!allowBody && size > 0) {
     throw new HttpError('INVALID_JSON', 'Request body must be empty', 400);
   }
 }

@@ -72,6 +72,8 @@ android/key.properties
 
 # Cloudflare Wrangler local cache
 .wrangler/
+cloudflare/guess-the-pokemon/.smoke-*.tmp
+cloudflare/guess-the-pokemon/.cursor-encryption-key.tmp
 
 # Node (seed scripts)
 scripts/node_modules/

@@ -3,17 +3,20 @@ main = "src/index.ts"
 compatibility_date = "2026-09-17"
 
 [vars]
-FIREBASE_PROJECT_ID = "replace-with-firebase-project-id"
-GAME_API_BASE_URL = "https://replace-with-worker-url"
-CORS_ALLOWED_ORIGINS = "https://replace-with-app-origin"
+FIREBASE_PROJECT_ID = "pokedex-app-c5e90"
+GAME_API_BASE_URL = "https://guess-the-pokemon.kaique-workspace.workers.dev"
+CORS_ALLOWED_ORIGINS = "https://pokedata.kaique.site,https://pokedex-app-c5e90.web.app,https://pokedex-app-c5e90.firebaseapp.com"
 
 [assets]
 directory = "./catalog"
 binding = "CATALOG_ASSETS"
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+
 [[d1_databases]]
 binding = "DB"
 database_name = "guess-the-pokemon"
-# Replace this placeholder locally or in CI. Never commit a real account ID.
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "ee058ebd-92d3-473e-b81b-2a7b4f7933fd"
 migrations_dir = "migrations"

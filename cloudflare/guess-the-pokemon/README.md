@@ -77,9 +77,36 @@ windows.
 ```shell
 npm test
 npm run typecheck
-npm run build
+npm run ci
 npm run dry-run
 ```
 
+`npm run ci` validates the checked-in catalog (1,025 entries), contiguous D1
+migrations, TypeScript, Vitest, and a Wrangler dry-run bundle. It does **not**
+refetch PokeAPI.
+
 Authenticated routes are under `/v1/game/`, `/v1/leaderboards`, and
 `/v1/me/game-profile`. All game mutations require a Firebase Bearer token.
+
+Production Worker URL:
+
+```text
+https://guess-the-pokemon.kaique-workspace.workers.dev
+```
+
+Set the same value as `GAME_API_BASE_URL` in the local gitignored
+`dart_defines.json`. For a quick authenticated smoke against production:
+
+```shell
+# Write a Firebase ID token to .smoke-id-token.tmp, then:
+npm run smoke:production
+```
+
+Free-tier usage (needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`):
+
+```shell
+npm run monitor:free-tier
+```
+
+GitHub Actions runs the same Worker CI on every PR/push and deploys the Worker
+from `master`. See the root README CI section.

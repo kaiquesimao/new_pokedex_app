@@ -81,4 +81,21 @@ describe('top-level Worker routing', () => {
     expect(response.headers.get('access-control-allow-origin')).toBe('https://app.example.test');
     await expect(response.json()).resolves.toMatchObject({ error: { code: 'AUTH_REQUIRED' } });
   });
+
+  it('sets cache-control and Vary: Origin on success and error responses', async () => {
+    const ok = await worker.fetch(new Request('https://test/round?seed=a&round=1', {
+      headers: { origin: 'https://app.example.test' },
+    }), testEnv);
+    expect(ok.headers.get('vary')).toBe('Origin');
+    expect(ok.headers.get('access-control-allow-origin')).toBe('https://app.example.test');
+
+    const unauthorized = await worker.fetch(new Request('https://test/v1/game/sessions', {
+      method: 'POST',
+      headers: { origin: 'https://app.example.test' },
+    }), testEnv);
+    expect(unauthorized.status).toBe(401);
+    expect(unauthorized.headers.get('cache-control')).toBe('no-store');
+    expect(unauthorized.headers.get('vary')).toBe('Origin');
+    expect(unauthorized.headers.get('access-control-allow-origin')).toBe('https://app.example.test');
+  });
 });
