@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/guess_the_pokemon_providers.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart'
     show localFavoritesRepositoryProvider;
 
@@ -22,6 +23,8 @@ final authSessionEffectsProvider = Provider<void>((ref) {
     if (!sessionEnded && !userChanged) return;
 
     unawaited(ref.read(localFavoritesRepositoryProvider).replaceAll({}));
+    ref.invalidate(guessThePokemonControllerProvider);
+    ref.invalidate(guessThePokemonRepositoryProvider);
     ref.read(registerFlowProvider.notifier).reset();
   });
 });

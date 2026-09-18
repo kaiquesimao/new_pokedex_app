@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/locale/locale_resolver.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/profile/domain/entities/profile_settings.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const notifyNewPokemonKey = 'profile_notify_new_pokemon';
@@ -64,6 +65,23 @@ class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
     final next = state.appLanguage == 'pt-BR' ? 'en-US' : 'pt-BR';
     state = state.copyWith(appLanguage: next);
     await _persist(state);
+  }
+
+  Future<void> loadPublicProfilePreference() async {
+    final value = await ref
+        .read(guessThePokemonRepositoryProvider)
+        .getPublicProfilePreference();
+    state = state.copyWith(publicProfile: value);
+  }
+
+  Future<void> setPublicProfile({required bool value}) async {
+    await ref
+        .read(guessThePokemonRepositoryProvider)
+        .savePublicProfilePreference(
+          value: value,
+          displayName: ref.read(authProvider).displayName,
+        );
+    state = state.copyWith(publicProfile: value);
   }
 }
 

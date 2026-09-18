@@ -14,6 +14,11 @@ Flutter app targeting **Android** and **Web** (mobile-first).
 
 See [`lib/core/firebase/README.md`](lib/core/firebase/README.md) for Firebase setup details.
 
+`GAME_API_BASE_URL` configures the optional competitive game Worker API. It is
+empty in the example configuration, which intentionally keeps competitive
+remote calls disabled and lets the game run in local mode. Supply the Worker
+base URL through `dart_defines.json` to enable authenticated competitive play.
+
 ## Run locally
 
 Configs in [`.vscode/launch.json`](.vscode/launch.json) pass

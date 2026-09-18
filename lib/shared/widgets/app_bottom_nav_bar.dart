@@ -38,6 +38,7 @@ class const AppBottomNavBar({
       l10n.navRegions,
       l10n.navFavorites,
       l10n.navAccount,
+      l10n.navGame,
     ];
 
     return Padding(
@@ -123,14 +124,16 @@ class const _NavSvg({
         selected
             ? AppAssets.navFavoritesActive
             : AppAssets.navFavoritesInactive,
-      _ => selected ? AppAssets.navProfileActive : AppAssets.navProfileInactive,
+      3 => selected ? AppAssets.navProfileActive : AppAssets.navProfileInactive,
+      _ => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
     };
 
     final fallback = switch (index) {
       0 => Icons.catching_pokemon,
       1 => Icons.public,
       2 => Icons.favorite_border,
-      _ => Icons.person_outline,
+      3 => Icons.person_outline,
+      _ => Icons.catching_pokemon,
     };
 
     // ponytail: assets already have active/inactive variants; no colorFilter.

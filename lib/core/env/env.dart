@@ -38,5 +38,9 @@ abstract final class Env {
     'FIREBASE_IOS_BUNDLE_ID',
   );
 
+  static const String gameApiBaseUrl = String.fromEnvironment(
+    'GAME_API_BASE_URL',
+  );
+
   static bool get isFirebaseConfigured => projectId.isNotEmpty;
 }

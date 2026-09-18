@@ -16,6 +16,8 @@ import 'package:pokedex_app/features/auth/presentation/pages/register_success_pa
 import 'package:pokedex_app/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/favorites/presentation/pages/favorites_page.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/guess_the_pokemon_page.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/leaderboard_page.dart';
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -119,6 +121,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           library: profile_extras.loadLibrary(),
           builder: (_) => profile_extras.ChangePasswordPage(),
         ),
+      ),
+
+      GoRoute(
+        path: '/leaderboard',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, _) => const LeaderboardPage(),
       ),
 
       GoRoute(
@@ -310,6 +318,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
                 builder: (_, _) =>
                     const LazyShellTab(tabIndex: 3, child: ProfilePage()),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/game',
+
+                builder: (_, _) =>
+                    const LazyShellTab(tabIndex: 4, child: GuessThePokemonPage()),
               ),
             ],
           ),

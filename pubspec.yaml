@@ -63,6 +63,7 @@ flutter:
     - assets/images/characters/
     - assets/images/regions/
     - assets/legal/
+    - assets/game/catalog-v1.json
   fonts:
     - family: Poppins
       fonts:

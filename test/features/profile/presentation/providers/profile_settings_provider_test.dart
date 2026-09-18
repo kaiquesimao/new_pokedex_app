@@ -1,4 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
+import 'package:pokedex_app/core/network/guess_the_pokemon_api_client.dart';
+import 'package:pokedex_app/core/providers/core_providers.dart';
+import 'package:pokedex_app/core/providers/firebase_providers.dart';
+import 'package:pokedex_app/core/firebase/firebase_bootstrap.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_local_datasource.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_remote_datasource.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/repositories/guess_the_pokemon_repository_impl.dart';
 import 'package:pokedex_app/features/profile/presentation/providers/profile_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -77,6 +86,55 @@ void main() {
     expect(settings.notifyNewPokemon, isFalse);
     expect(settings.notifyAppUpdates, isTrue);
     expect(settings.appLanguage, 'pt-BR');
+  });
+
+  test('setPublicProfile persists through the game repository', () async {
+    SharedPreferences.setMockInitialValues({'mock_auth_name': 'Ash'});
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic>? profilePayload;
+    final repository = GuessThePokemonRepositoryImpl(
+      local: GuessThePokemonLocalDataSource(prefs),
+      remote: GuessThePokemonRemoteDataSource(
+        GuessThePokemonApiClient(
+          Dio(BaseOptions(baseUrl: 'https://worker.example.test'))
+            ..interceptors.add(
+              InterceptorsWrapper(
+                onRequest: (options, handler) {
+                  if (options.path == '/v1/me/game-profile') {
+                    profilePayload = Map<String, dynamic>.from(
+                      options.data as Map,
+                    );
+                  }
+                  handler.resolve(
+                    Response(requestOptions: options, data: <String, dynamic>{}),
+                  );
+                },
+              ),
+            ),
+        ),
+      ),
+    );
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        firebaseBootstrapProvider.overrideWithValue(
+          const FirebaseBootstrapResult(isAvailable: false),
+        ),
+        guessThePokemonRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container
+        .read(profileSettingsProvider.notifier)
+        .setPublicProfile(value: true);
+
+    expect(container.read(profileSettingsProvider).publicProfile, isTrue);
+    expect(prefs.getBool('guess_the_pokemon_public_profile:guest'), isTrue);
+    expect(profilePayload, {
+      'isAnonymous': false,
+      'displayName': 'Ash',
+    });
   });
 
   test('ignores leftover mega/other form preference keys', () async {

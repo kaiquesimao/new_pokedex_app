@@ -19,6 +19,7 @@ String apiLoadTargetMessage(AppLocalizations l10n, ApiLoadTarget target) {
     ApiLoadTarget.evolutionChain => l10n.errorLoadEvolutionChain,
     ApiLoadTarget.species => l10n.errorLoadSpecies,
     ApiLoadTarget.form => l10n.errorLoadForm,
+    ApiLoadTarget.guessThePokemon => l10n.errorGenericRetry,
   };
 }
 

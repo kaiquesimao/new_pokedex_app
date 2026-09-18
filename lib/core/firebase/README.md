@@ -16,7 +16,7 @@ Firebase credentials are **not** embedded in `lib/firebase_options.dart`. They a
 
 | File | Role |
 |------|------|
-| `dart_defines.json` | Values for `FIREBASE_*` keys (see `dart_defines.example.json`) |
+| `dart_defines.json` | Values for `FIREBASE_*` keys and optional `GAME_API_BASE_URL` (see `dart_defines.example.json`) |
 | `lib/core/env/env.dart` | Reads `String.fromEnvironment('FIREBASE_*')` |
 | `lib/firebase_options.dart` | Builds `FirebaseOptions` from `Env` |
 | `lib/core/firebase/firebase_bootstrap.dart` | Calls `Firebase.initializeApp` when configured |
@@ -28,6 +28,9 @@ Build/run **must** include:
 ```
 
 Release builds without `FIREBASE_PROJECT_ID` show a configuration error screen (no mock auth fallback).
+
+`GAME_API_BASE_URL` is optional. Leave it empty to disable competitive remote
+calls and use local game mode; provide the Worker base URL to enable them.
 
 ## Bootstrap
 

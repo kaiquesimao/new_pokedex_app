@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get navAccount;
 
+  /// No description provided for @navGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Game'**
+  String get navGame;
+
   /// Help FAQ: changing app language
   ///
   /// In en, this message translates to:
@@ -943,6 +949,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App updates'**
   String get profileNotifyAppUpdates;
+
+  /// No description provided for @profilePublicProfileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show my trainer name on the leaderboard'**
+  String get profilePublicProfileLabel;
 
   /// No description provided for @profileLanguageTitle.
   ///
@@ -2341,6 +2353,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This production build requires Firebase. Configure dart_defines.json and rebuild the app with --dart-define-from-file=dart_defines.json.'**
   String get firebaseConfigErrorBody;
+
+  /// No description provided for @gameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s that Pokémon?'**
+  String get gameTitle;
+
+  /// No description provided for @gameGuestMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Play as a guest'**
+  String get gameGuestMessage;
+
+  /// No description provided for @gameStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start game'**
+  String get gameStartButton;
+
+  /// No description provided for @gameRoundPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Which Pokémon is hidden?'**
+  String get gameRoundPrompt;
+
+  /// No description provided for @gamePokemonNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Pokémon #{id}'**
+  String gamePokemonNumber(Object id);
+
+  /// No description provided for @gameAnswerSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer {name}'**
+  String gameAnswerSemantics(Object name);
+
+  /// No description provided for @gameScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{score} points'**
+  String gameScore(Object score);
+
+  /// No description provided for @gameResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game result'**
+  String get gameResultTitle;
+
+  /// No description provided for @gameBestScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Best score: {score}'**
+  String gameBestScore(Object score);
+
+  /// No description provided for @gamePlayAgainButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Play again'**
+  String get gamePlayAgainButton;
+
+  /// No description provided for @gamePublishButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish score'**
+  String get gamePublishButton;
+
+  /// No description provided for @gameRetryPublicationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try publishing again'**
+  String get gameRetryPublicationButton;
+
+  /// No description provided for @gamePublicationPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Publishing score...'**
+  String get gamePublicationPending;
+
+  /// No description provided for @gamePublicationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The score could not be published.'**
+  String get gamePublicationFailed;
+
+  /// No description provided for @gamePublishedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your score was published to the leaderboard.'**
+  String get gamePublishedMessage;
+
+  /// No description provided for @gamePublicOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to publish your score to the leaderboard.'**
+  String get gamePublicOnlyMessage;
+
+  /// No description provided for @gameAbandonTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon game'**
+  String get gameAbandonTooltip;
+
+  /// No description provided for @gameAbandonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the game?'**
+  String get gameAbandonTitle;
+
+  /// No description provided for @gameAbandonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress in this game will be lost.'**
+  String get gameAbandonMessage;
+
+  /// No description provided for @gameAbandonButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave game'**
+  String get gameAbandonButton;
+
+  /// No description provided for @gameKeepPlayingButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep playing'**
+  String get gameKeepPlayingButton;
+
+  /// No description provided for @gameLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing game...'**
+  String get gameLoading;
+
+  /// No description provided for @gameError.
+  ///
+  /// In en, this message translates to:
+  /// **'The game could not be started.'**
+  String get gameError;
+
+  /// No description provided for @gameRetryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get gameRetryButton;
+
+  /// No description provided for @gameLeaderboardButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View leaderboard'**
+  String get gameLeaderboardButton;
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardGeneralTab.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get leaderboardGeneralTab;
+
+  /// No description provided for @leaderboardWeeklyTab.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get leaderboardWeeklyTab;
+
+  /// No description provided for @leaderboardCurrentUser.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get leaderboardCurrentUser;
+
+  /// No description provided for @leaderboardAnonymousTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous Trainer'**
+  String get leaderboardAnonymousTrainer;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No scores have been published yet.'**
+  String get leaderboardEmpty;
+
+  /// No description provided for @leaderboardOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard unavailable offline.'**
+  String get leaderboardOffline;
+
+  /// No description provided for @leaderboardError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the leaderboard.'**
+  String get leaderboardError;
+
+  /// No description provided for @leaderboardRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get leaderboardRetry;
+
+  /// No description provided for @leaderboardSignInGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to publish your score and appear with your trainer name.'**
+  String get leaderboardSignInGuidance;
 }
 
 class _AppLocalizationsDelegate

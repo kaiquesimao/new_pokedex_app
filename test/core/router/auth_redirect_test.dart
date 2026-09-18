@@ -130,6 +130,30 @@ void main() {
       );
     });
 
+    test('guest can open the game route', () {
+      expect(
+        resolveAuthRedirect(
+          auth: const AuthState(isInitialized: true),
+          onboardingCompleted: onboardingDone,
+          legalTermsAccepted: termsAccepted,
+          path: '/game',
+        ),
+        isNull,
+      );
+    });
+
+    test('guest can open the leaderboard route', () {
+      expect(
+        resolveAuthRedirect(
+          auth: const AuthState(isInitialized: true),
+          onboardingCompleted: onboardingDone,
+          legalTermsAccepted: termsAccepted,
+          path: '/leaderboard',
+        ),
+        isNull,
+      );
+    });
+
     test('legal terms route bypasses onboarding', () {
       expect(
         resolveAuthRedirect(

@@ -22,6 +22,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navAccount => 'Conta';
 
   @override
+  String get navGame => 'Jogo';
+
+  @override
   String get profileHelpLanguageQuestion => 'Como alterar o idioma?';
 
   @override
@@ -473,6 +476,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get profileNotifyAppUpdates => 'Atualizações do app';
+
+  @override
+  String get profilePublicProfileLabel =>
+      'Mostrar meu nome de treinador no ranking';
 
   @override
   String get profileLanguageTitle => 'Idioma';
@@ -1253,4 +1260,119 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get firebaseConfigErrorBody =>
       'Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json.';
+
+  @override
+  String get gameTitle => 'Quem é esse Pokémon?';
+
+  @override
+  String get gameGuestMessage => 'Jogar como convidado';
+
+  @override
+  String get gameStartButton => 'Começar partida';
+
+  @override
+  String get gameRoundPrompt => 'Qual Pokémon está escondido?';
+
+  @override
+  String gamePokemonNumber(Object id) {
+    return 'Pokémon #$id';
+  }
+
+  @override
+  String gameAnswerSemantics(Object name) {
+    return 'Resposta $name';
+  }
+
+  @override
+  String gameScore(Object score) {
+    return '$score pontos';
+  }
+
+  @override
+  String get gameResultTitle => 'Resultado da partida';
+
+  @override
+  String gameBestScore(Object score) {
+    return 'Melhor pontuação: $score';
+  }
+
+  @override
+  String get gamePlayAgainButton => 'Jogar novamente';
+
+  @override
+  String get gamePublishButton => 'Publicar pontuação';
+
+  @override
+  String get gameRetryPublicationButton => 'Tentar publicar novamente';
+
+  @override
+  String get gamePublicationPending => 'Publicando pontuação...';
+
+  @override
+  String get gamePublicationFailed => 'Não foi possível publicar a pontuação.';
+
+  @override
+  String get gamePublishedMessage => 'Pontuação publicada no ranking.';
+
+  @override
+  String get gamePublicOnlyMessage =>
+      'Entre na sua conta para publicar sua pontuação no ranking.';
+
+  @override
+  String get gameAbandonTooltip => 'Abandonar partida';
+
+  @override
+  String get gameAbandonTitle => 'Sair da partida?';
+
+  @override
+  String get gameAbandonMessage => 'Seu progresso nesta partida será perdido.';
+
+  @override
+  String get gameAbandonButton => 'Sair da partida';
+
+  @override
+  String get gameKeepPlayingButton => 'Continuar jogando';
+
+  @override
+  String get gameLoading => 'Preparando partida...';
+
+  @override
+  String get gameError => 'Não foi possível iniciar a partida.';
+
+  @override
+  String get gameRetryButton => 'Tentar novamente';
+
+  @override
+  String get gameLeaderboardButton => 'Ver ranking';
+
+  @override
+  String get leaderboardTitle => 'Ranking';
+
+  @override
+  String get leaderboardGeneralTab => 'Geral';
+
+  @override
+  String get leaderboardWeeklyTab => 'Esta semana';
+
+  @override
+  String get leaderboardCurrentUser => 'Você';
+
+  @override
+  String get leaderboardAnonymousTrainer => 'Treinador anônimo';
+
+  @override
+  String get leaderboardEmpty => 'Nenhuma pontuação foi publicada ainda.';
+
+  @override
+  String get leaderboardOffline => 'O ranking está indisponível offline.';
+
+  @override
+  String get leaderboardError => 'Não foi possível carregar o ranking.';
+
+  @override
+  String get leaderboardRetry => 'Tentar novamente';
+
+  @override
+  String get leaderboardSignInGuidance =>
+      'Entre para publicar sua pontuação e aparecer com seu nome de treinador.';
 }

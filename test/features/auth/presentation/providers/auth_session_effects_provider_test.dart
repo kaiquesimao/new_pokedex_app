@@ -6,6 +6,7 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/auth/presentation/providers/auth_session_effects_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/register_flow_provider.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -54,5 +55,46 @@ void main() {
       isEmpty,
     );
     expect(container.read(registerFlowProvider).email, isEmpty);
+  });
+
+  test('switching Firebase users scopes game recovery to the new user', () async {
+    final prefs = await SharedPreferences.getInstance();
+    var uid = 'user-1';
+    final container = ProviderContainer.test(
+      overrides: [
+        firebaseUnavailableOverride,
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => AuthState(
+            isInitialized: true,
+            isAuthenticated: true,
+            uid: uid,
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(authSessionEffectsProvider);
+
+    final firstDataSource = container.read(
+      guessThePokemonLocalDataSourceProvider,
+    );
+    await firstDataSource.savePublicationState(
+      const PublicationStateModel(
+        state: PublicationState.failed,
+        sessionId: 'user-1-session',
+      ),
+    );
+    expect(await firstDataSource.readPublicationState(), isNotNull);
+
+    uid = 'user-2';
+    container.invalidate(authProvider);
+    await Future<void>.delayed(Duration.zero);
+
+    final secondDataSource = container.read(
+      guessThePokemonLocalDataSourceProvider,
+    );
+    expect(secondDataSource.scopeKey, 'user-2');
+    expect(await secondDataSource.readPublicationState(), isNull);
   });
 }
