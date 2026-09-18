@@ -15,9 +15,10 @@ class const LeaderboardEntryTile({
     final name = playerName.trim().isEmpty
         ? l10n.leaderboardAnonymousTrainer
         : playerName;
+    final scoreLabel = l10n.gameScore(score);
 
     return Semantics(
-      label: '$rank. $name, $score',
+      label: '$rank. $name, $scoreLabel',
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -33,7 +34,7 @@ class const LeaderboardEntryTile({
         child: Row(
           children: [
             SizedBox(
-              width: 36,
+              width: 40,
               child: Text(
                 '#$rank',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -42,21 +43,20 @@ class const LeaderboardEntryTile({
               ),
             ),
             Expanded(
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    child: Text(
-                      name,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: isCurrentUser
-                            ? FontWeight.w800
-                            : FontWeight.w600,
-                      ),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: isCurrentUser
+                          ? FontWeight.w800
+                          : FontWeight.w600,
                     ),
                   ),
-                  if (isCurrentUser) ...[
-                    const SizedBox(width: 8),
+                  if (isCurrentUser)
                     Text(
                       l10n.leaderboardCurrentUser,
                       style: theme.textTheme.labelMedium?.copyWith(
@@ -64,12 +64,13 @@ class const LeaderboardEntryTile({
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
+            const SizedBox(width: 12),
             Text(
-              l10n.gameScore(score),
+              scoreLabel,
+              softWrap: false,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: theme.colorScheme.primary,

@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Introductory view for starting a local or authenticated game.
@@ -7,14 +9,15 @@ class const GameStartView({
   required this.onLeaderboard,
   super.key,
   this.errorMessage,
-}) extends StatelessWidget {
+}) extends ConsumerWidget {
   final Future<void> Function() onStart;
   final VoidCallback onLeaderboard;
   final String? errorMessage;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final isAuthenticated = ref.watch(authProvider).isAuthenticated;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -24,18 +27,14 @@ class const GameStartView({
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.catching_pokemon, size: 72),
-              const SizedBox(height: 20),
-              Text(
-                l10n.gameTitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.gameGuestMessage,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              if (!isAuthenticated) ...[
+                const SizedBox(height: 20),
+                Text(
+                  l10n.gameGuestMessage,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
               if (errorMessage != null) ...[
                 const SizedBox(height: 20),
                 Text(

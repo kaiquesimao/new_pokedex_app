@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_round.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/widgets/game_option_button.dart';
@@ -13,6 +14,10 @@ class const GameRoundView({
   this.remoteRound,
   this.score = 0,
   this.isAnswering = false,
+  this.selectedOptionId,
+  this.lastAnswerCorrect,
+  this.revealedPokemonName,
+  this.revealedSpriteUrl,
   this.error,
   this.onRetry,
 }) extends StatelessWidget {
@@ -20,6 +25,10 @@ class const GameRoundView({
   final GameRoundModel? remoteRound;
   final int score;
   final bool isAnswering;
+  final int? selectedOptionId;
+  final bool? lastAnswerCorrect;
+  final String? revealedPokemonName;
+  final String? revealedSpriteUrl;
   final Object? error;
   final VoidCallback? onRetry;
   final Future<void> Function(int optionId) onAnswer;
@@ -27,12 +36,45 @@ class const GameRoundView({
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final options = _options(l10n);
-    final spriteUrl = localRound?.correctAnswer.spriteUrl ?? remoteRound?.silhouetteUrl;
+    final rawSpriteUrl =
+        revealedSpriteUrl ??
+        localRound?.correctAnswer.spriteUrl ??
+        remoteRound?.silhouetteUrl;
+    final speciesId =
+        localRound?.correctAnswer.speciesId ??
+        PokemonSpriteUrls.idFromSpriteUrl(rawSpriteUrl ?? '');
+    final spriteUrl = rawSpriteUrl == null
+        ? null
+        : PokemonSpriteUrls.highQualitySpriteUrl(
+            rawSpriteUrl,
+            speciesId: speciesId,
+          );
+    final showReveal = isAnswering && lastAnswerCorrect != null;
 
-     if (options.isEmpty || spriteUrl == null) {
-       return Center(child: Text(l10n.gameError));
-     }
+    if (options.isEmpty || spriteUrl == null) {
+      return Center(child: Text(l10n.gameError));
+    }
+
+    final silhouetteColor = isDark
+        ? const Color(0xFFF2F2F2)
+        : const Color(0xFF1B1B1B);
+    final cardColor = isDark
+        ? theme.colorScheme.surfaceContainerHigh
+        : theme.colorScheme.surfaceContainerLowest;
+
+    final sprite = PokemonSpriteImage(
+      key: ValueKey('game-sprite-$showReveal-$spriteUrl'),
+      imageUrl: spriteUrl,
+      width: 220,
+      height: 220,
+      maxCachePixels: 768,
+      semanticLabel: showReveal
+          ? (revealedPokemonName ?? l10n.gameTitle)
+          : l10n.gameTitle,
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -42,12 +84,6 @@ class const GameRoundView({
             alignment: Alignment.centerRight,
             child: Text(l10n.gameScore(score)),
           ),
-          const SizedBox(height: 8),
-           Text(
-             l10n.gameRoundPrompt,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge,
-           ),
           if (error != null) ...[
             const SizedBox(height: 8),
             Text(l10n.gameError),
@@ -56,40 +92,44 @@ class const GameRoundView({
           ],
           const SizedBox(height: 16),
           Card(
+            color: cardColor,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: ColorFiltered(
-                colorFilter: const ColorFilter.matrix(<double>[
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ]),
-                child: PokemonSpriteImage(
-                  imageUrl: spriteUrl,
-                  width: 220,
-                  height: 220,
-                  semanticLabel: l10n.gameRoundPrompt,
-                ),
-              ),
+              child: showReveal
+                  ? sprite
+                  : ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                        silhouetteColor,
+                        BlendMode.srcIn,
+                      ),
+                      child: sprite,
+                    ),
             ),
           ),
+          if (showReveal) ...[
+            const SizedBox(height: 16),
+            Text(
+              lastAnswerCorrect!
+                  ? l10n.gameAnswerCorrect
+                  : l10n.gameAnswerWrong,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: lastAnswerCorrect!
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.error,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            if (revealedPokemonName != null &&
+                revealedPokemonName!.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.gameCorrectWas(revealedPokemonName!),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleMedium,
+              ),
+            ],
+          ],
           const SizedBox(height: 20),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -101,10 +141,17 @@ class const GameRoundView({
                 spacing: 12,
                 runSpacing: 12,
                 children: options.map((option) {
+                  final isSelected = selectedOptionId == option.speciesId;
+                  final isCorrectOption =
+                      showReveal &&
+                      revealedPokemonName != null &&
+                      option.name == revealedPokemonName;
                   return SizedBox(
                     width: optionWidth,
                     child: GameOptionButton(
                       name: option.name,
+                      selected: isSelected,
+                      correct: showReveal ? isCorrectOption : null,
                       onPressed: isAnswering
                           ? null
                           : () => onAnswer(option.speciesId),
@@ -142,7 +189,6 @@ class const GameRoundView({
             .toList() ??
         const [];
   }
-
 }
 
 class const _RoundOption({required this.speciesId, required this.name}) {

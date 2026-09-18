@@ -2378,6 +2378,24 @@ abstract class AppLocalizations {
   /// **'Which Pokémon is hidden?'**
   String get gameRoundPrompt;
 
+  /// No description provided for @gameAnswerCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get gameAnswerCorrect;
+
+  /// No description provided for @gameAnswerWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong!'**
+  String get gameAnswerWrong;
+
+  /// No description provided for @gameCorrectWas.
+  ///
+  /// In en, this message translates to:
+  /// **'It was {name}'**
+  String gameCorrectWas(String name);
+
   /// No description provided for @gamePokemonNumber.
   ///
   /// In en, this message translates to:

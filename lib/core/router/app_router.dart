@@ -303,10 +303,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
+                path: '/game',
+
+                builder: (_, _) =>
+                    const LazyShellTab(tabIndex: 2, child: GuessThePokemonPage()),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
                 path: '/favorites',
 
                 builder: (_, _) =>
-                    const LazyShellTab(tabIndex: 2, child: FavoritesPage()),
+                    const LazyShellTab(tabIndex: 3, child: FavoritesPage()),
               ),
             ],
           ),
@@ -317,18 +328,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/profile',
 
                 builder: (_, _) =>
-                    const LazyShellTab(tabIndex: 3, child: ProfilePage()),
-              ),
-            ],
-          ),
-
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/game',
-
-                builder: (_, _) =>
-                    const LazyShellTab(tabIndex: 4, child: GuessThePokemonPage()),
+                    const LazyShellTab(tabIndex: 4, child: ProfilePage()),
               ),
             ],
           ),

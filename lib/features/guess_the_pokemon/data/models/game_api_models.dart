@@ -163,19 +163,23 @@ class AnswerResultModel {
     required this.score,
     required this.finished,
     this.nextRound,
+    this.correctPokemonName,
+    this.correctSpriteUrl,
   });
 
   factory AnswerResultModel.fromJson(Map<String, dynamic> json) {
     final correct = json['correct'];
     final finished = json['finished'];
     final score = json['score'];
-    if (correct is! bool || finished is! bool || score is! int) {
+    if (correct is! bool || finished is! bool || score is! num) {
       throw const FormatException('Invalid game answer result');
     }
     return AnswerResultModel(
       correct: correct,
-      score: score,
+      score: score.toInt(),
       finished: finished,
+      correctPokemonName: json['correctPokemonName'] as String?,
+      correctSpriteUrl: json['correctSpriteUrl'] as String?,
       nextRound: json['nextRound'] is Map<String, dynamic>
           ? GameRoundModel.fromJson(json['nextRound'] as Map<String, dynamic>)
           : null,
@@ -186,6 +190,8 @@ class AnswerResultModel {
   final int score;
   final bool finished;
   final GameRoundModel? nextRound;
+  final String? correctPokemonName;
+  final String? correctSpriteUrl;
 }
 
 @immutable
@@ -201,9 +207,9 @@ class LeaderboardEntryModel {
   factory LeaderboardEntryModel.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntryModel(
       playerName: json['player_name'] as String? ?? '',
-      score: json['score'] as int? ?? 0,
+      score: (json['score'] as num?)?.toInt() ?? 0,
       completedAt: DateTime.parse(json['completed_at'] as String),
-      rank: json['rank'] as int? ?? 0,
+      rank: (json['rank'] as num?)?.toInt() ?? 0,
       isCurrentUser: json['is_current_user'] as bool? ?? false,
     );
   }

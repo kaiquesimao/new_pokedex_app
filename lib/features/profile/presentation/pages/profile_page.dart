@@ -34,7 +34,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         if (ref.read(authProvider).isAuthenticated) {
           await ref
               .read(profileSettingsProvider.notifier)
-              .loadPublicProfilePreference();
+              .ensurePublicRankingProfile();
         }
       } on Object {
         // ponytail: best-effort sync when opening profile
@@ -105,15 +105,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     .read(profileSettingsProvider.notifier)
                     .setNotifyAppUpdates(value: value),
                ),
-              showPublicProfile: auth.isAuthenticated,
-              publicProfile: settings.publicProfile,
-              onTogglePublicProfile: (value) => _saveSetting(
-                context,
-                ref,
-                () => ref
-                    .read(profileSettingsProvider.notifier)
-                    .setPublicProfile(value: value),
-              ),
               onToggleAppLanguage: () => _saveSetting(
                 context,
                 ref,
@@ -316,9 +307,6 @@ class const _SettingsSections({
   required final String versionLabel,
   required final ValueChanged<bool> onToggleNotifyNew,
   required final ValueChanged<bool> onToggleNotifyUpdates,
-  required final bool showPublicProfile,
-  required final bool publicProfile,
-  required final ValueChanged<bool> onTogglePublicProfile,
   required final VoidCallback onToggleAppLanguage,
   required final VoidCallback onTermsTap,
   required final VoidCallback onPrivacyTap,
@@ -341,12 +329,6 @@ class const _SettingsSections({
               value: settings.notifyNewPokemon,
               onChanged: onToggleNotifyNew,
             ),
-            if (showPublicProfile)
-              _ToggleRow(
-                label: l10n.profilePublicProfileLabel,
-                value: publicProfile,
-                onChanged: onTogglePublicProfile,
-              ),
             _ToggleRow(
               label: l10n.profileNotifyAppUpdates,
               value: settings.notifyAppUpdates,

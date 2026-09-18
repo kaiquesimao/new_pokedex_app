@@ -44,6 +44,8 @@
     "correct": true,
     "finished": false,
     "score": 1,
+    "correctPokemonName": "Pikachu",
+    "correctSpriteUrl": "https://example.test/sprites/25.png",
     "nextRound": {
       "roundIndex": 1,
       "difficulty": "easy",

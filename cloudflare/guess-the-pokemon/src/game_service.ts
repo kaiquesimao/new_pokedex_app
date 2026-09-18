@@ -1,4 +1,4 @@
-import { chooseRound, type CatalogEntry, type RoundSelection } from './catalog';
+import { CATALOG, chooseRound, type CatalogEntry, type RoundSelection } from './catalog';
 import { canonicalUtcTimestamp, createSession, type Clock, type D1Binding } from './db';
 import { HttpError } from './http';
 import { DEFAULT_ABUSE_LIMITS, type AbuseLimits } from './rate_limit';
@@ -25,6 +25,8 @@ export interface GameAnswerResult {
   correct: boolean;
   finished: boolean;
   score: number;
+  correctPokemonName: string;
+  correctSpriteUrl: string;
   nextRound?: GameRound;
 }
 
@@ -120,12 +122,18 @@ export async function answerGameSession(
   const correct = optionId === session.current_target_id;
   const nextIndex = roundIndex + 1;
   const nextSelection = correct ? chooseRound(session.seed, nextIndex) : undefined;
+  const target = CATALOG.find((entry) => entry.id === session.current_target_id);
+  if (!target) {
+    throw new HttpError('GAME_CATALOG_MISMATCH', 'Game catalog target is missing', 500);
+  }
   const response: GameAnswerResult = {
     sessionId,
     roundIndex,
     correct,
     finished: !correct,
     score: session.score + (correct ? 1 : 0),
+    correctPokemonName: target.label,
+    correctSpriteUrl: target.spriteUrl,
     ...(nextSelection ? { nextRound: publicRound(nextSelection, nextIndex) } : {}),
   };
   const statements = [db.prepare(`

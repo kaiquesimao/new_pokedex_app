@@ -46,10 +46,34 @@ class const PokemonSprites({
 abstract final class PokemonSpriteUrls {
   static const _homeSegment = '/other/home/';
   static const _officialSegment = '/other/official-artwork/';
+  static const _officialArtworkBase =
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
 
   static final RegExp _lowResSpritePattern = RegExp(
     r'/sprites/pokemon/\d+\.png$',
   );
+  static final RegExp _spriteIdPattern = RegExp(r'/(\d+)\.png(?:\?|$)');
+
+  /// High-quality artwork used by the guessing game and detail surfaces.
+  static String officialArtworkForId(int id) => '$_officialArtworkBase/$id.png';
+
+  /// Upgrades low-resolution game sprites to official artwork when possible.
+  static String highQualitySpriteUrl(String imageUrl, {int? speciesId}) {
+    final id = speciesId ?? idFromSpriteUrl(imageUrl);
+    if (id == null) return imageUrl;
+    if (isLowResolutionSpriteUrl(imageUrl) ||
+        (!imageUrl.contains(_officialSegment) &&
+            !imageUrl.contains(_homeSegment))) {
+      return officialArtworkForId(id);
+    }
+    return imageUrl;
+  }
+
+  static int? idFromSpriteUrl(String imageUrl) {
+    final match = _spriteIdPattern.firstMatch(imageUrl);
+    if (match == null) return null;
+    return int.tryParse(match.group(1)!);
+  }
 
   /// Returns official-artwork when [imageUrl] is a home sprite URL.
   static String? officialArtworkFallbackFor(String imageUrl) {

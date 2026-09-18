@@ -568,6 +568,14 @@
   "gameGuestMessage": "Jogar como convidado",
   "gameStartButton": "Começar partida",
   "gameRoundPrompt": "Qual Pokémon está escondido?",
+  "gameAnswerCorrect": "Acertou!",
+  "gameAnswerWrong": "Errou!",
+  "gameCorrectWas": "Era {name}",
+  "@gameCorrectWas": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "gamePokemonNumber": "Pokémon #{id}",
   "gameAnswerSemantics": "Resposta {name}",
   "gameScore": "{score} pontos",

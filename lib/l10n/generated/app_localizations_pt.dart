@@ -1274,6 +1274,17 @@ class AppLocalizationsPt extends AppLocalizations {
   String get gameRoundPrompt => 'Qual Pokémon está escondido?';
 
   @override
+  String get gameAnswerCorrect => 'Acertou!';
+
+  @override
+  String get gameAnswerWrong => 'Errou!';
+
+  @override
+  String gameCorrectWas(String name) {
+    return 'Era $name';
+  }
+
+  @override
   String gamePokemonNumber(Object id) {
     return 'Pokémon #$id';
   }

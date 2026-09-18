@@ -20,6 +20,7 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(l10n.gameTitle),
         actions: [
           if (state.status == GuessThePokemonStatus.playing ||
@@ -65,6 +66,10 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
         remoteRound: state.remoteRound,
         score: state.score,
         isAnswering: state.status == GuessThePokemonStatus.answering,
+        selectedOptionId: state.selectedOptionId,
+        lastAnswerCorrect: state.lastAnswerCorrect,
+        revealedPokemonName: state.revealedPokemonName,
+        revealedSpriteUrl: state.revealedSpriteUrl,
         error: state.error,
         onRetry: controller.retryAnswer,
         onAnswer: controller.selectAnswer,
@@ -79,12 +84,19 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
         onPublish: controller.retryPublication,
         localRound: state.localRound,
         remoteRound: state.remoteRound,
+        revealedPokemonName: state.revealedPokemonName,
+        revealedSpriteUrl: state.revealedSpriteUrl,
+        lastAnswerCorrect: state.lastAnswerCorrect,
       ),
       GuessThePokemonStatus.error => state.isRemote
           ? GameRoundView(
               localRound: state.localRound,
               remoteRound: state.remoteRound,
               score: state.score,
+              selectedOptionId: state.selectedOptionId,
+              lastAnswerCorrect: state.lastAnswerCorrect,
+              revealedPokemonName: state.revealedPokemonName,
+              revealedSpriteUrl: state.revealedSpriteUrl,
               error: state.error,
               onRetry: controller.retryAnswer,
               onAnswer: controller.selectAnswer,

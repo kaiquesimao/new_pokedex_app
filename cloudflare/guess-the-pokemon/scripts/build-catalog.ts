@@ -50,7 +50,7 @@ function toCatalogEntry(resource: ResourceList['results'][number]): CatalogEntry
     slug: resource.name,
     name: resource.name,
     label: toLabel(resource.name),
-    spriteUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+    spriteUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
     difficulty: difficultyForId(id),
   };
 }

@@ -68,20 +68,22 @@ class ProfileSettingsNotifier extends Notifier<ProfileSettings> {
   }
 
   Future<void> loadPublicProfilePreference() async {
-    final value = await ref
-        .read(guessThePokemonRepositoryProvider)
-        .getPublicProfilePreference();
-    state = state.copyWith(publicProfile: value);
+    await ensurePublicRankingProfile();
+  }
+
+  /// Trainer name is always visible on the leaderboard.
+  Future<void> ensurePublicRankingProfile() async {
+    final displayName = ref.read(authProvider).displayName;
+    await ref.read(guessThePokemonRepositoryProvider).savePublicProfilePreference(
+      value: true,
+      displayName: displayName,
+    );
+    state = state.copyWith(publicProfile: true);
   }
 
   Future<void> setPublicProfile({required bool value}) async {
-    await ref
-        .read(guessThePokemonRepositoryProvider)
-        .savePublicProfilePreference(
-          value: value,
-          displayName: ref.read(authProvider).displayName,
-        );
-    state = state.copyWith(publicProfile: value);
+    // Public ranking display is mandatory; ignore opt-out requests.
+    await ensurePublicRankingProfile();
   }
 }
 

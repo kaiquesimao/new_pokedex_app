@@ -581,6 +581,14 @@
   "gameGuestMessage": "Play as a guest",
   "gameStartButton": "Start game",
   "gameRoundPrompt": "Which Pokémon is hidden?",
+  "gameAnswerCorrect": "Correct!",
+  "gameAnswerWrong": "Wrong!",
+  "gameCorrectWas": "It was {name}",
+  "@gameCorrectWas": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "gamePokemonNumber": "Pokémon #{id}",
   "gameAnswerSemantics": "Answer {name}",
   "gameScore": "{score} points",

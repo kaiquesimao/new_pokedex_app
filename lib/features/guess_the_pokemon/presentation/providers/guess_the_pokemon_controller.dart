@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_round.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_session.dart';
@@ -32,6 +34,10 @@ class GuessThePokemonState {
     this.publicationState = PublicationState.notPublished,
     this.error,
     this.pendingSubmission,
+    this.selectedOptionId,
+    this.lastAnswerCorrect,
+    this.revealedPokemonName,
+    this.revealedSpriteUrl,
   });
 
   final GuessThePokemonStatus status;
@@ -44,16 +50,18 @@ class GuessThePokemonState {
   final PublicationState publicationState;
   final Object? error;
   final AnswerSubmissionModel? pendingSubmission;
+  final int? selectedOptionId;
+  final bool? lastAnswerCorrect;
+  final String? revealedPokemonName;
+  final String? revealedSpriteUrl;
 
-  // Kept as a convenience for local consumers; remote consumers use remoteRound.
   GameRound? get round => localRound;
 
   bool get canPublish =>
       isRemote &&
       sessionId != null &&
-       status == GuessThePokemonStatus.finished &&
-       publicationState != PublicationState.published &&
-       sessionId != null;
+      status == GuessThePokemonStatus.finished &&
+      publicationState != PublicationState.published;
 
   GuessThePokemonState copyWith({
     GuessThePokemonStatus? status,
@@ -71,6 +79,14 @@ class GuessThePokemonState {
     bool clearError = false,
     AnswerSubmissionModel? pendingSubmission,
     bool clearPendingSubmission = false,
+    int? selectedOptionId,
+    bool clearSelectedOptionId = false,
+    bool? lastAnswerCorrect,
+    bool clearLastAnswerCorrect = false,
+    String? revealedPokemonName,
+    bool clearRevealedPokemonName = false,
+    String? revealedSpriteUrl,
+    bool clearRevealedSpriteUrl = false,
   }) {
     return GuessThePokemonState(
       status: status ?? this.status,
@@ -85,11 +101,25 @@ class GuessThePokemonState {
       pendingSubmission: clearPendingSubmission
           ? null
           : (pendingSubmission ?? this.pendingSubmission),
+      selectedOptionId: clearSelectedOptionId
+          ? null
+          : (selectedOptionId ?? this.selectedOptionId),
+      lastAnswerCorrect: clearLastAnswerCorrect
+          ? null
+          : (lastAnswerCorrect ?? this.lastAnswerCorrect),
+      revealedPokemonName: clearRevealedPokemonName
+          ? null
+          : (revealedPokemonName ?? this.revealedPokemonName),
+      revealedSpriteUrl: clearRevealedSpriteUrl
+          ? null
+          : (revealedSpriteUrl ?? this.revealedSpriteUrl),
     );
   }
 }
 
 class GuessThePokemonController extends Notifier<GuessThePokemonState> {
+  static const _revealDelay = Duration(milliseconds: 750);
+
   GuessThePokemonRepository get _repository =>
       ref.read(guessThePokemonRepositoryProvider);
 
@@ -116,10 +146,13 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
   ) async {
     try {
       final cached = await repository.readCachedPublicationState();
-      if (!_mounted || cached?.sessionId == null ||
+      if (!_mounted ||
+          cached?.sessionId == null ||
           cached!.state == PublicationState.published ||
           state.status != GuessThePokemonStatus.idle ||
-          generation != _generation) return;
+          generation != _generation) {
+        return;
+      }
       final publicationState = cached.state == PublicationState.pending
           ? PublicationState.failed
           : cached.state;
@@ -135,8 +168,11 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         } on Object {
           // The in-memory state remains actionable if persistence is unavailable.
         }
-        if (!_mounted || generation != _generation ||
-            state.status != GuessThePokemonStatus.idle) return;
+        if (!_mounted ||
+            generation != _generation ||
+            state.status != GuessThePokemonStatus.idle) {
+          return;
+        }
       }
       state = GuessThePokemonState(
         status: GuessThePokemonStatus.finished,
@@ -156,6 +192,8 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
     try {
       if (_authenticated) {
         try {
+          await _ensurePublicRankingProfile();
+          if (!_isCurrent(generation)) return;
           final session = await _repository.startSession();
           if (!_isCurrent(generation)) return;
           final bestScore = await _repository.getBestScore();
@@ -169,7 +207,6 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
           );
           return;
         } on Object {
-          // A Worker outage must not prevent the offline game from starting.
           if (!_isCurrent(generation)) return;
         }
       }
@@ -185,13 +222,22 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   Future<void> selectAnswer(int optionId) async {
     if (state.status != GuessThePokemonStatus.playing) return;
-      final generation = _generation;
-    state = state.copyWith(status: GuessThePokemonStatus.answering);
+    final generation = _generation;
+    final preview = _previewAnswer(optionId);
+    state = state.copyWith(
+      status: GuessThePokemonStatus.answering,
+      selectedOptionId: optionId,
+      lastAnswerCorrect: preview.correct,
+      revealedPokemonName: preview.name,
+      revealedSpriteUrl: preview.spriteUrl,
+      clearError: true,
+    );
 
     if (state.isRemote) {
       final round = state.remoteRound;
       if (round == null) return;
       try {
+        final startedAt = DateTime.now();
         final result = await _repository.submitAnswer(
           AnswerSubmissionModel(
             sessionId: state.sessionId!,
@@ -200,24 +246,46 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
           ),
         );
         if (!_isCurrent(generation)) return;
-         await _applyRemoteResult(result, generation);
-       } on Object catch (error) {
-         if (!_isCurrent(generation)) return;
-         state = state.copyWith(
-           status: GuessThePokemonStatus.error,
-           error: error,
-           pendingSubmission: AnswerSubmissionModel(
-             sessionId: state.sessionId!,
-             roundIndex: round.roundIndex,
-             optionId: optionId,
-           ),
-         );
+        final serverName = result.correctPokemonName?.trim();
+        final serverSprite = result.correctSpriteUrl;
+        state = state.copyWith(
+          lastAnswerCorrect: result.correct,
+          revealedPokemonName:
+              (serverName != null && serverName.isNotEmpty)
+                  ? serverName
+                  : state.revealedPokemonName,
+          revealedSpriteUrl: serverSprite == null || serverSprite.isEmpty
+              ? state.revealedSpriteUrl
+              : PokemonSpriteUrls.highQualitySpriteUrl(
+                  serverSprite,
+                  speciesId: PokemonSpriteUrls.idFromSpriteUrl(serverSprite),
+                ),
+        );
+        await _holdRevealRemaining(startedAt, generation);
+        if (!_isCurrent(generation)) return;
+        await _applyRemoteResult(result, generation, keepReveal: result.finished);
+      } on Object catch (error) {
+        if (!_isCurrent(generation)) return;
+        state = state.copyWith(
+          status: GuessThePokemonStatus.error,
+          error: error,
+          pendingSubmission: AnswerSubmissionModel(
+            sessionId: state.sessionId!,
+            roundIndex: round.roundIndex,
+            optionId: optionId,
+          ),
+        );
       }
       return;
     }
 
     final round = state.localRound;
-    if (round != null) await _applyLocalResult(round, optionId, generation);
+    if (round != null) {
+      final startedAt = DateTime.now();
+      await _holdRevealRemaining(startedAt, generation);
+      if (!_isCurrent(generation)) return;
+      await _applyLocalResult(round, optionId, generation);
+    }
   }
 
   Future<void> playAgain() => start();
@@ -228,7 +296,7 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
     state = state.copyWith(status: GuessThePokemonStatus.answering, clearError: true);
     try {
       final result = await _repository.submitAnswer(submission);
-      await _applyRemoteResult(result, _generation);
+      await _applyRemoteResult(result, _generation, keepReveal: result.finished);
     } on Object catch (error) {
       state = state.copyWith(status: GuessThePokemonStatus.error, error: error);
     }
@@ -247,15 +315,15 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
     try {
       final publication = await _repository.publishScore(state.sessionId!);
       if (!_isCurrent(generation)) return;
-       final saved = PublicationStateModel(
-         state: publication.state,
-         publishedAt: publication.publishedAt,
-         sessionId: state.sessionId,
-         score: state.score,
-       );
-       await _repository.savePublicationState(saved);
-       if (!_isCurrent(generation)) return;
-       state = state.copyWith(publicationState: publication.state);
+      final saved = PublicationStateModel(
+        state: publication.state,
+        publishedAt: publication.publishedAt,
+        sessionId: state.sessionId,
+        score: state.score,
+      );
+      await _repository.savePublicationState(saved);
+      if (!_isCurrent(generation)) return;
+      state = state.copyWith(publicationState: publication.state);
     } on Object catch (error) {
       if (!_isCurrent(generation)) return;
       state = state.copyWith(
@@ -288,13 +356,14 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   Future<void> _applyRemoteResult(
     AnswerResultModel result,
-    int generation,
-  ) async {
+    int generation, {
+    bool keepReveal = false,
+  }) async {
     final bestScore = result.score > state.bestScore
         ? result.score
         : state.bestScore;
     if (result.score > state.bestScore) {
-       await _repository.saveBestScore(result.score);
+      await _repository.saveBestScore(result.score);
       if (!_isCurrent(generation)) return;
     }
     if (!_isCurrent(generation)) return;
@@ -303,6 +372,9 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         status: GuessThePokemonStatus.finished,
         score: result.score,
         bestScore: bestScore,
+        lastAnswerCorrect: result.correct,
+        revealedPokemonName: keepReveal ? state.revealedPokemonName : state.revealedPokemonName,
+        revealedSpriteUrl: keepReveal ? state.revealedSpriteUrl : state.revealedSpriteUrl,
       );
       await _repository.savePublicationState(
         PublicationStateModel(
@@ -320,6 +392,10 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         remoteRound: result.nextRound,
         score: result.score,
         bestScore: bestScore,
+        clearSelectedOptionId: true,
+        clearLastAnswerCorrect: true,
+        clearRevealedPokemonName: true,
+        clearRevealedSpriteUrl: true,
       );
       return;
     }
@@ -354,6 +430,9 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         localRound: round,
         score: result.session.score,
         bestScore: bestScore,
+        lastAnswerCorrect: result.isCorrect,
+        revealedPokemonName: round.correctAnswer.name,
+        revealedSpriteUrl: round.correctAnswer.spriteUrl,
       );
       return;
     }
@@ -362,6 +441,69 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
       localRound: engine.nextRound(_localSession),
       score: result.session.score,
       bestScore: bestScore,
+      clearSelectedOptionId: true,
+      clearLastAnswerCorrect: true,
+      clearRevealedPokemonName: true,
+      clearRevealedSpriteUrl: true,
+    );
+  }
+
+  Future<void> _holdRevealRemaining(DateTime startedAt, int generation) async {
+    final elapsed = DateTime.now().difference(startedAt);
+    final remaining = _revealDelay - elapsed;
+    if (remaining <= Duration.zero) return;
+    await Future<void>.delayed(remaining);
+    if (!_isCurrent(generation)) return;
+  }
+
+  Future<void> _ensurePublicRankingProfile() async {
+    final auth = ref.read(authProvider);
+    final displayName = auth.displayName?.trim();
+    await _repository.savePublicProfilePreference(
+      value: true,
+      displayName: (displayName == null || displayName.isEmpty)
+          ? null
+          : displayName,
+    );
+  }
+
+  ({bool correct, String name, String? spriteUrl}) _previewAnswer(int optionId) {
+    final local = state.localRound;
+    if (local != null) {
+      final sprite = PokemonSpriteUrls.highQualitySpriteUrl(
+        local.correctAnswer.spriteUrl ?? '',
+        speciesId: local.correctAnswer.speciesId,
+      );
+      return (
+        correct: local.correctAnswer.speciesId == optionId,
+        name: local.correctAnswer.name,
+        spriteUrl: sprite.isEmpty ? local.correctAnswer.spriteUrl : sprite,
+      );
+    }
+
+    final remote = state.remoteRound;
+    if (remote == null) {
+      return (correct: false, name: '', spriteUrl: null);
+    }
+    final silhouette = remote.silhouetteUrl ?? '';
+    final targetId =
+        PokemonSpriteUrls.idFromSpriteUrl(silhouette) ??
+        remote.options
+            .where((option) => option.spriteUrl == silhouette)
+            .map((option) => option.id)
+            .firstOrNull;
+    final correctOption = remote.options
+        .where((option) => option.id == targetId)
+        .firstOrNull;
+    final name = correctOption?.name ?? '';
+    final sprite = PokemonSpriteUrls.highQualitySpriteUrl(
+      silhouette.isEmpty ? (correctOption?.spriteUrl ?? '') : silhouette,
+      speciesId: targetId,
+    );
+    return (
+      correct: targetId != null && targetId == optionId,
+      name: name,
+      spriteUrl: sprite.isEmpty ? silhouette : sprite,
     );
   }
 

@@ -152,7 +152,7 @@ class const _DismissibleFavoriteCard({required final PokemonDetail pokemon})
         types: pokemon.types,
         spriteUrl: pokemon.spriteUrl,
         isFavorite: true,
-        heroShellTabIndex: 2,
+        heroShellTabIndex: 3,
         onTap: () => context.push('/pokemon/${pokemon.id}'),
         onFavoriteTap: () =>
             ref.read(favoritesProvider.notifier).toggle(pokemon.id),

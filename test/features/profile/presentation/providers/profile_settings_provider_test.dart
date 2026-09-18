@@ -88,7 +88,7 @@ void main() {
     expect(settings.appLanguage, 'pt-BR');
   });
 
-  test('setPublicProfile persists through the game repository', () async {
+  test('setPublicProfile always forces a public ranking profile', () async {
     SharedPreferences.setMockInitialValues({'mock_auth_name': 'Ash'});
     final prefs = await SharedPreferences.getInstance();
     Map<String, dynamic>? profilePayload;
@@ -127,7 +127,7 @@ void main() {
 
     await container
         .read(profileSettingsProvider.notifier)
-        .setPublicProfile(value: true);
+        .setPublicProfile(value: false);
 
     expect(container.read(profileSettingsProvider).publicProfile, isTrue);
     expect(prefs.getBool('guess_the_pokemon_public_profile:guest'), isTrue);

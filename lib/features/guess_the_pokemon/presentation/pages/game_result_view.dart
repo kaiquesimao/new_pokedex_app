@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/constants/pokemon_sprite_urls.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_round.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
@@ -16,6 +17,9 @@ class const GameResultView({
   this.onPublish,
   this.localRound,
   this.remoteRound,
+  this.revealedPokemonName,
+  this.revealedSpriteUrl,
+  this.lastAnswerCorrect,
 }) extends StatelessWidget {
   final int score;
   final int bestScore;
@@ -26,11 +30,29 @@ class const GameResultView({
   final Future<void> Function()? onPublish;
   final GameRound? localRound;
   final GameRoundModel? remoteRound;
+  final String? revealedPokemonName;
+  final String? revealedSpriteUrl;
+  final bool? lastAnswerCorrect;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final spriteUrl = localRound?.correctAnswer.spriteUrl;
+    final theme = Theme.of(context);
+    final rawSprite =
+        revealedSpriteUrl ??
+        localRound?.correctAnswer.spriteUrl ??
+        remoteRound?.silhouetteUrl;
+    final speciesId =
+        localRound?.correctAnswer.speciesId ??
+        PokemonSpriteUrls.idFromSpriteUrl(rawSprite ?? '');
+    final spriteUrl = rawSprite == null
+        ? null
+        : PokemonSpriteUrls.highQualitySpriteUrl(
+            rawSprite,
+            speciesId: speciesId,
+          );
+    final pokemonName =
+        revealedPokemonName ?? localRound?.correctAnswer.name ?? '';
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -41,7 +63,8 @@ class const GameResultView({
             children: [
               Text(
                 l10n.gameResultTitle,
-                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineSmall,
               ),
               if (spriteUrl != null) ...[
                 const SizedBox(height: 16),
@@ -49,13 +72,41 @@ class const GameResultView({
                   imageUrl: spriteUrl,
                   width: 180,
                   height: 180,
-                  semanticLabel: l10n.gameResultTitle,
+                  maxCachePixels: 768,
+                  semanticLabel: pokemonName.isEmpty
+                      ? l10n.gameResultTitle
+                      : pokemonName,
+                ),
+              ],
+              if (pokemonName.trim().isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.gameCorrectWas(pokemonName),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+              if (lastAnswerCorrect != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  lastAnswerCorrect!
+                      ? l10n.gameAnswerCorrect
+                      : l10n.gameAnswerWrong,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: lastAnswerCorrect!
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.error,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
               const SizedBox(height: 16),
               Text(
                 l10n.gameScore(score),
-                style: Theme.of(context).textTheme.displaySmall,
+                style: theme.textTheme.displaySmall,
               ),
               const SizedBox(height: 8),
               Text(l10n.gameBestScore(bestScore)),
