@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
@@ -15,7 +17,10 @@ final guessThePokemonAuthenticatedProvider = Provider<bool>(
 );
 
 final guessThePokemonEngineProvider = Provider<GuessThePokemonEngine>((ref) {
-  return GuessThePokemonEngine(catalog: _defaultCatalog, seed: 42);
+  return GuessThePokemonEngine(
+    catalog: _defaultCatalog,
+    seed: Random().nextInt(1 << 32),
+  );
 });
 
 final guessThePokemonLocalCatalogProvider = FutureProvider<List<GameCatalogEntry>>((ref) {

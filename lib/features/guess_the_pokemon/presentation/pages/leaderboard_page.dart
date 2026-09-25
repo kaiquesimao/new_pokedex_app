@@ -9,7 +9,7 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/leaderboard_provider.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/widgets/leaderboard_entry_tile.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
-import 'package:pokedex_app/shared/widgets/app_button.dart';
+import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 class const LeaderboardPage({super.key}) extends ConsumerStatefulWidget {
@@ -35,51 +35,54 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.leaderboardTitle)),
       body: SafePageBody.belowAppBar(
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (notification) {
-            if (notification.metrics.extentAfter < 240) {
-              unawaited(ref.read(leaderboardProvider.notifier).loadMore());
-            }
-            return false;
-          },
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-            children: [
-              _ScopeToggle(
-                scope: state.scope,
-                onChanged: (scope) => unawaited(
-                  ref.read(leaderboardProvider.notifier).load(scope: scope),
-                ),
-              ),
-              if (!auth.isAuthenticated) ...[
-                const SizedBox(height: 16),
-                _GuestGuidance(onSignIn: () => context.push('/login')),
-              ],
-              const SizedBox(height: 20),
-              if (state.status == LeaderboardStatus.loading &&
-                  state.entries.isEmpty)
-                const Center(child: CircularProgressIndicator.adaptive())
-              else if (state.status == LeaderboardStatus.error &&
-                  state.entries.isEmpty)
-                _ErrorState(
-                  isOffline: _isOffline(state.error),
-                  onRetry: () => unawaited(
-                    ref
-                        .read(leaderboardProvider.notifier)
-                        .load(scope: state.scope),
+        child: ResponsiveContentFrame(
+          expandHeight: true,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification.metrics.extentAfter < 240) {
+                unawaited(ref.read(leaderboardProvider.notifier).loadMore());
+              }
+              return false;
+            },
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+              children: [
+                _ScopeToggle(
+                  scope: state.scope,
+                  onChanged: (scope) => unawaited(
+                    ref.read(leaderboardProvider.notifier).load(scope: scope),
                   ),
-                )
-              else if (state.entries.isEmpty)
-                Center(child: Text(l10n.leaderboardEmpty))
-              else
-                for (var index = 0; index < state.entries.length; index++)
-                  _entryTile(state.entries[index], index),
-              if (state.isLoadingMore)
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
-            ],
+                if (!auth.isAuthenticated) ...[
+                  const SizedBox(height: 16),
+                  _GuestGuidance(onSignIn: () => context.push('/login')),
+                ],
+                const SizedBox(height: 20),
+                if (state.status == LeaderboardStatus.loading &&
+                    state.entries.isEmpty)
+                  const Center(child: CircularProgressIndicator.adaptive())
+                else if (state.status == LeaderboardStatus.error &&
+                    state.entries.isEmpty)
+                  _ErrorState(
+                    isOffline: _isOffline(state.error),
+                    onRetry: () => unawaited(
+                      ref
+                          .read(leaderboardProvider.notifier)
+                          .load(scope: state.scope),
+                    ),
+                  )
+                else if (state.entries.isEmpty)
+                  Center(child: Text(l10n.leaderboardEmpty))
+                else
+                  for (var index = 0; index < state.entries.length; index++)
+                    _entryTile(state.entries[index], index),
+                if (state.isLoadingMore)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator.adaptive()),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -101,29 +104,36 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
           error.code == GuessThePokemonErrorCode.unavailable);
 }
 
-class const _ScopeToggle({required final LeaderboardScope scope, required final ValueChanged<LeaderboardScope> onChanged})
-    extends StatelessWidget {
+class const _ScopeToggle({
+  required final LeaderboardScope scope,
+  required final ValueChanged<LeaderboardScope> onChanged,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return SegmentedButton<LeaderboardScope>(
-      segments: [
-        ButtonSegment(
-          value: LeaderboardScope.general,
-          label: Text(l10n.leaderboardGeneralTab),
+    return Center(
+      child: IntrinsicWidth(
+        child: SegmentedButton<LeaderboardScope>(
+          segments: [
+            ButtonSegment(
+              value: LeaderboardScope.general,
+              label: Text(l10n.leaderboardGeneralTab),
+            ),
+            ButtonSegment(
+              value: LeaderboardScope.weekly,
+              label: Text(l10n.leaderboardWeeklyTab),
+            ),
+          ],
+          selected: {scope},
+          onSelectionChanged: (selection) => onChanged(selection.first),
         ),
-        ButtonSegment(
-          value: LeaderboardScope.weekly,
-          label: Text(l10n.leaderboardWeeklyTab),
-        ),
-      ],
-      selected: {scope},
-      onSelectionChanged: (selection) => onChanged(selection.first),
+      ),
     );
   }
 }
 
-class const _GuestGuidance({required final VoidCallback onSignIn}) extends StatelessWidget {
+class const _GuestGuidance({required final VoidCallback onSignIn})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -131,11 +141,17 @@ class const _GuestGuidance({required final VoidCallback onSignIn}) extends State
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.leaderboardSignInGuidance),
-            const SizedBox(height: 12),
-            AppButton(label: l10n.authLoginRequiredSignIn, onPressed: onSignIn),
+            Text(
+              l10n.leaderboardSignInGuidance,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: onSignIn,
+              child: Text(l10n.authLoginRequiredSignIn),
+            ),
           ],
         ),
       ),
@@ -143,16 +159,26 @@ class const _GuestGuidance({required final VoidCallback onSignIn}) extends State
   }
 }
 
-class const _ErrorState({required final bool isOffline, required final VoidCallback onRetry})
-    extends StatelessWidget {
+class const _ErrorState({
+  required final bool isOffline,
+  required final VoidCallback onRetry,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Column(
       children: [
-        Text(isOffline ? l10n.leaderboardOffline : l10n.leaderboardError),
-        const SizedBox(height: 12),
-        OutlinedButton(onPressed: onRetry, child: Text(l10n.leaderboardRetry)),
+        Text(
+          isOffline ? l10n.leaderboardOffline : l10n.leaderboardError,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          onPressed: onRetry,
+          icon: const Icon(Icons.refresh),
+          label: Text(l10n.leaderboardRetry),
+        ),
       ],
     );
   }

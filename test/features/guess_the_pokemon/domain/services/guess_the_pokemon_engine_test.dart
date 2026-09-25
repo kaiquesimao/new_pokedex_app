@@ -30,6 +30,16 @@ void main() {
     ),
   ];
 
+  test('different seeds produce different species sequences', () {
+    final first = GuessThePokemonEngine(catalog: catalog, seed: 1);
+    final second = GuessThePokemonEngine(catalog: catalog, seed: 2);
+
+    expect(
+      first.nextRound(first.startSession()).correctAnswer.speciesId,
+      isNot(second.nextRound(second.startSession()).correctAnswer.speciesId),
+    );
+  });
+
   test('uses the same seeded sequence and options for two engines', () {
     final first = GuessThePokemonEngine(catalog: catalog, seed: 42);
     final second = GuessThePokemonEngine(catalog: catalog, seed: 42);

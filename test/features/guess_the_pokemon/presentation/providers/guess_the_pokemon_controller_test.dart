@@ -26,6 +26,28 @@ void main() {
     expect(repository.bestScore, 1);
   });
 
+  test('each new local game shuffles the species order', () async {
+    final repository = _FakeRepository();
+    final container = _container(repository: repository);
+    final controller = container.read(
+      guessThePokemonControllerProvider.notifier,
+    );
+
+    final firstAnswers = <int>[];
+    for (var index = 0; index < 20; index++) {
+      await controller.start();
+      firstAnswers.add(
+        container
+            .read(guessThePokemonControllerProvider)
+            .localRound!
+            .correctAnswer
+            .speciesId,
+      );
+    }
+
+    expect(firstAnswers.toSet(), hasLength(greaterThan(1)));
+  });
+
   test('remote mode uses the server current and next rounds exactly', () async {
     final repository = _FakeRepository(
       answerResult: AnswerResultModel(

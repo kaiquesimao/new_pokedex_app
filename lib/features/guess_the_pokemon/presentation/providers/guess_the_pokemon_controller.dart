@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -342,7 +343,10 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   Future<void> _startLocal(int generation) async {
     final catalog = await ref.read(guessThePokemonLocalCatalogProvider.future);
-    _activeEngine = GuessThePokemonEngine(catalog: catalog, seed: 42);
+    _activeEngine = GuessThePokemonEngine(
+      catalog: catalog,
+      seed: Random().nextInt(1 << 32),
+    );
     _localSession = _activeEngine!.startSession();
     final round = _activeEngine!.nextRound(_localSession);
     final bestScore = await _repository.getBestScore();
