@@ -18,7 +18,7 @@
     "wrangler": "wrangler"
   },
   "devDependencies": {
-    "@cloudflare/vitest-plugin": "^1.1.12",
+    "@cloudflare/vitest-plugin": "^1.2.3",
     "@cloudflare/workers-types": "latest",
     "@types/node": "^26.6.1",
     "tsx": "latest",
