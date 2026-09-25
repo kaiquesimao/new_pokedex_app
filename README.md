@@ -1,300 +1,200 @@
-# Pokédex
+# PokeData
 
-Explore todos os Pokémon, regiões e favoritos — sua Pokédex completa.
+A modern Pokédex for fans — browse Pokémon, regions, and details; sync favorites across devices; play **Guess the Pokémon**.
 
-Flutter app targeting **Android** and **Web** (mobile-first).
+Built with **Flutter** for **Android** and **Web** (mobile-first). Published on Google Play and on the web.
 
-## Prerequisites
+**Português:** [README.pt-BR.md](README.pt-BR.md)
 
-- Flutter SDK **3.47+** (stable, Dart 3.13)
-- Firebase project with Authentication and Cloud Firestore
-- Local secret files (not in git):
-  - `dart_defines.json` — copy from [`dart_defines.example.json`](dart_defines.example.json)
-  - `android/app/google-services.json` — copy from [`android/app/google-services.example.json`](android/app/google-services.example.json)
+| | |
+|---|---|
+| **Google Play** | [Pokedata: Pokedex](https://play.google.com/store/apps/details?id=com.kaiquesimao.pokedex) |
+| **Web** | [https://pokedata.kaique.site](https://pokedata.kaique.site) |
+| **Package** | `com.kaiquesimao.pokedex` |
 
-See [`lib/core/firebase/README.md`](lib/core/firebase/README.md) for Firebase setup details.
+---
 
-`GAME_API_BASE_URL` configures the optional competitive game Worker API. It is
-empty in the example configuration, which intentionally keeps competitive
-remote calls disabled and lets the game run in local mode. Supply the Worker
-base URL through `dart_defines.json` to enable authenticated competitive play.
+## Overview
 
-## Run locally
+PokeData is a fan-made reference app focused on everyday use: fast search, readable detail screens, and navigation that stays out of the way. Guests can explore the full Pokédex without an account; signing in unlocks synced favorites and competitive game features.
 
-Configs in [`.vscode/launch.json`](.vscode/launch.json) pass
-`--dart-define-from-file=dart_defines.json`. Prefer the named launch configs
-over ad-hoc CLI when debugging in VS Code / Cursor.
+The product is intentionally lean on cost: the client, auth, sync, static hosting, and the game API all run on **free-tier** services, with engineering choices shaped around those limits.
 
-| Launch config | Target | Notes |
-|---------------|--------|--------|
-| **pokedex_app** | device selecionado | Debug genérico (Android / web) |
-| **Chrome JS :5000** | Chrome (JS) | Debug + hot reload; compile mais rápido |
-| **Chrome Wasm debug :5000** | Chrome (Wasm) | Debug + Inspector + hot reload + multi-thread |
-| **Chrome Wasm profile :5000** | Chrome (Wasm) | Performance (sem hot reload) |
+---
 
-```bash
-flutter pub get
-flutter run --dart-define-from-file=dart_defines.json
+## Product surface
+
+- **Pokédex** — full list with National Dex numbers, sprites, types; search; filters by type and generation
+- **Detail profiles** — stats, abilities, height/weight, weaknesses, evolution, localized flavor text, cries, sprite variants
+- **Regions** — browse Pokémon by region
+- **Favorites** — heart to save; requires an account; synced via Firestore
+- **Guest mode** — full browsing without login; auth prompted only when needed
+- **Offline-friendly cache** — recently loaded data remains available when connectivity drops
+- **Localization** — Portuguese and English (UI + PokéAPI game text when available)
+- **Guess the Pokémon** — silhouette/quiz game with local play and optional authenticated competitive mode (leaderboards, publish score)
+- **Account & legal** — profile, password/email flows, terms/privacy, account-deletion path for Play Data Safety
+
+---
+
+## Architecture
+
+The app follows a **feature-first** layout with clear boundaries inspired by clean architecture.
+
+```text
+lib/
+  core/          # bootstrap, router, network, Drift DB, Firebase, locale, theme
+  features/      # auth, pokemon, regions, favorites, guess_the_pokemon, …
+    <feature>/
+      domain/        # entities, repository contracts, policies
+      data/          # datasources, mappers, repository implementations
+      presentation/  # pages, widgets, Riverpod providers/controllers
+  shared/        # reusable UI
+  l10n/          # ARB + generated localizations
 ```
 
-Web JS (port 5000):
+**State & navigation:** Riverpod for dependency injection and UI state; `go_router` for typed routes, auth redirects, and shell navigation.
 
-```bash
-flutter run -d chrome --web-port=5000 \
-  --dart-define-from-file=dart_defines.json
+### Pokédex data flow
+
+```text
+UI (Riverpod)
+    → PokemonRepository
+        → Remote (PokéAPI via Dio)
+        → Local cache (Drift)
+    → entities → presentation
 ```
 
-Web Wasm (debug local; Chrome 119+):
+Remote responses are mapped into domain entities and persisted locally so list/detail browsing stays responsive and degrades gracefully offline. Locale changes rebuild localized name indexes and game-text caches.
 
-```bash
-flutter run -d chrome --web-port=5000 \
-  --dart-define-from-file=dart_defines.json \
-  --wasm
+### Auth & favorites
+
+| Concern | Approach |
+|---------|----------|
+| Identity | Firebase Authentication |
+| Email/password | All platforms (web + mobile) |
+| Google Sign-In | **Mobile only** (see [Decisions](#design-decisions--tradeoffs)) |
+| Guest | Allowed for Pokédex/regions; no persistent favorites |
+| Favorites | `users/{uid}/favorites/{pokemonId}` in Cloud Firestore after login |
+
+Release builds require Firebase configuration. Debug can fall back to a local mock auth path for development convenience.
+
+### Guess the Pokémon
+
+Two modes share one feature module:
+
+| Mode | Behavior |
+|------|----------|
+| **Local** | Bundled catalog (`assets/game/catalog-v1.json`); scores stay on device |
+| **Competitive** | Cloudflare Worker + D1; Firebase ID token on mutations; leaderboards and publish |
+
+The Worker serves gameplay from a **checked-in catalog** (validated at build time). It does **not** call PokéAPI at request time — important for free-tier request/row budgets and for deterministic sessions. Rate limits apply per user and IP (session starts, answers, publishes).
+
+```text
+Flutter client
+    → local catalog / best score (SharedPreferences + assets)
+    → optional GAME_API_BASE_URL
+        → Worker (/v1/game, /v1/leaderboards, /v1/me/…)
+            → D1 (sessions, scores, rate-limit buckets)
+            → Firebase token verification
 ```
 
-Guest browsing: on the welcome screen tap **Explorar sem conta** to use the Pokédex without logging in.
+### Hosting topology (high level)
 
-Widget Previews (Flutter 3.47, isolated UI without a full app run):
+| Piece | Role |
+|-------|------|
+| Flutter Android | Play Store distribution |
+| Flutter Web (Wasm + JS fallback) | Cloudflare Pages (`pokedata.kaique.site`) |
+| Firebase Auth + Firestore | Identity, favorites, legal documents |
+| Cloudflare Worker + D1 | Competitive game API |
+| GitHub Actions | Analyze, test, web/Worker deploy, Android AAB upload, free-tier usage monitor |
 
-```bash
-flutter widget-preview start
-```
+---
 
+## Tech stack
 
-## Production builds
+| Layer | Choice |
+|-------|--------|
+| Client | Flutter 3.47+ / Dart 3.13+, Material, Poppins |
+| State | Riverpod 3 |
+| Routing | go_router |
+| Local DB | Drift |
+| HTTP | Dio (+ offline/retry guards) |
+| Auth / sync | Firebase Auth, Cloud Firestore |
+| Analytics | Firebase Analytics |
+| Game API | Cloudflare Workers, D1 |
+| Web runtime | Wasm (skwasm multi-thread) with JS fallback |
+| CI | GitHub Actions |
+| Quality | `very_good_analysis`, extensive unit/widget tests |
 
-Always pass Firebase compile-time defines:
+---
 
-```bash
-# Android (Play Store)
-flutter build appbundle --release --dart-define-from-file=dart_defines.json
+## Design decisions & tradeoffs
 
-# Web (Wasm + JS fallback)
-flutter build web --release --wasm \
-  --dart-define-from-file=dart_defines.json
-```
+### WebAssembly multi-thread vs Google Sign-In on web
 
-### Google Play — account deletion URL
+Production web enables **cross-origin isolation** (COOP / COEP) so Flutter’s Wasm renderer can use **SharedArrayBuffer** and multi-threaded skwasm. That isolation is incompatible with Firebase’s Google Auth helpers in the browser.
 
-`https://pokedata.kaique.site/#/legal/account-deletion`
+**Decision:** keep Wasm multi-thread for web performance; offer **email/password** on web; keep **Google Sign-In on Android** (and Apple Sign-In where applicable on mobile). Same product, platform-appropriate auth surface — not an unfinished feature.
 
-Data Safety → account deletion link. Optional “delete data without deleting
-account”: No.
+### Free-tier by design
 
-Optional Android obfuscation:
+The stack is chosen so a real published product can run at **$0** infrastructure cost:
 
-```bash
-flutter build appbundle --release \
-  --dart-define-from-file=dart_defines.json \
-  --obfuscate --split-debug-info=build/debug-info
-```
+- Firebase Spark (Auth + Firestore for favorites/legal)
+- Cloudflare Pages (static Flutter web)
+- Workers + D1 (game API within daily free ceilings)
+- GitHub Actions for CI/CD
 
-### Android signing
+**Consequences:** conservative Worker rate limits; catalog baked into the Worker; a scheduled job that warns/fails when Workers/D1 usage approaches free ceilings; competitive mode optional (client works in local mode if the API URL is unset).
 
-1. Generate an upload keystore (keep a secure backup — never commit it):
+### Guest-first Pokédex, account for persistence
 
-   ```bash
-   keytool -genkey -v -keystore android/upload-keystore.jks \
-     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
-   ```
+Browsing must work without friction. Favorites and competitive identity need a stable `uid`, so those paths gate on sign-in (with a clear prompt rather than a hard wall on first open).
 
-2. Copy [`android/key.properties.example`](android/key.properties.example) to
-   `android/key.properties` (gitignored) and fill passwords / alias / `storeFile`.
-3. Add **SHA-1** and **SHA-256** in Firebase Console for:
-   - Play **app signing** key (Play Console → App signing)
-   - **Upload** key (`./gradlew signingReport` or after first AAB upload)
-4. Re-download `google-services.json`.
+### Cache-first Pokémon data
 
-```bash
-cd android && ./gradlew signingReport
-```
+PokéAPI is the source of truth for species data; Drift is the offline and performance layer. Tradeoff: cached entries can lag until refreshed — acceptable for a reference app, and better UX on flaky networks.
 
-**Application ID:** `com.kaiquesimao.pokedex`
+### Dual game modes in one feature
 
-Play Console uses **Play App Signing** (Google holds the distribution key). Your
-local/CI `.jks` is only the **upload** key.
+Local mode proves the UX without backend dependency. Competitive mode adds fairness (server-side sessions), leaderboards, and anti-abuse caps. Shared domain types keep the UI consistent across both.
 
-### Web auth
+### Android first; iOS later
 
-Web supports **email/password** Firebase Auth. Google Sign-In is **mobile only**
-— Wasm multi-thread (COOP: same-origin + COEP: credentialless in
-[web/_headers](web/_headers)) is incompatible with Firebase Google Auth helpers.
+Production shipping target is Android (Play Store) plus Web. **iOS is a planned future platform**, not abandoned — the Flutter codebase is the foundation for that expansion.
 
-| Setup | Wasm | Email/password | Google |
-|-------|------|----------------|--------|
-| Production (COOP/COEP) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
-| Local **Chrome Wasm debug/profile** (`--wasm`) | ✅ multi-thread | ✅ | ❌ web / ✅ mobile |
+---
 
-Mobile still uses google_sign_in + GoogleSignIn.authenticate.
+## Constraints & known limitations
 
-FIREBASE_GOOGLE_WEB_CLIENT_ID remains required in dart_defines.json as
-Android serverClientId.
+- **Google Sign-In is not available on web** while Wasm multi-thread (COOP/COEP) remains enabled
+- **Layout is mobile-first** — wide desktop viewports stretch some detail layouts; best experience is a phone-width viewport or the Android app
+- **iOS** — not in the current production release track (roadmap item)
+- **Fan project** — PokéAPI data may change as that upstream project updates
+- Free-tier ceilings require ongoing awareness (monitor + rate limits); growth may eventually force paid plans or further optimizations
 
-### WebAssembly (multi-thread)
+---
 
-- `web/index.html` uses modern `flutter_bootstrap.js` (Flutter 3.22+).
-- App/deps use `package:web` / `dart:js_interop` (no `dart:html` / `package:js`).
-- CI builds with `--wasm` (JS fallback when WasmGC is missing).
-- Production headers in [`web/_headers`](web/_headers) enable
-  `SharedArrayBuffer` (COOP + COEP) for multi-thread skwasm.
-- `flutter run --wasm` enables cross-origin isolation locally by default.
-- Staging/QA stack traces: `flutter build web --wasm --no-strip-wasm`
-  (or `--source-maps` for error monitoring).
+## Engineering strengths
 
-### Cloudflare zone (required for custom domain)
+- **Shipped product** — live on [Google Play](https://play.google.com/store/apps/details?id=com.kaiquesimao.pokedex) and [web](https://pokedata.kaique.site)
+- **Clear modular architecture** — features isolated with domain contracts and testable data/presentation layers
+- **Broad automated tests** — domain, repositories, providers, and widget coverage across auth, Pokédex, game, and core networking
+- **Production web Wasm** — multi-thread renderer with JS fallback for browsers without WasmGC
+- **CI/CD** — analyze + test on every push/PR; web and Worker deploy from `master`; signed AAB upload to Play open testing on version bumps
+- **Free-tier discipline** — usage monitor against Workers/D1 daily limits; game API designed not to hammer PokéAPI at runtime
+- **Play compliance** — in-app legal docs, account-deletion URL for Data Safety, in-app review hooks
+- **i18n** — PT/EN app strings and localized PokéAPI text resolution
 
-pokedata.kaique.site is served through your **kaique.site** zone. Keep
-**Rocket Loader** and **Bot Fight Mode** off for this host — both break Flutter
-on the custom domain (not on *.pages.dev).
+---
 
-## CI / CD
+## Roadmap
 
-Dependabot: [`.github/dependabot.yml`](.github/dependabot.yml).
+- **iOS** release track (parity with Android auth and store requirements)
+- Continued game and Pokédex quality-of-life improvements within free-tier constraints
 
-### Web → Cloudflare Pages
+---
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (**CI Web**):
+## Disclaimer
 
-| Trigger | What runs |
-|---------|-------------|
-| Every push / PR | `flutter analyze` + `flutter test` |
-| Every push / PR | Worker job: catalog/migrations validate + typecheck + vitest + dry-run |
-| Push to `master` | `flutter build web --wasm` → deploy **production** → smoke checks |
-| Push to `master` | Apply D1 migrations → deploy **guess-the-pokemon** Worker → API smoke |
-| PR (same repo) | Same Wasm build → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
-
-Production URLs:
-
-- Web: **https://pokedata.kaique.site**
-- Worker API: **https://guess-the-pokemon.kaique-workspace.workers.dev**
-
-SPA deep links use [`web/_redirects`](web/_redirects). Headers: [`web/_headers`](web/_headers).
-Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
-
-### Free-tier monitor
-
-[`.github/workflows/free-tier-monitor.yml`](.github/workflows/free-tier-monitor.yml):
-
-| Trigger | What runs |
-|---------|-------------|
-| Every 6 hours + manual | GraphQL usage for Workers requests and D1 rows read/written |
-
-Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
-(100k requests, 5M D1 rows read, 100k D1 rows written). Limits reset at 00:00 UTC.
-
-### Android → Play Store (open testing / beta)
-
-[`.github/workflows/release-android.yml`](.github/workflows/release-android.yml):
-
-| Trigger | What runs |
-|---------|-------------|
-| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **beta** (open testing) track |
-| Manual (`workflow_dispatch`) from `master` | Same; choose track (`beta` / `internal` / `alpha`) and whether to upload |
-
-Tags do **not** start the workflow. Create them on a PR branch with the
-release script; Android deploys only after that version is merged to `master`.
-
-**Preferred:** run the release script on the PR branch (clean tree; bumps
-`pubspec.yaml`, commits, tags, pushes), then merge to `master`:
-
-```powershell
-# Working tree must be clean. Build number (+N) always increments.
-.\scripts\release.ps1 patch   # 1.0.0+4 → 1.0.1+5
-.\scripts\release.ps1 minor
-.\scripts\release.ps1 major
-.\scripts\release.ps1 patch -DryRun
-```
-
-```bash
-# Git Bash / WSL / macOS / Linux
-./scripts/release.sh patch
-./scripts/release.sh minor --dry-run
-```
-
-The workflow reads `version:` from `pubspec.yaml` and builds with
-`--build-name` / `--build-number` (`versionCode` must keep increasing on
-every Play upload; current Play is `+4`).
-
-Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
-
-### GitHub Secrets
-
-**Web (required):**
-
-| Secret | Purpose |
-|--------|---------|
-| `DART_DEFINES_JSON` | Full contents of `dart_defines.json` (same shape as [`dart_defines.example.json`](dart_defines.example.json)). Include `GAME_API_BASE_URL` = `https://guess-the-pokemon.kaique-workspace.workers.dev` for competitive mode. |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with **Account → Cloudflare Pages → Edit**, **Account → Workers Scripts → Edit**, **Account → D1 → Edit**, and **Account → Account Analytics → Read** |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
-
-**Android release (required for `release-android.yml`):**
-
-| Secret | Purpose |
-|--------|---------|
-| `DART_DEFINES_JSON` | Same as web |
-| `GOOGLE_SERVICES_JSON` | Full contents of `android/app/google-services.json` |
-| `KEYSTORE_BASE64` | Base64 of `android/upload-keystore.jks` |
-| `KEYSTORE_PASSWORD` | Keystore store password |
-| `KEY_PASSWORD` | Key password (often same as store) |
-| `KEY_ALIAS` | Key alias (e.g. `upload`) |
-| `PLAY_SERVICE_ACCOUNT_JSON` | Play Console API service account JSON |
-
-Encode the keystore (PowerShell):
-
-```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("android\upload-keystore.jks")) |
-  Set-Clipboard
-```
-
-Optional:
-
-| Secret | Purpose |
-|--------|---------|
-| `CLOUDFLARE_PROJECT_NAME` | Pages project name (default: `pokedata`) |
-
-Do **not** commit `dart_defines.json`, `google-services.json`, keystores, or API keys.
-
-### One-time setup (manual)
-
-**Web**
-
-1. **Cloudflare Pages:** create a project (name `pokedata` unless you set
-   `CLOUDFLARE_PROJECT_NAME`). Direct Upload / Wrangler is enough — GitHub
-   Actions owns the build; you do not need a second Pages Git integration.
-2. **Custom domain:** attach `pokedata.kaique.site` to that Pages project
-   (Cloudflare Dashboard → Pages → Custom domains). DNS: CNAME `pokedata` →
-   `pokedata-5fq.pages.dev` (proxied). This is **Pages**, not a Worker route
-   (Workers are for apps like a portfolio Worker — Flutter web stays on Pages).
-3. **GitHub Secrets:** add the web secrets above
-   (Settings → Secrets and variables → Actions).
-4. **GitHub Environment:** create Environment `production`
-   (Settings → Environments). Optional: add required reviewers for deploy.
-   Repo secrets still work; moving secrets into the environment is optional.
-5. **Firebase Auth:** add `pokedata.kaique.site` under
-   Authentication → Settings → Authorized domains.
-   PR preview URLs (`*.pages.dev`) also need the Pages domain(s) if you test
-   Google Sign-In on previews — add those hostnames as needed.
-
-**Android / Play**
-
-1. Upload at least one AAB manually (Internal testing) so the package exists
-   and Play App Signing is active.
-2. Google Cloud → enable **Google Play Android Developer API** → create a
-   **service account** (no GCP roles) → JSON key → invite that email in
-   Play Console → Users and permissions (release access to this app).
-3. Add the Android secrets above in GitHub.
-4. Firebase: SHA-1/SHA-256 of app signing + upload keys (see Android signing).
-
-## Verify
-
-```bash
-flutter analyze
-flutter test
-```
-
-## Version
-
-App version lives in [`pubspec.yaml`](pubspec.yaml) (`version: x.y.z+build`) and is
-shown in Profile via `package_info_plus`. For releases, prefer
-[`scripts/release.ps1`](scripts/release.ps1) or [`scripts/release.sh`](scripts/release.sh)
-instead of editing by hand.
+PokeData is a **fan-made** project. It is not developed, endorsed, or affiliated with Nintendo, The Pokémon Company, Game Freak, or Creatures Inc. Pokémon and Pokémon character names are trademarks of their respective owners. Species data is sourced from [PokéAPI](https://pokeapi.co/).
