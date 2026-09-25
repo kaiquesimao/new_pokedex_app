@@ -120,7 +120,7 @@ class const _NavSvg({
     final asset = switch (index) {
       0 => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
       1 => selected ? AppAssets.navRegionsActive : AppAssets.navRegionsInactive,
-      2 => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
+      2 => selected ? AppAssets.navGameActive : AppAssets.navGameInactive,
       3 =>
         selected
             ? AppAssets.navFavoritesActive

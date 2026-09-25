@@ -12,6 +12,9 @@ abstract final class AppAssets {
       '${componentsBase}nav_regions_active.svg';
   static const String navRegionsInactive =
       '${componentsBase}nav_regions_inactive.svg';
+  static const String navGameActive = '${componentsBase}nav_game_active.svg';
+  static const String navGameInactive =
+      '${componentsBase}nav_game_inactive.svg';
 
   static const String navFavoritesActive =
       '${componentsBase}nav_favorites_active.svg';

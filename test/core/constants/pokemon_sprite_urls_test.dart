@@ -85,4 +85,20 @@ void main() {
     expect(PokemonSpriteUrls.isLowResolutionSpriteUrl(homeUrl), isFalse);
     expect(PokemonSpriteUrls.isLowResolutionSpriteUrl(null), isFalse);
   });
+
+  test('highQualitySpriteUrl prefers home sprites like the Pokédex list', () {
+    expect(PokemonSpriteUrls.highQualitySpriteUrl(homeUrl), homeUrl);
+    expect(PokemonSpriteUrls.highQualitySpriteUrl(officialUrl), homeUrl);
+    expect(
+      PokemonSpriteUrls.highQualitySpriteUrl(lowResUrl),
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png',
+    );
+    expect(
+      PokemonSpriteUrls.highQualitySpriteUrl(
+        'https://example.test/unknown.png',
+        speciesId: 25,
+      ),
+      homeUrl,
+    );
+  });
 }
