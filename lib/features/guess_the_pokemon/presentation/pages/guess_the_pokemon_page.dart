@@ -7,48 +7,75 @@ import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/game_r
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/game_start_view.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/guess_the_pokemon_providers.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
+import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
 /// Hosts the guessing game and projects controller state into its current view.
 class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
+  /// Matches [AppBottomNavBar] floating chrome.
+  static const _headerHorizontalInset = 16.0;
+  static const _headerTopInset = 8.0;
+  static const _headerCornerRadius = 20.0;
+  static const _headerBarHeight = 56.0;
+  static const _headerBottomGap = 8.0;
+
+  static double get _headerOverlayHeight =>
+      _headerTopInset + _headerBarHeight + _headerBottomGap;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(guessThePokemonControllerProvider);
     final controller = ref.read(guessThePokemonControllerProvider.notifier);
     final l10n = AppLocalizations.of(context);
+    final showAbandon =
+        state.status == GuessThePokemonStatus.playing ||
+        state.status == GuessThePokemonStatus.answering;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(l10n.gameTitle),
-        actions: [
-          if (state.status == GuessThePokemonStatus.playing ||
-              state.status == GuessThePokemonStatus.answering)
-            IconButton(
-              tooltip: l10n.gameAbandonTooltip,
-              icon: const Icon(Icons.close),
-              onPressed: () => _confirmAbandon(context, controller),
-            ),
-        ],
-      ),
-      body: SafePageBody.belowAppBar(
+      body: SafePageBody(
+        bottom: false,
         child: ResponsiveContentFrame(
           expandHeight: true,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 280),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeIn,
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            child: KeyedSubtree(
-              key: ValueKey(_viewBucket(state.status)),
-              child: _buildView(context, ref, state),
-            ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: _headerOverlayHeight,
+                    bottom: AppBottomNavBar.overlayHeight(context),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 280),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                    child: KeyedSubtree(
+                      key: ValueKey(_viewBucket(state.status)),
+                      child: _buildView(context, ref, state),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _GameFloatingTitleBar(
+                  title: l10n.gameTitle,
+                  abandonTooltip: l10n.gameAbandonTooltip,
+                  onAbandon: showAbandon
+                      ? () => _confirmAbandon(context, controller)
+                      : null,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -176,5 +203,67 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
       ),
     );
     if (shouldAbandon == true) controller.abandon();
+  }
+}
+
+/// Floating title chrome aligned with [AppBottomNavBar] (inset + radius 20).
+class const _GameFloatingTitleBar({
+  required final String title,
+  required final String abandonTooltip,
+  final VoidCallback? onAbandon,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        GuessThePokemonPage._headerHorizontalInset,
+        GuessThePokemonPage._headerTopInset,
+        GuessThePokemonPage._headerHorizontalInset,
+        0,
+      ),
+      child: Material(
+        color: theme.colorScheme.surface,
+        elevation: isDark ? 0 : 2,
+        shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
+        borderRadius: BorderRadius.circular(
+          GuessThePokemonPage._headerCornerRadius,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: SizedBox(
+          height: GuessThePokemonPage._headerBarHeight,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: onAbandon != null ? 48 : 16,
+                ),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              if (onAbandon != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    tooltip: abandonTooltip,
+                    icon: const Icon(Icons.close),
+                    onPressed: onAbandon,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
