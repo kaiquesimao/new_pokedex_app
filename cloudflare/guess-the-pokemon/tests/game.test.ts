@@ -204,6 +204,8 @@ describe('game routes', () => {
       'correct',
       'finished',
       'score',
+      'correctPokemonName',
+      'correctSpriteUrl',
       'nextRound',
     ]);
     for (const payload of [sharedContract.session.round, sharedContract.answer.nextRound]) {

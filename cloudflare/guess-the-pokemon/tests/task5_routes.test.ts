@@ -24,7 +24,10 @@ const verify = async (token: string) => ({
   exp: Number.MAX_SAFE_INTEGER,
 });
 
-const leaderboardRouter = createLeaderboardRouter({ verifyToken: verify });
+const leaderboardRouter = createLeaderboardRouter({
+  verifyToken: verify,
+  clock: () => new Date('2026-09-17T12:00:00.000Z'),
+});
 const profileRouter = createProfileRouter({ verifyToken: verify });
 
 beforeAll(async () => {
