@@ -57,6 +57,7 @@ class const PokemonSpriteImage({
   final double errorIconSize = 48,
   final Color? errorIconColor,
   final Duration fadeInDuration = Duration.zero,
+  final VoidCallback? onLoaded,
 }) extends StatefulWidget {
   @override
   State<PokemonSpriteImage> createState() => _PokemonSpriteImageState();
@@ -65,6 +66,7 @@ class const PokemonSpriteImage({
 class _PokemonSpriteImageState extends State<PokemonSpriteImage> {
   late String _currentUrl;
   var _usedFallback = false;
+  var _notifiedLoaded = false;
 
   @override
   void initState() {
@@ -79,7 +81,19 @@ class _PokemonSpriteImageState extends State<PokemonSpriteImage> {
         oldWidget.fallbackImageUrl != widget.fallbackImageUrl) {
       _currentUrl = widget.imageUrl;
       _usedFallback = false;
+      _notifiedLoaded = false;
     }
+  }
+
+  void _notifyLoaded() {
+    if (_notifiedLoaded) return;
+    _notifiedLoaded = true;
+    final callback = widget.onLoaded;
+    if (callback == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      callback();
+    });
   }
 
   String? get _fallbackUrl =>
@@ -117,6 +131,7 @@ class _PokemonSpriteImageState extends State<PokemonSpriteImage> {
         return buildLoadingIndicator(context);
       }
 
+      _notifyLoaded();
       return Icon(
         Icons.catching_pokemon,
         size: widget.errorIconSize,
@@ -135,6 +150,16 @@ class _PokemonSpriteImageState extends State<PokemonSpriteImage> {
       memCacheWidth: cacheSize,
       memCacheHeight: cacheSize,
       progressIndicatorBuilder: (_, _, _) => buildLoadingIndicator(context),
+      imageBuilder: (context, imageProvider) {
+        _notifyLoaded();
+        return Image(
+          image: imageProvider,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          filterQuality: widget.filterQuality,
+        );
+      },
       errorWidget: (_, _, _) => buildErrorWidget(context),
     );
 

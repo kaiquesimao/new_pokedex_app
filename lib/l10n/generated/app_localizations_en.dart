@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navAccount => 'Account';
 
   @override
+  String get navGame => 'Game';
+
+  @override
   String get profileHelpLanguageQuestion => 'How do I change the language?';
 
   @override
@@ -472,6 +475,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileNotifyAppUpdates => 'App updates';
+
+  @override
+  String get profilePublicProfileLabel =>
+      'Show my trainer name on the leaderboard';
 
   @override
   String get profileLanguageTitle => 'Language';
@@ -1246,4 +1253,139 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get firebaseConfigErrorBody =>
       'This production build requires Firebase. Configure dart_defines.json and rebuild the app with --dart-define-from-file=dart_defines.json.';
+
+  @override
+  String get gameTitle => 'Who\'s that Pokémon?';
+
+  @override
+  String get gameGuestMessage => 'Play as a guest';
+
+  @override
+  String get gameStartButton => 'Start game';
+
+  @override
+  String get gameRoundPrompt => 'Which Pokémon is hidden?';
+
+  @override
+  String get gameAnswerCorrect => 'Correct!';
+
+  @override
+  String get gameAnswerWrong => 'Wrong!';
+
+  @override
+  String get gameAnswerTimeout => 'Time\'s up!';
+
+  @override
+  String gameTimerSemantics(int seconds) {
+    return '$seconds seconds remaining';
+  }
+
+  @override
+  String gameCorrectWas(String name) {
+    return 'It was $name';
+  }
+
+  @override
+  String gamePokemonNumber(Object id) {
+    return 'Pokémon #$id';
+  }
+
+  @override
+  String gameAnswerSemantics(Object name) {
+    return 'Answer $name';
+  }
+
+  @override
+  String gameScore(Object score) {
+    return '$score points';
+  }
+
+  @override
+  String get gameResultTitle => 'Game result';
+
+  @override
+  String gameBestScore(Object score) {
+    return 'Best score: $score';
+  }
+
+  @override
+  String get gamePlayAgainButton => 'Play again';
+
+  @override
+  String get gamePublishButton => 'Publish score';
+
+  @override
+  String get gameRetryPublicationButton => 'Try publishing again';
+
+  @override
+  String get gamePublicationPending => 'Publishing score...';
+
+  @override
+  String get gamePublicationFailed => 'The score could not be published.';
+
+  @override
+  String get gamePublishedMessage =>
+      'Your score was published to the leaderboard.';
+
+  @override
+  String get gamePublicOnlyMessage =>
+      'Sign in to publish your score to the leaderboard.';
+
+  @override
+  String get gameAbandonTooltip => 'Abandon game';
+
+  @override
+  String get gameAbandonTitle => 'Leave the game?';
+
+  @override
+  String get gameAbandonMessage => 'Your progress in this game will be lost.';
+
+  @override
+  String get gameAbandonButton => 'Leave game';
+
+  @override
+  String get gameKeepPlayingButton => 'Keep playing';
+
+  @override
+  String get gameLoading => 'Preparing game...';
+
+  @override
+  String get gameError => 'The game could not be started.';
+
+  @override
+  String get gameRetryButton => 'Try again';
+
+  @override
+  String get gameLeaderboardButton => 'View leaderboard';
+
+  @override
+  String get leaderboardTitle => 'Leaderboard';
+
+  @override
+  String get leaderboardGeneralTab => 'All time';
+
+  @override
+  String get leaderboardWeeklyTab => 'This week';
+
+  @override
+  String get leaderboardCurrentUser => 'You';
+
+  @override
+  String get leaderboardAnonymousTrainer => 'Anonymous Trainer';
+
+  @override
+  String get leaderboardEmpty => 'No scores have been published yet.';
+
+  @override
+  String get leaderboardOffline => 'Leaderboard unavailable offline.';
+
+  @override
+  String get leaderboardError => 'Could not load the leaderboard.';
+
+  @override
+  String get leaderboardRetry => 'Try again';
+
+  @override
+  String get leaderboardSignInGuidance =>
+      'Sign in to publish your score and appear with your trainer name.';
 }

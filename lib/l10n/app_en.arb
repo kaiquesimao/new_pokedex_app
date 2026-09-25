@@ -5,6 +5,7 @@
   "navRegions": "Regions",
   "navFavorites": "Favorites",
   "navAccount": "Account",
+  "navGame": "Game",
   "profileHelpLanguageQuestion": "How do I change the language?",
   "@profileHelpLanguageQuestion": {
     "description": "Help FAQ: changing app language"
@@ -282,6 +283,7 @@
   "profileNotificationsTitle": "Notifications",
   "profileNotifyNewPokemon": "New Pokémon",
   "profileNotifyAppUpdates": "App updates",
+  "profilePublicProfileLabel": "Show my trainer name on the leaderboard",
   "profileLanguageTitle": "Language",
   "profileAppLanguageLabel": "App language",
   "profileGeneralTitle": "General",
@@ -573,5 +575,57 @@
   },
 
   "firebaseConfigErrorTitle": "Configuration unavailable",
-  "firebaseConfigErrorBody": "This production build requires Firebase. Configure dart_defines.json and rebuild the app with --dart-define-from-file=dart_defines.json."
+  "firebaseConfigErrorBody": "This production build requires Firebase. Configure dart_defines.json and rebuild the app with --dart-define-from-file=dart_defines.json.",
+
+  "gameTitle": "Who's that Pokémon?",
+  "gameGuestMessage": "Play as a guest",
+  "gameStartButton": "Start game",
+  "gameRoundPrompt": "Which Pokémon is hidden?",
+  "gameAnswerCorrect": "Correct!",
+  "gameAnswerWrong": "Wrong!",
+  "gameAnswerTimeout": "Time's up!",
+  "gameTimerSemantics": "{seconds} seconds remaining",
+  "@gameTimerSemantics": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "gameCorrectWas": "It was {name}",
+  "@gameCorrectWas": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "gamePokemonNumber": "Pokémon #{id}",
+  "gameAnswerSemantics": "Answer {name}",
+  "gameScore": "{score} points",
+  "gameResultTitle": "Game result",
+  "gameBestScore": "Best score: {score}",
+  "gamePlayAgainButton": "Play again",
+  "gamePublishButton": "Publish score",
+  "gameRetryPublicationButton": "Try publishing again",
+  "gamePublicationPending": "Publishing score...",
+  "gamePublicationFailed": "The score could not be published.",
+  "gamePublishedMessage": "Your score was published to the leaderboard.",
+  "gamePublicOnlyMessage": "Sign in to publish your score to the leaderboard.",
+  "gameAbandonTooltip": "Abandon game",
+  "gameAbandonTitle": "Leave the game?",
+  "gameAbandonMessage": "Your progress in this game will be lost.",
+  "gameAbandonButton": "Leave game",
+  "gameKeepPlayingButton": "Keep playing",
+  "gameLoading": "Preparing game...",
+  "gameError": "The game could not be started.",
+  "gameRetryButton": "Try again"
+  ,"gameLeaderboardButton": "View leaderboard"
+,
+  "leaderboardTitle": "Leaderboard",
+  "leaderboardGeneralTab": "All time",
+  "leaderboardWeeklyTab": "This week",
+  "leaderboardCurrentUser": "You",
+  "leaderboardAnonymousTrainer": "Anonymous Trainer",
+  "leaderboardEmpty": "No scores have been published yet.",
+  "leaderboardOffline": "Leaderboard unavailable offline.",
+  "leaderboardError": "Could not load the leaderboard.",
+  "leaderboardRetry": "Try again",
+  "leaderboardSignInGuidance": "Sign in to publish your score and appear with your trainer name."
 }

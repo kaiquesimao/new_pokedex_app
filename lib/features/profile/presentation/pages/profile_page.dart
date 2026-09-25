@@ -31,6 +31,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         await ref.read(authProvider.notifier).refreshAuthenticatedUser();
+        if (ref.read(authProvider).isAuthenticated) {
+          await ref
+              .read(profileSettingsProvider.notifier)
+              .ensurePublicRankingProfile();
+        }
       } on Object {
         // ponytail: best-effort sync when opening profile
       }
@@ -93,13 +98,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     .read(profileSettingsProvider.notifier)
                     .setNotifyNewPokemon(value: value),
               ),
-              onToggleNotifyUpdates: (value) => _saveSetting(
+               onToggleNotifyUpdates: (value) => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
                     .setNotifyAppUpdates(value: value),
-              ),
+               ),
               onToggleAppLanguage: () => _saveSetting(
                 context,
                 ref,

@@ -11,5 +11,6 @@
   "FIREBASE_ANDROID_APP_ID": "your-android-app-id",
   "FIREBASE_IOS_API_KEY": "your-ios-api-key",
   "FIREBASE_IOS_APP_ID": "your-ios-app-id",
-  "FIREBASE_IOS_BUNDLE_ID": "com.example.pokedexApp"
+  "FIREBASE_IOS_BUNDLE_ID": "com.example.pokedexApp",
+  "GAME_API_BASE_URL": "https://guess-the-pokemon.kaique-workspace.workers.dev"
 }

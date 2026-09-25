@@ -1,0 +1,32 @@
+{
+  "name": "guess-the-pokemon-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:catalog": "tsx scripts/build-catalog.ts",
+    "validate:catalog": "tsx scripts/validate-catalog.ts",
+    "validate:migrations": "tsx scripts/validate-migrations.ts",
+    "build": "npm run build:catalog && npm run validate:catalog && npm run validate:migrations && npm run typecheck",
+    "ci": "npm run validate:catalog && npm run validate:migrations && npm run typecheck && npm test && npm run bundle:check",
+    "bundle:check": "wrangler deploy --dry-run",
+    "deploy": "npm run build && wrangler deploy",
+    "dry-run": "npm run build && wrangler deploy --dry-run",
+    "monitor:free-tier": "tsx scripts/check-free-tier.ts",
+    "smoke:production": "tsx scripts/smoke-production.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "wrangler": "wrangler"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.1.12",
+    "@cloudflare/workers-types": "latest",
+    "@types/node": "^26.6.1",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest",
+    "wrangler": "latest"
+  },
+  "dependencies": {
+    "hono": "^4.13.9"
+  }
+}

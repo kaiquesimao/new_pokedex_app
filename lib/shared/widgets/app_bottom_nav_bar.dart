@@ -36,6 +36,7 @@ class const AppBottomNavBar({
     final labels = [
       l10n.navPokedex,
       l10n.navRegions,
+      l10n.navGame,
       l10n.navFavorites,
       l10n.navAccount,
     ];
@@ -119,18 +120,22 @@ class const _NavSvg({
     final asset = switch (index) {
       0 => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
       1 => selected ? AppAssets.navRegionsActive : AppAssets.navRegionsInactive,
-      2 =>
+      2 => selected ? AppAssets.navGameActive : AppAssets.navGameInactive,
+      3 =>
         selected
             ? AppAssets.navFavoritesActive
             : AppAssets.navFavoritesInactive,
-      _ => selected ? AppAssets.navProfileActive : AppAssets.navProfileInactive,
+      4 => selected ? AppAssets.navProfileActive : AppAssets.navProfileInactive,
+      _ => selected ? AppAssets.navPokedexActive : AppAssets.navPokedexInactive,
     };
 
     final fallback = switch (index) {
       0 => Icons.catching_pokemon,
       1 => Icons.public,
-      2 => Icons.favorite_border,
-      _ => Icons.person_outline,
+      2 => Icons.quiz_outlined,
+      3 => Icons.favorite_border,
+      4 => Icons.person_outline,
+      _ => Icons.catching_pokemon,
     };
 
     // ponytail: assets already have active/inactive variants; no colorFilter.

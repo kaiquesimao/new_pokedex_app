@@ -19,6 +19,8 @@ bool isGuestShellRoute(String path) {
       path.startsWith('/regions') ||
       path == '/favorites' ||
       path == '/profile' ||
+      path == '/game' ||
+      path == '/leaderboard' ||
       path.startsWith('/pokemon/');
 }
 

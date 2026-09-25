@@ -1,0 +1,85 @@
+{
+  "session": {
+    "sessionId": "fixture-session",
+    "catalogVersion": "v1",
+    "round": {
+      "roundIndex": 0,
+      "difficulty": "easy",
+      "silhouetteUrl": "https://example.test/sprites/25.png",
+      "options": [
+        {
+          "id": 25,
+          "slug": "pikachu",
+          "name": "pikachu",
+          "label": "Pikachu",
+          "spriteUrl": "https://example.test/sprites/25.png"
+        },
+        {
+          "id": 4,
+          "slug": "charmander",
+          "name": "charmander",
+          "label": "Charmander",
+          "spriteUrl": "https://example.test/sprites/4.png"
+        },
+        {
+          "id": 7,
+          "slug": "squirtle",
+          "name": "squirtle",
+          "label": "Squirtle",
+          "spriteUrl": "https://example.test/sprites/7.png"
+        },
+        {
+          "id": 1,
+          "slug": "bulbasaur",
+          "name": "bulbasaur",
+          "label": "Bulbasaur",
+          "spriteUrl": "https://example.test/sprites/1.png"
+        }
+      ]
+    }
+  },
+  "answer": {
+    "sessionId": "fixture-session",
+    "roundIndex": 0,
+    "correct": true,
+    "finished": false,
+    "score": 1,
+    "correctPokemonName": "Pikachu",
+    "correctSpriteUrl": "https://example.test/sprites/25.png",
+    "nextRound": {
+      "roundIndex": 1,
+      "difficulty": "easy",
+      "silhouetteUrl": "https://example.test/sprites/133.png",
+      "options": [
+        {
+          "id": 133,
+          "slug": "eevee",
+          "name": "eevee",
+          "label": "Eevee",
+          "spriteUrl": "https://example.test/sprites/133.png"
+        },
+        {
+          "id": 10,
+          "slug": "caterpie",
+          "name": "caterpie",
+          "label": "Caterpie",
+          "spriteUrl": "https://example.test/sprites/10.png"
+        },
+        {
+          "id": 16,
+          "slug": "pidgey",
+          "name": "pidgey",
+          "label": "Pidgey",
+          "spriteUrl": "https://example.test/sprites/16.png"
+        },
+        {
+          "id": 19,
+          "slug": "rattata",
+          "name": "rattata",
+          "label": "Rattata",
+          "spriteUrl": "https://example.test/sprites/19.png"
+        }
+      ]
+    }
+  }
+}

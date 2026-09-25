@@ -47,6 +47,115 @@ jobs:
       - name: Test
         run: flutter test
 
+  worker:
+    name: Worker (guess-the-pokemon)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudflare/guess-the-pokemon
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: cloudflare/guess-the-pokemon/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate, typecheck, test, and dry-run
+        run: npm run ci
+
+  deploy-worker:
+    name: Deploy Worker (production)
+    needs: worker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://guess-the-pokemon.kaique-workspace.workers.dev
+    defaults:
+      run:
+        working-directory: cloudflare/guess-the-pokemon
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: cloudflare/guess-the-pokemon/package-lock.json
+
+      - name: Require deploy secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=0
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing secret $name"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate catalog and migrations
+        run: |
+          npm run validate:catalog
+          npm run validate:migrations
+
+      - name: Apply D1 migrations (remote)
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare/guess-the-pokemon
+          command: d1 migrations apply guess-the-pokemon --remote
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare/guess-the-pokemon
+          command: deploy
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Smoke check (Worker API)
+        run: |
+          BASE_URL='https://guess-the-pokemon.kaique-workspace.workers.dev'
+          echo "Checking $BASE_URL/round"
+          curl -fsS --retry 8 --retry-delay 3 --retry-all-errors \
+            "$BASE_URL/round?seed=ci&round=0" | tee /tmp/worker-round.json
+          python3 - <<'PY'
+          import json, sys
+          data = json.load(open('/tmp/worker-round.json'))
+          assert 'difficulty' in data and 'options' in data, data
+          print('round ok')
+          PY
+          echo "Checking $BASE_URL/v1/leaderboards"
+          curl -fsS --retry 8 --retry-delay 3 --retry-all-errors \
+            "$BASE_URL/v1/leaderboards?scope=global&limit=5" | tee /tmp/worker-lb.json
+          python3 - <<'PY'
+          import json
+          data = json.load(open('/tmp/worker-lb.json'))
+          assert 'entries' in data and 'next_cursor' in data, data
+          blob = json.dumps(data)
+          assert '@' not in blob
+          print('leaderboard ok')
+          PY
+          CODE=$(curl -sS -o /tmp/cors.json -w "%{http_code}" \
+            -H "Origin: https://pokedata.kaique.site" \
+            "$BASE_URL/v1/leaderboards?scope=weekly&limit=1")
+          test "$CODE" = "200"
+          echo "CORS origin poke data site ok ($CODE)"
+
   deploy-web:
     name: Deploy web (production)
     needs: ci

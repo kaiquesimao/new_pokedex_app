@@ -27,17 +27,20 @@ Map<String, String> pokeApiRequestHeaders({
 Dio createDio({
   required ConnectivityService connectivity,
   String appVersion = '1.0.0',
+  String baseUrl = 'https://pokeapi.co/api/v2',
+  Map<String, String>? headers,
+  bool enableLogging = true,
 }) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://pokeapi.co/api/v2',
+      baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       sendTimeout: kIsWeb ? null : const Duration(seconds: 15),
       // ponytail: explicit per network-resilience spec (default is json).
       // ignore: avoid_redundant_argument_values
       responseType: ResponseType.json,
-      headers: pokeApiRequestHeaders(appVersion: appVersion),
+      headers: headers ?? pokeApiRequestHeaders(appVersion: appVersion),
     ),
   );
 
@@ -45,10 +48,8 @@ Dio createDio({
   dio.interceptors.add(TransientRetryInterceptor(dio: dio));
   dio.interceptors.add(WebSafeHeadersInterceptor());
 
-  if (kDebugMode) {
-    dio.interceptors.add(
-      LogInterceptor(),
-    );
+  if (kDebugMode && enableLogging) {
+    dio.interceptors.add(LogInterceptor());
   }
 
   return dio;

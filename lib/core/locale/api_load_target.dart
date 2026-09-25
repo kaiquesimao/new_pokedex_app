@@ -13,4 +13,5 @@ enum ApiLoadTarget {
   evolutionChain,
   species,
   form,
+  guessThePokemon,
 }

@@ -4,6 +4,7 @@
   "navRegions": "Regiões",
   "navFavorites": "Favoritos",
   "navAccount": "Conta",
+  "navGame": "Jogo",
   "profileHelpLanguageQuestion": "Como alterar o idioma?",
   "profileHelpLanguageAnswer": "Em Conta → Idioma, toque em \"Idioma do app\" para alternar entre português e inglês."
 ,
@@ -274,6 +275,7 @@
   "profileNotificationsTitle": "Notificações",
   "profileNotifyNewPokemon": "Novos Pokémon",
   "profileNotifyAppUpdates": "Atualizações do app",
+  "profilePublicProfileLabel": "Mostrar meu nome de treinador no ranking",
   "profileLanguageTitle": "Idioma",
   "profileAppLanguageLabel": "Idioma do app",
   "profileGeneralTitle": "Geral",
@@ -560,5 +562,57 @@
   },
 
   "firebaseConfigErrorTitle": "Configuração indisponível",
-  "firebaseConfigErrorBody": "Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json."
+  "firebaseConfigErrorBody": "Este build de produção requer Firebase. Configure dart_defines.json e reconstrua o app com --dart-define-from-file=dart_defines.json.",
+
+  "gameTitle": "Quem é esse Pokémon?",
+  "gameGuestMessage": "Jogar como convidado",
+  "gameStartButton": "Começar partida",
+  "gameRoundPrompt": "Qual Pokémon está escondido?",
+  "gameAnswerCorrect": "Acertou!",
+  "gameAnswerWrong": "Errou!",
+  "gameAnswerTimeout": "Tempo esgotado!",
+  "gameTimerSemantics": "Restam {seconds} segundos",
+  "@gameTimerSemantics": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "gameCorrectWas": "Era {name}",
+  "@gameCorrectWas": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "gamePokemonNumber": "Pokémon #{id}",
+  "gameAnswerSemantics": "Resposta {name}",
+  "gameScore": "{score} pontos",
+  "gameResultTitle": "Resultado da partida",
+  "gameBestScore": "Melhor pontuação: {score}",
+  "gamePlayAgainButton": "Jogar novamente",
+  "gamePublishButton": "Publicar pontuação",
+  "gameRetryPublicationButton": "Tentar publicar novamente",
+  "gamePublicationPending": "Publicando pontuação...",
+  "gamePublicationFailed": "Não foi possível publicar a pontuação.",
+  "gamePublishedMessage": "Pontuação publicada no ranking.",
+  "gamePublicOnlyMessage": "Entre na sua conta para publicar sua pontuação no ranking.",
+  "gameAbandonTooltip": "Abandonar partida",
+  "gameAbandonTitle": "Sair da partida?",
+  "gameAbandonMessage": "Seu progresso nesta partida será perdido.",
+  "gameAbandonButton": "Sair da partida",
+  "gameKeepPlayingButton": "Continuar jogando",
+  "gameLoading": "Preparando partida...",
+  "gameError": "Não foi possível iniciar a partida.",
+   "gameRetryButton": "Tentar novamente",
+   "gameLeaderboardButton": "Ver ranking"
+,
+  "leaderboardTitle": "Ranking",
+  "leaderboardGeneralTab": "Geral",
+  "leaderboardWeeklyTab": "Esta semana",
+  "leaderboardCurrentUser": "Você",
+  "leaderboardAnonymousTrainer": "Treinador anônimo",
+  "leaderboardEmpty": "Nenhuma pontuação foi publicada ainda.",
+  "leaderboardOffline": "O ranking está indisponível offline.",
+  "leaderboardError": "Não foi possível carregar o ranking.",
+  "leaderboardRetry": "Tentar novamente",
+  "leaderboardSignInGuidance": "Entre para publicar sua pontuação e aparecer com seu nome de treinador."
 }

@@ -137,4 +137,5 @@ class PokeApiClient(final Dio _dio) {
       mapDioException(e, loadTarget: ApiLoadTarget.form);
     }
   }
+
 }

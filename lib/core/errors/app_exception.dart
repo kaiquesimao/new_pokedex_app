@@ -36,3 +36,7 @@ final class const OfflineEmptyCacheException({
 }) extends AppException {
   this : super('');
 }
+
+final class const GameApiUnavailableException() extends AppException {
+  this : super('');
+}
