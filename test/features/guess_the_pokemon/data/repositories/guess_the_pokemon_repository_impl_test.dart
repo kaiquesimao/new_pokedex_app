@@ -33,14 +33,17 @@ void main() {
       await repository.getLeaderboard(cursor: 'next');
       await repository.publishScore('session-1');
       await repository.saveBestScore(9);
-       await repository.savePublicProfilePreference(value: true, displayName: 'Ash');
+      await repository.savePublicProfilePreference(
+        value: true,
+        displayName: 'Ash',
+      );
 
       expect(remote.calls, [
         'start',
         'answer',
         'leaderboard:general:next',
         'publish:session-1',
-         'profile:false:Ash',
+        'profile:false:Ash',
       ]);
       expect(local.savedSession?.sessionId, 'session-1');
       expect(local.savedPublication?.state, PublicationState.published);
@@ -69,11 +72,11 @@ void main() {
 }
 
 class _RecordingRemoteDataSource extends GuessThePokemonRemoteDataSource {
-  _RecordingRemoteDataSource({this.readProfileError}) : super(_unusedClient);
+  new({this.readProfileError}) : super(_unusedClient);
 
   static final _unusedClient = GuessThePokemonApiClient(Dio());
   final calls = <String>[];
-  final Object? readProfileError;
+  final Exception? readProfileError;
 
   @override
   Future<GameSessionModel> startSession() async {
@@ -108,9 +111,9 @@ class _RecordingRemoteDataSource extends GuessThePokemonRemoteDataSource {
 
   @override
   Future<PublicationStateModel> publishScore(
-    String sessionId,
-    {int? score}
-  ) async {
+    String sessionId, {
+    int? score,
+  }) async {
     calls.add('publish:$sessionId');
     return const PublicationStateModel(state: PublicationState.published);
   }
@@ -131,7 +134,7 @@ class _RecordingRemoteDataSource extends GuessThePokemonRemoteDataSource {
 }
 
 class _RecordingLocalDataSource extends GuessThePokemonLocalDataSource {
-  _RecordingLocalDataSource(super.prefs);
+  new(super._prefs);
 
   GameSessionModel? savedSession;
   PublicationStateModel? savedPublication;

@@ -1,8 +1,8 @@
 import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_catalog_entry.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 
 class GuessThePokemonRepositoryImpl implements GuessThePokemonRepository {
   new({required this._local, required this._remote});

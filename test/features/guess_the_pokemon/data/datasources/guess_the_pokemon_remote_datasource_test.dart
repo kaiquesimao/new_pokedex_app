@@ -71,7 +71,7 @@ void main() {
 
   test('reports an unconfigured game API as unavailable', () async {
     final remote = GuessThePokemonRemoteDataSource(
-      GuessThePokemonApiClient(Dio(BaseOptions(baseUrl: ''))),
+      GuessThePokemonApiClient(Dio(BaseOptions())),
     );
 
     await expectLater(
@@ -88,7 +88,7 @@ void main() {
 }
 
 class _FakeGameApiClient extends GuessThePokemonApiClient {
-  _FakeGameApiClient({this.error}) : super(Dio());
+  new({this.error}) : super(Dio());
 
   final Exception? error;
   final calls = <String>[];

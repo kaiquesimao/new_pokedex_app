@@ -3,28 +3,23 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// A keyboard-focusable, semantically labelled answer control.
 class const GameOptionButton({
-  required this.name,
+  required final String name,
   super.key,
-  this.onPressed,
-  this.selected = false,
-  this.correct,
+  final VoidCallback? onPressed,
+  final bool selected = false,
+  final bool? correct,
 }) extends StatelessWidget {
-  final String name;
-  final VoidCallback? onPressed;
-  final bool selected;
-  final bool? correct;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final Color? background = switch (correct) {
+    final background = switch (correct) {
       true => scheme.primaryContainer,
       false when selected => scheme.errorContainer,
       _ when selected => scheme.secondaryContainer,
       _ => null,
     };
-    final Color? foreground = switch (correct) {
+    final foreground = switch (correct) {
       true => scheme.onPrimaryContainer,
       false when selected => scheme.onErrorContainer,
       _ => null,

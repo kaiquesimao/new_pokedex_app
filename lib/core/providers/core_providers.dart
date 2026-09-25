@@ -2,16 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_app/core/database/app_database.dart';
+import 'package:pokedex_app/core/env/env.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/locale/game_text_resolver_provider.dart';
 import 'package:pokedex_app/core/network/dio_client.dart';
 import 'package:pokedex_app/core/network/guess_the_pokemon_api_client.dart';
-import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/core/network/poke_api_client.dart';
-import 'package:pokedex_app/core/env/env.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
+import 'package:pokedex_app/core/providers/firebase_providers.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_local_datasource.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_remote_datasource.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/data/repositories/guess_the_pokemon_repository_impl.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/pokemon/data/repositories/pokemon_repository_impl.dart';
@@ -19,11 +24,6 @@ import 'package:pokedex_app/features/pokemon/domain/repositories/pokemon_reposit
 import 'package:pokedex_app/features/regions/data/datasources/region_local_datasource.dart';
 import 'package:pokedex_app/features/regions/data/repositories/region_repository_impl.dart';
 import 'package:pokedex_app/features/regions/domain/repositories/region_repository.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_local_datasource.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_remote_datasource.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/data/repositories/guess_the_pokemon_repository_impl.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
-import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {

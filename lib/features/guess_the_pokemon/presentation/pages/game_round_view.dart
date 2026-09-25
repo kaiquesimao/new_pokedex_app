@@ -8,31 +8,19 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 /// Displays one controller-owned round without deciding its outcome.
 class const GameRoundView({
-  required this.onAnswer,
+  required final Future<void> Function(int optionId) onAnswer,
   super.key,
-  this.localRound,
-  this.remoteRound,
-  this.score = 0,
-  this.isAnswering = false,
-  this.selectedOptionId,
-  this.lastAnswerCorrect,
-  this.revealedPokemonName,
-  this.revealedSpriteUrl,
-  this.error,
-  this.onRetry,
+  final GameRound? localRound,
+  final GameRoundModel? remoteRound,
+  final int score = 0,
+  final bool isAnswering = false,
+  final int? selectedOptionId,
+  final bool? lastAnswerCorrect,
+  final String? revealedPokemonName,
+  final String? revealedSpriteUrl,
+  final Object? error,
+  final VoidCallback? onRetry,
 }) extends StatelessWidget {
-  final GameRound? localRound;
-  final GameRoundModel? remoteRound;
-  final int score;
-  final bool isAnswering;
-  final int? selectedOptionId;
-  final bool? lastAnswerCorrect;
-  final String? revealedPokemonName;
-  final String? revealedSpriteUrl;
-  final Object? error;
-  final VoidCallback? onRetry;
-  final Future<void> Function(int optionId) onAnswer;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -191,7 +179,4 @@ class const GameRoundView({
   }
 }
 
-class const _RoundOption({required this.speciesId, required this.name}) {
-  final int speciesId;
-  final String name;
-}
+class const _RoundOption({required final int speciesId, required final String name});

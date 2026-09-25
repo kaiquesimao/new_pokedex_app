@@ -7,33 +7,16 @@ import 'package:pokedex_app/shared/widgets/pokemon_sprite_image.dart';
 
 /// Shows the score returned by the game controller and its publication state.
 class const GameResultView({
-  required this.onPlayAgain,
-  required this.onLeaderboard,
-  super.key,
-  required this.score,
-  required this.bestScore,
-  required this.canPublish,
-  required this.publicationState,
-  this.onPublish,
-  this.localRound,
-  this.remoteRound,
-  this.revealedPokemonName,
-  this.revealedSpriteUrl,
-  this.lastAnswerCorrect,
+  required final Future<void> Function() onPlayAgain,
+  required final VoidCallback onLeaderboard,
+  required final int score, required final int bestScore, required final bool canPublish, required final PublicationState publicationState, super.key,
+  final Future<void> Function()? onPublish,
+  final GameRound? localRound,
+  final GameRoundModel? remoteRound,
+  final String? revealedPokemonName,
+  final String? revealedSpriteUrl,
+  final bool? lastAnswerCorrect,
 }) extends StatelessWidget {
-  final int score;
-  final int bestScore;
-  final bool canPublish;
-  final PublicationState publicationState;
-  final Future<void> Function() onPlayAgain;
-  final VoidCallback onLeaderboard;
-  final Future<void> Function()? onPublish;
-  final GameRound? localRound;
-  final GameRoundModel? remoteRound;
-  final String? revealedPokemonName;
-  final String? revealedSpriteUrl;
-  final bool? lastAnswerCorrect;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -150,10 +133,8 @@ class const GameResultView({
   }
 }
 
-class const _PublicationProgress({required this.message})
+class const _PublicationProgress({required final String message})
     extends StatelessWidget {
-  final String message;
-
   @override
   Widget build(BuildContext context) {
     return Row(

@@ -4,7 +4,7 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_roun
 /// Immutable progress for one local game session.
 @immutable
 class GameSession {
-  GameSession({
+  new({
     this.score = 0,
     this.isFinished = false,
     List<GameRound> rounds = const [],

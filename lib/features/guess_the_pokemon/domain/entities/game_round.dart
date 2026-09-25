@@ -4,7 +4,7 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_cata
 /// A single question with one correct answer and three alternatives.
 @immutable
 class GameRound {
-  GameRound({
+  new({
     required this.sequenceNumber,
     required this.correctAnswer,
     required List<GameCatalogEntry> options,

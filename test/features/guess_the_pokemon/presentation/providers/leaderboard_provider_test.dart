@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_catalog_entry.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/leaderboard_provider.dart';
 
 void main() {
@@ -75,7 +75,7 @@ void main() {
 
     final notifier = container.read(leaderboardProvider.notifier);
     final oldRequest = notifier.load(scope: LeaderboardScope.weekly);
-    await notifier.load(scope: LeaderboardScope.general);
+    await notifier.load();
     weekly.complete(
       LeaderboardPageModel(
         entries: [
@@ -123,16 +123,16 @@ void main() {
 }
 
 class _FakeLeaderboardRepository implements GuessThePokemonRepository {
-  _FakeLeaderboardRepository(this.pages)
+  new(this.pages)
     : requests = [for (final page in pages) () async => page];
 
-  _FakeLeaderboardRepository.withRequests(this.requests) : pages = const [];
+  new withRequests(this.requests) : pages = const [];
 
   final List<LeaderboardPageModel> pages;
   final List<Future<LeaderboardPageModel> Function()> requests;
   final scopes = <LeaderboardScope>[];
   final cursors = <String?>[];
-  var index = 0;
+  int index = 0;
 
   @override
   Future<LeaderboardPageModel> getLeaderboard({

@@ -3,8 +3,8 @@ import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
-import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_catalog_entry.dart';
+import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/leaderboard_page.dart';
 
 import '../../../../helpers/firebase_test_overrides.dart';
@@ -61,7 +61,7 @@ void main() {
 }
 
 class _FakeLeaderboardRepository implements GuessThePokemonRepository {
-  _FakeLeaderboardRepository({this.currentUser = true});
+  new({this.currentUser = true});
 
   final bool currentUser;
 

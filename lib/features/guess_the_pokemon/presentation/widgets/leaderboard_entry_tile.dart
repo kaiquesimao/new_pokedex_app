@@ -2,10 +2,10 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 class const LeaderboardEntryTile({
-  required this.rank,
-  required this.playerName,
-  required this.score,
-  required this.isCurrentUser,
+  required final int rank,
+  required final String playerName,
+  required final int score,
+  required final bool isCurrentUser,
   super.key,
 }) extends StatelessWidget {
   @override
@@ -82,8 +82,4 @@ class const LeaderboardEntryTile({
     );
   }
 
-  final int rank;
-  final String playerName;
-  final int score;
-  final bool isCurrentUser;
 }

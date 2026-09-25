@@ -1,5 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -103,7 +103,6 @@ void main() {
         status: GuessThePokemonStatus.finished,
         score: 3,
         bestScore: 5,
-        isRemote: false,
       ),
     );
     await _pump(tester, controller);
@@ -355,13 +354,13 @@ Future<void> _pump(WidgetTester tester, _FakeController controller) async {
 }
 
 class _FakeController extends GuessThePokemonController {
-  _FakeController(this.initialState);
+  new(this.initialState);
 
   final GuessThePokemonState initialState;
-  var startCalls = 0;
-  var playAgainCalls = 0;
-  var abandonCalls = 0;
-  var retryPublicationCalls = 0;
+  int startCalls = 0;
+  int playAgainCalls = 0;
+  int abandonCalls = 0;
+  int retryPublicationCalls = 0;
   int? selectedAnswer;
 
   @override

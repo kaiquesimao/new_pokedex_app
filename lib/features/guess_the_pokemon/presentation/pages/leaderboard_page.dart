@@ -101,11 +101,8 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
           error.code == GuessThePokemonErrorCode.unavailable);
 }
 
-class const _ScopeToggle({required this.scope, required this.onChanged})
+class const _ScopeToggle({required final LeaderboardScope scope, required final ValueChanged<LeaderboardScope> onChanged})
     extends StatelessWidget {
-  final LeaderboardScope scope;
-  final ValueChanged<LeaderboardScope> onChanged;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -126,9 +123,7 @@ class const _ScopeToggle({required this.scope, required this.onChanged})
   }
 }
 
-class const _GuestGuidance({required this.onSignIn}) extends StatelessWidget {
-  final VoidCallback onSignIn;
-
+class const _GuestGuidance({required final VoidCallback onSignIn}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -148,11 +143,8 @@ class const _GuestGuidance({required this.onSignIn}) extends StatelessWidget {
   }
 }
 
-class const _ErrorState({required this.isOffline, required this.onRetry})
+class const _ErrorState({required final bool isOffline, required final VoidCallback onRetry})
     extends StatelessWidget {
-  final bool isOffline;
-  final VoidCallback onRetry;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

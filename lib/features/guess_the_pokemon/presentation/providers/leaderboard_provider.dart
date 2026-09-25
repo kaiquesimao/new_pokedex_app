@@ -6,20 +6,13 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess
 enum LeaderboardStatus { idle, loading, loaded, error }
 
 class const LeaderboardState({
-  this.status = LeaderboardStatus.idle,
-  this.scope = LeaderboardScope.general,
-  this.entries = const [],
-  this.nextCursor,
-  this.error,
-  this.isLoadingMore = false,
+  final LeaderboardStatus status = LeaderboardStatus.idle,
+  final LeaderboardScope scope = LeaderboardScope.general,
+  final List<LeaderboardEntryModel> entries = const [],
+  final String? nextCursor,
+  final Object? error,
+  final bool isLoadingMore = false,
 }) {
-  final LeaderboardStatus status;
-  final LeaderboardScope scope;
-  final List<LeaderboardEntryModel> entries;
-  final String? nextCursor;
-  final Object? error;
-  final bool isLoadingMore;
-
   bool get hasMore => nextCursor != null;
 
   LeaderboardState copyWith({

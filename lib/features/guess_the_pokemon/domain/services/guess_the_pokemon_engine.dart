@@ -7,7 +7,7 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_sess
 
 /// Builds deterministic local rounds and applies the game's scoring rules.
 class GuessThePokemonEngine {
-  GuessThePokemonEngine({
+  new({
     required List<GameCatalogEntry> catalog,
     this.seed = 0,
   }) : _catalog = _validatedCatalog(catalog) {

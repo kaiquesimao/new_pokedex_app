@@ -1,10 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/core/firebase/firebase_bootstrap.dart';
 import 'package:pokedex_app/core/network/guess_the_pokemon_api_client.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
 import 'package:pokedex_app/core/providers/firebase_providers.dart';
-import 'package:pokedex_app/core/firebase/firebase_bootstrap.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/datasources/guess_the_pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/repositories/guess_the_pokemon_repository_impl.dart';

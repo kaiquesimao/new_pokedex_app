@@ -23,7 +23,7 @@ enum GuessThePokemonStatus {
 
 @immutable
 class GuessThePokemonState {
-  const GuessThePokemonState({
+  const new({
     this.status = GuessThePokemonStatus.idle,
     this.localRound,
     this.remoteRound,

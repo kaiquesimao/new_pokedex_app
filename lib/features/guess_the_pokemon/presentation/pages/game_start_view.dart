@@ -5,15 +5,11 @@ import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 
 /// Introductory view for starting a local or authenticated game.
 class const GameStartView({
-  required this.onStart,
-  required this.onLeaderboard,
+  required final Future<void> Function() onStart,
+  required final VoidCallback onLeaderboard,
   super.key,
-  this.errorMessage,
+  final String? errorMessage,
 }) extends ConsumerWidget {
-  final Future<void> Function() onStart;
-  final VoidCallback onLeaderboard;
-  final String? errorMessage;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);

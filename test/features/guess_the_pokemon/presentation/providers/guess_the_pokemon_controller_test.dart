@@ -114,7 +114,7 @@ void main() {
         nextRound: GameRoundModel(
           roundIndex: 8,
           silhouetteUrl: 'https://example.test/next.png',
-          options: [
+          options: const [
             GameRoundOptionModel(id: 404, name: '404'),
             GameRoundOptionModel(id: 505, name: '505'),
             GameRoundOptionModel(id: 606, name: '606'),
@@ -125,14 +125,19 @@ void main() {
     );
     final container = _container(repository: repository, authenticated: true);
     addTearDown(container.dispose);
-    final controller = container.read(guessThePokemonControllerProvider.notifier);
+    final controller = container.read(
+      guessThePokemonControllerProvider.notifier,
+    );
 
     await controller.start();
     await controller.selectAnswer(303);
     await controller.retryAnswer();
 
     expect(repository.submission?.optionId, 303);
-    expect(container.read(guessThePokemonControllerProvider).remoteRound?.roundIndex, 8);
+    expect(
+      container.read(guessThePokemonControllerProvider).remoteRound?.roundIndex,
+      8,
+    );
   });
 
   test('late answer response cannot resurrect an abandoned game', () async {
@@ -305,7 +310,7 @@ ProviderContainer _container({
   );
 }
 
-final _catalog = [
+final List<GameCatalogEntry> _catalog = [
   ...List.generate(
     4,
     (i) => GameCatalogEntry(
@@ -347,7 +352,7 @@ final _serverSession = GameSessionModel(
 );
 
 class _FakeRepository implements GuessThePokemonRepository {
-  _FakeRepository({
+  new({
     this.startError,
     this.answerError,
     this.answerResult,
@@ -357,13 +362,13 @@ class _FakeRepository implements GuessThePokemonRepository {
     this.publishErrors = const [],
   });
 
-  final Object? startError;
-  final Object? answerError;
+  final Error? startError;
+  final Error? answerError;
   final AnswerResultModel? answerResult;
   final Completer<AnswerResultModel>? answerCompleter;
-  final Object? answerErrorOnce;
+  final Error? answerErrorOnce;
   final PublicationStateModel? cachedPublication;
-  final List<Object> publishErrors;
+  final List<Error> publishErrors;
   int bestScore = 0;
   int publishCalls = 0;
   int answerCalls = 0;
@@ -416,7 +421,10 @@ class _FakeRepository implements GuessThePokemonRepository {
   Future<bool> getPublicProfilePreference() async => false;
 
   @override
-  Future<void> savePublicProfilePreference({required bool value, String? displayName}) async {}
+  Future<void> savePublicProfilePreference({
+    required bool value,
+    String? displayName,
+  }) async {}
 
   @override
   Future<List<GameCatalogEntry>> loadLocalCatalog() async => _catalog;
@@ -428,6 +436,6 @@ class _FakeRepository implements GuessThePokemonRepository {
   Future<GameSessionModel?> readCachedSession() async => null;
 
   @override
-  Future<PublicationStateModel?> readCachedPublicationState() async => cachedPublication;
-
+  Future<PublicationStateModel?> readCachedPublicationState() async =>
+      cachedPublication;
 }

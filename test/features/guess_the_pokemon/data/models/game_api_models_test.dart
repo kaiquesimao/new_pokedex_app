@@ -59,7 +59,7 @@ void main() {
   });
 
   test('answer result uses the server score and has no client score input', () {
-    final result = AnswerResultModel.fromJson({
+    final result = AnswerResultModel.fromJson(const {
       'correct': true,
       'finished': false,
       'score': 42,
@@ -68,7 +68,7 @@ void main() {
     expect(result.score, 42);
     expect(result.correct, isTrue);
     expect(
-      AnswerSubmissionModel(
+      const AnswerSubmissionModel(
         sessionId: 'session-1',
         roundIndex: 1,
         optionId: 25,
@@ -81,7 +81,7 @@ void main() {
   });
 
   test('remote round never serializes or requires the correct target', () {
-    final round = GameRoundModel.fromJson({
+    final round = GameRoundModel.fromJson(const {
       'roundIndex': 0,
       'options': [
         {'id': 25, 'label': 'Pikachu', 'spriteUrl': 'sprite.png'},
@@ -91,7 +91,7 @@ void main() {
     expect(round.toJson(), isNot(contains('correct_species_id')));
     expect(round.toJson(), isNot(contains('correctSpeciesId')));
     expect(
-      () => GameRoundModel.fromJson({
+      () => GameRoundModel.fromJson(const {
         'roundIndex': 0,
         'correct_species_id': 25,
         'options': <dynamic>[],
@@ -111,7 +111,7 @@ void main() {
   });
 
   test('maps the backend current-user marker without identity fields', () {
-    final page = LeaderboardPageModel.fromJson({
+    final page = LeaderboardPageModel.fromJson(const {
       'entries': [
         {
           'player_name': 'Ash',

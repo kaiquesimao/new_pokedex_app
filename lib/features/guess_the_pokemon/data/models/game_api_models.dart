@@ -5,13 +5,13 @@ enum PublicationState { notPublished, pending, published, failed }
 
 @immutable
 class GameRoundOptionModel {
-  const GameRoundOptionModel({
+  const new({
     required this.id,
     required this.name,
     this.spriteUrl,
   });
 
-  factory GameRoundOptionModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final id = json['id'];
     final name = json['label'] ?? json['name'];
     if (id is! int || name is! String) {
@@ -53,7 +53,7 @@ class GameRoundModel {
     this.silhouetteUrl,
   }) : options = List.unmodifiable(options);
 
-  factory GameRoundModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final roundIndex = json['roundIndex'];
     final options = json['options'];
     if (roundIndex is! int || options is! List) {
@@ -95,13 +95,13 @@ class GameRoundModel {
 
 @immutable
 class GameSessionModel {
-  new({
+  const new({
     required this.sessionId,
     required this.catalogVersion,
     required this.round,
   });
 
-  factory GameSessionModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final sessionId = json['sessionId'];
     final catalogVersion = json['catalogVersion'];
     final round = json['round'];
@@ -140,7 +140,7 @@ class GameSessionModel {
 
 @immutable
 class AnswerSubmissionModel {
-  const AnswerSubmissionModel({
+  const new({
     required this.sessionId,
     required this.roundIndex,
     required this.optionId,
@@ -158,7 +158,7 @@ class AnswerSubmissionModel {
 
 @immutable
 class AnswerResultModel {
-  const AnswerResultModel({
+  const new({
     required this.correct,
     required this.score,
     required this.finished,
@@ -167,7 +167,7 @@ class AnswerResultModel {
     this.correctSpriteUrl,
   });
 
-  factory AnswerResultModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final correct = json['correct'];
     final finished = json['finished'];
     final score = json['score'];
@@ -196,7 +196,7 @@ class AnswerResultModel {
 
 @immutable
 class LeaderboardEntryModel {
-  const LeaderboardEntryModel({
+  const new({
     required this.playerName,
     required this.score,
     required this.completedAt,
@@ -204,7 +204,7 @@ class LeaderboardEntryModel {
     this.isCurrentUser = false,
   });
 
-  factory LeaderboardEntryModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return LeaderboardEntryModel(
       playerName: json['player_name'] as String? ?? '',
       score: (json['score'] as num?)?.toInt() ?? 0,
@@ -228,7 +228,7 @@ class LeaderboardPageModel {
     this.nextCursor,
   }) : entries = List.unmodifiable(entries);
 
-  factory LeaderboardPageModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return LeaderboardPageModel(
       entries: (json['entries'] as List<dynamic>? ?? [])
           .whereType<Map<String, dynamic>>()
@@ -244,9 +244,9 @@ class LeaderboardPageModel {
 
 @immutable
 class PublicationStateModel {
-  const PublicationStateModel({required this.state, this.publishedAt, this.sessionId, this.score = 0});
+  const new({required this.state, this.publishedAt, this.sessionId, this.score = 0});
 
-  factory PublicationStateModel.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     final value = json['state'];
     final state = PublicationState.values.where((item) => item.name == value);
     if (state.isEmpty) throw const FormatException('Unknown publication state');
@@ -295,9 +295,9 @@ enum GuessThePokemonErrorCode {
 }
 
 class GuessThePokemonException implements Exception {
-  const GuessThePokemonException(this.code, [this.message]);
+  const new(this.code, [this.message]);
 
-  factory GuessThePokemonException.fromError(Object error) {
+  factory fromError(Object error) {
     return switch (error) {
       NetworkException() => const GuessThePokemonException(
         GuessThePokemonErrorCode.network,

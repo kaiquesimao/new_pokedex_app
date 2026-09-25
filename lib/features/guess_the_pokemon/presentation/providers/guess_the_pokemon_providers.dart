@@ -5,10 +5,10 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_cata
 import 'package:pokedex_app/features/guess_the_pokemon/domain/services/guess_the_pokemon_engine.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/guess_the_pokemon_controller.dart';
 
-export 'guess_the_pokemon_controller.dart';
-
 export 'package:pokedex_app/core/providers/core_providers.dart'
     show guessThePokemonRepositoryProvider;
+
+export 'guess_the_pokemon_controller.dart';
 
 final guessThePokemonAuthenticatedProvider = Provider<bool>(
   (ref) => ref.watch(authProvider).isAuthenticated,

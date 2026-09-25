@@ -92,7 +92,7 @@ void main() {
 
   test('empty game API configuration disables requests', () async {
     var requestCount = 0;
-    final dio = Dio(BaseOptions(baseUrl: ''))
+    final dio = Dio(BaseOptions())
       ..interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
