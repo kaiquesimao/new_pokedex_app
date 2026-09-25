@@ -20,7 +20,7 @@
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.2.3",
     "@cloudflare/workers-types": "latest",
-    "@types/node": "^26.6.1",
+    "@types/node": "^26.6.2",
     "tsx": "latest",
     "typescript": "latest",
     "vitest": "latest",
