@@ -229,7 +229,6 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
             isRemote: true,
             sessionId: session.sessionId,
             secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
-            spriteReady: false,
           );
           return;
         } on Object {
@@ -406,7 +405,6 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
       localRound: round,
       bestScore: bestScore,
       secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
-      spriteReady: false,
     );
   }
 

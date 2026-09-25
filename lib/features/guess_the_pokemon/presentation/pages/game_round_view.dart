@@ -229,7 +229,7 @@ class const GameRoundView({
                     alignment: Alignment.topCenter,
                     children: [
                       ...previousChildren,
-                      if (currentChild != null) currentChild,
+                      ?currentChild,
                     ],
                   );
                 },
@@ -293,7 +293,7 @@ class const GameRoundView({
 }
 
 class _RoundTimerBar extends StatefulWidget {
-  const _RoundTimerBar({
+  const new({
     required this.roundKey,
     required this.frozen,
     required this.theme,
@@ -320,7 +320,7 @@ class _RoundTimerBarState extends State<_RoundTimerBar>
       value: 1,
     );
     if (!widget.frozen) {
-      unawaited(_controller.animateTo(0, curve: Curves.linear));
+      _controller.animateTo(0);
     }
   }
 
@@ -333,14 +333,14 @@ class _RoundTimerBarState extends State<_RoundTimerBar>
       );
       _controller.value = 1;
       if (!widget.frozen) {
-        unawaited(_controller.animateTo(0, curve: Curves.linear));
+        _controller.animateTo(0);
       }
       return;
     }
     if (widget.frozen && !oldWidget.frozen) {
       _controller.stop();
     } else if (!widget.frozen && oldWidget.frozen) {
-      unawaited(_controller.animateTo(0, curve: Curves.linear));
+      _controller.animateTo(0);
     }
   }
 
@@ -371,12 +371,12 @@ class _RoundTimerBarState extends State<_RoundTimerBar>
 }
 
 class _RevealSprite extends StatelessWidget {
-  const _RevealSprite({
-    super.key,
+  const new({
     required this.imageUrl,
     required this.revealed,
     required this.silhouetteColor,
     required this.semanticLabel,
+    super.key,
     this.onLoaded,
   });
 
