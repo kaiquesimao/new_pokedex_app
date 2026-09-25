@@ -1273,6 +1273,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameAnswerWrong => 'Wrong!';
 
   @override
+  String get gameAnswerTimeout => 'Time\'s up!';
+
+  @override
+  String gameTimerSemantics(int seconds) {
+    return '$seconds seconds remaining';
+  }
+
+  @override
   String gameCorrectWas(String name) {
     return 'It was $name';
   }

@@ -32,6 +32,7 @@ class const GameOptionButton({
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
+          animationDuration: const Duration(milliseconds: 180),
           backgroundColor: background == null
               ? null
               : WidgetStatePropertyAll(background),

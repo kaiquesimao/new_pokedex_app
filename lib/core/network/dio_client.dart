@@ -28,6 +28,7 @@ Dio createDio({
   required ConnectivityService connectivity,
   String appVersion = '1.0.0',
   String baseUrl = 'https://pokeapi.co/api/v2',
+  Map<String, String>? headers,
   bool enableLogging = true,
 }) {
   final dio = Dio(
@@ -39,7 +40,7 @@ Dio createDio({
       // ponytail: explicit per network-resilience spec (default is json).
       // ignore: avoid_redundant_argument_values
       responseType: ResponseType.json,
-      headers: pokeApiRequestHeaders(appVersion: appVersion),
+      headers: headers ?? pokeApiRequestHeaders(appVersion: appVersion),
     ),
   );
 

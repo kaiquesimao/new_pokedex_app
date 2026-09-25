@@ -1280,6 +1280,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get gameAnswerWrong => 'Errou!';
 
   @override
+  String get gameAnswerTimeout => 'Tempo esgotado!';
+
+  @override
+  String gameTimerSemantics(int seconds) {
+    return 'Restam $seconds segundos';
+  }
+
+  @override
   String gameCorrectWas(String name) {
     return 'Era $name';
   }

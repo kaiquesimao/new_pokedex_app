@@ -13,6 +13,7 @@ class const GameStartView({
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final isAuthenticated = ref.watch(authProvider).isAuthenticated;
     return Center(
       child: SingleChildScrollView(
@@ -28,7 +29,7 @@ class const GameStartView({
                 Text(
                   l10n.gameGuestMessage,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: theme.textTheme.bodyLarge,
                 ),
               ],
               if (errorMessage != null) ...[
@@ -36,7 +37,7 @@ class const GameStartView({
                 Text(
                   errorMessage!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  style: TextStyle(color: theme.colorScheme.error),
                 ),
               ],
               const SizedBox(height: 28),
@@ -49,7 +50,13 @@ class const GameStartView({
                       : l10n.gameRetryButton,
                 ),
               ),
-              TextButton(
+              const SizedBox(height: 12),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.surface,
+                  foregroundColor: theme.colorScheme.primary,
+                  side: BorderSide(color: theme.colorScheme.primary),
+                ),
                 onPressed: onLeaderboard,
                 child: Text(l10n.gameLeaderboardButton),
               ),

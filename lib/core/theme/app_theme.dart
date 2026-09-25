@@ -33,13 +33,16 @@ abstract final class AppTheme {
     final colorScheme = ColorScheme(
       brightness: brightness,
       primary: primary,
-      onPrimary: isDark ? AppColorsDark.background : Colors.white,
+      // Always white on brand blue — dark ink is unreadable on #173EA5.
+      onPrimary: Colors.white,
       secondary: primary,
-      onSecondary: isDark ? AppColorsDark.background : Colors.white,
+      onSecondary: Colors.white,
       error: const Color(0xFFCF6679),
       onError: Colors.white,
       surface: surface,
       onSurface: textPrimary,
+      primaryContainer: primary,
+      onPrimaryContainer: Colors.white,
       surfaceContainerHighest: isDark
           ? const Color(0xFF2A2A2A)
           : const Color(0xFFE8E8E8),
@@ -117,7 +120,7 @@ abstract final class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: primary,
-          foregroundColor: isDark ? AppColorsDark.background : Colors.white,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -126,10 +129,9 @@ abstract final class AppTheme {
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           foregroundColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return isDark ? AppColorsDark.background : Colors.white;
-            }
-            return textPrimary;
+            // Blue fill → white label; dark/surface fill → blue label.
+            if (states.contains(WidgetState.selected)) return Colors.white;
+            return primary;
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) return primary;

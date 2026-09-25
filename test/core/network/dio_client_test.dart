@@ -55,4 +55,17 @@ void main() {
       isFalse,
     );
   });
+
+  test('accepts explicit headers for the game API client', () {
+    final dio = createDio(
+      connectivity: ConnectivityService(reachabilityProbe: () async => true),
+      baseUrl: 'https://worker.example.test',
+      headers: const {'Accept': 'application/json'},
+      enableLogging: false,
+    );
+
+    expect(dio.options.headers['Accept'], 'application/json');
+    expect(dio.options.headers.containsKey('X-PokeData-Client'), isFalse);
+    expect(dio.options.headers.containsKey('User-Agent'), isFalse);
+  });
 }

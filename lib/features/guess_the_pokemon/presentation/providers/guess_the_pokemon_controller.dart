@@ -39,6 +39,9 @@ class GuessThePokemonState {
     this.lastAnswerCorrect,
     this.revealedPokemonName,
     this.revealedSpriteUrl,
+    this.secondsRemaining,
+    this.timedOut = false,
+    this.spriteReady = false,
   });
 
   final GuessThePokemonStatus status;
@@ -55,6 +58,9 @@ class GuessThePokemonState {
   final bool? lastAnswerCorrect;
   final String? revealedPokemonName;
   final String? revealedSpriteUrl;
+  final int? secondsRemaining;
+  final bool timedOut;
+  final bool spriteReady;
 
   GameRound? get round => localRound;
 
@@ -88,6 +94,10 @@ class GuessThePokemonState {
     bool clearRevealedPokemonName = false,
     String? revealedSpriteUrl,
     bool clearRevealedSpriteUrl = false,
+    int? secondsRemaining,
+    bool clearSecondsRemaining = false,
+    bool? timedOut,
+    bool? spriteReady,
   }) {
     return GuessThePokemonState(
       status: status ?? this.status,
@@ -114,12 +124,19 @@ class GuessThePokemonState {
       revealedSpriteUrl: clearRevealedSpriteUrl
           ? null
           : (revealedSpriteUrl ?? this.revealedSpriteUrl),
+      secondsRemaining: clearSecondsRemaining
+          ? null
+          : (secondsRemaining ?? this.secondsRemaining),
+      timedOut: timedOut ?? this.timedOut,
+      spriteReady: spriteReady ?? this.spriteReady,
     );
   }
 }
 
 class GuessThePokemonController extends Notifier<GuessThePokemonState> {
-  static const _revealDelay = Duration(milliseconds: 750);
+  static const _revealDelay = Duration(milliseconds: 2050);
+  @visibleForTesting
+  static Duration answerDuration = const Duration(seconds: 5);
 
   GuessThePokemonRepository get _repository =>
       ref.read(guessThePokemonRepositoryProvider);
@@ -132,10 +149,15 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
   GuessThePokemonEngine? _activeEngine;
   var _mounted = true;
   int _generation = 0;
+  Timer? _timeoutTimer;
+  Timer? _tickTimer;
 
   @override
   GuessThePokemonState build() {
-    ref.onDispose(() => _mounted = false);
+    ref.onDispose(() {
+      _mounted = false;
+      _cancelRoundTimer();
+    });
     final repository = _repository;
     unawaited(_recoverPublication(repository, _generation));
     return const GuessThePokemonState();
@@ -189,6 +211,7 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   Future<void> start() async {
     final generation = ++_generation;
+    _cancelRoundTimer();
     state = const GuessThePokemonState(status: GuessThePokemonStatus.loading);
     try {
       if (_authenticated) {
@@ -205,6 +228,8 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
             bestScore: bestScore,
             isRemote: true,
             sessionId: session.sessionId,
+            secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
+            spriteReady: false,
           );
           return;
         } on Object {
@@ -221,16 +246,21 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
     }
   }
 
-  Future<void> selectAnswer(int optionId) async {
+  Future<void> selectAnswer(int optionId, {bool timedOut = false}) async {
     if (state.status != GuessThePokemonStatus.playing) return;
+    if (!state.spriteReady && !timedOut) return;
+    _cancelRoundTimer();
     final generation = _generation;
     final preview = _previewAnswer(optionId);
     state = state.copyWith(
       status: GuessThePokemonStatus.answering,
       selectedOptionId: optionId,
+      clearSelectedOptionId: timedOut,
       lastAnswerCorrect: preview.correct,
       revealedPokemonName: preview.name,
       revealedSpriteUrl: preview.spriteUrl,
+      secondsRemaining: timedOut ? 0 : state.secondsRemaining,
+      timedOut: timedOut,
       clearError: true,
     );
 
@@ -251,10 +281,9 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         final serverSprite = result.correctSpriteUrl;
         state = state.copyWith(
           lastAnswerCorrect: result.correct,
-          revealedPokemonName:
-              (serverName != null && serverName.isNotEmpty)
-                  ? serverName
-                  : state.revealedPokemonName,
+          revealedPokemonName: (serverName != null && serverName.isNotEmpty)
+              ? serverName
+              : state.revealedPokemonName,
           revealedSpriteUrl: serverSprite == null || serverSprite.isEmpty
               ? state.revealedSpriteUrl
               : PokemonSpriteUrls.highQualitySpriteUrl(
@@ -264,7 +293,11 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         );
         await _holdRevealRemaining(startedAt, generation);
         if (!_isCurrent(generation)) return;
-        await _applyRemoteResult(result, generation, keepReveal: result.finished);
+        await _applyRemoteResult(
+          result,
+          generation,
+          keepReveal: result.finished,
+        );
       } on Object catch (error) {
         if (!_isCurrent(generation)) return;
         state = state.copyWith(
@@ -291,13 +324,29 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   Future<void> playAgain() => start();
 
+  /// Starts the round timer once the silhouette has finished loading.
+  void onSpriteReady() {
+    if (state.status != GuessThePokemonStatus.playing || state.spriteReady) {
+      return;
+    }
+    state = state.copyWith(spriteReady: true);
+    _armRoundTimer(_generation);
+  }
+
   Future<void> retryAnswer() async {
     final submission = state.pendingSubmission;
     if (submission == null || !state.isRemote) return;
-    state = state.copyWith(status: GuessThePokemonStatus.answering, clearError: true);
+    state = state.copyWith(
+      status: GuessThePokemonStatus.answering,
+      clearError: true,
+    );
     try {
       final result = await _repository.submitAnswer(submission);
-      await _applyRemoteResult(result, _generation, keepReveal: result.finished);
+      await _applyRemoteResult(
+        result,
+        _generation,
+        keepReveal: result.finished,
+      );
     } on Object catch (error) {
       state = state.copyWith(status: GuessThePokemonStatus.error, error: error);
     }
@@ -305,6 +354,7 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
 
   void abandon() {
     _generation++;
+    _cancelRoundTimer();
     _localSession = _engine.startSession();
     state = const GuessThePokemonState();
   }
@@ -355,6 +405,8 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
       status: GuessThePokemonStatus.playing,
       localRound: round,
       bestScore: bestScore,
+      secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
+      spriteReady: false,
     );
   }
 
@@ -377,8 +429,12 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         score: result.score,
         bestScore: bestScore,
         lastAnswerCorrect: result.correct,
-        revealedPokemonName: keepReveal ? state.revealedPokemonName : state.revealedPokemonName,
-        revealedSpriteUrl: keepReveal ? state.revealedSpriteUrl : state.revealedSpriteUrl,
+        revealedPokemonName: keepReveal
+            ? state.revealedPokemonName
+            : state.revealedPokemonName,
+        revealedSpriteUrl: keepReveal
+            ? state.revealedSpriteUrl
+            : state.revealedSpriteUrl,
       );
       await _repository.savePublicationState(
         PublicationStateModel(
@@ -396,6 +452,9 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
         remoteRound: result.nextRound,
         score: result.score,
         bestScore: bestScore,
+        secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
+        timedOut: false,
+        spriteReady: false,
         clearSelectedOptionId: true,
         clearLastAnswerCorrect: true,
         clearRevealedPokemonName: true,
@@ -445,11 +504,103 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
       localRound: engine.nextRound(_localSession),
       score: result.session.score,
       bestScore: bestScore,
+      secondsRemaining: answerDuration.inSeconds.clamp(1, 3600),
+      timedOut: false,
+      spriteReady: false,
       clearSelectedOptionId: true,
       clearLastAnswerCorrect: true,
       clearRevealedPokemonName: true,
       clearRevealedSpriteUrl: true,
     );
+  }
+
+  void _armRoundTimer(int generation) {
+    _cancelRoundTimer();
+    if (!_isCurrent(generation) ||
+        state.status != GuessThePokemonStatus.playing) {
+      return;
+    }
+    final duration = answerDuration;
+    final totalSeconds = duration.inSeconds.clamp(1, 3600);
+    final deadline = DateTime.now().add(duration);
+    state = state.copyWith(
+      secondsRemaining: totalSeconds,
+      timedOut: false,
+    );
+    _timeoutTimer = Timer(duration, () {
+      unawaited(_handleRoundTimeout(generation));
+    });
+    _tickTimer = Timer.periodic(const Duration(milliseconds: 250), (_) {
+      if (!_mounted ||
+          !_isCurrent(generation) ||
+          state.status != GuessThePokemonStatus.playing) {
+        _cancelRoundTimer();
+        return;
+      }
+      final remaining = deadline.difference(DateTime.now());
+      final display = remaining <= Duration.zero
+          ? 0
+          : (remaining.inMilliseconds / 1000).ceil().clamp(0, totalSeconds);
+      if (display != state.secondsRemaining) {
+        state = state.copyWith(secondsRemaining: display);
+      }
+    });
+  }
+
+  void _cancelRoundTimer() {
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
+    _tickTimer?.cancel();
+    _tickTimer = null;
+  }
+
+  Future<void> _handleRoundTimeout(int generation) async {
+    if (!_isCurrent(generation) ||
+        state.status != GuessThePokemonStatus.playing) {
+      return;
+    }
+    final wrongOptionId = _wrongOptionId();
+    if (wrongOptionId == null) {
+      _cancelRoundTimer();
+      state = state.copyWith(
+        status: GuessThePokemonStatus.finished,
+        clearSecondsRemaining: true,
+        timedOut: true,
+        lastAnswerCorrect: false,
+      );
+      return;
+    }
+    await selectAnswer(wrongOptionId, timedOut: true);
+  }
+
+  int? _wrongOptionId() {
+    final local = state.localRound;
+    if (local != null) {
+      return local.options
+          .where((option) => option.speciesId != local.correctAnswer.speciesId)
+          .map((option) => option.speciesId)
+          .firstOrNull;
+    }
+    final remote = state.remoteRound;
+    if (remote == null || remote.options.isEmpty) return null;
+    final correctId = _inferredCorrectOptionId(remote);
+    if (correctId == null) {
+      // Without a known correct id, any option risks ending the round as a win.
+      return null;
+    }
+    return remote.options
+        .where((option) => option.id != correctId)
+        .map((option) => option.id)
+        .firstOrNull;
+  }
+
+  int? _inferredCorrectOptionId(GameRoundModel remote) {
+    final silhouette = remote.silhouetteUrl ?? '';
+    return PokemonSpriteUrls.idFromSpriteUrl(silhouette) ??
+        remote.options
+            .where((option) => option.spriteUrl == silhouette)
+            .map((option) => option.id)
+            .firstOrNull;
   }
 
   Future<void> _holdRevealRemaining(DateTime startedAt, int generation) async {
@@ -471,7 +622,9 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
     );
   }
 
-  ({bool correct, String name, String? spriteUrl}) _previewAnswer(int optionId) {
+  ({bool correct, String name, String? spriteUrl}) _previewAnswer(
+    int optionId,
+  ) {
     final local = state.localRound;
     if (local != null) {
       final sprite = PokemonSpriteUrls.highQualitySpriteUrl(
@@ -490,12 +643,7 @@ class GuessThePokemonController extends Notifier<GuessThePokemonState> {
       return (correct: false, name: '', spriteUrl: null);
     }
     final silhouette = remote.silhouetteUrl ?? '';
-    final targetId =
-        PokemonSpriteUrls.idFromSpriteUrl(silhouette) ??
-        remote.options
-            .where((option) => option.spriteUrl == silhouette)
-            .map((option) => option.id)
-            .firstOrNull;
+    final targetId = _inferredCorrectOptionId(remote);
     final correctOption = remote.options
         .where((option) => option.id == targetId)
         .firstOrNull;

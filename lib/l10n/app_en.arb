@@ -583,6 +583,13 @@
   "gameRoundPrompt": "Which Pokémon is hidden?",
   "gameAnswerCorrect": "Correct!",
   "gameAnswerWrong": "Wrong!",
+  "gameAnswerTimeout": "Time's up!",
+  "gameTimerSemantics": "{seconds} seconds remaining",
+  "@gameTimerSemantics": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
   "gameCorrectWas": "It was {name}",
   "@gameCorrectWas": {
     "placeholders": {

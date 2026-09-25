@@ -2390,6 +2390,18 @@ abstract class AppLocalizations {
   /// **'Wrong!'**
   String get gameAnswerWrong;
 
+  /// No description provided for @gameAnswerTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Time\'s up!'**
+  String get gameAnswerTimeout;
+
+  /// No description provided for @gameTimerSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds remaining'**
+  String gameTimerSemantics(int seconds);
+
   /// No description provided for @gameCorrectWas.
   ///
   /// In en, this message translates to:

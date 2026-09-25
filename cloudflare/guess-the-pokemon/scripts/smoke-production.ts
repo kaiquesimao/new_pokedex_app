@@ -120,11 +120,15 @@ const corsOk = await fetch(`${base}/v1/leaderboards?scope=global&limit=1`, {
   headers: {
     Origin: 'https://pokedex-app-c5e90.web.app',
     'Access-Control-Request-Method': 'GET',
-    'Access-Control-Request-Headers': 'authorization,content-type',
+    'Access-Control-Request-Headers': 'authorization,content-type,x-pokedata-client',
   },
 });
 assert(corsOk.status === 204, `cors preflight failed: ${corsOk.status}`);
 assert(corsOk.headers.get('access-control-allow-origin') === 'https://pokedex-app-c5e90.web.app', 'cors origin missing');
+assert(
+  corsOk.headers.get('access-control-allow-headers')?.toLowerCase().includes('x-pokedata-client'),
+  'cors allow-headers missing X-PokeData-Client',
+);
 assert(corsOk.headers.get('vary')?.toLowerCase().includes('origin'), 'vary origin missing');
 results.push('PASS CORS preflight for production web origin');
 

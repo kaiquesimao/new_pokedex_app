@@ -35,10 +35,38 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
       body: SafePageBody.belowAppBar(
         child: ResponsiveContentFrame(
           expandHeight: true,
-          child: _buildView(context, ref, state),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 280),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: KeyedSubtree(
+              key: ValueKey(_viewBucket(state.status)),
+              child: _buildView(context, ref, state),
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  /// Groups statuses that share the same view so AnimatedSwitcher does not
+  /// remount the round screen when an answer is selected.
+  static String _viewBucket(GuessThePokemonStatus status) {
+    return switch (status) {
+      GuessThePokemonStatus.playing ||
+      GuessThePokemonStatus.answering => 'round',
+      GuessThePokemonStatus.finished ||
+      GuessThePokemonStatus.ranking => 'result',
+      GuessThePokemonStatus.idle => 'idle',
+      GuessThePokemonStatus.loading => 'loading',
+      GuessThePokemonStatus.error => 'error',
+    };
   }
 
   Widget _buildView(
@@ -66,13 +94,17 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
         remoteRound: state.remoteRound,
         score: state.score,
         isAnswering: state.status == GuessThePokemonStatus.answering,
+        spriteReady: state.spriteReady,
         selectedOptionId: state.selectedOptionId,
         lastAnswerCorrect: state.lastAnswerCorrect,
         revealedPokemonName: state.revealedPokemonName,
         revealedSpriteUrl: state.revealedSpriteUrl,
+        secondsRemaining: state.secondsRemaining,
+        timedOut: state.timedOut,
         error: state.error,
         onRetry: controller.retryAnswer,
         onAnswer: controller.selectAnswer,
+        onSpriteReady: controller.onSpriteReady,
       ),
       GuessThePokemonStatus.finished => GameResultView(
         score: state.score,
@@ -87,25 +119,29 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
         revealedPokemonName: state.revealedPokemonName,
         revealedSpriteUrl: state.revealedSpriteUrl,
         lastAnswerCorrect: state.lastAnswerCorrect,
+        timedOut: state.timedOut,
       ),
-      GuessThePokemonStatus.error => state.isRemote
-          ? GameRoundView(
-              localRound: state.localRound,
-              remoteRound: state.remoteRound,
-              score: state.score,
-              selectedOptionId: state.selectedOptionId,
-              lastAnswerCorrect: state.lastAnswerCorrect,
-              revealedPokemonName: state.revealedPokemonName,
-              revealedSpriteUrl: state.revealedSpriteUrl,
-              error: state.error,
-              onRetry: controller.retryAnswer,
-              onAnswer: controller.selectAnswer,
-            )
-          : GameStartView(
-              errorMessage: l10n.gameError,
-              onStart: controller.start,
-              onLeaderboard: () => context.push('/leaderboard'),
-            ),
+      GuessThePokemonStatus.error =>
+        state.isRemote
+            ? GameRoundView(
+                localRound: state.localRound,
+                remoteRound: state.remoteRound,
+                score: state.score,
+                spriteReady: state.spriteReady,
+                selectedOptionId: state.selectedOptionId,
+                lastAnswerCorrect: state.lastAnswerCorrect,
+                revealedPokemonName: state.revealedPokemonName,
+                revealedSpriteUrl: state.revealedSpriteUrl,
+                error: state.error,
+                onRetry: controller.retryAnswer,
+                onAnswer: controller.selectAnswer,
+                onSpriteReady: controller.onSpriteReady,
+              )
+            : GameStartView(
+                errorMessage: l10n.gameError,
+                onStart: controller.start,
+                onLeaderboard: () => context.push('/leaderboard'),
+              ),
       GuessThePokemonStatus.ranking => GameResultView(
         score: state.score,
         bestScore: state.bestScore,

@@ -71,6 +71,28 @@ describe('top-level Worker routing', () => {
     await expect(rejected.json()).resolves.toMatchObject({ error: { code: 'CORS_ORIGIN_NOT_ALLOWED' } });
   });
 
+  it('allows Flutter web localhost origins for local Chrome debugging', async () => {
+    const preflight = await worker.fetch(new Request('https://test/v1/leaderboards?scope=global', {
+      method: 'OPTIONS',
+      headers: {
+        origin: 'http://localhost:5000',
+        'access-control-request-method': 'GET',
+        'access-control-request-headers': 'authorization,content-type,x-pokedata-client',
+      },
+    }), testEnv);
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get('access-control-allow-origin')).toBe('http://localhost:5000');
+    expect(preflight.headers.get('access-control-allow-headers')?.toLowerCase())
+      .toContain('x-pokedata-client');
+
+    const leaderboard = await worker.fetch(new Request('https://test/v1/leaderboards?scope=global', {
+      headers: { origin: 'http://127.0.0.1:5000' },
+    }), testEnv);
+    // Must not be blocked by CORS; status may be app error if secrets are unset in tests.
+    expect(leaderboard.status).not.toBe(403);
+    expect(leaderboard.headers.get('access-control-allow-origin')).toBe('http://127.0.0.1:5000');
+  });
+
   it('routes game endpoints through authentication with the stable CORS envelope', async () => {
     const response = await worker.fetch(new Request('https://test/v1/game/sessions', {
       method: 'POST',

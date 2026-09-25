@@ -24,7 +24,7 @@ export function createWorker(options: WorkerOptions = {}) {
       try {
         const url = new URL(request.url);
         const origin = request.headers.get('origin');
-        if (origin && !allowedOrigins(env).has(origin)) {
+        if (origin && !isAllowedOrigin(origin, env)) {
           return withCors(jsonError(new HttpError('CORS_ORIGIN_NOT_ALLOWED', 'Origin is not allowed', 403)), request, env);
         }
         if (request.method === 'OPTIONS') {
@@ -84,14 +84,33 @@ function allowedOrigins(env: Cloudflare.Env): Set<string> {
   return new Set(configured.split(',').map((origin: string) => origin.trim()).filter(Boolean));
 }
 
+/** Flutter web / Chrome local debugging (Android/iOS clients do not send Origin). */
+function isLocalDevOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    return url.protocol === 'http:'
+      && (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
+  } catch {
+    return false;
+  }
+}
+
+function isAllowedOrigin(origin: string, env: Cloudflare.Env): boolean {
+  return allowedOrigins(env).has(origin) || isLocalDevOrigin(origin);
+}
+
 function withCors(response: Response, request: Request, env: Cloudflare.Env): Response {
   const headers = new Headers(response.headers);
   headers.set('vary', 'Origin');
   const origin = request.headers.get('origin');
-  if (origin && allowedOrigins(env).has(origin)) {
+  if (origin && isAllowedOrigin(origin, env)) {
     headers.set('access-control-allow-origin', origin);
     headers.set('access-control-allow-methods', 'GET, POST, PATCH, OPTIONS');
-    headers.set('access-control-allow-headers', 'Authorization, Content-Type');
+    // Flutter web Dio sends X-PokeData-Client; omitting it fails browser preflight.
+    headers.set(
+      'access-control-allow-headers',
+      'Authorization, Content-Type, X-PokeData-Client',
+    );
     headers.set('access-control-max-age', '600');
   }
   return new Response(response.body, { status: response.status, headers });

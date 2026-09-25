@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/features/auth/domain/auth_state.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_catalog_entry.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_round.dart';
@@ -22,7 +24,7 @@ void main() {
       final controller = _FakeController(const GuessThePokemonState());
       await _pump(tester, controller);
 
-      expect(find.text('Quem é esse Pokémon?'), findsNWidgets(2));
+      expect(find.text('Quem é esse Pokémon?'), findsOneWidget);
       expect(find.text('Jogar como convidado'), findsOneWidget);
 
       await tester.tap(find.text('Começar partida'));
@@ -81,6 +83,7 @@ void main() {
         GuessThePokemonState(
           localRound: round,
           status: GuessThePokemonStatus.playing,
+          spriteReady: true,
         ),
       );
       await _pump(tester, controller);
@@ -232,6 +235,7 @@ void main() {
     final controller = _FakeController(
       GuessThePokemonState(
         status: GuessThePokemonStatus.playing,
+        spriteReady: true,
         localRound: _roundWithLongNames(),
       ),
     );
@@ -250,6 +254,7 @@ void main() {
     final controller = _FakeController(
       GuessThePokemonState(
         status: GuessThePokemonStatus.playing,
+        spriteReady: true,
         localRound: _roundWithLongNames(),
       ),
     );
@@ -267,6 +272,7 @@ void main() {
     final controller = _FakeController(
       GuessThePokemonState(
         status: GuessThePokemonStatus.playing,
+        spriteReady: true,
         localRound: _roundWithLongNames(),
       ),
     );
@@ -328,6 +334,9 @@ Future<void> _pump(WidgetTester tester, _FakeController controller) async {
     ProviderScope(
       overrides: [
         guessThePokemonControllerProvider.overrideWith(() => controller),
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
       ],
       child: MaterialApp.router(
         locale: const Locale('pt'),
@@ -350,7 +359,7 @@ Future<void> _pump(WidgetTester tester, _FakeController controller) async {
     ),
   );
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 100));
+  await tester.pump(const Duration(milliseconds: 320));
 }
 
 class _FakeController extends GuessThePokemonController {
@@ -373,7 +382,8 @@ class _FakeController extends GuessThePokemonController {
   Future<void> playAgain() async => playAgainCalls++;
 
   @override
-  Future<void> selectAnswer(int optionId) async => selectedAnswer = optionId;
+  Future<void> selectAnswer(int optionId, {bool timedOut = false}) async =>
+      selectedAnswer = optionId;
 
   @override
   Future<void> retryPublication() async => retryPublicationCalls++;

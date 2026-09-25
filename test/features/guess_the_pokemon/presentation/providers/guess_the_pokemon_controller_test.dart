@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_app/features/auth/domain/auth_state.dart';
+import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/entities/game_catalog_entry.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/domain/repositories/guess_the_pokemon_repository.dart';
@@ -9,7 +11,29 @@ import 'package:pokedex_app/features/guess_the_pokemon/domain/services/guess_the
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/providers/guess_the_pokemon_providers.dart';
 
 void main() {
+  Future<void> startReady(GuessThePokemonController controller) async {
+    await controller.start();
+    controller.onSpriteReady();
+  }
+
   test('guest starts a local round and records a local best score', () async {
+    final repository = _FakeRepository();
+    final container = _container(repository: repository);
+    final controller = container.read(
+      guessThePokemonControllerProvider.notifier,
+    );
+
+    await startReady(controller);
+    final round = container.read(guessThePokemonControllerProvider).localRound!;
+    await controller.selectAnswer(round.correctAnswer.speciesId);
+
+    final state = container.read(guessThePokemonControllerProvider);
+    expect(state.status, GuessThePokemonStatus.playing);
+    expect(state.score, 1);
+    expect(repository.bestScore, 1);
+  });
+
+  test('answers are ignored until the silhouette is ready', () async {
     final repository = _FakeRepository();
     final container = _container(repository: repository);
     final controller = container.read(
@@ -22,8 +46,8 @@ void main() {
 
     final state = container.read(guessThePokemonControllerProvider);
     expect(state.status, GuessThePokemonStatus.playing);
-    expect(state.score, 1);
-    expect(repository.bestScore, 1);
+    expect(state.spriteReady, isFalse);
+    expect(state.score, 0);
   });
 
   test('each new local game shuffles the species order', () async {
@@ -74,7 +98,7 @@ void main() {
       guessThePokemonControllerProvider.notifier,
     );
 
-    await controller.start();
+    await startReady(controller);
     final initial = container.read(guessThePokemonControllerProvider);
     expect(initial.remoteRound?.roundIndex, 7);
     expect(initial.remoteRound?.options.map((option) => option.id), [
@@ -117,7 +141,7 @@ void main() {
       guessThePokemonControllerProvider.notifier,
     );
 
-    await controller.start();
+    await startReady(controller);
     await controller.selectAnswer(303);
     final state = container.read(guessThePokemonControllerProvider);
     expect(state.isRemote, isTrue);
@@ -151,7 +175,7 @@ void main() {
       guessThePokemonControllerProvider.notifier,
     );
 
-    await controller.start();
+    await startReady(controller);
     await controller.selectAnswer(303);
     await controller.retryAnswer();
 
@@ -170,7 +194,7 @@ void main() {
       guessThePokemonControllerProvider.notifier,
     );
 
-    await controller.start();
+    await startReady(controller);
     final answerRequest = controller.selectAnswer(303);
     controller.abandon();
     answerCompleter.complete(
@@ -201,7 +225,7 @@ void main() {
       guessThePokemonControllerProvider.notifier,
     );
 
-    await controller.start();
+    await startReady(controller);
     await controller.selectAnswer(303);
     await controller.retryPublication();
     await controller.retryPublication();
@@ -278,7 +302,7 @@ void main() {
         guessThePokemonControllerProvider.notifier,
       );
 
-      await controller.start();
+      await startReady(controller);
       await controller.selectAnswer(303);
       expect(
         container.read(guessThePokemonControllerProvider).publicationState,
@@ -312,6 +336,42 @@ void main() {
     );
     container.dispose();
   });
+
+  test('round timeout ends the game as a loss', () async {
+    final previous = GuessThePokemonController.answerDuration;
+    GuessThePokemonController.answerDuration = const Duration(milliseconds: 40);
+    addTearDown(() => GuessThePokemonController.answerDuration = previous);
+
+    final repository = _FakeRepository();
+    final container = _container(repository: repository);
+    addTearDown(container.dispose);
+    final controller = container.read(
+      guessThePokemonControllerProvider.notifier,
+    );
+
+    await startReady(controller);
+    expect(
+      container.read(guessThePokemonControllerProvider).status,
+      GuessThePokemonStatus.playing,
+    );
+    expect(
+      container.read(guessThePokemonControllerProvider).spriteReady,
+      isTrue,
+    );
+    expect(
+      container.read(guessThePokemonControllerProvider).secondsRemaining,
+      isNotNull,
+    );
+
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+    await Future<void>.delayed(const Duration(milliseconds: 2300));
+
+    final state = container.read(guessThePokemonControllerProvider);
+    expect(state.status, GuessThePokemonStatus.finished);
+    expect(state.timedOut, isTrue);
+    expect(state.lastAnswerCorrect, isFalse);
+    expect(state.score, 0);
+  });
 }
 
 ProviderContainer _container({
@@ -319,7 +379,7 @@ ProviderContainer _container({
   bool authenticated = false,
   bool failEngine = false,
 }) {
-  return ProviderContainer.test(
+  final container = ProviderContainer.test(
     overrides: [
       guessThePokemonRepositoryProvider.overrideWithValue(repository),
       guessThePokemonEngineProvider.overrideWith(
@@ -328,8 +388,17 @@ ProviderContainer _container({
             : GuessThePokemonEngine(catalog: _catalog, seed: 7),
       ),
       guessThePokemonAuthenticatedProvider.overrideWithValue(authenticated),
+      authProvider.overrideWithBuild(
+        (ref, notifier) => AuthState(
+          isInitialized: true,
+          isAuthenticated: authenticated,
+          displayName: authenticated ? 'Ash' : null,
+        ),
+      ),
     ],
   );
+  addTearDown(container.dispose);
+  return container;
 }
 
 final List<GameCatalogEntry> _catalog = [

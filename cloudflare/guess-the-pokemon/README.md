@@ -11,7 +11,8 @@ Wrangler config:
 - `FIREBASE_PROJECT_ID`: Firebase project used to verify ID tokens.
 - `GAME_API_BASE_URL`: deployed Worker URL used by the client.
 - `CORS_ALLOWED_ORIGINS`: comma-separated HTTPS origins for the web app; do not
-  use `*`.
+  use `*`. Local Flutter web (`http://localhost:*` / `http://127.0.0.1:*`) is
+  allowed automatically for Chrome debugging.
 - `DB`: D1 binding configured in `wrangler.toml`.
 
 The default `wrangler.toml` values are safe placeholders. For separate

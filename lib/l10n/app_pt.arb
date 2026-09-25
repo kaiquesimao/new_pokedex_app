@@ -570,6 +570,13 @@
   "gameRoundPrompt": "Qual Pokémon está escondido?",
   "gameAnswerCorrect": "Acertou!",
   "gameAnswerWrong": "Errou!",
+  "gameAnswerTimeout": "Tempo esgotado!",
+  "gameTimerSemantics": "Restam {seconds} segundos",
+  "@gameTimerSemantics": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
   "gameCorrectWas": "Era {name}",
   "@gameCorrectWas": {
     "placeholders": {

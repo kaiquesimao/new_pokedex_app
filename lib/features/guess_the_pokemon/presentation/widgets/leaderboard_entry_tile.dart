@@ -11,11 +11,18 @@ class const LeaderboardEntryTile({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
     final name = playerName.trim().isEmpty
         ? l10n.leaderboardAnonymousTrainer
         : playerName;
     final scoreLabel = l10n.gameScore(score);
+    // Current user uses brand blue fill → white ink; others sit on dark surface → blue accents.
+    final nameColor = isCurrentUser ? colors.onPrimary : colors.onSurface;
+    final scoreColor = isCurrentUser ? colors.onPrimary : colors.primary;
+    final badgeColor = isCurrentUser
+        ? colors.onPrimary.withValues(alpha: 0.85)
+        : colors.primary;
 
     return Semantics(
       label: '$rank. $name, $scoreLabel',
@@ -23,13 +30,8 @@ class const LeaderboardEntryTile({
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isCurrentUser
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surface,
+          color: isCurrentUser ? colors.primary : colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: isCurrentUser
-              ? Border.all(color: theme.colorScheme.primary)
-              : null,
         ),
         child: Row(
           children: [
@@ -39,31 +41,36 @@ class const LeaderboardEntryTile({
                 '#$rank',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
+                  color: nameColor,
                 ),
               ),
             ),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: isCurrentUser
-                          ? FontWeight.w800
-                          : FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: isCurrentUser
+                            ? FontWeight.w800
+                            : FontWeight.w600,
+                        color: nameColor,
+                      ),
                     ),
                   ),
-                  if (isCurrentUser)
+                  if (isCurrentUser) ...[
+                    const SizedBox(width: 8),
                     Text(
                       l10n.leaderboardCurrentUser,
                       style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.primary,
+                        color: badgeColor,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                  ],
                 ],
               ),
             ),
@@ -73,7 +80,7 @@ class const LeaderboardEntryTile({
               softWrap: false,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w800,
-                color: theme.colorScheme.primary,
+                color: scoreColor,
               ),
             ),
           ],
@@ -81,5 +88,4 @@ class const LeaderboardEntryTile({
       ),
     );
   }
-
 }

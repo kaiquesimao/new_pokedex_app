@@ -39,11 +39,11 @@ final dioProvider = Provider<Dio>((ref) {
 });
 
 final gameDioProvider = Provider<Dio>((ref) {
-  final appVersion = ref.watch(packageInfoProvider).value?.version ?? '1.0.0';
   return createDio(
     connectivity: ref.watch(connectivityServiceProvider),
-    appVersion: appVersion,
     baseUrl: Env.gameApiBaseUrl,
+    // PokéAPI client-id header is not needed here and breaks CORS preflight on web.
+    headers: const {'Accept': 'application/json'},
     enableLogging: false,
   );
 });
