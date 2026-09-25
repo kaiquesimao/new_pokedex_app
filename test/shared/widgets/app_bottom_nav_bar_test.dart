@@ -35,13 +35,13 @@ void main() {
     expect(find.text('Regions'), findsOneWidget);
   });
 
-  testWidgets('game tab is index 4 and exposes localized label', (tester) async {
+  testWidgets('game tab is index 2 and exposes localized label', (tester) async {
     var tappedIndex = -1;
     await pumpLocalizedApp(
       tester,
       child: Scaffold(
         bottomNavigationBar: AppBottomNavBar(
-          currentIndex: 4,
+          currentIndex: 2,
           onTap: (index) => tappedIndex = index,
         ),
       ),
@@ -49,6 +49,6 @@ void main() {
 
     expect(find.text('Jogo'), findsOneWidget);
     await tester.tap(find.text('Jogo'));
-    expect(tappedIndex, 4);
+    expect(tappedIndex, 2);
   });
 }
