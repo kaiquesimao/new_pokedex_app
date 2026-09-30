@@ -1,0 +1,6 @@
+Novidades na 1.6.0
+
+• Quem é esse Pokémon? — novo minigame: descubra o Pokémon pela silhueta, acumule pontos e dispute o ranking
+• Aba Jogo na navegação inferior para começar uma partida rápido
+• Ranking global para comparar sua pontuação com outros fãs
+• Melhorias de desempenho e estabilidade
