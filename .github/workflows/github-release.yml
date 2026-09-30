@@ -1,0 +1,153 @@
+# Creates a GitHub Release (Releases tab) when a version tag is pushed.
+# Preferred path: scripts/release.ps1|release.sh (bump + tag + push).
+# Android Play upload stays in release-android.yml (master + pubspec version change).
+name: GitHub Release
+run-name: GitHub Release · ${{ github.ref_name }}
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to publish (e.g. v1.6.1). Leave empty to use the latest v* tag.
+        required: false
+        type: string
+
+concurrency:
+  group: github-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ -n "${INPUT_TAG:-}" ]; then
+              tag="$INPUT_TAG"
+            else
+              tag="$(git tag -l 'v*' --sort=-v:refname | head -n1 || true)"
+            fi
+            if [ -z "$tag" ]; then
+              echo "::error::No tag provided and no v* tags found."
+              exit 1
+            fi
+            if ! git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+              echo "::error::Tag ${tag} does not exist."
+              exit 1
+            fi
+            git checkout -q "$tag"
+          else
+            tag="$REF_NAME"
+          fi
+
+          if [[ ! "$tag" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::Unexpected tag format: ${tag} (expected vX.Y.Z)"
+            exit 1
+          fi
+
+          echo "name=${tag}" >> "$GITHUB_OUTPUT"
+          echo "semver=${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag: $tag"
+
+      - name: Resolve pubspec version
+        id: version
+        run: |
+          set -euo pipefail
+          line="$(grep -E '^version:' pubspec.yaml | head -n1)"
+          if [[ ! "$line" =~ ^version:[[:space:]]*([0-9]+)\.([0-9]+)\.([0-9]+)\+([0-9]+)[[:space:]]*$ ]]; then
+            echo "::error::Unexpected pubspec version: $line (expected x.y.z+build)"
+            exit 1
+          fi
+          name="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+          number="${BASH_REMATCH[4]}"
+          expected="${{ steps.tag.outputs.semver }}"
+          if [ "$name" != "$expected" ]; then
+            echo "::error::Tag v${expected} does not match pubspec name ${name}+${number}."
+            exit 1
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "full=${name}+${number}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: ${name}+${number}"
+
+      - name: Build release notes
+        id: notes
+        run: |
+          set -euo pipefail
+          version_code="${{ steps.version.outputs.number }}"
+          full="${{ steps.version.outputs.full }}"
+          notes="$(mktemp)"
+          {
+            echo "## ${full}"
+            echo
+            en="store/google_play/en-US/changelogs/${version_code}.txt"
+            pt="store/google_play/pt-BR/changelogs/${version_code}.txt"
+            if [ -f "$en" ]; then
+              echo "### What's new"
+              echo
+              cat "$en"
+              echo
+            fi
+            if [ -f "$pt" ]; then
+              echo "### Novidades"
+              echo
+              cat "$pt"
+              echo
+            fi
+            if [ ! -f "$en" ] && [ ! -f "$pt" ]; then
+              echo "App version \`${full}\`."
+              echo
+              echo "_No Play Store changelog files found for versionCode ${version_code}._"
+              echo
+            fi
+            echo "### Deploy"
+            echo
+            echo "- Android Play upload runs when this version reaches \`master\` (see **Release Android**)."
+            echo "- Tag: \`${{ steps.tag.outputs.name }}\`"
+          } >"$notes"
+          echo "path=${notes}" >> "$GITHUB_OUTPUT"
+          echo "---- release notes ----"
+          cat "$notes"
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.name }}
+          NOTES: ${{ steps.notes.outputs.path }}
+          FULL: ${{ steps.version.outputs.full }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists — updating notes and marking latest."
+            gh release edit "$TAG" \
+              --title "$TAG" \
+              --notes-file "$NOTES" \
+              --latest
+          else
+            echo "Creating release ${TAG} (${FULL})."
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file "$NOTES" \
+              --generate-notes \
+              --latest \
+              --verify-tag
+          fi
+          echo "Published: $(gh release view "$TAG" --json url -q .url)"

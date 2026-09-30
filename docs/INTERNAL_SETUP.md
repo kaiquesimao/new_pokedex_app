@@ -191,8 +191,11 @@ Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
 | Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **beta** (open testing) track |
 | Manual (`workflow_dispatch`) from `master` | Same; choose track (`beta` / `internal` / `alpha`) and whether to upload |
 
-Tags do **not** start the workflow. Create them on a PR branch with the
+Tags do **not** start the Android workflow. Create them on a PR branch with the
 release script; Android deploys only after that version is merged to `master`.
+Pushing a `vX.Y.Z` tag **does** publish a GitHub Release (Releases tab) via
+[`.github/workflows/github-release.yml`](../.github/workflows/github-release.yml)
+(notes from `store/google_play/*/changelogs/<versionCode>.txt` when present).
 
 **Preferred:** run the release script on the PR branch (clean tree; bumps
 `pubspec.yaml`, commits, tags, pushes), then merge to `master`:
@@ -223,6 +226,9 @@ workflow stages these into the format expected by
 fails if no changelog exists for that `versionCode`.
 
 Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
+
+To (re)publish only the GitHub Releases entry for an existing tag: Actions →
+**GitHub Release** → Run workflow (optional tag input; defaults to latest `v*`).
 
 ### GitHub Secrets
 
