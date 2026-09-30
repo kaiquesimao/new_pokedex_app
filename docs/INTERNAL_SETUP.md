@@ -215,6 +215,13 @@ The workflow reads `version:` from `pubspec.yaml` and builds with
 `--build-name` / `--build-number` (`versionCode` must keep increasing on
 every Play upload; current Play is `+4`).
 
+**Release notes (required for upload):** add localized “what's new” text under
+`store/google_play/<locale>/changelogs/<versionCode>.txt` (e.g.
+`store/google_play/pt-BR/changelogs/15.txt` for `1.6.0+15`). The release
+workflow stages these into the format expected by
+`r0adkll/upload-google-play` and attaches them to the Play release. Upload
+fails if no changelog exists for that `versionCode`.
+
 Or: Actions → **Release Android** → Run workflow (upload optional for build-only).
 
 ### GitHub Secrets

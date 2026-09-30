@@ -191,6 +191,37 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
 
+      # Source of truth: store/google_play/<locale>/changelogs/<versionCode>.txt
+      # Action expects flat whatsnew-<BCP47> files (no extension).
+      - name: Stage Play Store release notes
+        if: >-
+          github.event_name == 'push' ||
+          (github.event_name == 'workflow_dispatch' && inputs.upload)
+        id: whatsnew
+        run: |
+          set -euo pipefail
+          version_code="${{ steps.version.outputs.number }}"
+          staging="build/play-whatsnew"
+          mkdir -p "$staging"
+          found=0
+          shopt -s nullglob
+          for locale_dir in store/google_play/*/; do
+            locale="$(basename "$locale_dir")"
+            src="${locale_dir}changelogs/${version_code}.txt"
+            if [ -f "$src" ]; then
+              cp "$src" "${staging}/whatsnew-${locale}"
+              found=$((found + 1))
+              echo "Staged release notes for ${locale} from ${src}"
+            fi
+          done
+          if [ "$found" -eq 0 ]; then
+            echo "::error::No Play Store changelogs for versionCode ${version_code}."
+            echo "Add store/google_play/<locale>/changelogs/${version_code}.txt (e.g. en-US, pt-BR)."
+            exit 1
+          fi
+          echo "directory=${staging}" >> "$GITHUB_OUTPUT"
+          ls -la "$staging"
+
       - name: Upload to Play Store
         if: >-
           github.event_name == 'push' ||
@@ -203,3 +234,4 @@ jobs:
           tracks: ${{ inputs.track || 'beta' }}
           status: completed
           releaseName: ${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
+          whatsNewDirectory: ${{ steps.whatsnew.outputs.directory }}
