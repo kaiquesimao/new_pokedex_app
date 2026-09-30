@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   decide:
@@ -185,12 +185,96 @@ jobs:
           --build-number=${{ steps.version.outputs.number }}
           --dart-define-from-file=dart_defines.json
 
-      - name: Upload AAB artifact
+      - name: Build APK
+        run: >-
+          flutter build apk --release
+          --build-name=${{ steps.version.outputs.name }}
+          --build-number=${{ steps.version.outputs.number }}
+          --dart-define-from-file=dart_defines.json
+
+      - name: Stage release binaries
+        id: binaries
+        run: |
+          set -euo pipefail
+          name="${{ steps.version.outputs.name }}"
+          number="${{ steps.version.outputs.number }}"
+          staging="build/github-release-assets"
+          mkdir -p "$staging"
+          aab_src="build/app/outputs/bundle/release/app-release.aab"
+          apk_src="build/app/outputs/flutter-apk/app-release.apk"
+          aab_out="${staging}/pokedata-${name}+${number}.aab"
+          apk_out="${staging}/pokedata-${name}+${number}.apk"
+          cp "$aab_src" "$aab_out"
+          cp "$apk_src" "$apk_out"
+          echo "directory=${staging}" >> "$GITHUB_OUTPUT"
+          echo "aab=${aab_out}" >> "$GITHUB_OUTPUT"
+          echo "apk=${apk_out}" >> "$GITHUB_OUTPUT"
+          ls -la "$staging"
+
+      - name: Upload release artifacts
         uses: actions/upload-artifact@v7
         with:
           name: app-release-${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: |
+            ${{ steps.binaries.outputs.aab }}
+            ${{ steps.binaries.outputs.apk }}
           retention-days: 30
+
+      - name: Attach binaries to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.version.outputs.name }}
+          FULL: ${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
+          AAB: ${{ steps.binaries.outputs.aab }}
+          APK: ${{ steps.binaries.outputs.apk }}
+          VERSION_CODE: ${{ steps.version.outputs.number }}
+        run: |
+          set -euo pipefail
+          notes="$(mktemp)"
+          {
+            echo "## ${FULL}"
+            echo
+            en="store/google_play/en-US/changelogs/${VERSION_CODE}.txt"
+            pt="store/google_play/pt-BR/changelogs/${VERSION_CODE}.txt"
+            if [ -f "$en" ]; then
+              echo "### What's new"
+              echo
+              cat "$en"
+              echo
+            fi
+            if [ -f "$pt" ]; then
+              echo "### Novidades"
+              echo
+              cat "$pt"
+              echo
+            fi
+            echo "### Downloads"
+            echo
+            echo "- **APK** (sideload / direct install): attached below"
+            echo "- **AAB** (Play upload format): attached below"
+            echo
+            echo "Play Store track upload is handled by this workflow when enabled."
+          } >"$notes"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Updating existing GitHub Release ${TAG} with APK/AAB."
+            gh release upload "$TAG" "$APK" "$AAB" --clobber
+            gh release edit "$TAG" --title "$TAG" --notes-file "$notes" --latest
+          else
+            echo "Creating GitHub Release ${TAG} with APK/AAB."
+            # Tag may not exist yet if version was bumped without scripts/release.*
+            if ! git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+              git tag "$TAG"
+              git push origin "$TAG"
+            fi
+            gh release create "$TAG" "$APK" "$AAB" \
+              --title "$TAG" \
+              --notes-file "$notes" \
+              --generate-notes \
+              --latest \
+              --verify-tag
+          fi
+          echo "Published: $(gh release view "$TAG" --json url -q .url)"
 
       # Source of truth: store/google_play/<locale>/changelogs/<versionCode>.txt
       # Action expects flat whatsnew-<BCP47> files (no extension).

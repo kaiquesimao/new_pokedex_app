@@ -120,7 +120,7 @@ jobs:
             fi
             echo "### Deploy"
             echo
-            echo "- Android Play upload runs when this version reaches \`master\` (see **Release Android**)."
+            echo "- Signed **APK** and **AAB** are attached by **Release Android** when this version reaches \`master\`."
             echo "- Tag: \`${{ steps.tag.outputs.name }}\`"
           } >"$notes"
           echo "path=${notes}" >> "$GITHUB_OUTPUT"

@@ -188,7 +188,7 @@ Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
 
 | Trigger | What runs |
 |---------|-------------|
-| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB → upload **beta** (open testing) track |
+| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB + APK → upload AAB to **beta** → attach APK/AAB on GitHub Release |
 | Manual (`workflow_dispatch`) from `master` | Same; choose track (`beta` / `internal` / `alpha`) and whether to upload |
 
 Tags do **not** start the Android workflow. Create them on a PR branch with the
@@ -196,6 +196,8 @@ release script; Android deploys only after that version is merged to `master`.
 Pushing a `vX.Y.Z` tag **does** publish a GitHub Release (Releases tab) via
 [`.github/workflows/github-release.yml`](../.github/workflows/github-release.yml)
 (notes from `store/google_play/*/changelogs/<versionCode>.txt` when present).
+After merge to `master`, **Release Android** builds signed **APK** + **AAB**,
+uploads the AAB to Play, and attaches both binaries to that GitHub Release.
 
 **Preferred:** run the release script on the PR branch (clean tree; bumps
 `pubspec.yaml`, commits, tags, pushes), then merge to `master`:

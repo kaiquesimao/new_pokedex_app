@@ -136,6 +136,7 @@ Write-Host @"
 
 Done. Pushed $tag from $branch.
 GitHub Release is created by Actions → GitHub Release (on tag push).
+Signed APK/AAB are attached by Actions → Release Android after merge to master.
 Android Play upload runs after this version reaches master (merge the PR).
 Track: beta / open testing (default). Monitor: Actions → Release Android
 "@
