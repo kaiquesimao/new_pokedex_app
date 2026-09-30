@@ -1,0 +1,6 @@
+What's new in 1.6.0
+
+• Who's that Pokémon? — new mini-game: guess from the silhouette, earn points, and climb the leaderboard
+• Game tab in the bottom navigation for quick matches
+• Global leaderboard to compare your score with other fans
+• Performance and stability improvements
