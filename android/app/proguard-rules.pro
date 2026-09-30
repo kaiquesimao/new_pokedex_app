@@ -7,8 +7,9 @@
 -keep class io.flutter.plugins.** { *; }
 -keep class io.flutter.embedding.** { *; }
 
-# Play Core / deferred components (safe keep)
--keep class com.google.android.play.core.** { *; }
+# Flutter references Play Core for optional deferred components; this app does
+# not ship that library. -keep cannot invent missing classes — suppress R8.
+-dontwarn com.google.android.play.core.**
 
 # Firebase / Google
 -keep class com.google.firebase.** { *; }
