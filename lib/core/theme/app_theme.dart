@@ -146,6 +146,9 @@ abstract final class AppTheme {
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: primary),
       iconTheme: IconThemeData(color: textPrimary),
+      iconButtonTheme: const IconButtonThemeData(
+        variant: StyleVariant.material3Expressive,
+      ),
     );
   }
 }

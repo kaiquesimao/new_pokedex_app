@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Bump app version, commit, tag, and push from the current branch.
-# Android deploy runs after that version reaches master.
+# GitHub Release (Releases tab) is published by .github/workflows/github-release.yml
+# when the vX.Y.Z tag is pushed. Android deploy runs after that version reaches master.
 #
 # Usage:
 #   ./scripts/release.sh patch|minor|major [--dry-run]
@@ -106,6 +107,8 @@ git push origin "$tag"
 cat <<EOF
 
 Done. Pushed ${tag} from ${branch}.
-Android release runs after this version reaches master (merge the PR).
+GitHub Release is created by Actions → GitHub Release (on tag push).
+Signed APK/AAB are attached by Actions → Release Android after merge to master.
+Android Play upload runs after this version reaches master (merge the PR).
 Track: beta / open testing (default). Monitor: Actions → Release Android
 EOF

@@ -1,0 +1,5 @@
+Novidades da 1.6.1
+
+• Bibliotecas do app atualizadas para mais estabilidade e compatibilidade
+• Botões de ícone com estilo Material 3 Expressive
+• Assets web do banco (Drift / SQLite) atualizados

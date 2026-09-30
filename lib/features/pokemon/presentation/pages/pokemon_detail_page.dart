@@ -190,9 +190,8 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
                           PokemonFormatters.displayNumber(pokemon.id),
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: Theme.of(context).colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
                                 fontWeight: FontWeight.w600,
                               ),
                         ),
@@ -277,10 +276,7 @@ class const _HeroSection({
             headerColor.withValues(alpha: 0.55),
             headerColor.withValues(alpha: 0.18),
           ]
-        : [
-            headerColor,
-            Color.lerp(headerColor, Colors.white, 0.28)!,
-          ];
+        : [headerColor, Color.lerp(headerColor, Colors.white, 0.28)!];
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -334,6 +330,8 @@ class const _HeroSection({
                 child: IconButton(
                   style: IconButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.surface,
+                    sizeVariant: ButtonSizeVariant.medium,
+                    shapeVariant: ButtonShapeVariant.round,
                   ),
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
@@ -348,6 +346,8 @@ class const _HeroSection({
                 child: IconButton(
                   style: IconButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.surface,
+                    sizeVariant: ButtonSizeVariant.medium,
+                    shapeVariant: ButtonShapeVariant.round,
                   ),
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -408,9 +408,7 @@ class const _EvolutionSection({
                       embedded: true,
                       onNodeTap: (targetPokemonId) {
                         if (targetPokemonId == pokemonId) return;
-                        unawaited(
-                          context.push('/pokemon/$targetPokemonId'),
-                        );
+                        unawaited(context.push('/pokemon/$targetPokemonId'));
                       },
                     ),
             ),

@@ -1166,7 +1166,18 @@ class $$CachedPokemonEntriesTableTableManager
                 cachedAt: cachedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$CachedPokemonEntriesTable, CachedPokemonEntry>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CachedPokemonEntriesTable,
+                    CachedPokemonEntry
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -1334,7 +1345,18 @@ class $$PokemonNameIndexTableTableManager
                 localizedName: localizedName,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$PokemonNameIndexTable, PokemonNameIndexData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PokemonNameIndexTable,
+                    PokemonNameIndexData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -1519,7 +1541,19 @@ class $$CachedRegionalPokedexEntriesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<
+                    $CachedRegionalPokedexEntriesTable,
+                    CachedRegionalPokedexEntry
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CachedRegionalPokedexEntriesTable,
+                    CachedRegionalPokedexEntry
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),

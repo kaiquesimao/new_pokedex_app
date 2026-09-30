@@ -6,7 +6,8 @@
 .DESCRIPTION
   Updates pubspec.yaml (x.y.z+build), commits, creates tag vX.Y.Z, and pushes
   the current branch + tag to origin. Run from any branch (typically a PR
-  branch). Release Android deploys only after that version reaches master.
+  branch). Pushing the tag triggers Actions → GitHub Release (Releases tab).
+  Release Android deploys only after that version reaches master.
 
 .PARAMETER Bump
   Semver part to bump: patch | minor | major.
@@ -134,6 +135,8 @@ git push origin $tag
 Write-Host @"
 
 Done. Pushed $tag from $branch.
-Android release runs after this version reaches master (merge the PR).
+GitHub Release is created by Actions → GitHub Release (on tag push).
+Signed APK/AAB are attached by Actions → Release Android after merge to master.
+Android Play upload runs after this version reaches master (merge the PR).
 Track: beta / open testing (default). Monitor: Actions → Release Android
 "@

@@ -176,6 +176,11 @@ class const _TypePanel({
                     : l10n.favoriteAddSemantics,
                 button: true,
                 child: IconButton(
+                  style: IconButton.styleFrom(
+                    sizeVariant: ButtonSizeVariant.xSmall,
+                    shapeVariant: ButtonShapeVariant.round,
+                    foregroundColor: isFavorite ? Colors.red : Colors.white,
+                  ),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
