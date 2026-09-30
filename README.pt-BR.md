@@ -181,7 +181,7 @@ O alvo de produção atual é Android (Play Store) + Web. **iOS é plataforma fu
 - **Arquitetura modular clara** — features isoladas com contratos de domínio e camadas data/presentation testáveis
 - **Testes automatizados amplos** — domínio, repositórios, providers e widgets (auth, Pokédex, jogo, networking)
 - **Wasm web em produção** — renderer multi-thread com fallback JS
-- **CI/CD** — analyze + test em todo push/PR; deploy web/Worker a partir de `master`; upload de AAB assinado para open testing da Play em bumps de versão
+- **CI/CD** — analyze + test em todo push/PR; deploy web/Worker a partir de `master`; upload de AAB assinado para teste interno + open testing da Play em bumps de versão
 - **Disciplina de free tier** — monitor de uso Workers/D1; API do jogo sem martelar PokéAPI em runtime
 - **Compliance Play** — docs legais no app, URL de exclusão de conta para Data Safety, hooks de in-app review
 - **i18n** — strings PT/EN e resolução de textos localizados da PokéAPI
