@@ -1,9 +1,9 @@
-# Build signed AAB and upload to Play Store (open testing / beta by default).
+# Build signed AAB and upload to Play Store (internal + open testing / beta by default).
 # Trigger: version change on master (after PR merge), or manual run from master.
 # Tags may be created on a feature branch; they do not start this workflow.
 # GitHub Releases tab entries are published by github-release.yml on v* tag push.
 name: Release Android
-run-name: Release Android (${{ inputs.track || 'beta' }}) · ${{ github.ref_name }}
+run-name: Release Android (${{ inputs.track || 'internal,beta' }}) · ${{ github.ref_name }}
 
 on:
   push:
@@ -13,11 +13,12 @@ on:
   workflow_dispatch:
     inputs:
       track:
-        description: Play Store track
+        description: Play Store track(s)
         required: true
-        default: beta
+        default: internal,beta
         type: choice
         options:
+          - internal,beta
           - beta
           - internal
           - alpha
@@ -333,7 +334,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.kaiquesimao.pokedex
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          tracks: ${{ inputs.track || 'beta' }}
+          tracks: ${{ inputs.track || 'internal,beta' }}
           status: completed
           releaseName: ${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
           whatsNewDirectory: ${{ steps.whatsnew.outputs.directory }}

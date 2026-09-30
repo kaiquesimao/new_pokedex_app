@@ -181,7 +181,7 @@ Production shipping target is Android (Play Store) plus Web. **iOS is a planned 
 - **Clear modular architecture** — features isolated with domain contracts and testable data/presentation layers
 - **Broad automated tests** — domain, repositories, providers, and widget coverage across auth, Pokédex, game, and core networking
 - **Production web Wasm** — multi-thread renderer with JS fallback for browsers without WasmGC
-- **CI/CD** — analyze + test on every push/PR; web and Worker deploy from `master`; signed AAB upload to Play open testing on version bumps
+- **CI/CD** — analyze + test on every push/PR; web and Worker deploy from `master`; signed AAB upload to Play internal + open testing on version bumps
 - **Free-tier discipline** — usage monitor against Workers/D1 daily limits; game API designed not to hammer PokéAPI at runtime
 - **Play compliance** — in-app legal docs, account-deletion URL for Data Safety, in-app review hooks
 - **i18n** — PT/EN app strings and localized PokéAPI text resolution

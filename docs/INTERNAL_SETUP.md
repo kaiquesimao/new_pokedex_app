@@ -189,14 +189,14 @@ Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
 Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
 (100k requests, 5M D1 rows read, 100k D1 rows written). Limits reset at 00:00 UTC.
 
-### Android → Play Store (open testing / beta)
+### Android → Play Store (internal + open testing / beta)
 
 [`.github/workflows/release-android.yml`](../.github/workflows/release-android.yml):
 
 | Trigger | What runs |
 |---------|-------------|
-| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB + APK → upload AAB to **beta** → attach APK/AAB on GitHub Release |
-| Manual (`workflow_dispatch`) from `master` | Same; choose track (`beta` / `internal` / `alpha`) and whether to upload |
+| Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB + APK → upload AAB to **internal** and **beta** → attach APK/AAB on GitHub Release |
+| Manual (`workflow_dispatch`) from `master` | Same; choose track(s) (`internal,beta` / `beta` / `internal` / `alpha`) and whether to upload |
 
 Tags do **not** start the Android workflow. Create them on a PR branch with the
 release script; Android deploys only after that version is merged to `master`.
