@@ -188,6 +188,8 @@ jobs:
           --build-name=${{ steps.version.outputs.name }}
           --build-number=${{ steps.version.outputs.number }}
           --dart-define-from-file=dart_defines.json
+          --obfuscate
+          --split-debug-info=build/debug-info
 
       - name: Build APK
         run: >-
@@ -195,6 +197,17 @@ jobs:
           --build-name=${{ steps.version.outputs.name }}
           --build-number=${{ steps.version.outputs.number }}
           --dart-define-from-file=dart_defines.json
+          --obfuscate
+          --split-debug-info=build/debug-info
+
+      - name: Upload Dart obfuscation symbols
+        uses: actions/upload-artifact@v7
+        with:
+          # Keep private to Actions artifacts — do not attach to public GitHub Releases.
+          name: debug-info-${{ steps.version.outputs.name }}+${{ steps.version.outputs.number }}
+          path: build/debug-info
+          retention-days: 90
+          if-no-files-found: error
 
       - name: Stage release binaries
         id: binaries

@@ -81,7 +81,14 @@ flutter build web --release --wasm \
 Data Safety → account deletion link. Optional “delete data without deleting
 account”: No.
 
-Optional Android obfuscation:
+Android release builds (CI) always use:
+
+- Dart: `--obfuscate --split-debug-info=build/debug-info` (symbols uploaded as a
+  private Actions artifact, **not** attached to the public GitHub Release)
+- Android R8: `minifyEnabled` + `shrinkResources` with
+  [`android/app/proguard-rules.pro`](../android/app/proguard-rules.pro)
+
+Local equivalent:
 
 ```bash
 flutter build appbundle --release \
