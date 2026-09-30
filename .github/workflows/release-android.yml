@@ -80,12 +80,16 @@ jobs:
           fi
 
   release:
-    name: Analyze, build AAB, upload
+    name: Analyze, build AAB/APK, upload
     needs: decide
     if: needs.decide.outputs.release == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # Needed to create/push the version tag when attaching GH Release assets.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-java@v6
         with:
