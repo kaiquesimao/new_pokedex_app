@@ -16,6 +16,8 @@ linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
+    # VGA 11: noisy for intentional Future passthrough (repos/providers).
+    async_return_with_no_await: false
     # Dart 3.13 — primary constructors and related style.
     use_declaring_parameters: true
     empty_container_bodies: true

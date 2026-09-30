@@ -1,0 +1,5 @@
+What's new in 1.6.1
+
+• Updated app libraries for better stability and compatibility
+• Refreshed Material icon buttons with Material 3 Expressive styling
+• Web database assets updated for Drift / SQLite

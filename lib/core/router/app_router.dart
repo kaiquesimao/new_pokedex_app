@@ -304,9 +304,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/game',
-
-                builder: (_, _) =>
-                    const LazyShellTab(tabIndex: 2, child: GuessThePokemonPage()),
+                builder: (_, _) => const LazyShellTab(
+                  tabIndex: 2,
+                  child: GuessThePokemonPage(),
+                ),
               ),
             ],
           ),
