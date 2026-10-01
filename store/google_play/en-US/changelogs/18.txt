@@ -1,0 +1,5 @@
+What's new in 1.6.3
+
+• Match result screen fits without scrolling
+• Play again and leaderboard actions stay visible
+• Game start screen also tuned for the phone layout
