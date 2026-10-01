@@ -66,203 +66,222 @@ class const GameRoundView({
         ? theme.colorScheme.surfaceContainerHigh
         : theme.colorScheme.surfaceContainerLowest;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: AnimatedSwitcher(
-              duration: _motion,
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              child: Text(
-                l10n.gameScore(score),
-                key: ValueKey(score),
+    // Fit the full round in the viewport: no scroll for a timed guessing game.
+    // Bottom shell padding already clears the floating nav; keep this compact.
+    return SizedBox.expand(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: AnimatedSwitcher(
+                duration: _motion,
+                switchInCurve: Curves.easeOut,
+                switchOutCurve: Curves.easeIn,
+                child: Text(
+                  l10n.gameScore(score),
+                  key: ValueKey(score),
+                ),
               ),
             ),
-          ),
-          AnimatedSize(
-            duration: _motion,
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            child: secondsRemaining != null
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Semantics(
-                      liveRegion: !isAnswering,
-                      label: l10n.gameTimerSemantics(secondsRemaining!),
-                      child: Opacity(
-                        opacity: isAnswering
-                            ? 0.55
-                            : spriteReady
-                            ? 1
-                            : 0.45,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(999),
-                              child: _RoundTimerBar(
-                                roundKey: roundKey,
-                                frozen: !roundArmed || isAnswering,
-                                theme: theme,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 160),
-                              switchInCurve: Curves.easeOut,
-                              switchOutCurve: Curves.easeIn,
-                              transitionBuilder: (child, animation) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                              child: Text(
-                                '$secondsRemaining',
-                                key: ValueKey(secondsRemaining),
-                                textAlign: TextAlign.center,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: secondsRemaining! <= 2
-                                      ? theme.colorScheme.error
-                                      : theme.colorScheme.onSurface,
+            AnimatedSize(
+              duration: _motion,
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: secondsRemaining != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Semantics(
+                        liveRegion: !isAnswering,
+                        label: l10n.gameTimerSemantics(secondsRemaining!),
+                        child: Opacity(
+                          opacity: isAnswering
+                              ? 0.55
+                              : spriteReady
+                              ? 1
+                              : 0.45,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(999),
+                                child: _RoundTimerBar(
+                                  roundKey: roundKey,
+                                  frozen: !roundArmed || isAnswering,
+                                  theme: theme,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          if (error != null) ...[
-            const SizedBox(height: 8),
-            Text(l10n.gameError),
-            if (onRetry != null)
-              TextButton(onPressed: onRetry, child: Text(l10n.gameRetryButton)),
-          ],
-          const SizedBox(height: 16),
-          Card(
-            color: cardColor,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: _RevealSprite(
-                key: ValueKey('sprite-$roundKey'),
-                imageUrl: spriteUrl,
-                revealed: showReveal,
-                silhouetteColor: silhouetteColor,
-                semanticLabel: showReveal
-                    ? (revealedPokemonName ?? l10n.gameTitle)
-                    : l10n.gameTitle,
-                onLoaded: isAnswering ? null : onSpriteReady,
-              ),
-            ),
-          ),
-          AnimatedSize(
-            duration: _motion,
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            child: showReveal
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: AnimatedSwitcher(
-                      duration: _motion,
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeIn,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                      child: Column(
-                        key: ValueKey(
-                          '${timedOut}_${lastAnswerCorrect}_$revealedPokemonName',
-                        ),
-                        children: [
-                          Text(
-                            timedOut
-                                ? l10n.gameAnswerTimeout
-                                : lastAnswerCorrect!
-                                ? l10n.gameAnswerCorrect
-                                : l10n.gameAnswerWrong,
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: lastAnswerCorrect!
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.error,
-                              fontWeight: FontWeight.w800,
-                            ),
+                              const SizedBox(height: 2),
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 160),
+                                switchInCurve: Curves.easeOut,
+                                switchOutCurve: Curves.easeIn,
+                                transitionBuilder: (child, animation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                                child: Text(
+                                  '$secondsRemaining',
+                                  key: ValueKey(secondsRemaining),
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: secondsRemaining! <= 2
+                                        ? theme.colorScheme.error
+                                        : theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          if (revealedPokemonName != null &&
-                              revealedPokemonName!.trim().isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              l10n.gameCorrectWas(revealedPokemonName!),
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.titleMedium,
-                            ),
-                          ],
-                        ],
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            if (error != null) ...[
+              const SizedBox(height: 4),
+              Text(l10n.gameError),
+              if (onRetry != null)
+                TextButton(
+                  onPressed: onRetry,
+                  child: Text(l10n.gameRetryButton),
+                ),
+            ],
+            const SizedBox(height: 8),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final available = constraints.maxWidth < constraints.maxHeight
+                      ? constraints.maxWidth
+                      : constraints.maxHeight;
+                  final side = (available - 24).clamp(96.0, 200.0);
+                  return Center(
+                    child: Card(
+                      color: cardColor,
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: _RevealSprite(
+                          key: ValueKey('sprite-$roundKey'),
+                          imageUrl: spriteUrl,
+                          size: side,
+                          revealed: showReveal,
+                          silhouetteColor: silhouetteColor,
+                          semanticLabel: showReveal
+                              ? (revealedPokemonName ?? l10n.gameTitle)
+                              : l10n.gameTitle,
+                          onLoaded: isAnswering ? null : onSpriteReady,
+                        ),
                       ),
                     ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          const SizedBox(height: 20),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final columns = constraints.maxWidth >= 560 ? 2 : 1;
-              final optionWidth = columns == 1
-                  ? constraints.maxWidth
-                  : (constraints.maxWidth - 12) / 2;
-              return AnimatedSwitcher(
-                duration: _revealMotion,
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeIn,
-                layoutBuilder: (currentChild, previousChildren) {
-                  return Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      ...previousChildren,
-                      ?currentChild,
-                    ],
                   );
                 },
-                child: Wrap(
-                  key: ValueKey('options-$roundKey'),
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: options.map((option) {
-                    final isSelected = selectedOptionId == option.speciesId;
-                    final isCorrectOption =
-                        showReveal &&
-                        revealedPokemonName != null &&
-                        option.name == revealedPokemonName;
-                    return SizedBox(
-                      width: optionWidth,
-                      child: Opacity(
-                        opacity: roundArmed || showReveal ? 1 : 0.5,
-                        child: GameOptionButton(
-                          name: option.name,
-                          selected: isSelected,
-                          correct: showReveal ? isCorrectOption : null,
-                          onPressed: isAnswering || !spriteReady
-                              ? null
-                              : () => onAnswer(option.speciesId),
+              ),
+            ),
+            AnimatedSize(
+              duration: _motion,
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: showReveal
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: AnimatedSwitcher(
+                        duration: _motion,
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeIn,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        child: Column(
+                          key: ValueKey(
+                            '${timedOut}_${lastAnswerCorrect}_$revealedPokemonName',
+                          ),
+                          children: [
+                            Text(
+                              timedOut
+                                  ? l10n.gameAnswerTimeout
+                                  : lastAnswerCorrect!
+                                  ? l10n.gameAnswerCorrect
+                                  : l10n.gameAnswerWrong,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: lastAnswerCorrect!
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.error,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            if (revealedPokemonName != null &&
+                                revealedPokemonName!.trim().isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.gameCorrectWas(revealedPokemonName!),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                            ],
+                          ],
                         ),
                       ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 10),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                // Always 2 columns so four answers fit without vertical scroll.
+                final optionWidth = (constraints.maxWidth - 10) / 2;
+                return AnimatedSwitcher(
+                  duration: _revealMotion,
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeIn,
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        ...previousChildren,
+                        ?currentChild,
+                      ],
                     );
-                  }).toList(),
-                ),
-              );
-            },
-          ),
-        ],
+                  },
+                  child: Wrap(
+                    key: ValueKey('options-$roundKey'),
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: options.map((option) {
+                      final isSelected = selectedOptionId == option.speciesId;
+                      final isCorrectOption =
+                          showReveal &&
+                          revealedPokemonName != null &&
+                          option.name == revealedPokemonName;
+                      return SizedBox(
+                        width: optionWidth,
+                        child: Opacity(
+                          opacity: roundArmed || showReveal ? 1 : 0.5,
+                          child: GameOptionButton(
+                            name: option.name,
+                            selected: isSelected,
+                            correct: showReveal ? isCorrectOption : null,
+                            onPressed: isAnswering || !spriteReady
+                                ? null
+                                : () => onAnswer(option.speciesId),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -373,6 +392,7 @@ class _RoundTimerBarState extends State<_RoundTimerBar>
 class _RevealSprite extends StatelessWidget {
   const new({
     required this.imageUrl,
+    required this.size,
     required this.revealed,
     required this.silhouetteColor,
     required this.semanticLabel,
@@ -381,6 +401,7 @@ class _RevealSprite extends StatelessWidget {
   });
 
   final String imageUrl;
+  final double size;
   final bool revealed;
   final Color silhouetteColor;
   final String semanticLabel;
@@ -397,26 +418,30 @@ class _RevealSprite extends StatelessWidget {
       builder: (context, silhouetteAmount, _) {
         final coloredOpacity = (1 - silhouetteAmount).clamp(0.0, 1.0);
         final silhouetteOpacity = silhouetteAmount.clamp(0.0, 1.0);
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            if (coloredOpacity > 0.01)
-              Opacity(
-                opacity: coloredOpacity,
-                child: _sprite(notifyLoaded: false),
-              ),
-            if (silhouetteOpacity > 0.01)
-              Opacity(
-                opacity: silhouetteOpacity,
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    silhouetteColor,
-                    BlendMode.srcIn,
-                  ),
-                  child: _sprite(notifyLoaded: !revealed),
+        return SizedBox(
+          width: size,
+          height: size,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (coloredOpacity > 0.01)
+                Opacity(
+                  opacity: coloredOpacity,
+                  child: _sprite(notifyLoaded: false),
                 ),
-              ),
-          ],
+              if (silhouetteOpacity > 0.01)
+                Opacity(
+                  opacity: silhouetteOpacity,
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      silhouetteColor,
+                      BlendMode.srcIn,
+                    ),
+                    child: _sprite(notifyLoaded: !revealed),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
@@ -425,8 +450,8 @@ class _RevealSprite extends StatelessWidget {
   Widget _sprite({required bool notifyLoaded}) {
     return PokemonSpriteImage(
       imageUrl: imageUrl,
-      width: 220,
-      height: 220,
+      width: size,
+      height: size,
       maxCachePixels: 768,
       semanticLabel: semanticLabel,
       onLoaded: notifyLoaded ? onLoaded : null,

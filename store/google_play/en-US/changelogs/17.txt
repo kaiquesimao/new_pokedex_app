@@ -1,0 +1,5 @@
+What's new in 1.6.2
+
+• "Who's that Pokémon?" round fits the screen with no scrolling
+• All answer options stay visible at once
+• Tighter layout for quick mobile guessing rounds

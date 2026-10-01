@@ -40,7 +40,7 @@ class const GameOptionButton({
               ? null
               : WidgetStatePropertyAll(foreground),
           padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           ),
           side: WidgetStateProperty.resolveWith((states) {
             if (correct == true) {
@@ -55,7 +55,12 @@ class const GameOptionButton({
             return null;
           }),
         ),
-        child: Text(name, textAlign: TextAlign.center),
+        child: Text(
+          name,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

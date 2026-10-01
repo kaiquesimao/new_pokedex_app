@@ -245,6 +245,41 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('round view fits phone viewport without scrolling', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final controller = _FakeController(
+      GuessThePokemonState(
+        status: GuessThePokemonStatus.playing,
+        spriteReady: true,
+        secondsRemaining: 4,
+        localRound: _roundWithLongNames(),
+      ),
+    );
+    await _pump(tester, controller);
+
+    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.byType(GameOptionButton), findsNWidgets(4));
+
+    final viewport = tester.getRect(find.byType(GuessThePokemonPage));
+    for (var i = 0; i < 4; i++) {
+      final optionRect = tester.getRect(find.byType(GameOptionButton).at(i));
+      expect(
+        optionRect.bottom,
+        lessThanOrEqualTo(viewport.bottom + 0.5),
+        reason: 'option $i should stay inside the page viewport',
+      );
+      expect(
+        optionRect.top,
+        greaterThanOrEqualTo(viewport.top - 0.5),
+        reason: 'option $i should stay inside the page viewport',
+      );
+    }
+  });
+
   testWidgets('wide viewport lays out answer controls in two columns', (
     tester,
   ) async {
