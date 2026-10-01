@@ -106,7 +106,11 @@ if ($DryRun) {
   exit 0
 }
 
-$pubspec = Get-Content -Path 'pubspec.yaml' -Raw
+# Read/write UTF-8 explicitly. Windows PowerShell Get-Content defaults to the
+# system ANSI code page and mojibakes non-ASCII (e.g. pubspec description).
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+$pubspecPath = Join-Path $repoRoot 'pubspec.yaml'
+$pubspec = [System.IO.File]::ReadAllText($pubspecPath, $utf8NoBom)
 $updated = [regex]::Replace(
   $pubspec,
   '(?m)^version:\s*\d+\.\d+\.\d+\+\d+\s*$',
@@ -116,13 +120,7 @@ $updated = [regex]::Replace(
 if ($updated -eq $pubspec) {
   throw 'Failed to replace version line in pubspec.yaml'
 }
-# Keep UTF-8 without BOM (Flutter/pub expect this).
-$utf8NoBom = New-Object System.Text.UTF8Encoding $false
-[System.IO.File]::WriteAllText(
-  (Join-Path $repoRoot 'pubspec.yaml'),
-  $updated,
-  $utf8NoBom
-)
+[System.IO.File]::WriteAllText($pubspecPath, $updated, $utf8NoBom)
 
 git add pubspec.yaml
 git commit -m "chore: bump version to $newVersion"
