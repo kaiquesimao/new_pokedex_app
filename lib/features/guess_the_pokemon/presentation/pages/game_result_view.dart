@@ -52,100 +52,118 @@ class const GameResultView({
           child: child,
         );
       },
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Column(
-              children: [
-                Text(
-                  l10n.gameResultTitle,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineSmall,
+      // Fit inside the shell body (header + floating nav already padded).
+      child: SizedBox.expand(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+          child: Column(
+            children: [
+              Text(
+                l10n.gameResultTitle,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
-                if (spriteUrl != null) ...[
-                  const SizedBox(height: 16),
-                  PokemonSpriteImage(
-                    imageUrl: spriteUrl,
-                    width: 180,
-                    height: 180,
-                    maxCachePixels: 768,
-                    semanticLabel: pokemonName.isEmpty
-                        ? l10n.gameResultTitle
-                        : pokemonName,
-                  ),
-                ],
-                if (pokemonName.trim().isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.gameCorrectWas(pokemonName),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-                if (lastAnswerCorrect != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    timedOut
-                        ? l10n.gameAnswerTimeout
-                        : lastAnswerCorrect!
-                        ? l10n.gameAnswerCorrect
-                        : l10n.gameAnswerWrong,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: lastAnswerCorrect!
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.error,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                Text(
-                  l10n.gameScore(score),
-                  style: theme.textTheme.displaySmall,
-                ),
+              ),
+              if (spriteUrl != null) ...[
                 const SizedBox(height: 8),
-                Text(l10n.gameBestScore(bestScore)),
-                const SizedBox(height: 24),
-                if (publicationState == PublicationState.published)
-                  Text(l10n.gamePublishedMessage)
-                else if (publicationState == PublicationState.pending)
-                  _PublicationProgress(message: l10n.gamePublicationPending)
-                else if (publicationState == PublicationState.failed) ...[
-                  Text(
-                    l10n.gamePublicationFailed,
-                    textAlign: TextAlign.center,
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final side = (constraints.maxHeight < constraints.maxWidth
+                              ? constraints.maxHeight
+                              : constraints.maxWidth)
+                          .clamp(96.0, 160.0);
+                      return Center(
+                        child: PokemonSpriteImage(
+                          imageUrl: spriteUrl,
+                          width: side,
+                          height: side,
+                          maxCachePixels: 768,
+                          semanticLabel: pokemonName.isEmpty
+                              ? l10n.gameResultTitle
+                              : pokemonName,
+                        ),
+                      );
+                    },
                   ),
-                  if (onPublish != null) ...[
-                    const SizedBox(height: 16),
-                    OutlinedButton(
-                      onPressed: onPublish,
-                      child: Text(l10n.gameRetryPublicationButton),
-                    ),
-                  ],
-                ] else if (!canPublish)
-                  Text(
-                    l10n.gamePublicOnlyMessage,
-                    textAlign: TextAlign.center,
-                  )
-                else if (onPublish != null) ...[
-                  const SizedBox(height: 16),
+                ),
+              ] else
+                const Spacer(),
+              if (pokemonName.trim().isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.gameCorrectWas(pokemonName),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+              if (lastAnswerCorrect != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  timedOut
+                      ? l10n.gameAnswerTimeout
+                      : lastAnswerCorrect!
+                      ? l10n.gameAnswerCorrect
+                      : l10n.gameAnswerWrong,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: lastAnswerCorrect!
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.error,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Text(
+                l10n.gameScore(score),
+                style: theme.textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(l10n.gameBestScore(bestScore)),
+              const SizedBox(height: 12),
+              if (publicationState == PublicationState.published)
+                Text(l10n.gamePublishedMessage, textAlign: TextAlign.center)
+              else if (publicationState == PublicationState.pending)
+                _PublicationProgress(message: l10n.gamePublicationPending)
+              else if (publicationState == PublicationState.failed) ...[
+                Text(
+                  l10n.gamePublicationFailed,
+                  textAlign: TextAlign.center,
+                ),
+                if (onPublish != null) ...[
+                  const SizedBox(height: 8),
                   OutlinedButton(
                     onPressed: onPublish,
-                    child: Text(l10n.gamePublishButton),
+                    child: Text(l10n.gameRetryPublicationButton),
                   ),
                 ],
-                const SizedBox(height: 16),
-                FilledButton(
+              ] else if (!canPublish)
+                Text(
+                  l10n.gamePublicOnlyMessage,
+                  textAlign: TextAlign.center,
+                )
+              else if (onPublish != null) ...[
+                OutlinedButton(
+                  onPressed: onPublish,
+                  child: Text(l10n.gamePublishButton),
+                ),
+              ],
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
                   onPressed: onPlayAgain,
                   child: Text(l10n.gamePlayAgainButton),
                 ),
-                const SizedBox(height: 12),
-                OutlinedButton(
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     backgroundColor: theme.colorScheme.surface,
                     foregroundColor: theme.colorScheme.primary,
@@ -154,8 +172,8 @@ class const GameResultView({
                   onPressed: onLeaderboard,
                   child: Text(l10n.gameLeaderboardButton),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

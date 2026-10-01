@@ -1,0 +1,5 @@
+Novidades da 1.6.3
+
+• Tela de resultado da partida cabe na tela sem scroll
+• Botões de jogar novamente e ranking sempre visíveis
+• Tela inicial do jogo também ajustada ao layout do celular

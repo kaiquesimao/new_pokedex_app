@@ -118,6 +118,36 @@ void main() {
     expect(controller.playAgainCalls, 1);
   });
 
+  testWidgets('finished page fits phone viewport without scrolling', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final controller = _FakeController(
+      GuessThePokemonState(
+        status: GuessThePokemonStatus.finished,
+        score: 3,
+        bestScore: 5,
+        lastAnswerCorrect: true,
+        revealedPokemonName: 'Pikachu',
+        localRound: _roundWithLongNames(),
+      ),
+    );
+    await _pump(tester, controller);
+
+    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.text('Jogar novamente'), findsOneWidget);
+    expect(find.text('Ver ranking'), findsOneWidget);
+
+    final viewport = tester.getRect(find.byType(GuessThePokemonPage));
+    for (final label in ['Jogar novamente', 'Ver ranking']) {
+      final rect = tester.getRect(find.text(label));
+      expect(rect.bottom, lessThanOrEqualTo(viewport.bottom + 0.5));
+      expect(rect.top, greaterThanOrEqualTo(viewport.top - 0.5));
+    }
+  });
+
   testWidgets('finished page opens the leaderboard route', (tester) async {
     final controller = _FakeController(
       const GuessThePokemonState(
