@@ -1,0 +1,5 @@
+Novidades da 1.6.2
+
+• Tela do jogo "Quem é esse Pokémon?" cabe na tela sem scroll
+• Todas as opções de resposta ficam visíveis de uma vez
+• Layout mais compacto para partidas rápidas no celular
