@@ -1,0 +1,4 @@
+Novidades da 1.6.4
+
+• Relato de crashes melhorado para corrigir bugs mais rápido
+• Melhorias de estabilidade por baixo dos panos
