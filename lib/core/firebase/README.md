@@ -11,6 +11,13 @@ Favorites sync to Firestore after login; local cache remains the offline source.
    - `dart_defines.json` — copy from `dart_defines.example.json` at project root
    - `android/app/google-services.json` — copy from `android/app/google-services.example.json`
 
+### Android Advertising ID
+
+The app keeps Firebase Analytics events but **does not collect the Advertising ID**
+and strips `com.google.android.gms.permission.AD_ID` from the merged manifest
+(`android/app/src/main/AndroidManifest.xml`). In Play Console → App content →
+Advertising ID, declare **No**. There are no ads in the app.
+
 ## Configuration model
 
 Firebase credentials are **not** embedded in `lib/firebase_options.dart`. They are injected at build time:
