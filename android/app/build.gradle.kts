@@ -27,7 +27,8 @@ android {
 
     defaultConfig {
         applicationId = "com.kaiquesimao.pokedex"
-        minSdk = flutter.minSdkVersion
+        // Sentry Flutter SDK v10 requires API 26+.
+        minSdk = maxOf(flutter.minSdkVersion, 26)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
