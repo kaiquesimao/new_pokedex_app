@@ -1,0 +1,4 @@
+What's new in 1.6.4
+
+• Improved crash reporting for faster bug fixes
+• Stability improvements under the hood

@@ -69,8 +69,13 @@ Always pass Firebase compile-time defines:
 # Android (Play Store)
 flutter build appbundle --release --dart-define-from-file=dart_defines.json
 
-# Web (Wasm + JS fallback)
-flutter build web --release --wasm \
+# Web (Wasm + JS fallback) — production: source maps for private symbolication
+flutter build web --release --wasm --source-maps \
+  --dart-define-from-file=dart_defines.json
+# Do not upload *.map to public hosting (strip before Cloudflare Pages deploy).
+
+# Web (Wasm) — staging / PR preview: readable Wasm stack traces (~47% larger)
+flutter build web --release --wasm --no-strip-wasm \
   --dart-define-from-file=dart_defines.json
 ```
 
@@ -137,6 +142,19 @@ Mobile still uses google_sign_in + GoogleSignIn.authenticate.
 FIREBASE_GOOGLE_WEB_CLIENT_ID remains required in dart_defines.json as
 Android serverClientId.
 
+### Crash reporting (Sentry)
+
+Org/project: **kaique-projects** / **pokedata**
+Dashboard: https://kaique-projects.sentry.io/projects/pokedata/
+
+1. Put `SENTRY_DSN` in local `dart_defines.json` (gitignored) and in GitHub
+   secret `DART_DEFINES_JSON` so production builds send events.
+2. Optional upload of symbols/source maps: organization token with `org:ci`
+   (GitHub secret `SENTRY_AUTH_TOKEN`; export locally before
+   `dart run sentry_dart_plugin`).
+3. Filter Issues by tags `app.platform` (`android` / `web`) and `app.runtime`.
+4. SDK is **off in debug** and when `SENTRY_DSN` is empty (quota-friendly).
+
 ### WebAssembly (multi-thread)
 
 - `web/index.html` uses modern `flutter_bootstrap.js` (Flutter 3.22+).
@@ -145,8 +163,16 @@ Android serverClientId.
 - Production headers in [`web/_headers`](../web/_headers) enable
   `SharedArrayBuffer` (COOP + COEP) for multi-thread skwasm.
 - `flutter run --wasm` enables cross-origin isolation locally by default.
-- Staging/QA stack traces: `flutter build web --wasm --no-strip-wasm`
-  (or `--source-maps` for error monitoring).
+- **Production CI:** `flutter build web --wasm --source-maps`, then upload
+  `*.map` as a private Actions artifact (`web-source-maps-production-*`,
+  30-day retention) and **delete maps before** Cloudflare Pages deploy
+  (Flutter warning: public source maps expose symbols/paths).
+- **PR preview CI:** `flutter build web --wasm --no-strip-wasm` so browser
+  console stack traces keep Wasm function names (QA only; larger binary).
+- Debug web: console log `flutter.web` reports `dart2wasm` vs `dart2js`
+  via `bool.fromEnvironment('dart.tool.dart2wasm')`.
+- Wasm dry-run warnings also appear on plain `flutter build web` (no
+  `--wasm`) when deps import unsupported libraries (`dart:html`, etc.).
 
 ### Cloudflare zone (required for custom domain)
 
@@ -166,9 +192,9 @@ Dependabot: [`.github/dependabot.yml`](../.github/dependabot.yml).
 |---------|-------------|
 | Every push / PR | `flutter analyze` + `flutter test` |
 | Every push / PR | Worker job: catalog/migrations validate + typecheck + vitest + dry-run |
-| Push to `master` | `flutter build web --wasm` → deploy **production** → smoke checks |
+| Push to `master` | `flutter build web --wasm --source-maps` → private map artifact → strip maps → deploy **production** → smoke checks |
 | Push to `master` | Apply D1 migrations → deploy **guess-the-pokemon** Worker → API smoke |
-| PR (same repo) | Same Wasm build → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
+| PR (same repo) | `flutter build web --wasm --no-strip-wasm` → Cloudflare **preview** (`pr-<number>`) → comment URL on the PR |
 
 Production URLs:
 
@@ -177,6 +203,8 @@ Production URLs:
 
 SPA deep links use [`web/_redirects`](../web/_redirects). Headers: [`web/_headers`](../web/_headers).
 Web build artifacts are uploaded (7-day retention) for failed-deploy debugging.
+Production source maps are a separate private artifact (30-day retention); they
+are never deployed to Pages.
 
 ### Free-tier monitor
 
@@ -260,6 +288,7 @@ To (re)publish only the GitHub Releases entry for an existing tag: Actions →
 | `KEY_PASSWORD` | Key password (often same as store) |
 | `KEY_ALIAS` | Key alias (e.g. `upload`) |
 | `PLAY_SERVICE_ACCOUNT_JSON` | Play Console API service account JSON |
+| `SENTRY_AUTH_TOKEN` (optional) | Organization token (`org:ci`) for `sentry_dart_plugin` symbol/source-map uploads |
 
 Encode the keystore (PowerShell):
 

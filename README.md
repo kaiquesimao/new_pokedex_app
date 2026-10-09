@@ -121,8 +121,9 @@ Flutter client
 | HTTP | Dio (+ offline/retry guards) |
 | Auth / sync | Firebase Auth, Cloud Firestore |
 | Analytics | Firebase Analytics |
+| Crash reporting | Sentry (free Developer): one project for Android + web; filter `app.platform` |
 | Game API | Cloudflare Workers, D1 |
-| Web runtime | Wasm (skwasm multi-thread) with JS fallback |
+| Web runtime | Wasm (skwasm multi-thread) with JS fallback; prod `--source-maps` (private artifact), preview `--no-strip-wasm` |
 | CI | GitHub Actions |
 | Quality | `very_good_analysis`, extensive unit/widget tests |
 
@@ -180,8 +181,8 @@ Production shipping target is Android (Play Store) plus Web. **iOS is a planned 
 - **Shipped product** — live on [Google Play](https://play.google.com/store/apps/details?id=com.kaiquesimao.pokedex) and [web](https://pokedata.kaique.site)
 - **Clear modular architecture** — features isolated with domain contracts and testable data/presentation layers
 - **Broad automated tests** — domain, repositories, providers, and widget coverage across auth, Pokédex, game, and core networking
-- **Production web Wasm** — multi-thread renderer with JS fallback for browsers without WasmGC
-- **CI/CD** — analyze + test on every push/PR; web and Worker deploy from `master`; signed AAB upload to Play internal + open testing on version bumps
+- **Production web Wasm** — multi-thread renderer with JS fallback; private `--source-maps` artifact (maps not hosted publicly)
+- **CI/CD** — analyze + test on every push/PR; web and Worker deploy from `master`; PR previews use `--no-strip-wasm`; signed AAB upload to Play internal + open testing on version bumps
 - **Free-tier discipline** — usage monitor against Workers/D1 daily limits; game API designed not to hammer PokéAPI at runtime
 - **Play compliance** — in-app legal docs, account-deletion URL for Data Safety, in-app review hooks
 - **i18n** — PT/EN app strings and localized PokéAPI text resolution

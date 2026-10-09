@@ -42,5 +42,8 @@ abstract final class Env {
     'GAME_API_BASE_URL',
   );
 
+  /// Sentry DSN for crash reporting (Android + web). Empty disables Sentry.
+  static const String sentryDsn = String.fromEnvironment('SENTRY_DSN');
+
   static bool get isFirebaseConfigured => projectId.isNotEmpty;
 }

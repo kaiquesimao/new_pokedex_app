@@ -195,10 +195,42 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build web (Wasm + JS fallback)
+      # --source-maps: symbolication for private error monitoring (Flutter Wasm docs).
+      # Maps are uploaded as a private artifact and stripped before public hosting.
+      - name: Build web (Wasm + JS fallback + source maps)
         run: >-
-          flutter build web --release --wasm
+          flutter build web --release --wasm --source-maps
           --dart-define-from-file=dart_defines.json
+
+      - name: Upload web source maps (private)
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-source-maps-production-${{ github.sha }}
+          path: build/web/**/*.map
+          retention-days: 30
+          if-no-files-found: error
+
+      # Upload to Sentry before stripping maps from the public Pages deploy.
+      - name: Upload web source maps to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SENTRY_AUTH_TOKEN:-}" ]; then
+            echo "::warning::SENTRY_AUTH_TOKEN unset — skipping Sentry source map upload."
+            exit 0
+          fi
+          dart run sentry_dart_plugin
+
+      - name: Exclude source maps from public hosting
+        run: |
+          map_count=$(find build/web -name '*.map' -type f | wc -l)
+          echo "Removing $map_count source map file(s) before deploy"
+          find build/web -name '*.map' -type f -delete
+          if find build/web -name '*.map' -type f | grep -q .; then
+            echo "::error::Source maps still present under build/web"
+            exit 1
+          fi
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v7
@@ -284,9 +316,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build web (Wasm + JS fallback)
+      # --no-strip-wasm: preserve Wasm function names in browser console (QA/preview).
+      # ~47% larger Wasm binary; do not use on production.
+      - name: Build web (Wasm + JS fallback, QA symbols)
         run: >-
-          flutter build web --release --wasm
+          flutter build web --release --wasm --no-strip-wasm
           --dart-define-from-file=dart_defines.json
 
       - name: Upload web build artifact

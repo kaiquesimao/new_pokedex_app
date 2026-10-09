@@ -1,7 +1,7 @@
 name: pokedex_app
 description: "PokeData - Pokédex para fãs"
 publish_to: 'none'
-version: 1.6.3+18
+version: 1.6.4+19
 environment:
   sdk: ^3.13.0
   flutter: '>=3.47.0'
@@ -35,6 +35,7 @@ dependencies:
   package_info_plus: ^10.2.0
   path_provider: ^2.1.6
   riverpod: ^3.4.3
+  sentry_flutter: 10.0.0
   shared_preferences: ^2.5.5
   shimmer: ^4.0.0
   sign_in_with_apple: ^8.2.0
@@ -50,7 +51,19 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  sentry_dart_plugin: ^3.4.0
   very_good_analysis: ^11.0.0
+
+# Sentry Dart Plugin — upload debug symbols / web source maps after builds.
+# Auth token: set env SENTRY_AUTH_TOKEN (never commit the token).
+# https://docs.sentry.io/platforms/dart/guides/flutter/debug-symbols/dart-plugin/
+sentry:
+  project: pokedata
+  org: kaique-projects
+  dart_symbol_map_path: build/app/obfuscation.map.json
+  upload_source_maps: true
+  upload_sources: true
+  ignore_missing: true
 
 flutter:
   generate: true

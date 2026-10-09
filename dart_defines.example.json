@@ -12,5 +12,6 @@
   "FIREBASE_IOS_API_KEY": "your-ios-api-key",
   "FIREBASE_IOS_APP_ID": "your-ios-app-id",
   "FIREBASE_IOS_BUNDLE_ID": "com.example.pokedexApp",
-  "GAME_API_BASE_URL": "https://guess-the-pokemon.kaique-workspace.workers.dev"
+  "GAME_API_BASE_URL": "https://guess-the-pokemon.kaique-workspace.workers.dev",
+  "SENTRY_DSN": "https://YOUR_PUBLIC_KEY@oXXXX.ingest.us.sentry.io/YOUR_PROJECT_ID"
 }

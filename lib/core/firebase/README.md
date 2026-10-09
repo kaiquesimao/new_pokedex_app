@@ -5,7 +5,8 @@ Favorites sync to Firestore after login; local cache remains the offline source.
 
 ## Prerequisites
 
-1. Firebase project with **Authentication** (email/password, Google) and **Cloud Firestore**.
+1. Firebase project with **Authentication** (email/password, Google), **Cloud Firestore**,
+   and **Google Analytics**.
 2. Local secret files (gitignored):
    - `dart_defines.json` — copy from `dart_defines.example.json` at project root
    - `android/app/google-services.json` — copy from `android/app/google-services.example.json`
@@ -38,7 +39,27 @@ calls and use local game mode; provide the Worker base URL to enable them.
 2. `lib/firebase_options.dart` — platform options from `Env`.
 3. `lib/core/firebase/firebase_bootstrap.dart` — `Firebase.initializeApp`.
 4. `lib/core/bootstrap/app_bootstrap.dart` — cold start (connectivity, Firebase, prefs, auth).
-5. `main.dart` — splash, cold start, then `PokedexApp`.
+5. `main.dart` — splash, cold start, crash reporting handlers, then `PokedexApp`.
+
+## Crash reporting (Sentry — free Developer plan)
+
+One project for **Android and web**: [kaique-projects/pokedata](https://kaique-projects.sentry.io/projects/pokedata/).
+
+| Tag | Values |
+|-----|--------|
+| `app.platform` | `android` / `web` / `ios` / `other` |
+| `app.runtime` | `native` / `dart2wasm` / `dart2js` |
+
+Setup:
+
+1. `SENTRY_DSN` in `dart_defines.json` (and GitHub `DART_DEFINES_JSON`).
+2. Optional: `SENTRY_AUTH_TOKEN` for `dart run sentry_dart_plugin` (CI uploads
+   Android debug symbols + web source maps — see
+   [Sentry Dart Plugin](https://docs.sentry.io/platforms/dart/guides/flutter/debug-symbols/dart-plugin/)).
+3. Rebuild with `--dart-define-from-file=dart_defines.json`.
+
+Collection is **off in debug** / empty DSN. Tracing/replay stay disabled to
+conserve free quota.
 
 ## Platform files
 
