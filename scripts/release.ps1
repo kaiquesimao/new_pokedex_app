@@ -1,13 +1,13 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Bump app version, commit, tag, and push (Android deploys after merge to master).
+  Bump app version on the current PR branch (no GitHub Release yet).
 
 .DESCRIPTION
-  Updates pubspec.yaml (x.y.z+build), commits, creates tag vX.Y.Z, and pushes
-  the current branch + tag to origin. Run from any branch (typically a PR
-  branch). Pushing the tag triggers Actions → GitHub Release (Releases tab).
-  Release Android deploys only after that version reaches master.
+  Updates pubspec.yaml (x.y.z+build), commits, and pushes the current branch.
+  Does NOT create or push a git tag — the GitHub Release (Releases tab) and
+  Play upload run only after this version reaches master (Release Android
+  creates the vX.Y.Z tag + release when attaching APK/AAB).
 
 .PARAMETER Bump
   Semver part to bump: patch | minor | major.
@@ -89,17 +89,10 @@ $newVersion = Format-Version $major $minor $patch $build
 $nameOnly = "{0}.{1}.{2}" -f $major, $minor, $patch
 $tag = "v$nameOnly"
 
-if (-not $DryRun) {
-  $existingTag = git tag -l $tag
-  if ($existingTag) {
-    throw "Tag $tag already exists."
-  }
-}
-
 Write-Host "Branch:  $branch"
 Write-Host "Bump:    $Bump"
 Write-Host "Version: $oldVersion -> $newVersion"
-Write-Host "Tag:     $tag"
+Write-Host "Tag:     $tag (created later on master by Release Android — not now)"
 
 if ($DryRun) {
   Write-Host 'Dry run - no changes made.'
@@ -124,17 +117,13 @@ if ($updated -eq $pubspec) {
 
 git add pubspec.yaml
 git commit -m "chore: bump version to $newVersion"
-git tag $tag
 
-Write-Host "Pushing $branch and $tag..."
+Write-Host "Pushing $branch (no tag)..."
 git push -u origin HEAD
-git push origin $tag
 
 Write-Host @"
 
-Done. Pushed $tag from $branch.
-GitHub Release is created by Actions → GitHub Release (on tag push).
-Signed APK/AAB are attached by Actions → Release Android after merge to master.
-Android Play upload runs after this version reaches master (merge the PR).
-Track: beta / open testing (default). Monitor: Actions → Release Android
+Done. Bumped to $newVersion on $branch (no GitHub Release yet).
+After the PR merges to master, Release Android creates tag $tag + the GitHub
+Release and uploads to Play (internal + beta by default).
 "@

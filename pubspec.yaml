@@ -1,7 +1,7 @@
 name: pokedex_app
 description: "PokeData - Pokédex para fãs"
 publish_to: 'none'
-version: 1.6.4+19
+version: 1.6.5+20
 environment:
   sdk: ^3.13.0
   flutter: '>=3.47.0'
@@ -35,6 +35,8 @@ dependencies:
   package_info_plus: ^10.2.0
   path_provider: ^2.1.6
   riverpod: ^3.4.3
+  sentry_dio: 10.0.0
+  sentry_drift: 10.0.0
   sentry_flutter: 10.0.0
   shared_preferences: ^2.5.5
   shimmer: ^4.0.0

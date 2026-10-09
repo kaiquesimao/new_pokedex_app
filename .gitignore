@@ -49,7 +49,9 @@ app.*.map.json
 prototype/
 
 # AI
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 .agents/
 skills-lock.json
 docs/design

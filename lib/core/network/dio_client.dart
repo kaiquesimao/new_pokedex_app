@@ -4,6 +4,7 @@ import 'package:pokedex_app/core/network/connectivity_service.dart';
 import 'package:pokedex_app/core/network/offline_guard_interceptor.dart';
 import 'package:pokedex_app/core/network/transient_retry_interceptor.dart';
 import 'package:pokedex_app/core/network/web_safe_headers_interceptor.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 
 const _appName = 'PokeData';
 const _projectUrl = 'https://pokedata.kaique.site';
@@ -51,6 +52,9 @@ Dio createDio({
   if (kDebugMode && enableLogging) {
     dio.interceptors.add(LogInterceptor());
   }
+
+  // Must be last — breadcrumbs, failed-request events, and HTTP spans.
+  dio.addSentry();
 
   return dio;
 }

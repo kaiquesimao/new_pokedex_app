@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/crash_reporting/sentry_context_sync.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/theme_provider.dart';
@@ -14,13 +15,15 @@ import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
 class const PokedexApp({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(authSessionEffectsProvider);
+    ref
+      ..watch(authSessionEffectsProvider)
+      ..watch(sentryContextSyncProvider);
     final router = ref.watch(goRouterProvider);
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(appLocaleProvider);
 
     return MaterialApp.router(
-      title: 'PokeData',
+      title: 'PokeData - Pokédex',
       scrollBehavior: const AppScrollBehavior(),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
@@ -33,9 +36,7 @@ class const PokedexApp({super.key}) extends ConsumerWidget {
         fit: StackFit.expand,
         children: [
           const WideViewportBackdrop(),
-          WideViewportTheme(
-            child: AppOfflineShell(child: child),
-          ),
+          WideViewportTheme(child: AppOfflineShell(child: child)),
         ],
       ),
     );

@@ -798,6 +798,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Did not find what you need? Send your question or issue report to our team.';
 
   @override
+  String get helpReportBugLabel => 'Report a bug in the app';
+
+  @override
   String get helpEmailOpenError => 'Could not open the email app.';
 
   @override

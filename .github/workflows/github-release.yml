@@ -1,6 +1,8 @@
 # Creates a GitHub Release (Releases tab) when a version tag is pushed.
-# Preferred path: scripts/release.ps1|release.sh (bump + tag + push).
-# Android Play upload stays in release-android.yml (master + pubspec version change).
+# Tags must point at a commit already on master (after PR merge). Prefer bumping
+# on the PR with scripts/release.ps1|release.sh (no tag); Release Android on
+# master creates the tag + attaches APK/AAB. This workflow is a safety net /
+# notes refresh when a v* tag lands on master.
 name: GitHub Release
 run-name: GitHub Release · ${{ github.ref_name }}
 
@@ -63,9 +65,19 @@ jobs:
             exit 1
           fi
 
+          # Refuse releases for tags that are not on master (e.g. premature PR tags).
+          git fetch origin master
+          tag_commit="$(git rev-list -n1 "$tag")"
+          if ! git merge-base --is-ancestor "$tag_commit" origin/master; then
+            echo "::error::Tag ${tag} (${tag_commit}) is not on master."
+            echo "GitHub Releases are published only after the version PR merges."
+            echo "Bump with scripts/release.* on the PR (no tag); merge; Release Android tags."
+            exit 1
+          fi
+
           echo "name=${tag}" >> "$GITHUB_OUTPUT"
           echo "semver=${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}" >> "$GITHUB_OUTPUT"
-          echo "Resolved tag: $tag"
+          echo "Resolved tag: $tag (on master)"
 
       - name: Resolve pubspec version
         id: version

@@ -1,0 +1,17 @@
+---
+description: Always bump app version when opening a feature/fix PR
+alwaysApply: true
+---
+
+# Version bump on every PR
+
+Whenever you **create or open a pull request** that ships user-facing or production changes (features, fixes, observability, CI that affects releases):
+
+1. **Add Play changelogs** for the next `versionCode` (`+N`):
+   - `store/google_play/en-US/changelogs/<N>.txt`
+   - `store/google_play/pt-BR/changelogs/<N>.txt`
+2. **Bump** `pubspec.yaml` on the PR branch with `.\scripts\release.ps1 patch` (Windows) or `./scripts/release.sh patch` after changelogs are committed. That commits and pushes the branch only — **do not create or push a `v*` tag from the PR**.
+3. **GitHub Release** (Releases tab) and Play upload happen **after the PR merges to `master`**: Release Android creates `vX.Y.Z`, publishes the release, and attaches APK/AAB.
+4. Skip only for pure docs/chore PRs that must not ship a store build (ask if unclear).
+
+Do not leave a shipping PR without a version bump + changelog for that build number. Never tag/release before merge/approval.

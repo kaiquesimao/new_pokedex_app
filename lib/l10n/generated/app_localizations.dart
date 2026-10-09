@@ -1544,6 +1544,12 @@ abstract class AppLocalizations {
   /// **'Did not find what you need? Send your question or issue report to our team.'**
   String get helpSupportBody;
 
+  /// Opens the in-app Sentry feedback form when crash reporting is enabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a bug in the app'**
+  String get helpReportBugLabel;
+
   /// No description provided for @helpEmailOpenError.
   ///
   /// In en, this message translates to:
