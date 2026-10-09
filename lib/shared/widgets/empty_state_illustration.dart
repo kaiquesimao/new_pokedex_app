@@ -18,7 +18,7 @@ class const EmptyStateIllustration({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxIllustration = kIsWeb
+    const maxIllustration = kIsWeb
         ? _illustrationSizeWeb
         : _illustrationSizeMobile;
 
@@ -30,10 +30,11 @@ class const EmptyStateIllustration({
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final side = (constraints.maxHeight < constraints.maxWidth
-                        ? constraints.maxHeight
-                        : constraints.maxWidth)
-                    .clamp(_illustrationSizeMin, maxIllustration);
+                final side =
+                    (constraints.maxHeight < constraints.maxWidth
+                            ? constraints.maxHeight
+                            : constraints.maxWidth)
+                        .clamp(_illustrationSizeMin, maxIllustration);
                 return Center(
                   child: pixelArt
                       ? TrainerIllustrationSlot(
@@ -71,10 +72,7 @@ class const EmptyStateIllustration({
               textAlign: TextAlign.center,
             ),
           ],
-          if (action != null) ...[
-            const SizedBox(height: 20),
-            action!,
-          ],
+          if (action != null) ...[const SizedBox(height: 20), action!],
           const SizedBox(height: 8),
         ],
       ),
