@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
+import 'package:pokedex_app/core/router/app_navigator_key.dart';
 import 'package:pokedex_app/core/router/auth_redirect.dart';
 import 'package:pokedex_app/core/router/deferred_page.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
@@ -32,8 +33,7 @@ import 'package:pokedex_app/features/regions/presentation/pages/regions_page.dar
 import 'package:pokedex_app/features/shell/presentation/pages/main_shell_page.dart';
 import 'package:pokedex_app/features/shell/presentation/widgets/animated_branch_container.dart';
 import 'package:pokedex_app/features/shell/presentation/widgets/shell_tab_scope.dart';
-
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Notifies GoRouter when auth-related state changes so redirect re-runs.
 class GoRouterRefreshNotifier extends ChangeNotifier {
@@ -56,12 +56,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final refreshListenable = ref.watch(goRouterRefreshNotifierProvider);
 
   final router = GoRouter(
-    navigatorKey: _rootNavigatorKey,
-
+    navigatorKey: appRootNavigatorKey,
+    observers: [SentryNavigatorObserver()],
     initialLocation: ref.watch(appInitialLocationProvider),
-
     refreshListenable: refreshListenable,
-
     redirect: (context, state) {
       return resolveAuthRedirect(
         auth: ref.read(authProvider),
@@ -70,7 +68,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: state.uri.path,
       );
     },
-
     routes: [
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingPage()),
 
@@ -115,7 +112,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/change-password',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -125,14 +122,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: '/leaderboard',
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
         builder: (_, _) => const LeaderboardPage(),
       ),
 
       GoRoute(
         path: '/profile/edit-name',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -143,7 +140,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/change-email',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -154,7 +151,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/terms',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         redirect: (_, _) => '/legal/terms',
       ),
@@ -162,7 +159,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/privacy',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         redirect: (_, _) => '/legal/privacy',
       ),
@@ -170,7 +167,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/legal/terms',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -181,7 +178,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/legal/privacy',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -192,7 +189,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/legal/account-deletion',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -203,7 +200,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/about',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -214,7 +211,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/help',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         builder: (_, _) => DeferredPage(
           library: profile_extras.loadLibrary(),
@@ -225,7 +222,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/pokemon/:id',
 
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: appRootNavigatorKey,
 
         pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
@@ -266,32 +263,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
         branches: [
           StatefulShellBranch(
+            observers: [SentryNavigatorObserver()],
             routes: [
               GoRoute(
                 path: '/pokedex',
-
                 builder: (_, _) => const PokemonListPage(),
               ),
             ],
           ),
-
           StatefulShellBranch(
+            observers: [SentryNavigatorObserver()],
             routes: [
               GoRoute(
                 path: '/regions',
-
                 builder: (_, _) =>
                     const LazyShellTab(tabIndex: 1, child: RegionsPage()),
-
                 routes: [
                   GoRoute(
                     path: ':name',
-
-                    parentNavigatorKey: _rootNavigatorKey,
-
+                    parentNavigatorKey: appRootNavigatorKey,
                     builder: (_, state) {
                       final name = state.pathParameters['name']!;
-
                       return RegionalPokedexPage(regionName: name);
                     },
                   ),
@@ -299,8 +291,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-
           StatefulShellBranch(
+            observers: [SentryNavigatorObserver()],
             routes: [
               GoRoute(
                 path: '/game',
@@ -311,23 +303,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-
           StatefulShellBranch(
+            observers: [SentryNavigatorObserver()],
             routes: [
               GoRoute(
                 path: '/favorites',
-
                 builder: (_, _) =>
                     const LazyShellTab(tabIndex: 3, child: FavoritesPage()),
               ),
             ],
           ),
-
           StatefulShellBranch(
+            observers: [SentryNavigatorObserver()],
             routes: [
               GoRoute(
                 path: '/profile',
-
                 builder: (_, _) =>
                     const LazyShellTab(tabIndex: 4, child: ProfilePage()),
               ),
