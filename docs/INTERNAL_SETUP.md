@@ -152,8 +152,12 @@ Dashboard: https://kaique-projects.sentry.io/projects/pokedata/
 2. Optional upload of symbols/source maps: organization token with `org:ci`
    (GitHub secret `SENTRY_AUTH_TOKEN`; export locally before
    `dart run sentry_dart_plugin`).
-3. Filter Issues by tags `app.platform` (`android` / `web`) and `app.runtime`.
+3. Filter Issues by tags `app.platform` (`android` / `web`), `app.runtime`,
+   `auth.session`, `app.locale`, `network.online`.
 4. SDK is **off in debug** and when `SENTRY_DSN` is empty (quota-friendly).
+5. Rich capture (when enabled): Dio + Drift spans/breadcrumbs, GoRouter
+   observer, masked screenshots (mobile), user feedback from Help, structured
+   logs. Session Replay remains disabled.
 
 ### WebAssembly (multi-thread)
 

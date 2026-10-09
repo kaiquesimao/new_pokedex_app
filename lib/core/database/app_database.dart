@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_drift/sentry_drift.dart';
 
 part 'app_database.g.dart';
 
@@ -249,7 +250,7 @@ class AppDatabase([QueryExecutor? executor]) extends _$AppDatabase {
   }
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(
+    final executor = driftDatabase(
       name: 'pokedex_cache',
       web: DriftWebOptions(
         sqlite3Wasm: Uri.parse('sqlite3.wasm'),
@@ -258,6 +259,9 @@ class AppDatabase([QueryExecutor? executor]) extends _$AppDatabase {
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
       ),
+    );
+    return executor.interceptWith(
+      SentryQueryInterceptor(databaseName: 'pokedex_cache'),
     );
   }
 }

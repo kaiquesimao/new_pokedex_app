@@ -49,6 +49,25 @@ One project for **Android and web**: [kaique-projects/pokedata](https://kaique-p
 |-----|--------|
 | `app.platform` | `android` / `web` / `ios` / `other` |
 | `app.runtime` | `native` / `dart2wasm` / `dart2js` |
+| `auth.session` | `authenticated` / `guest` / `uninitialized` |
+| `app.locale` / `app.theme` / `network.online` | current UI + connectivity |
+
+### What is wired
+
+- **SDK init** (`install_crash_reporting.dart`): release/dist/environment, session
+  tracking, light `tracesSampleRate` (0.15), failed HTTP capture, screenshot +
+  view hierarchy on mobile (text/image masked), `beforeSend` header scrubbing,
+  structured logs (`Sentry.logger`, debug/trace dropped).
+- **UI:** `SentryWidget` + `SentryNavigatorObserver` (root + shell tabs);
+  Help → **Report a bug** opens `SentryFeedbackForm` when Sentry is active.
+- **Network:** `dio.addSentry()` on PokéAPI + game Dio clients.
+- **DB:** `SentryQueryInterceptor` on the Drift cache connection.
+- **Scope sync:** uid (never email), locale, theme, online tags via
+  `sentryContextSyncProvider`.
+- **Symbols:** `sentry_dart_plugin` in CI (Android map + web source maps).
+
+Session Replay stays **off** (quota + PII). Collection is **off in debug** /
+empty DSN.
 
 Setup:
 
@@ -57,9 +76,6 @@ Setup:
    Android debug symbols + web source maps — see
    [Sentry Dart Plugin](https://docs.sentry.io/platforms/dart/guides/flutter/debug-symbols/dart-plugin/)).
 3. Rebuild with `--dart-define-from-file=dart_defines.json`.
-
-Collection is **off in debug** / empty DSN. Tracing/replay stay disabled to
-conserve free quota.
 
 ## Platform files
 
