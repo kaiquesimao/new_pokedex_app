@@ -1,0 +1,5 @@
+What's new in 1.6.5
+
+• Richer crash reports for faster fixes
+• In-app bug reporting from Help
+• Stability improvements under the hood

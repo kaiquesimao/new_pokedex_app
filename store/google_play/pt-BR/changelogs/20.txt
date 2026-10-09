@@ -1,0 +1,5 @@
+Novidades da 1.6.5
+
+• Relatos de crash mais completos para corrigir bugs mais rápido
+• Relato de bugs pelo app em Ajuda
+• Melhorias de estabilidade por baixo dos panos
