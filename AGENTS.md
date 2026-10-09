@@ -50,4 +50,5 @@ In this Linux cloud VM the testable target is the **web** build (Chrome is insta
 - **Version on every shipping PR:** before opening/pushing a feature or fix PR, add Play
   changelogs for the next `versionCode` under `store/google_play/*/changelogs/`, then run
   `.\scripts\release.ps1 patch` (or `./scripts/release.sh patch`) on the PR branch to bump
-  `pubspec.yaml`, tag `vX.Y.Z`, and push. See `.cursor/rules/pr-version-bump.mdc`.
+  `pubspec.yaml` and push (**no `v*` tag**). GitHub Release + Play upload happen after merge
+  to `master`. See `.cursor/rules/pr-version-bump.mdc`.
