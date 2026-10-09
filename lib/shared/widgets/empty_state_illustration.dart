@@ -11,77 +11,72 @@ class const EmptyStateIllustration({
   final Widget? action,
   final bool pixelArt = false,
 }) extends StatelessWidget {
-  static const _illustrationSizeMobile = 260.0;
-  static const _illustrationSizeWeb = 320.0;
+  static const _illustrationSizeMobile = 220.0;
+  static const _illustrationSizeWeb = 280.0;
+  static const _illustrationSizeMin = 96.0;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const illustrationSize = kIsWeb
+    final maxIllustration = kIsWeb
         ? _illustrationSizeWeb
         : _illustrationSizeMobile;
 
-    // ponytail: taller curved nav shrinks body; scroll instead of overflow.
+    // Fit inside shell body (nav clearance is parent padding) — no scroll bar.
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (pixelArt)
-                    TrainerIllustrationSlot(
-                      assetPath: imageAsset,
-                      slotSize: illustrationSize,
-                      errorBuilder: _errorBuilder(
-                        theme,
-                        illustrationSize * 0.5,
-                      ),
-                    )
-                  else
-                    TrainerAvatarImage(
-                      assetPath: imageAsset,
-                      height: illustrationSize,
-                      pixelArt: false,
-                      errorBuilder: _errorBuilder(
-                        theme,
-                        illustrationSize * 0.45,
-                      ),
-                    ),
-                  const SizedBox(height: 28),
-                  Text(
-                    title,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      height: 1.3,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      subtitle!,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.6,
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+      child: Column(
+        children: [
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final side = (constraints.maxHeight < constraints.maxWidth
+                        ? constraints.maxHeight
+                        : constraints.maxWidth)
+                    .clamp(_illustrationSizeMin, maxIllustration);
+                return Center(
+                  child: pixelArt
+                      ? TrainerIllustrationSlot(
+                          assetPath: imageAsset,
+                          slotSize: side,
+                          errorBuilder: _errorBuilder(theme, side * 0.5),
+                        )
+                      : TrainerAvatarImage(
+                          assetPath: imageAsset,
+                          height: side,
+                          pixelArt: false,
+                          errorBuilder: _errorBuilder(theme, side * 0.45),
                         ),
-                        height: 1.45,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                  if (action != null) ...[
-                    const SizedBox(height: 28),
-                    action!,
-                  ],
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              height: 1.3,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              subtitle!,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                height: 1.45,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          if (action != null) ...[
+            const SizedBox(height: 20),
+            action!,
+          ],
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
