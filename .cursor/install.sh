@@ -2,10 +2,18 @@
 set -euo pipefail
 
 required_dart="3.13.0"
-current_dart="$(dart --version 2>&1 | awk '{print $4}')"
+flutter_dir="${HOME}/flutter"
+current_dart="$("${flutter_dir}/bin/dart" --version 2>&1 | awk '{print $4}')"
 
 if [[ "$(printf '%s\n' "$required_dart" "$current_dart" | sort -V | head -n1)" != "$required_dart" ]]; then
-  flutter upgrade --force
+  archive_url="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.0-stable.tar.xz"
+  temporary_dir="$(mktemp -d)"
+  trap 'rm -rf "$temporary_dir"' EXIT
+
+  curl --fail --location --silent --show-error "$archive_url" \
+    | tar -xJ -C "$temporary_dir"
+  rm -rf "$flutter_dir"
+  mv "${temporary_dir}/flutter" "$flutter_dir"
 fi
 
-flutter pub get
+"${flutter_dir}/bin/flutter" pub get
