@@ -2,7 +2,8 @@
 set -euo pipefail
 
 required_dart="3.13.0"
-flutter_dir="${HOME}/flutter"
+flutter_bin="$(readlink -f "$(command -v flutter)")"
+flutter_dir="$(cd "$(dirname "$flutter_bin")/.." && pwd)"
 current_dart="$("${flutter_dir}/bin/dart" --version 2>&1 | awk '{print $4}')"
 
 if [[ "$(printf '%s\n' "$required_dart" "$current_dart" | sort -V | head -n1)" != "$required_dart" ]]; then
