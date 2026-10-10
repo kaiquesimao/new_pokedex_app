@@ -24,7 +24,7 @@
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11",
-    "wrangler": "^4.145.0"
+    "wrangler": "^4.147.0"
   },
   "dependencies": {
     "hono": "^4.13.12"
