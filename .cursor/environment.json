@@ -1,4 +1,13 @@
 {
   "name": "PokeData Flutter",
-  "install": "bash .cursor/install.sh"
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "chromeExecutablePath": "/usr/local/bin/google-chrome",
+  "ports": [
+    {
+      "name": "flutter-web",
+      "port": 5000
+    }
+  ]
 }

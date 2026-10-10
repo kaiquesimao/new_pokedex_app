@@ -11,17 +11,22 @@ This is a **Flutter Pokédex app** (`pokedex_app`), mobile-first but also target
 In this Linux cloud VM the testable target is the **web** build (Chrome is installed at
 `/usr/local/bin/google-chrome`).
 
-### Toolchain (already provisioned in the VM snapshot)
+### Toolchain
 
-- Flutter SDK is preinstalled at `$HOME/flutter` (Flutter 3.47 / Dart 3.13, stable) and is
-  on `PATH` via `~/.bashrc`. If `flutter` is not found in a non-interactive shell, call it
-  directly: `"$HOME/flutter/bin/flutter"`.
-- The startup update script runs `flutter pub get`; dependencies are otherwise ready.
+- `.cursor/install.sh` installs Flutter 3.47 (Dart 3.13+) into `$HOME/flutter` and wrappers
+  at `/usr/local/bin/flutter` and `/usr/local/bin/dart`, so login shells find them without
+  `~/.bashrc`. It also runs `flutter pub get` and `npm ci` for the Guess the Pokémon Worker.
+- Node.js 22 is linked on `/usr/local/bin` when the base image provides it via nvm.
+- Chrome is at `/usr/local/bin/google-chrome`.
+- On every boot, `.cursor/start.sh` runs the Flutter web server on `0.0.0.0:5000` (idempotent
+  if that process is already up). First compile can take a few minutes; readiness is HTTP
+  on port 5000. Logs: `/tmp/cursor/start-user/start-user.log`.
 
 ### Run / lint / test / build (web)
 
 - Run (dev): `flutter run -d web-server --web-port 5000 --web-hostname 0.0.0.0`, then open
-  `http://localhost:5000` in a browser. `-d chrome` also works. See `.vscode/launch.json`.
+  `http://localhost:5000` in a browser. The boot `start` script already does this. `-d chrome`
+  also works. See `.vscode/launch.json`.
 - Lint: `flutter analyze` (note `analysis_options.yaml` treats `deprecated_member_use` as an error).
 - Test: `flutter test`.
 - Build (web): `flutter build web`. A release build served statically

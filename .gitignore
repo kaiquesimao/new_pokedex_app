@@ -52,6 +52,9 @@ prototype/
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
+!.cursor/environment.json
+!.cursor/install.sh
+!.cursor/start.sh
 .agents/
 skills-lock.json
 docs/design
