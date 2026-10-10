@@ -1,0 +1,4 @@
+{
+  "name": "PokeData Flutter",
+  "install": "bash .cursor/install.sh"
+}
