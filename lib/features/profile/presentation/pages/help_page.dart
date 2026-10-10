@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class const HelpPage({super.key}) extends StatelessWidget {
@@ -101,6 +103,12 @@ class const HelpPage({super.key}) extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
+                      if (isCrashReportingEnabled())
+                        TextButton.icon(
+                          onPressed: () => SentryFeedbackForm.show(context),
+                          icon: const Icon(Icons.bug_report_outlined, size: 20),
+                          label: Text(l10n.helpReportBugLabel),
+                        ),
                       TextButton.icon(
                         onPressed: () => _openSupportEmail(context, l10n),
                         icon: const Icon(Icons.mail_outline, size: 20),

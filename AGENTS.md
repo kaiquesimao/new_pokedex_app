@@ -46,3 +46,9 @@ In this Linux cloud VM the testable target is the **web** build (Chrome is insta
   this constrained browser VM the Flutter web tab can reload (Flutter loading spinner) after
   extended interaction/heavy sprite loading; the release build is more stable than the debug dev
   server.
+
+- **Version on every shipping PR:** before opening/pushing a feature or fix PR, add Play
+  changelogs for the next `versionCode` under `store/google_play/*/changelogs/`, then run
+  `.\scripts\release.ps1 patch` (or `./scripts/release.sh patch`) on the PR branch to bump
+  `pubspec.yaml` and push (**no `v*` tag**). GitHub Release + Play upload happen after merge
+  to `master`. See `.cursor/rules/pr-version-bump.mdc`.

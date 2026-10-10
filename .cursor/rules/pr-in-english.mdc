@@ -1,0 +1,28 @@
+---
+description: Write pull request titles and bodies in English
+alwaysApply: true
+---
+
+# Pull requests in English
+
+When creating or updating pull requests (title, body, review replies meant for the PR):
+
+- Always write in **English**, even if the user chats in another language
+- Keep commit messages in English unless the repo already uses another language consistently
+- Chat replies to the user may stay in the user's language (e.g. Brazilian Portuguese)
+
+## Examples
+
+```text
+✅ Title: fix(ui): fit Favorites empty state without gray nav strip
+❌ Title: corrige estado vazio dos Favoritos sem barra cinza
+
+✅ Body:
+## Summary
+- Scale empty-state illustration to the usable viewport
+
+## Test plan
+- [ ] Open Favorites as guest and confirm CTA is visible
+
+❌ Body in Portuguese for the PR description
+```

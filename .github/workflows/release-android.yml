@@ -1,7 +1,6 @@
 # Build signed AAB and upload to Play Store (internal + open testing / beta by default).
 # Trigger: version change on master (after PR merge), or manual run from master.
-# Tags may be created on a feature branch; they do not start this workflow.
-# GitHub Releases tab entries are published by github-release.yml on v* tag push.
+# Creates the vX.Y.Z tag + GitHub Release here if missing (never tag from PR branches).
 name: Release Android
 run-name: Release Android (${{ inputs.track || 'internal,beta' }}) · ${{ github.ref_name }}
 

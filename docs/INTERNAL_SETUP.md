@@ -152,8 +152,12 @@ Dashboard: https://kaique-projects.sentry.io/projects/pokedata/
 2. Optional upload of symbols/source maps: organization token with `org:ci`
    (GitHub secret `SENTRY_AUTH_TOKEN`; export locally before
    `dart run sentry_dart_plugin`).
-3. Filter Issues by tags `app.platform` (`android` / `web`) and `app.runtime`.
+3. Filter Issues by tags `app.platform` (`android` / `web`), `app.runtime`,
+   `auth.session`, `app.locale`, `network.online`.
 4. SDK is **off in debug** and when `SENTRY_DSN` is empty (quota-friendly).
+5. Rich capture (when enabled): Dio + Drift spans/breadcrumbs, GoRouter
+   observer, masked screenshots (mobile), user feedback from Help, structured
+   logs. Session Replay remains disabled.
 
 ### WebAssembly (multi-thread)
 
@@ -226,16 +230,15 @@ Warns at ≥70% and fails the job at ≥85% of the Workers Free daily ceilings
 | Push to `master` that changes `version:` in `pubspec.yaml` | analyze → test → signed AAB + APK → upload AAB to **internal** and **beta** → attach APK/AAB on GitHub Release |
 | Manual (`workflow_dispatch`) from `master` | Same; choose track(s) (`internal,beta` / `beta` / `internal` / `alpha`) and whether to upload |
 
-Tags do **not** start the Android workflow. Create them on a PR branch with the
-release script; Android deploys only after that version is merged to `master`.
-Pushing a `vX.Y.Z` tag **does** publish a GitHub Release (Releases tab) via
+**Do not tag from a PR branch.** GitHub Releases appear only after merge to
+`master`: **Release Android** creates `vX.Y.Z` (if needed), publishes the
+Release, attaches APK/AAB, and uploads the AAB to Play.
 [`.github/workflows/github-release.yml`](../.github/workflows/github-release.yml)
-(notes from `store/google_play/*/changelogs/<versionCode>.txt` when present).
-After merge to `master`, **Release Android** builds signed **APK** + **AAB**,
-uploads the AAB to Play, and attaches both binaries to that GitHub Release.
+refuses tags that are not yet on `master`.
 
-**Preferred:** run the release script on the PR branch (clean tree; bumps
-`pubspec.yaml`, commits, tags, pushes), then merge to `master`:
+**Preferred:** on the PR branch, add Play changelogs, then run the release
+script (clean tree; bumps `pubspec.yaml`, commits, pushes — **no tag**), then
+merge to `master`:
 
 ```powershell
 # Working tree must be clean. Build number (+N) always increments.
