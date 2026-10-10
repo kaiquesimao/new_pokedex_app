@@ -3,11 +3,8 @@ import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class const HelpPage({super.key}) extends StatelessWidget {
-  static const supportEmail = 'pokedata.app@gmail.com';
-
   static List<({String question, String answer})> _faqItems(
     AppLocalizations l10n,
   ) => [
@@ -15,26 +12,14 @@ class const HelpPage({super.key}) extends StatelessWidget {
       question: l10n.helpExploreGuestQuestion,
       answer: l10n.helpExploreGuestAnswer,
     ),
-    (
-      question: l10n.helpFavoriteQuestion,
-      answer: l10n.helpFavoriteAnswer,
-    ),
-    (
-      question: l10n.helpFilterQuestion,
-      answer: l10n.helpFilterAnswer,
-    ),
+    (question: l10n.helpFavoriteQuestion, answer: l10n.helpFavoriteAnswer),
+    (question: l10n.helpFilterQuestion, answer: l10n.helpFilterAnswer),
     (
       question: l10n.profileHelpLanguageQuestion,
       answer: l10n.profileHelpLanguageAnswer,
     ),
-    (
-      question: l10n.helpMegaFormsQuestion,
-      answer: l10n.helpMegaFormsAnswer,
-    ),
-    (
-      question: l10n.helpOfflineQuestion,
-      answer: l10n.helpOfflineAnswer,
-    ),
+    (question: l10n.helpMegaFormsQuestion, answer: l10n.helpMegaFormsAnswer),
+    (question: l10n.helpOfflineQuestion, answer: l10n.helpOfflineAnswer),
   ];
 
   @override
@@ -109,11 +94,6 @@ class const HelpPage({super.key}) extends StatelessWidget {
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),
-                      TextButton.icon(
-                        onPressed: () => _openSupportEmail(context, l10n),
-                        icon: const Icon(Icons.mail_outline, size: 20),
-                        label: const Text(HelpPage.supportEmail),
-                      ),
                     ],
                   ),
                 ),
@@ -126,27 +106,8 @@ class const HelpPage({super.key}) extends StatelessWidget {
   }
 }
 
-Future<void> _openSupportEmail(
-  BuildContext context,
-  AppLocalizations l10n,
-) async {
-  final uri = Uri(
-    scheme: 'mailto',
-    path: HelpPage.supportEmail,
-    query: 'subject=${Uri.encodeComponent(l10n.helpEmailSubject)}',
-  );
-
-  if (!await launchUrl(uri)) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.helpEmailOpenError)),
-    );
-  }
-}
-
-class const _FaqTile({
-  required final ({String question, String answer}) item,
-}) extends StatelessWidget {
+class const _FaqTile({required final ({String question, String answer}) item})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

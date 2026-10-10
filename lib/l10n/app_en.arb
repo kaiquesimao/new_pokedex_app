@@ -400,13 +400,11 @@
 
   "helpFaqTitle": "Frequently asked questions",
   "helpSupportTitle": "Support",
-  "helpSupportBody": "Did not find what you need? Send your question or issue report to our team.",
+  "helpSupportBody": "Did not find what you need? Report the problem through the form below and our team will investigate it.",
   "helpReportBugLabel": "Report a bug in the app",
   "@helpReportBugLabel": {
     "description": "Opens the in-app Sentry feedback form when crash reporting is enabled."
   },
-  "helpEmailOpenError": "Could not open the email app.",
-  "helpEmailSubject": "PokeData Support",
   "helpExploreGuestQuestion": "How do I explore without an account?",
   "helpExploreGuestAnswer": "On the welcome screen, tap \"Explore without account\" to browse the Pokédex, regions, and Pokémon details without signing in.",
   "helpFavoriteQuestion": "How do I favorite Pokémon?",

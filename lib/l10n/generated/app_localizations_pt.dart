@@ -799,17 +799,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpSupportBody =>
-      'Não encontrou o que procura? Envie sua dúvida ou relato de problema para nossa equipe.';
+      'Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar.';
 
   @override
   String get helpReportBugLabel => 'Reportar um bug no app';
-
-  @override
-  String get helpEmailOpenError =>
-      'Não foi possível abrir o aplicativo de e-mail.';
-
-  @override
-  String get helpEmailSubject => 'Suporte PokeData';
 
   @override
   String get helpExploreGuestQuestion => 'Como explorar sem criar conta?';

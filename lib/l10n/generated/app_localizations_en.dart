@@ -795,16 +795,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpSupportBody =>
-      'Did not find what you need? Send your question or issue report to our team.';
+      'Did not find what you need? Report the problem through the form below and our team will investigate it.';
 
   @override
   String get helpReportBugLabel => 'Report a bug in the app';
-
-  @override
-  String get helpEmailOpenError => 'Could not open the email app.';
-
-  @override
-  String get helpEmailSubject => 'PokeData Support';
 
   @override
   String get helpExploreGuestQuestion => 'How do I explore without an account?';
