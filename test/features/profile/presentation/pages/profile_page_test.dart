@@ -192,7 +192,7 @@ void main() {
 
     expect(find.text('Perguntas frequentes'), findsOneWidget);
     expect(find.text('Suporte'), findsOneWidget);
-    expect(find.text(HelpPage.supportEmail), findsOneWidget);
+    expect(find.text('pokedata.app@gmail.com'), findsNothing);
   });
 
   testWidgets('profile privacy link navigates to privacy page', (tester) async {
