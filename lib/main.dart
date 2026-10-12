@@ -8,7 +8,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pokedex_app/app.dart';
 import 'package:pokedex_app/core/bootstrap/app_bootstrap.dart';
 import 'package:pokedex_app/core/bootstrap/firebase_config_error_app.dart';
-import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/core/crash_reporting/install_crash_reporting.dart';
 import 'package:pokedex_app/core/logging/browser_console_bridge.dart';
 

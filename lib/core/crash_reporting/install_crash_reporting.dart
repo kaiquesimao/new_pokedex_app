@@ -60,16 +60,6 @@ Future<void> installCrashReporting({
         ..maskAllText = false
         ..maskAllImages = true;
 
-      // #region agent log
-      debugPrint(
-        'SENTRY_FEEDBACK_DEBUG options '
-        'maskAllText=${options.privacy.maskAllText} '
-        'maskAllImages=${options.privacy.maskAllImages} '
-        'attachScreenshot=${options.attachScreenshot} '
-        'isWeb=$kIsWeb',
-      );
-      // #endregion
-
       options.feedback
         ..title = 'Report a Bug'
         ..formTitle = 'Report a Bug'
