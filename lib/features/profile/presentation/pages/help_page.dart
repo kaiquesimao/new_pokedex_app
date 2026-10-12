@@ -134,6 +134,8 @@ class _SentryFeedbackMaterialHost extends StatelessWidget {
 }
 
 class _SentryFeedbackNavigator extends StatelessWidget {
+  // Flutter's analyzer flags the required private constructor name here.
+  // ignore: unnecessary_type_name_in_constructor
   const _SentryFeedbackNavigator({required this.outerNavigator});
 
   final flutter_material.NavigatorState outerNavigator;
@@ -148,7 +150,7 @@ class _SentryFeedbackNavigator extends StatelessWidget {
         settings: settings,
         builder: (_) => const flutter_material.SizedBox.shrink(),
       ),
-      onGenerateInitialRoutes: (_) => [
+      onGenerateInitialRoutes: (_, __) => [
         flutter_material.MaterialPageRoute<void>(
           settings: const flutter_material.RouteSettings(name: '/shell'),
           builder: (_) => const flutter_material.SizedBox.shrink(),
