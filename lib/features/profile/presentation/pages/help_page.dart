@@ -121,13 +121,12 @@ class _SentryFeedbackMaterialHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return flutter_material.MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: flutter_material.ThemeData(
+    return flutter_material.Theme(
+      data: flutter_material.ThemeData(
         brightness: flutter_material.Brightness.light,
         useMaterial3: true,
       ),
-      home: SentryFeedbackForm(),
+      child: SentryFeedbackForm(),
     );
   }
 }
