@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
+import 'package:pokedex_app/core/crash_reporting/debug_feedback_log.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -90,7 +91,24 @@ class const HelpPage({super.key}) extends StatelessWidget {
                       const SizedBox(height: 8),
                       if (isCrashReportingEnabled())
                         TextButton.icon(
-                          onPressed: () => SentryFeedbackForm.show(context),
+                          onPressed: () {
+                            // #region agent log
+                            debugFeedbackLog(
+                              hypothesisId: 'B,C,D',
+                              location: 'help_page.dart:96',
+                              message: 'Opening Sentry feedback form',
+                              data: {
+                                'mounted': context.mounted,
+                                'crashReportingEnabled':
+                                    isCrashReportingEnabled(),
+                                'screenWidth': MediaQuery.sizeOf(context).width,
+                                'screenHeight': MediaQuery.sizeOf(context)
+                                    .height,
+                              },
+                            );
+                            // #endregion
+                            SentryFeedbackForm.show(context);
+                          },
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),

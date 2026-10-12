@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_platform.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
+import 'package:pokedex_app/core/crash_reporting/debug_feedback_log.dart';
 import 'package:pokedex_app/core/crash_reporting/sentry_event_scrubber.dart';
 import 'package:pokedex_app/core/env/env.dart';
 import 'package:pokedex_app/core/router/app_navigator_key.dart';
@@ -16,75 +17,110 @@ Future<void> installCrashReporting({
   required Future<void> Function() appRunner,
 }) async {
   if (!isCrashReportingEnabled()) {
+    // #region agent log
+    debugFeedbackLog(
+      hypothesisId: 'D',
+      location: 'install_crash_reporting.dart:21',
+      message: 'Crash reporting disabled before Sentry initialization',
+      data: {'isWeb': kIsWeb, 'releaseMode': kReleaseMode},
+    );
+    // #endregion
     await appRunner();
     return;
   }
 
   final dsn = Env.sentryDsn.trim();
 
-  await SentryFlutter.init((options) {
-    options
-      ..dsn = dsn
-      ..environment = kReleaseMode ? 'production' : 'profile'
-      ..release = 'pokedex_app@$appVersion+$buildNumber'
-      ..dist = buildNumber
-      ..sendDefaultPii = false
-      ..navigatorKey = appRootNavigatorKey
-      ..maxBreadcrumbs = 100
-      // Light performance sample — navigation/Dio/Drift spans without burning quota.
-      ..tracesSampleRate = 0.15
-      ..enableAutoPerformanceTracing = true
-      ..enableAutoSessionTracking = true
-      ..attachStacktrace = true
-      ..reportSilentFlutterErrors = true
-      ..captureFailedRequests = true
-      ..enableUserInteractionBreadcrumbs = true
-      ..enableUserInteractionTracing = true
-      // Screenshots / view hierarchy: mobile & desktop UI only (masked by default).
-      ..attachScreenshot = !kIsWeb
-      ..attachViewHierarchy = !kIsWeb
-      ..screenshotQuality = SentryScreenshotQuality.medium
-      ..beforeSend = scrubSentryEvent
-      ..beforeSendLog = (log, hint) {
-        // Structured logs are on by default in v10; drop noisy levels.
-        if (log.level == SentryLogLevel.debug ||
-            log.level == SentryLogLevel.trace) {
-          return null;
-        }
-        return log;
-      };
+  await SentryFlutter.init(
+    (options) {
+      options
+        ..dsn = dsn
+        ..environment = kReleaseMode ? 'production' : 'profile'
+        ..release = 'pokedex_app@$appVersion+$buildNumber'
+        ..dist = buildNumber
+        ..sendDefaultPii = false
+        ..navigatorKey = appRootNavigatorKey
+        ..maxBreadcrumbs = 100
+        // Light performance sample — navigation/Dio/Drift spans without burning quota.
+        ..tracesSampleRate = 0.15
+        ..enableAutoPerformanceTracing = true
+        ..enableAutoSessionTracking = true
+        ..attachStacktrace = true
+        ..reportSilentFlutterErrors = true
+        ..captureFailedRequests = true
+        ..enableUserInteractionBreadcrumbs = true
+        ..enableUserInteractionTracing = true
+        // Screenshots / view hierarchy: mobile & desktop UI only (masked by default).
+        ..attachScreenshot = !kIsWeb
+        ..attachViewHierarchy = !kIsWeb
+        ..screenshotQuality = SentryScreenshotQuality.medium
+        ..beforeSend = scrubSentryEvent
+        ..beforeSendLog = (log, hint) {
+          // Structured logs are on by default in v10; drop noisy levels.
+          if (log.level == SentryLogLevel.debug ||
+              log.level == SentryLogLevel.trace) {
+            return null;
+          }
+          return log;
+        };
 
-    options.privacy
-      ..maskAllText = true
-      ..maskAllImages = true;
+      options.privacy
+        ..maskAllText = true
+        ..maskAllImages = true;
 
-    options.feedback
-      ..title = 'Report a Bug'
-      ..formTitle = 'Report a Bug'
-      ..showBranding = false
-      ..useSentryUser = true
-      ..isEmailRequired = false
-      ..showEmail = true
-      ..showName = true;
+      options.feedback
+        ..title = 'Report a Bug'
+        ..formTitle = 'Report a Bug'
+        ..showBranding = false
+        ..useSentryUser = true
+        ..isEmailRequired = false
+        ..showEmail = true
+        ..showName = true;
 
-    options.addInAppInclude('package:pokedex_app');
-  }, appRunner: () async {
-    await Sentry.configureScope((scope) async {
-      await scope.setTag('app.platform', resolveCrashPlatform());
-      await scope.setTag('app.runtime', resolveCrashRuntime());
-      await scope.setTag('app.version', appVersion);
-      await scope.setTag('app.build', buildNumber);
-    });
+      // #region agent log
+      debugFeedbackLog(
+        hypothesisId: 'A,C,D',
+        location: 'install_crash_reporting.dart:68',
+        message: 'Configured Sentry privacy and feedback options',
+        data: {
+          'maskAllText': options.privacy.maskAllText,
+          'maskAllImages': options.privacy.maskAllImages,
+          'showName': options.feedback.showName,
+          'showEmail': options.feedback.showEmail,
+          'formTitle': options.feedback.formTitle,
+        },
+      );
+      // #endregion
 
-    Sentry.logger.info(
-      'Sentry ready',
-      attributes: {
-        'app.platform': SentryAttribute.string(resolveCrashPlatform()),
-        'app.runtime': SentryAttribute.string(resolveCrashRuntime()),
-        'app.version': SentryAttribute.string(appVersion),
-      },
-    );
+      options.addInAppInclude('package:pokedex_app');
+    },
+    appRunner: () async {
+      await Sentry.configureScope((scope) async {
+        await scope.setTag('app.platform', resolveCrashPlatform());
+        await scope.setTag('app.runtime', resolveCrashRuntime());
+        await scope.setTag('app.version', appVersion);
+        await scope.setTag('app.build', buildNumber);
+      });
 
-    await appRunner();
-  });
+      Sentry.logger.info(
+        'Sentry ready',
+        attributes: {
+          'app.platform': SentryAttribute.string(resolveCrashPlatform()),
+          'app.runtime': SentryAttribute.string(resolveCrashRuntime()),
+          'app.version': SentryAttribute.string(appVersion),
+        },
+      );
+
+      // #region agent log
+      debugFeedbackLog(
+        hypothesisId: 'A,B,D',
+        location: 'install_crash_reporting.dart:103',
+        message: 'Sentry app runner entered after initialization',
+        data: {'isWeb': kIsWeb, 'releaseMode': kReleaseMode},
+      );
+      // #endregion
+
+      await appRunner();
+    },
+  );
 }
