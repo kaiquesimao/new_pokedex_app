@@ -121,13 +121,46 @@ class _SentryFeedbackMaterialHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return flutter_material.Theme(
-      data: flutter_material.ThemeData(
+    final outerNavigator = flutter_material.Navigator.of(context);
+    return flutter_material.MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: flutter_material.ThemeData(
         brightness: flutter_material.Brightness.light,
         useMaterial3: true,
       ),
-      child: SentryFeedbackForm(),
+      navigatorObservers: [
+        _SentryFeedbackDismissObserver(onDismissed: outerNavigator.pop),
+      ],
+      initialRoute: '/feedback',
+      onGenerateInitialRoutes: (_) => [
+        flutter_material.MaterialPageRoute<void>(
+          settings: const flutter_material.RouteSettings(name: '/shell'),
+          builder: (_) => const flutter_material.SizedBox.shrink(),
+        ),
+        flutter_material.MaterialPageRoute<void>(
+          settings: const flutter_material.RouteSettings(name: '/feedback'),
+          builder: (_) => SentryFeedbackForm(),
+        ),
+      ],
     );
+  }
+}
+
+class _SentryFeedbackDismissObserver
+    extends flutter_material.NavigatorObserver {
+  _SentryFeedbackDismissObserver({required this.onDismissed});
+
+  final VoidCallback onDismissed;
+
+  @override
+  void didPop(
+    flutter_material.Route<dynamic> route,
+    flutter_material.Route<dynamic>? previousRoute,
+  ) {
+    super.didPop(route, previousRoute);
+    if (route.settings.name == '/feedback') {
+      onDismissed();
+    }
   }
 }
 
