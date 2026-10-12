@@ -128,10 +128,26 @@ class _SentryFeedbackMaterialHost extends StatelessWidget {
         brightness: flutter_material.Brightness.light,
         useMaterial3: true,
       ),
-      navigatorObservers: [
+      home: _SentryFeedbackNavigator(outerNavigator: outerNavigator),
+    );
+  }
+}
+
+class _SentryFeedbackNavigator extends StatelessWidget {
+  const _SentryFeedbackNavigator({required this.outerNavigator});
+
+  final flutter_material.NavigatorState outerNavigator;
+
+  @override
+  Widget build(BuildContext context) {
+    return flutter_material.Navigator(
+      observers: [
         _SentryFeedbackDismissObserver(onDismissed: outerNavigator.pop),
       ],
-      initialRoute: '/feedback',
+      onGenerateRoute: (settings) => flutter_material.MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const flutter_material.SizedBox.shrink(),
+      ),
       onGenerateInitialRoutes: (_) => [
         flutter_material.MaterialPageRoute<void>(
           settings: const flutter_material.RouteSettings(name: '/shell'),
