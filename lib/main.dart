@@ -11,7 +11,6 @@ import 'package:pokedex_app/core/bootstrap/firebase_config_error_app.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/core/crash_reporting/install_crash_reporting.dart';
 import 'package:pokedex_app/core/logging/browser_console_bridge.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +27,6 @@ Future<void> main() async {
   }
 
   final packageInfo = await PackageInfo.fromPlatform();
-  final sentryEnabled = isCrashReportingEnabled();
-
   await installCrashReporting(
     appVersion: packageInfo.version,
     buildNumber: packageInfo.buildNumber,
@@ -43,17 +40,7 @@ Future<void> main() async {
         return;
       }
 
-      Widget app = const PokedexApp();
-      if (sentryEnabled) {
-        // SentryWidget enables screenshots + user-interaction breadcrumbs/tracing.
-        // #region agent log
-        debugPrint(
-          'SENTRY_FEEDBACK_DEBUG wrapping app in SentryWidget '
-          'isWeb=$kIsWeb sentryEnabled=$sentryEnabled',
-        );
-        // #endregion
-        app = SentryWidget(child: app);
-      }
+      final Widget app = const PokedexApp();
 
       runApp(
         UncontrolledProviderScope(container: coldStart.container, child: app),
