@@ -13,5 +13,7 @@ void writeDebugFeedbackLog({
         .writeStringSync(
           '${jsonEncode({'hypothesisId': hypothesisId, 'location': location, 'message': message, 'data': data, 'timestamp': DateTime.now().millisecondsSinceEpoch})}\n',
         );
-  } on Object {}
+  } on Object {
+    // Debug logging must never affect app behavior.
+  }
 }
