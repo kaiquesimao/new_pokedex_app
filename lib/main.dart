@@ -46,14 +46,17 @@ Future<void> main() async {
       Widget app = const PokedexApp();
       if (sentryEnabled) {
         // SentryWidget enables screenshots + user-interaction breadcrumbs/tracing.
+        // #region agent log
+        debugPrint(
+          'SENTRY_FEEDBACK_DEBUG wrapping app in SentryWidget '
+          'isWeb=$kIsWeb sentryEnabled=$sentryEnabled',
+        );
+        // #endregion
         app = SentryWidget(child: app);
       }
 
       runApp(
-        UncontrolledProviderScope(
-          container: coldStart.container,
-          child: app,
-        ),
+        UncontrolledProviderScope(container: coldStart.container, child: app),
       );
     },
   );

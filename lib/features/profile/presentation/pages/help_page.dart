@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
@@ -90,7 +91,16 @@ class const HelpPage({super.key}) extends StatelessWidget {
                       const SizedBox(height: 8),
                       if (isCrashReportingEnabled())
                         TextButton.icon(
-                          onPressed: () => SentryFeedbackForm.show(context),
+                          onPressed: () {
+                            // #region agent log
+                            debugPrint(
+                              'SENTRY_FEEDBACK_DEBUG show '
+                              'screenshotWidget=${SentryScreenshotWidget.isMounted} '
+                              'isWeb=$kIsWeb',
+                            );
+                            // #endregion
+                            SentryFeedbackForm.show(context);
+                          },
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),
