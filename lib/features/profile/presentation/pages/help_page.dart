@@ -115,6 +115,7 @@ class const HelpPage({super.key}) extends StatelessWidget {
 }
 
 class _SentryFeedbackMaterialHost extends StatelessWidget {
+  // Flutter's analyzer flags the required private constructor name here.
   // ignore: unnecessary_type_name_in_constructor
   const _SentryFeedbackMaterialHost();
 
