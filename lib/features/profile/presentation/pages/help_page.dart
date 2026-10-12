@@ -115,7 +115,8 @@ class const HelpPage({super.key}) extends StatelessWidget {
 }
 
 class _SentryFeedbackMaterialHost extends StatelessWidget {
-  const _();
+  // ignore: unnecessary_type_name_in_constructor
+  const _SentryFeedbackMaterialHost();
 
   @override
   Widget build(BuildContext context) {
