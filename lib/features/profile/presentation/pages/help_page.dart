@@ -148,6 +148,8 @@ class _SentryFeedbackMaterialHost extends StatelessWidget {
 
 class _SentryFeedbackDismissObserver
     extends flutter_material.NavigatorObserver {
+  // Flutter's analyzer flags the required private constructor name here.
+  // ignore: unnecessary_type_name_in_constructor
   _SentryFeedbackDismissObserver({required this.onDismissed});
 
   final VoidCallback onDismissed;
