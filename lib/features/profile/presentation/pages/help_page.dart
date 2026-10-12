@@ -115,7 +115,7 @@ class const HelpPage({super.key}) extends StatelessWidget {
 }
 
 class _SentryFeedbackMaterialHost extends StatelessWidget {
-  const _SentryFeedbackMaterialHost();
+  const _();
 
   @override
   Widget build(BuildContext context) {
