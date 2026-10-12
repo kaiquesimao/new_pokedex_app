@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_platform.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
-import 'package:pokedex_app/core/crash_reporting/debug_feedback_log.dart';
 import 'package:pokedex_app/core/crash_reporting/sentry_event_scrubber.dart';
 import 'package:pokedex_app/core/env/env.dart';
 import 'package:pokedex_app/core/router/app_navigator_key.dart';
@@ -17,14 +16,6 @@ Future<void> installCrashReporting({
   required Future<void> Function() appRunner,
 }) async {
   if (!isCrashReportingEnabled()) {
-    // #region agent log
-    debugFeedbackLog(
-      hypothesisId: 'D',
-      location: 'install_crash_reporting.dart:21',
-      message: 'Crash reporting disabled before Sentry initialization',
-      data: {'isWeb': kIsWeb, 'releaseMode': kReleaseMode},
-    );
-    // #endregion
     await appRunner();
     return;
   }
@@ -65,7 +56,8 @@ Future<void> installCrashReporting({
         };
 
       options.privacy
-        ..maskAllText = true
+        // Sentry 10.0.0 masks feedback TextFormFields as opaque rectangles.
+        ..maskAllText = false
         ..maskAllImages = true;
 
       options.feedback
@@ -76,21 +68,6 @@ Future<void> installCrashReporting({
         ..isEmailRequired = false
         ..showEmail = true
         ..showName = true;
-
-      // #region agent log
-      debugFeedbackLog(
-        hypothesisId: 'A,C,D',
-        location: 'install_crash_reporting.dart:68',
-        message: 'Configured Sentry privacy and feedback options',
-        data: {
-          'maskAllText': options.privacy.maskAllText,
-          'maskAllImages': options.privacy.maskAllImages,
-          'showName': options.feedback.showName,
-          'showEmail': options.feedback.showEmail,
-          'formTitle': options.feedback.formTitle,
-        },
-      );
-      // #endregion
 
       options.addInAppInclude('package:pokedex_app');
     },
@@ -110,15 +87,6 @@ Future<void> installCrashReporting({
           'app.version': SentryAttribute.string(appVersion),
         },
       );
-
-      // #region agent log
-      debugFeedbackLog(
-        hypothesisId: 'A,B,D',
-        location: 'install_crash_reporting.dart:103',
-        message: 'Sentry app runner entered after initialization',
-        data: {'isWeb': kIsWeb, 'releaseMode': kReleaseMode},
-      );
-      // #endregion
 
       await appRunner();
     },
