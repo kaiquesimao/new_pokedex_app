@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' as flutter_material;
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
@@ -90,7 +91,14 @@ class const HelpPage({super.key}) extends StatelessWidget {
                       const SizedBox(height: 8),
                       if (isCrashReportingEnabled())
                         TextButton.icon(
-                          onPressed: () => SentryFeedbackForm.show(context),
+                          onPressed: () {
+                            flutter_material.Navigator.of(context).push(
+                              flutter_material.MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const _SentryFeedbackMaterialHost(),
+                              ),
+                            );
+                          },
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),
@@ -102,6 +110,22 @@ class const HelpPage({super.key}) extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SentryFeedbackMaterialHost extends StatelessWidget {
+  const _SentryFeedbackMaterialHost();
+
+  @override
+  Widget build(BuildContext context) {
+    return flutter_material.MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: flutter_material.ThemeData(
+        brightness: flutter_material.Brightness.light,
+        useMaterial3: true,
+      ),
+      home: SentryFeedbackForm(),
     );
   }
 }
