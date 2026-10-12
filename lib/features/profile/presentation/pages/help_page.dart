@@ -150,7 +150,7 @@ class _SentryFeedbackNavigator extends StatelessWidget {
         settings: settings,
         builder: (_) => const flutter_material.SizedBox.shrink(),
       ),
-      onGenerateInitialRoutes: (_navigator, _initialRoute) => [
+      onGenerateInitialRoutes: (navigator, initialRoute) => [
         flutter_material.MaterialPageRoute<void>(
           settings: const flutter_material.RouteSettings(name: '/shell'),
           builder: (_) => const flutter_material.SizedBox.shrink(),
