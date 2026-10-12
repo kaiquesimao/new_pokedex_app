@@ -39,7 +39,7 @@ Future<void> main() async {
         return;
       }
 
-      final Widget app = const PokedexApp();
+      const Widget app = PokedexApp();
 
       runApp(
         UncontrolledProviderScope(container: coldStart.container, child: app),
