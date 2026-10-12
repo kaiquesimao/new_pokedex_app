@@ -1541,7 +1541,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpSupportBody.
   ///
   /// In en, this message translates to:
-  /// **'Did not find what you need? Send your question or issue report to our team.'**
+  /// **'Did not find what you need? Report the problem through the form below and our team will investigate it.'**
   String get helpSupportBody;
 
   /// Opens the in-app Sentry feedback form when crash reporting is enabled.
@@ -1549,18 +1549,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report a bug in the app'**
   String get helpReportBugLabel;
-
-  /// No description provided for @helpEmailOpenError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open the email app.'**
-  String get helpEmailOpenError;
-
-  /// No description provided for @helpEmailSubject.
-  ///
-  /// In en, this message translates to:
-  /// **'PokeData Support'**
-  String get helpEmailSubject;
 
   /// No description provided for @helpExploreGuestQuestion.
   ///

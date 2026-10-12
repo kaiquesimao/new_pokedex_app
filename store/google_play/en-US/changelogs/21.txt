@@ -1,0 +1,1 @@
+Bug reports now use the in-app Sentry feedback form for a simpler support flow.

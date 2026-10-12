@@ -388,10 +388,8 @@
 
   "helpFaqTitle": "Perguntas frequentes",
   "helpSupportTitle": "Suporte",
-  "helpSupportBody": "Não encontrou o que procura? Envie sua dúvida ou relato de problema para nossa equipe.",
+  "helpSupportBody": "Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar.",
   "helpReportBugLabel": "Reportar um bug no app",
-  "helpEmailOpenError": "Não foi possível abrir o aplicativo de e-mail.",
-  "helpEmailSubject": "Suporte PokeData",
   "helpExploreGuestQuestion": "Como explorar sem criar conta?",
   "helpExploreGuestAnswer": "Na tela de boas-vindas, toque em \"Explorar sem conta\" para navegar pelo Pokédex, regiões e detalhes dos Pokémon sem precisar fazer login.",
   "helpFavoriteQuestion": "Como favoritar Pokémon?",
