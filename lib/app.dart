@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/sentry_context_sync.dart';
+import 'package:pokedex_app/core/crash_reporting/sentry_feedback_overlay.dart';
 import 'package:pokedex_app/core/locale/app_locale.dart';
 import 'package:pokedex_app/core/locale/app_locale_provider.dart';
 import 'package:pokedex_app/core/providers/theme_provider.dart';
@@ -37,6 +38,7 @@ class const PokedexApp({super.key}) extends ConsumerWidget {
         children: [
           const WideViewportBackdrop(),
           WideViewportTheme(child: AppOfflineShell(child: child)),
+          const SentryFeedbackOverlay(),
         ],
       ),
     );

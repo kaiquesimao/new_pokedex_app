@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart' as flutter_material;
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
+import 'package:pokedex_app/core/crash_reporting/sentry_feedback_overlay.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class const HelpPage({super.key}) extends StatelessWidget {
   static List<({String question, String answer})> _faqItems(
@@ -91,14 +90,7 @@ class const HelpPage({super.key}) extends StatelessWidget {
                       const SizedBox(height: 8),
                       if (isCrashReportingEnabled())
                         TextButton.icon(
-                          onPressed: () {
-                            flutter_material.Navigator.of(context).push(
-                              flutter_material.MaterialPageRoute<void>(
-                                builder: (_) =>
-                                    const _SentryFeedbackMaterialHost(),
-                              ),
-                            );
-                          },
+                          onPressed: openSentryFeedbackForm,
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),
@@ -111,76 +103,6 @@ class const HelpPage({super.key}) extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _SentryFeedbackMaterialHost extends StatelessWidget {
-  // Flutter's analyzer flags the required private constructor name here.
-  // ignore: unnecessary_type_name_in_constructor
-  const _SentryFeedbackMaterialHost();
-
-  @override
-  Widget build(BuildContext context) {
-    final outerNavigator = flutter_material.Navigator.of(context);
-    return flutter_material.MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: flutter_material.ThemeData(
-        brightness: flutter_material.Brightness.light,
-        useMaterial3: true,
-      ),
-      home: _SentryFeedbackNavigator(outerNavigator: outerNavigator),
-    );
-  }
-}
-
-class _SentryFeedbackNavigator extends StatelessWidget {
-  // Flutter's analyzer flags the required private constructor name here.
-  // ignore: unnecessary_type_name_in_constructor
-  const _SentryFeedbackNavigator({required this.outerNavigator});
-
-  final flutter_material.NavigatorState outerNavigator;
-
-  @override
-  Widget build(BuildContext context) {
-    return flutter_material.Navigator(
-      observers: [
-        _SentryFeedbackDismissObserver(onDismissed: outerNavigator.pop),
-      ],
-      onGenerateRoute: (settings) => flutter_material.MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const flutter_material.SizedBox.shrink(),
-      ),
-      onGenerateInitialRoutes: (navigator, initialRoute) => [
-        flutter_material.MaterialPageRoute<void>(
-          settings: const flutter_material.RouteSettings(name: '/shell'),
-          builder: (_) => const flutter_material.SizedBox.shrink(),
-        ),
-        flutter_material.MaterialPageRoute<void>(
-          settings: const flutter_material.RouteSettings(name: '/feedback'),
-          builder: (_) => SentryFeedbackForm(),
-        ),
-      ],
-    );
-  }
-}
-
-class _SentryFeedbackDismissObserver
-    extends flutter_material.NavigatorObserver {
-  // Flutter's analyzer flags the required private constructor name here.
-  // ignore: unnecessary_type_name_in_constructor
-  _SentryFeedbackDismissObserver({required this.onDismissed});
-
-  final VoidCallback onDismissed;
-
-  @override
-  void didPop(
-    flutter_material.Route<dynamic> route,
-    flutter_material.Route<dynamic>? previousRoute,
-  ) {
-    super.didPop(route, previousRoute);
-    if (route.settings.name == '/feedback') {
-      onDismissed();
-    }
   }
 }
 

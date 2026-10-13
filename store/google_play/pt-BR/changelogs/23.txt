@@ -1,0 +1,1 @@
+A captura de tela no relato de bugs voltou a funcionar — tire o print da tela antes de enviar.
