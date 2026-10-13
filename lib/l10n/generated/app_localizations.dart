@@ -2132,6 +2132,84 @@ abstract class AppLocalizations {
   /// **'Let\'s get started!'**
   String get onboardingStartButton;
 
+  /// No description provided for @homeTutorialSkipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get homeTutorialSkipButton;
+
+  /// No description provided for @homeTutorialNextButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get homeTutorialNextButton;
+
+  /// No description provided for @homeTutorialDoneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get homeTutorialDoneButton;
+
+  /// No description provided for @homeTutorialReplayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View home tutorial again'**
+  String get homeTutorialReplayButton;
+
+  /// No description provided for @homeTutorialStepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String homeTutorialStepLabel(int current, int total);
+
+  /// No description provided for @homeTutorialSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Pokémon'**
+  String get homeTutorialSearchTitle;
+
+  /// No description provided for @homeTutorialSearchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a name or number to find Pokémon quickly in the list.'**
+  String get homeTutorialSearchBody;
+
+  /// No description provided for @homeTutorialFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter and sort'**
+  String get homeTutorialFiltersTitle;
+
+  /// No description provided for @homeTutorialFiltersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use type, forms, sort, generation, and advanced filters to narrow the list.'**
+  String get homeTutorialFiltersBody;
+
+  /// No description provided for @homeTutorialListCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open details'**
+  String get homeTutorialListCardTitle;
+
+  /// No description provided for @homeTutorialListCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a Pokémon card to see stats, evolutions, and more.'**
+  String get homeTutorialListCardBody;
+
+  /// No description provided for @homeTutorialBottomNavTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the app'**
+  String get homeTutorialBottomNavTitle;
+
+  /// No description provided for @homeTutorialBottomNavBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch tabs for Regions, the guessing game, Favorites, and your Profile.'**
+  String get homeTutorialBottomNavBody;
+
   /// No description provided for @profileCurrentPasswordLabel.
   ///
   /// In en, this message translates to:

@@ -494,6 +494,26 @@
   "onboardingContinueButton": "Continuar",
   "onboardingStartButton": "Vamos começar!",
 
+  "homeTutorialSkipButton": "Pular",
+  "homeTutorialNextButton": "Próximo",
+  "homeTutorialDoneButton": "Entendi",
+  "homeTutorialReplayButton": "Ver tutorial da tela inicial de novo",
+  "homeTutorialStepLabel": "Passo {current} de {total}",
+  "@homeTutorialStepLabel": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "homeTutorialSearchTitle": "Buscar Pokémon",
+  "homeTutorialSearchBody": "Digite um nome ou número para encontrar Pokémon rapidamente na lista.",
+  "homeTutorialFiltersTitle": "Filtrar e ordenar",
+  "homeTutorialFiltersBody": "Use tipo, formas, ordenação, geração e filtros avançados para refinar a lista.",
+  "homeTutorialListCardTitle": "Abrir detalhes",
+  "homeTutorialListCardBody": "Toque em um card de Pokémon para ver atributos, evoluções e mais.",
+  "homeTutorialBottomNavTitle": "Explore o app",
+  "homeTutorialBottomNavBody": "Troque de aba para Regiões, o jogo de adivinhar, Favoritos e seu Perfil.",
+
   "profileCurrentPasswordLabel": "Senha atual",
   "profileSaveButton": "Salvar",
   "profileFinishButton": "Concluir",

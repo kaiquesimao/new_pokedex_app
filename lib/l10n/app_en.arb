@@ -510,6 +510,26 @@
   "onboardingContinueButton": "Continue",
   "onboardingStartButton": "Let's get started!",
 
+  "homeTutorialSkipButton": "Skip",
+  "homeTutorialNextButton": "Next",
+  "homeTutorialDoneButton": "Got it",
+  "homeTutorialReplayButton": "View home tutorial again",
+  "homeTutorialStepLabel": "Step {current} of {total}",
+  "@homeTutorialStepLabel": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "homeTutorialSearchTitle": "Search Pokémon",
+  "homeTutorialSearchBody": "Type a name or number to find Pokémon quickly in the list.",
+  "homeTutorialFiltersTitle": "Filter and sort",
+  "homeTutorialFiltersBody": "Use type, forms, sort, generation, and advanced filters to narrow the list.",
+  "homeTutorialListCardTitle": "Open details",
+  "homeTutorialListCardBody": "Tap a Pokémon card to see stats, evolutions, and more.",
+  "homeTutorialBottomNavTitle": "Explore the app",
+  "homeTutorialBottomNavBody": "Switch tabs for Regions, the guessing game, Favorites, and your Profile.",
+
   "profileCurrentPasswordLabel": "Current password",
   "profileSaveButton": "Save",
   "profileFinishButton": "Done",
