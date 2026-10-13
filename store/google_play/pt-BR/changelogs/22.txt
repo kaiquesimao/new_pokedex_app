@@ -1,0 +1,1 @@
+Os relatos de bugs agora usam o formulário integrado do Sentry para simplificar o suporte.
