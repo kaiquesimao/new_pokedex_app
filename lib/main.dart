@@ -45,7 +45,7 @@ Future<void> main() async {
 
       Widget app = const PokedexApp();
       if (sentryEnabled) {
-        // Required for feedback screenshots + user-interaction breadcrumbs.
+        // Enables error screenshots + user-interaction breadcrumbs/tracing.
         app = SentryWidget(child: app);
       }
 
