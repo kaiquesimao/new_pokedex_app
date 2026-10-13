@@ -798,6 +798,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Did not find what you need? Report the problem through the form below and our team will investigate it. You can attach a photo from your gallery.';
 
   @override
+  String get helpSupportBodyUnavailable =>
+      'Did not find what you need? Check the FAQ above. Bug reporting is unavailable in this build (missing Sentry configuration).';
+
+  @override
   String get helpReportBugLabel => 'Report a bug in the app';
 
   @override

@@ -389,6 +389,7 @@
   "helpFaqTitle": "Perguntas frequentes",
   "helpSupportTitle": "Suporte",
   "helpSupportBody": "Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar. Você pode anexar uma foto da galeria.",
+  "helpSupportBodyUnavailable": "Não encontrou o que procura? Confira as perguntas frequentes acima. O relato de bugs não está disponível nesta build (Sentry sem configuração).",
   "helpReportBugLabel": "Reportar um bug no app",
   "helpBugReportTitle": "Reportar um bug",
   "helpBugReportNameLabel": "Nome",

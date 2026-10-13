@@ -1544,6 +1544,12 @@ abstract class AppLocalizations {
   /// **'Did not find what you need? Report the problem through the form below and our team will investigate it. You can attach a photo from your gallery.'**
   String get helpSupportBody;
 
+  /// No description provided for @helpSupportBodyUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Did not find what you need? Check the FAQ above. Bug reporting is unavailable in this build (missing Sentry configuration).'**
+  String get helpSupportBodyUnavailable;
+
   /// Opens the bug report form when crash reporting is enabled.
   ///
   /// In en, this message translates to:

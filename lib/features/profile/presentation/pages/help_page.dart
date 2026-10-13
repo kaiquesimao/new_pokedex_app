@@ -79,7 +79,9 @@ class const HelpPage({super.key}) extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.helpSupportBody,
+                        isCrashReportingEnabled()
+                            ? l10n.helpSupportBody
+                            : l10n.helpSupportBodyUnavailable,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(
                             alpha: 0.7,
@@ -87,14 +89,15 @@ class const HelpPage({super.key}) extends StatelessWidget {
                           height: 1.4,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      if (isCrashReportingEnabled())
+                      if (isCrashReportingEnabled()) ...[
+                        const SizedBox(height: 8),
                         TextButton.icon(
                           onPressed: () =>
                               context.push('/profile/help/report-bug'),
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),
+                      ],
                     ],
                   ),
                 ),

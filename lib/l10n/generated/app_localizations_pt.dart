@@ -802,6 +802,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar. Você pode anexar uma foto da galeria.';
 
   @override
+  String get helpSupportBodyUnavailable =>
+      'Não encontrou o que procura? Confira as perguntas frequentes acima. O relato de bugs não está disponível nesta build (Sentry sem configuração).';
+
+  @override
   String get helpReportBugLabel => 'Reportar um bug no app';
 
   @override
