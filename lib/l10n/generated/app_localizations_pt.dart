@@ -799,10 +799,52 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpSupportBody =>
-      'Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar.';
+      'Não encontrou o que procura? Relate o problema pelo formulário abaixo para que nossa equipe possa investigar. Você pode anexar uma foto da galeria.';
 
   @override
   String get helpReportBugLabel => 'Reportar um bug no app';
+
+  @override
+  String get helpBugReportTitle => 'Reportar um bug';
+
+  @override
+  String get helpBugReportNameLabel => 'Nome';
+
+  @override
+  String get helpBugReportEmailLabel => 'E-mail';
+
+  @override
+  String get helpBugReportMessageLabel => 'Descrição';
+
+  @override
+  String get helpBugReportMessageHint =>
+      'O que aconteceu? O que você esperava?';
+
+  @override
+  String get helpBugReportMessageRequired => 'Descreva o problema.';
+
+  @override
+  String get helpBugReportAttachmentLabel => 'Anexo (opcional)';
+
+  @override
+  String get helpBugReportAttachImage => 'Escolher imagem da galeria';
+
+  @override
+  String get helpBugReportRemoveImage => 'Remover imagem';
+
+  @override
+  String get helpBugReportSubmit => 'Enviar relato';
+
+  @override
+  String get helpBugReportSuccess => 'Obrigado! Seu relato foi enviado.';
+
+  @override
+  String get helpBugReportSubmitError =>
+      'Não foi possível enviar o relato. Tente de novo.';
+
+  @override
+  String get helpBugReportPickImageError =>
+      'Não foi possível abrir a galeria. Tente de novo.';
 
   @override
   String get helpExploreGuestQuestion => 'Como explorar sem criar conta?';

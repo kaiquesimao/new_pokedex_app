@@ -1,6 +1,6 @@
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
-import 'package:pokedex_app/core/crash_reporting/sentry_feedback_overlay.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
@@ -90,7 +90,8 @@ class const HelpPage({super.key}) extends StatelessWidget {
                       const SizedBox(height: 8),
                       if (isCrashReportingEnabled())
                         TextButton.icon(
-                          onPressed: openSentryFeedbackForm,
+                          onPressed: () =>
+                              context.push('/profile/help/report-bug'),
                           icon: const Icon(Icons.bug_report_outlined, size: 20),
                           label: Text(l10n.helpReportBugLabel),
                         ),

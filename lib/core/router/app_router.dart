@@ -220,6 +220,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
+        path: '/profile/help/report-bug',
+
+        parentNavigatorKey: appRootNavigatorKey,
+
+        builder: (_, _) => DeferredPage(
+          library: profile_extras.loadLibrary(),
+          builder: (_) => profile_extras.BugReportPage(),
+        ),
+      ),
+
+      GoRoute(
         path: '/pokemon/:id',
 
         parentNavigatorKey: appRootNavigatorKey,

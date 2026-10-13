@@ -1541,14 +1541,92 @@ abstract class AppLocalizations {
   /// No description provided for @helpSupportBody.
   ///
   /// In en, this message translates to:
-  /// **'Did not find what you need? Report the problem through the form below and our team will investigate it.'**
+  /// **'Did not find what you need? Report the problem through the form below and our team will investigate it. You can attach a photo from your gallery.'**
   String get helpSupportBody;
 
-  /// Opens the in-app Sentry feedback form when crash reporting is enabled.
+  /// Opens the bug report form when crash reporting is enabled.
   ///
   /// In en, this message translates to:
   /// **'Report a bug in the app'**
   String get helpReportBugLabel;
+
+  /// No description provided for @helpBugReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a bug'**
+  String get helpBugReportTitle;
+
+  /// No description provided for @helpBugReportNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get helpBugReportNameLabel;
+
+  /// No description provided for @helpBugReportEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get helpBugReportEmailLabel;
+
+  /// No description provided for @helpBugReportMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get helpBugReportMessageLabel;
+
+  /// No description provided for @helpBugReportMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What went wrong? What did you expect?'**
+  String get helpBugReportMessageHint;
+
+  /// No description provided for @helpBugReportMessageRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please describe the problem.'**
+  String get helpBugReportMessageRequired;
+
+  /// No description provided for @helpBugReportAttachmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment (optional)'**
+  String get helpBugReportAttachmentLabel;
+
+  /// No description provided for @helpBugReportAttachImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose image from gallery'**
+  String get helpBugReportAttachImage;
+
+  /// No description provided for @helpBugReportRemoveImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove image'**
+  String get helpBugReportRemoveImage;
+
+  /// No description provided for @helpBugReportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get helpBugReportSubmit;
+
+  /// No description provided for @helpBugReportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks! Your report was sent.'**
+  String get helpBugReportSuccess;
+
+  /// No description provided for @helpBugReportSubmitError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the report. Try again.'**
+  String get helpBugReportSubmitError;
+
+  /// No description provided for @helpBugReportPickImageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the gallery. Try again.'**
+  String get helpBugReportPickImageError;
 
   /// No description provided for @helpExploreGuestQuestion.
   ///

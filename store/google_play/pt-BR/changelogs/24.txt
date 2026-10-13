@@ -1,0 +1,1 @@
+Os relatos de bugs agora permitem anexar uma foto da galeria em vez de capturar a tela do app.

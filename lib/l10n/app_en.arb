@@ -400,11 +400,24 @@
 
   "helpFaqTitle": "Frequently asked questions",
   "helpSupportTitle": "Support",
-  "helpSupportBody": "Did not find what you need? Report the problem through the form below and our team will investigate it.",
+  "helpSupportBody": "Did not find what you need? Report the problem through the form below and our team will investigate it. You can attach a photo from your gallery.",
   "helpReportBugLabel": "Report a bug in the app",
   "@helpReportBugLabel": {
-    "description": "Opens the in-app Sentry feedback form when crash reporting is enabled."
+    "description": "Opens the bug report form when crash reporting is enabled."
   },
+  "helpBugReportTitle": "Report a bug",
+  "helpBugReportNameLabel": "Name",
+  "helpBugReportEmailLabel": "Email",
+  "helpBugReportMessageLabel": "Description",
+  "helpBugReportMessageHint": "What went wrong? What did you expect?",
+  "helpBugReportMessageRequired": "Please describe the problem.",
+  "helpBugReportAttachmentLabel": "Attachment (optional)",
+  "helpBugReportAttachImage": "Choose image from gallery",
+  "helpBugReportRemoveImage": "Remove image",
+  "helpBugReportSubmit": "Send report",
+  "helpBugReportSuccess": "Thanks! Your report was sent.",
+  "helpBugReportSubmitError": "Could not send the report. Try again.",
+  "helpBugReportPickImageError": "Could not open the gallery. Try again.",
   "helpExploreGuestQuestion": "How do I explore without an account?",
   "helpExploreGuestAnswer": "On the welcome screen, tap \"Explore without account\" to browse the Pokédex, regions, and Pokémon details without signing in.",
   "helpFavoriteQuestion": "How do I favorite Pokémon?",
