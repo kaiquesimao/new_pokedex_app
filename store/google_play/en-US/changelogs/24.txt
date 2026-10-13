@@ -1,0 +1,1 @@
+Bug reports now let you attach a photo from your gallery instead of capturing the app screen.

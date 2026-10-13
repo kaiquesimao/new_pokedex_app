@@ -154,7 +154,8 @@ Dashboard: https://kaique-projects.sentry.io/projects/pokedata/
    `dart run sentry_dart_plugin`).
 3. Filter Issues by tags `app.platform` (`android` / `web`), `app.runtime`,
    `auth.session`, `app.locale`, `network.online`.
-4. SDK is **off in debug** and when `SENTRY_DSN` is empty (quota-friendly).
+4. SDK is **off when `SENTRY_DSN` is empty** (quota-friendly). Debug builds
+   with a DSN still enable Sentry so Help → bug report can be tested locally.
 5. Rich capture (when enabled): Dio + Drift spans/breadcrumbs, GoRouter
    observer, masked screenshots (mobile), user feedback from Help, structured
    logs. Session Replay remains disabled.

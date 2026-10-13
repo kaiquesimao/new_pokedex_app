@@ -1,8 +1,5 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Root navigator key used by GoRouter.
-///
-/// Sentry feedback uses a dedicated Flutter Material navigator — see
-/// `sentryFeedbackNavigatorKey` in `sentry_feedback_overlay.dart`.
+/// Root navigator key shared by GoRouter and Sentry.
 final GlobalKey<NavigatorState> appRootNavigatorKey =
     GlobalKey<NavigatorState>();

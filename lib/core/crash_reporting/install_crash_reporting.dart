@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_platform.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
 import 'package:pokedex_app/core/crash_reporting/sentry_event_scrubber.dart';
-import 'package:pokedex_app/core/crash_reporting/sentry_feedback_overlay.dart';
 import 'package:pokedex_app/core/env/env.dart';
+import 'package:pokedex_app/core/router/app_navigator_key.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Initializes Sentry (free Developer plan) for Android + web in one project.
@@ -30,9 +30,7 @@ Future<void> installCrashReporting({
         ..release = 'pokedex_app@$appVersion+$buildNumber'
         ..dist = buildNumber
         ..sendDefaultPii = false
-        // Flutter Material navigator dedicated to SentryFeedbackForm (the app
-        // shell uses material_ui, which cannot host flutter/material routes).
-        ..navigatorKey = sentryFeedbackNavigatorKey
+        ..navigatorKey = appRootNavigatorKey
         ..maxBreadcrumbs = 100
         // Light performance sample — navigation/Dio/Drift spans without burning quota.
         ..tracesSampleRate = 0.15
@@ -58,18 +56,11 @@ Future<void> installCrashReporting({
         };
 
       options.privacy
-        // Sentry 10.0.0 masks feedback TextFormFields as opaque rectangles.
-        ..maskAllText = false
+        ..maskAllText = true
         ..maskAllImages = true;
 
-      options.feedback
-        ..title = 'Report a Bug'
-        ..formTitle = 'Report a Bug'
-        ..showBranding = false
-        ..useSentryUser = true
-        ..isEmailRequired = false
-        ..showEmail = true
-        ..showName = true;
+      // Bug reports use [BugReportPage] with gallery attachments.
+      options.feedback.showCaptureScreenshot = false;
 
       options.addInAppInclude('package:pokedex_app');
     },

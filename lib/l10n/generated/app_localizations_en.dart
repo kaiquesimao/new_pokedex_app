@@ -795,10 +795,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpSupportBody =>
-      'Did not find what you need? Report the problem through the form below and our team will investigate it.';
+      'Did not find what you need? Report the problem through the form below and our team will investigate it. You can attach a photo from your gallery.';
+
+  @override
+  String get helpSupportBodyUnavailable =>
+      'Did not find what you need? Check the FAQ above. Bug reporting is unavailable in this build (missing Sentry configuration).';
 
   @override
   String get helpReportBugLabel => 'Report a bug in the app';
+
+  @override
+  String get helpBugReportTitle => 'Report a bug';
+
+  @override
+  String get helpBugReportNameLabel => 'Name';
+
+  @override
+  String get helpBugReportEmailLabel => 'Email';
+
+  @override
+  String get helpBugReportMessageLabel => 'Description';
+
+  @override
+  String get helpBugReportMessageHint =>
+      'What went wrong? What did you expect?';
+
+  @override
+  String get helpBugReportMessageRequired => 'Please describe the problem.';
+
+  @override
+  String get helpBugReportAttachmentLabel => 'Attachment (optional)';
+
+  @override
+  String get helpBugReportAttachImage => 'Choose image from gallery';
+
+  @override
+  String get helpBugReportRemoveImage => 'Remove image';
+
+  @override
+  String get helpBugReportSubmit => 'Send report';
+
+  @override
+  String get helpBugReportSuccess => 'Thanks! Your report was sent.';
+
+  @override
+  String get helpBugReportSubmitError =>
+      'Could not send the report. Try again.';
+
+  @override
+  String get helpBugReportPickImageError =>
+      'Could not open the gallery. Try again.';
 
   @override
   String get helpExploreGuestQuestion => 'How do I explore without an account?';
