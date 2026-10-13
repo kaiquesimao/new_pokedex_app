@@ -11,6 +11,8 @@ import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.d
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
+import 'package:pokedex_app/features/home_tutorial/domain/home_tutorial_step.dart';
+import 'package:pokedex_app/features/home_tutorial/presentation/widgets/home_tutorial_target.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
@@ -142,7 +144,10 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
           top: topPadding,
           bottom: bottomPadding,
         ),
-        child: const PokemonListSkeleton(),
+        child: const HomeTutorialTarget(
+          step: HomeTutorialStepId.listCard,
+          child: PokemonListSkeleton(),
+        ),
       );
     }
 
@@ -200,7 +205,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                 }
 
                 final pokemon = state.items[index];
-                return PokemonListRowCard(
+                final card = PokemonListRowCard(
                   number: pokemon.id,
                   name: pokemon.displayName,
                   types: pokemon.types,
@@ -212,6 +217,13 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                   onTap: () => context.push('/pokemon/${pokemon.id}'),
                   onFavoriteTap: () => _toggleFavorite(context, pokemon.id),
                 );
+                if (index == 0) {
+                  return HomeTutorialTarget(
+                    step: HomeTutorialStepId.listCard,
+                    child: card,
+                  );
+                }
+                return card;
               },
             ),
           ),
@@ -243,50 +255,56 @@ class const _PokemonListHeader({
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: PokemonSearchBar(
-            initialValue: filters.searchQuery,
-            onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+          child: HomeTutorialTarget(
+            step: HomeTutorialStepId.search,
+            child: PokemonSearchBar(
+              initialValue: filters.searchQuery,
+              onChanged: ref.read(pokemonFiltersProvider.notifier).setSearch,
+            ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            // Badges on filter pills overhang the chip top edge; avoid
-            // clipping them (default is Clip.hardEdge).
-            clipBehavior: Clip.none,
-            child: Row(
-              children: [
-                _TypeFilterChip(
-                  typeFilter: filters.typeFilter,
-                  onTap: () => showPokemonTypeSheet(context),
-                ),
-                const SizedBox(width: 8),
-                _FilterPillChip(
-                  label: l10n.filterFormsLabel,
-                  icon: Icons.auto_awesome_outlined,
-                  badgeCount: _formsFilterCount(filters),
-                  onTap: () => showPokemonFormsSheet(context),
-                ),
-                const SizedBox(width: 8),
-                _SortFilterChip(
-                  sort: filters.sort,
-                  onTap: () => showPokemonSortSheet(context),
-                ),
-                const SizedBox(width: 8),
-                _FilterPillChip(
-                  label: l10n.filterGenerationLabel,
-                  icon: Icons.layers_outlined,
-                  onTap: () => showPokemonGenerationSheet(context),
-                ),
-                const SizedBox(width: 8),
-                _FilterPillChip(
-                  label: l10n.filterAdvancedLabel,
-                  icon: Icons.tune,
-                  badgeCount: _advancedFilterCount(filters),
-                  onTap: () => showPokemonFilterSheet(context),
-                ),
-              ],
+          child: HomeTutorialTarget(
+            step: HomeTutorialStepId.filters,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              // Badges on filter pills overhang the chip top edge; avoid
+              // clipping them (default is Clip.hardEdge).
+              clipBehavior: Clip.none,
+              child: Row(
+                children: [
+                  _TypeFilterChip(
+                    typeFilter: filters.typeFilter,
+                    onTap: () => showPokemonTypeSheet(context),
+                  ),
+                  const SizedBox(width: 8),
+                  _FilterPillChip(
+                    label: l10n.filterFormsLabel,
+                    icon: Icons.auto_awesome_outlined,
+                    badgeCount: _formsFilterCount(filters),
+                    onTap: () => showPokemonFormsSheet(context),
+                  ),
+                  const SizedBox(width: 8),
+                  _SortFilterChip(
+                    sort: filters.sort,
+                    onTap: () => showPokemonSortSheet(context),
+                  ),
+                  const SizedBox(width: 8),
+                  _FilterPillChip(
+                    label: l10n.filterGenerationLabel,
+                    icon: Icons.layers_outlined,
+                    onTap: () => showPokemonGenerationSheet(context),
+                  ),
+                  const SizedBox(width: 8),
+                  _FilterPillChip(
+                    label: l10n.filterAdvancedLabel,
+                    icon: Icons.tune,
+                    badgeCount: _advancedFilterCount(filters),
+                    onTap: () => showPokemonFilterSheet(context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1132,6 +1132,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingStartButton => 'Let\'s get started!';
 
   @override
+  String get homeTutorialSkipButton => 'Skip';
+
+  @override
+  String get homeTutorialNextButton => 'Next';
+
+  @override
+  String get homeTutorialDoneButton => 'Got it';
+
+  @override
+  String get homeTutorialReplayButton => 'View home tutorial again';
+
+  @override
+  String homeTutorialStepLabel(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get homeTutorialSearchTitle => 'Search Pokémon';
+
+  @override
+  String get homeTutorialSearchBody =>
+      'Type a name or number to find Pokémon quickly in the list.';
+
+  @override
+  String get homeTutorialFiltersTitle => 'Filter and sort';
+
+  @override
+  String get homeTutorialFiltersBody =>
+      'Use type, forms, sort, generation, and advanced filters to narrow the list.';
+
+  @override
+  String get homeTutorialListCardTitle => 'Open details';
+
+  @override
+  String get homeTutorialListCardBody =>
+      'Tap a Pokémon card to see stats, evolutions, and more.';
+
+  @override
+  String get homeTutorialBottomNavTitle => 'Explore the app';
+
+  @override
+  String get homeTutorialBottomNavBody =>
+      'Switch tabs for Regions, the guessing game, Favorites, and your Profile.';
+
+  @override
   String get profileCurrentPasswordLabel => 'Current password';
 
   @override

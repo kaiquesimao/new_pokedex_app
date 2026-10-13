@@ -1,10 +1,15 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/crash_reporting/crash_reporting_enabled.dart';
+import 'package:pokedex_app/core/theme/app_colors.dart';
+import 'package:pokedex_app/features/home_tutorial/presentation/providers/home_tutorial_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 
-class const HelpPage({super.key}) extends StatelessWidget {
+class const HelpPage({super.key}) extends ConsumerWidget {
   static List<({String question, String answer})> _faqItems(
     AppLocalizations l10n,
   ) => [
@@ -23,7 +28,7 @@ class const HelpPage({super.key}) extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final faqItems = _faqItems(l10n);
@@ -61,6 +66,25 @@ class const HelpPage({super.key}) extends StatelessWidget {
                     ],
                   ],
                 ),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: () {
+                  unawaited(
+                    ref.read(homeTutorialProvider.notifier).replay(),
+                  );
+                  context.go('/pokedex');
+                },
+                icon: const Icon(Icons.school_outlined, size: 20),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColorsLight.primary,
+                  side: const BorderSide(color: AppColorsLight.primary),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+                label: Text(l10n.homeTutorialReplayButton),
               ),
               const SizedBox(height: 32),
               Text(
