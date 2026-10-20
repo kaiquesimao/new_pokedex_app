@@ -346,6 +346,23 @@
   "filterSortTitle": "Sort",
   "filterSortSemantics": "Pokémon list sort order",
   "filterNoPokemonFound": "No Pokémon found",
+  "recentPokemonTitle": "Recent",
+  "@recentPokemonTitle": {
+    "description": "Home section title for recently viewed Pokémon"
+  },
+  "recentPokemonClear": "Clear",
+  "@recentPokemonClear": {
+    "description": "Action that clears the recently viewed Pokémon history"
+  },
+  "recentPokemonOpenSemantics": "Open {name}",
+  "@recentPokemonOpenSemantics": {
+    "description": "Semantics label for a recently viewed Pokémon chip",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sortNumberAsc": "Lowest number",
   "sortNumberDesc": "Highest number",
   "sortNameAsc": "A-Z",

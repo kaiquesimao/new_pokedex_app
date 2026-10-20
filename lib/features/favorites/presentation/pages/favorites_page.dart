@@ -11,6 +11,8 @@ import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_f
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart'
     show PokemonDetail;
+import 'package:pokedex_app/features/pokemon/presentation/navigation/open_pokemon_detail.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pokemon_detail_preview.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/app_button.dart';
@@ -44,9 +46,7 @@ class const _GuestFavoritesBody({required final VoidCallback onAuth})
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: AppBottomNavBar.overlayHeight(context),
-      ),
+      padding: EdgeInsets.only(bottom: AppBottomNavBar.overlayHeight(context)),
       child: EmptyStateIllustration(
         imageAsset: TrainerAvatars.assetPathFor('pokemaniac'),
         pixelArt: true,
@@ -69,9 +69,7 @@ class const _EmptyFavoritesBody() extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: AppBottomNavBar.overlayHeight(context),
-      ),
+      padding: EdgeInsets.only(bottom: AppBottomNavBar.overlayHeight(context)),
       child: EmptyStateIllustration(
         imageAsset: AppAssets.patternMagikarp,
         title: l10n.favoritesEmptyTitle,
@@ -153,7 +151,15 @@ class const _DismissibleFavoriteCard({required final PokemonDetail pokemon})
         spriteUrl: pokemon.spriteUrl,
         isFavorite: true,
         heroShellTabIndex: 3,
-        onTap: () => context.push('/pokemon/${pokemon.id}'),
+        onTap: () => openPokemonDetail(
+          context,
+          PokemonDetailPreview(
+            id: pokemon.id,
+            displayName: pokemon.displayName,
+            spriteUrl: pokemon.spriteUrl,
+            types: pokemon.types,
+          ),
+        ),
         onFavoriteTap: () =>
             ref.read(favoritesProvider.notifier).toggle(pokemon.id),
       ),

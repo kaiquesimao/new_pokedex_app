@@ -7,6 +7,8 @@ import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
 import 'package:pokedex_app/core/locale/pokemon_type_l10n.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:pokedex_app/features/pokemon/presentation/navigation/open_pokemon_detail.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pokemon_detail_preview.dart';
 import 'package:pokedex_app/features/regions/domain/utils/regional_pokemon_filter_utils.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_filters_provider.dart';
 import 'package:pokedex_app/features/regions/presentation/providers/regional_pokedex_provider.dart';
@@ -127,7 +129,15 @@ class const RegionalPokedexPage({required final String regionName, super.key})
           spriteUrl: entry.spriteUrl,
           heroPokemonId: entry.pokemonId,
           useHero: true,
-          onTap: () => context.push('/pokemon/${entry.pokemonId}'),
+          onTap: () => openPokemonDetail(
+            context,
+            PokemonDetailPreview(
+              id: entry.pokemonId,
+              displayName: entry.displayName,
+              spriteUrl: entry.spriteUrl,
+              types: entry.types,
+            ),
+          ),
         );
       },
     );

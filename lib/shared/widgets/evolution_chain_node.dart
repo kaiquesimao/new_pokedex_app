@@ -167,7 +167,7 @@ class const EvolutionChainTree({
   required final EvolutionChainNode root,
   required final int currentSpeciesId,
   super.key,
-  final ValueChanged<int>? onNodeTap,
+  final ValueChanged<EvolutionChainNode>? onNodeTap,
   final bool embedded = false,
 }) extends StatelessWidget {
   @override
@@ -191,9 +191,7 @@ class const EvolutionChainTree({
           node: node,
           isCurrent: node.speciesId == currentSpeciesId,
           isFinalStage: isFinalStage,
-          onTap: node.speciesId == null
-              ? null
-              : () => onNodeTap?.call(node.pokemonId ?? node.speciesId!),
+          onTap: node.speciesId == null ? null : () => onNodeTap?.call(node),
         ),
         if (children.length == 1) ...[
           EvolutionChainConnector(

@@ -5,6 +5,7 @@ import 'package:pokedex_app/core/router/app_initial_location_provider.dart';
 import 'package:pokedex_app/core/router/app_navigator_key.dart';
 import 'package:pokedex_app/core/router/auth_redirect.dart';
 import 'package:pokedex_app/core/router/deferred_page.dart';
+import 'package:pokedex_app/core/router/page_transitions.dart';
 import 'package:pokedex_app/features/auth/domain/auth_state.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/auth_welcome_page.dart';
 import 'package:pokedex_app/features/auth/presentation/pages/forgot_password_page.dart';
@@ -22,9 +23,9 @@ import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/leader
 import 'package:pokedex_app/features/legal/presentation/providers/legal_acceptance_provider.dart';
 import 'package:pokedex_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:pokedex_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_page.dart'
-    deferred as pokemon_detail;
+import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_detail_route.dart';
 import 'package:pokedex_app/features/pokemon/presentation/pages/pokemon_list_page.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pokemon_detail_preview.dart';
 import 'package:pokedex_app/features/profile/presentation/pages/profile_extra_pages.dart'
     deferred as profile_extras;
 import 'package:pokedex_app/features/profile/presentation/pages/profile_page.dart';
@@ -237,34 +238,39 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
         pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
+          final preview = PokemonDetailPreview.fromExtra(state.extra, id);
 
           return CustomTransitionPage<void>(
             key: state.pageKey,
-
-            transitionDuration: const Duration(milliseconds: 350),
-
-            child: DeferredPage(
-              library: pokemon_detail.loadLibrary(),
-              builder: (_) => pokemon_detail.PokemonDetailPage(pokemonId: id),
-            ),
-
+            transitionDuration: routeTransitionDuration,
+            reverseTransitionDuration: routeTransitionDuration,
+            child: PokemonDetailRoute(pokemonId: id, preview: preview),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-                  final curved = CurvedAnimation(
-                    parent: animation,
-
-                    curve: Curves.easeOutCubic,
+                  return DetailPageTransition(
+                    animation: animation,
+                    child: child,
                   );
-
-                  return FadeTransition(opacity: curved, child: child);
                 },
           );
         },
       ),
 
       StatefulShellRoute(
-        builder: (_, _, navigationShell) {
-          return MainShellPage(navigationShell: navigationShell);
+        pageBuilder: (context, state, navigationShell) {
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            transitionDuration: routeTransitionDuration,
+            reverseTransitionDuration: routeTransitionDuration,
+            child: MainShellPage(navigationShell: navigationShell),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return ShellExitTransition(
+                    secondaryAnimation: secondaryAnimation,
+                    child: child,
+                  );
+                },
+          );
         },
         navigatorContainerBuilder: (_, navigationShell, children) {
           return AnimatedBranchContainer(

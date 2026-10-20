@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/locale/pokemon_filters_l10n.dart';
@@ -14,9 +13,12 @@ import 'package:pokedex_app/features/favorites/presentation/providers/favorites_
 import 'package:pokedex_app/features/home_tutorial/domain/home_tutorial_step.dart';
 import 'package:pokedex_app/features/home_tutorial/presentation/widgets/home_tutorial_target.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon_filters.dart';
+import 'package:pokedex_app/features/pokemon/presentation/navigation/open_pokemon_detail.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pokemon_detail_preview.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_filters_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_list_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_filter_sheets.dart';
+import 'package:pokedex_app/features/recent_pokemon/presentation/widgets/recent_pokemon_strip.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
@@ -129,24 +131,27 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
     required double topPadding,
     required double bottomPadding,
   }) {
-    final edgePadding = EdgeInsets.fromLTRB(
-      16,
-      topPadding,
-      16,
-      bottomPadding,
-    );
+    final edgePadding = EdgeInsets.fromLTRB(16, topPadding, 16, bottomPadding);
 
     if (state.showFullSkeleton) {
       // PokemonListSkeleton already applies content inset of 16; keep only
       // header / bottom-nav overlays to avoid double horizontal padding.
       return Padding(
-        padding: EdgeInsets.only(
-          top: topPadding,
-          bottom: bottomPadding,
-        ),
-        child: const HomeTutorialTarget(
-          step: HomeTutorialStepId.listCard,
-          child: PokemonListSkeleton(),
+        padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: RecentPokemonStrip(),
+            ),
+            Expanded(
+              child: HomeTutorialTarget(
+                step: HomeTutorialStepId.listCard,
+                child: PokemonListSkeleton(),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -157,10 +162,19 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         !state.isLoadingIds) {
       return Padding(
         padding: edgePadding,
-        child: OfflineEmptyState(
-          message: state.error!,
-          isConnectivityFailure: state.errorIsConnectivityFailure,
-          onRetry: () => ref.read(pokemonListProvider.notifier).loadInitial(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const RecentPokemonStrip(),
+            Expanded(
+              child: OfflineEmptyState(
+                message: state.error!,
+                isConnectivityFailure: state.errorIsConnectivityFailure,
+                onRetry: () =>
+                    ref.read(pokemonListProvider.notifier).loadInitial(),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -170,15 +184,23 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         !state.isLoadingIds) {
       return Padding(
         padding: edgePadding,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.search_off, size: 48),
-              const SizedBox(height: 12),
-              Text(l10n.filterNoPokemonFound),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const RecentPokemonStrip(),
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.search_off, size: 48),
+                    const SizedBox(height: 12),
+                    Text(l10n.filterNoPokemonFound),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -195,7 +217,11 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
         controller: _scrollController,
         slivers: [
           SliverPadding(
-            padding: edgePadding,
+            padding: EdgeInsets.fromLTRB(16, topPadding, 16, 0),
+            sliver: const SliverToBoxAdapter(child: RecentPokemonStrip()),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
             sliver: SliverList.separated(
               itemCount: state.items.length + skeletonCount,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -205,16 +231,25 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
                 }
 
                 final pokemon = state.items[index];
+                final spriteUrl = filters.showShiny
+                    ? (pokemon.shinySpriteUrl ?? pokemon.spriteUrl)
+                    : pokemon.spriteUrl;
                 final card = PokemonListRowCard(
                   number: pokemon.id,
                   name: pokemon.displayName,
                   types: pokemon.types,
-                  spriteUrl: filters.showShiny
-                      ? (pokemon.shinySpriteUrl ?? pokemon.spriteUrl)
-                      : pokemon.spriteUrl,
+                  spriteUrl: spriteUrl,
                   isFavorite: favorites.contains(pokemon.id),
                   heroShellTabIndex: 0,
-                  onTap: () => context.push('/pokemon/${pokemon.id}'),
+                  onTap: () => openPokemonDetail(
+                    context,
+                    PokemonDetailPreview(
+                      id: pokemon.id,
+                      displayName: pokemon.displayName,
+                      spriteUrl: spriteUrl,
+                      types: pokemon.types,
+                    ),
+                  ),
                   onFavoriteTap: () => _toggleFavorite(context, pokemon.id),
                 );
                 if (index == 0) {
@@ -483,10 +518,7 @@ class const _FilterPillChip({
 
     if (badgeCount <= 0) return chip;
 
-    return Badge(
-      label: Text('$badgeCount'),
-      child: chip,
-    );
+    return Badge(label: Text('$badgeCount'), child: chip);
   }
 }
 
