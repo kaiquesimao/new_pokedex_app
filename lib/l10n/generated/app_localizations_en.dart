@@ -655,6 +655,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterNoPokemonFound => 'No Pokémon found';
 
   @override
+  String get recentPokemonTitle => 'Recent';
+
+  @override
+  String get recentPokemonClear => 'Clear';
+
+  @override
+  String recentPokemonOpenSemantics(String name) {
+    return 'Open $name';
+  }
+
+  @override
   String get sortNumberAsc => 'Lowest number';
 
   @override

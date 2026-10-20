@@ -11,8 +11,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 /// No-ops when [Env.sentryDsn] is empty or in debug (keeps local noise out).
 /// Filter issues in the Sentry UI by tags `app.platform` / `app.runtime`.
 Future<void> installCrashReporting({
-  required String appVersion,
-  required String buildNumber,
   required Future<void> Function() appRunner,
 }) async {
   if (!isCrashReportingEnabled()) {
@@ -27,8 +25,6 @@ Future<void> installCrashReporting({
       options
         ..dsn = dsn
         ..environment = kReleaseMode ? 'production' : 'profile'
-        ..release = 'pokedex_app@$appVersion+$buildNumber'
-        ..dist = buildNumber
         ..sendDefaultPii = false
         ..navigatorKey = appRootNavigatorKey
         ..maxBreadcrumbs = 100
@@ -68,8 +64,6 @@ Future<void> installCrashReporting({
       await Sentry.configureScope((scope) async {
         await scope.setTag('app.platform', resolveCrashPlatform());
         await scope.setTag('app.runtime', resolveCrashRuntime());
-        await scope.setTag('app.version', appVersion);
-        await scope.setTag('app.build', buildNumber);
       });
 
       Sentry.logger.info(
@@ -77,11 +71,34 @@ Future<void> installCrashReporting({
         attributes: {
           'app.platform': SentryAttribute.string(resolveCrashPlatform()),
           'app.runtime': SentryAttribute.string(resolveCrashRuntime()),
-          'app.version': SentryAttribute.string(appVersion),
         },
       );
 
       await appRunner();
     },
   );
+}
+
+/// Attaches the store version after the Flutter binding exists.
+///
+/// Package info needs the binding, and on web that binding has to be created
+/// inside Sentry's zone. Release is applied here, before runApp, so later
+/// events still carry pokedex_app@version+build.
+Future<void> bindCrashReportingAppIdentity({
+  required String appVersion,
+  required String buildNumber,
+}) async {
+  if (!Sentry.isEnabled) return;
+
+  // Release is stored on the hub options. The SDK does not expose a public
+  // setter after init, and init runs before package info is available.
+  // ignore: invalid_use_of_internal_member
+  Sentry.currentHub.options
+    ..release = 'pokedex_app@$appVersion+$buildNumber'
+    ..dist = buildNumber;
+
+  await Sentry.configureScope((scope) async {
+    await scope.setTag('app.version', appVersion);
+    await scope.setTag('app.build', buildNumber);
+  });
 }

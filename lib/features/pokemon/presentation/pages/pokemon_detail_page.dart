@@ -4,33 +4,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
-import 'package:pokedex_app/core/constants/pokemon_types.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
-import 'package:pokedex_app/core/utils/image_cache_dimensions.dart';
-import 'package:pokedex_app/core/utils/pokemon_formatters.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
 import 'package:pokedex_app/features/favorites/presentation/favorite_toggle.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/evolution_chain.dart';
 import 'package:pokedex_app/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex_app/features/pokemon/presentation/navigation/open_pokemon_detail.dart';
+import 'package:pokedex_app/features/pokemon/presentation/pokemon_detail_preview.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_cry_player_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_description_tts_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/providers/pokemon_detail_bundle_provider.dart';
 import 'package:pokedex_app/features/pokemon/presentation/utils/pokemon_detail_formatters.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_about_section.dart';
+import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_header.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_detail_sprite_carousel.dart';
 import 'package:pokedex_app/features/pokemon/presentation/widgets/pokemon_weakness_section.dart';
+import 'package:pokedex_app/features/recent_pokemon/presentation/providers/recent_pokemon_provider.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/detail_surface_card.dart';
 import 'package:pokedex_app/shared/widgets/evolution_chain_node.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_detail_skeleton.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_primary_type_backdrop.dart';
 import 'package:pokedex_app/shared/widgets/pokemon_stat_bar.dart';
-import 'package:pokedex_app/shared/widgets/pokemon_type_chip.dart';
 import 'package:pokedex_app/shared/widgets/responsive_content_frame.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:pokedex_app/shared/widgets/wide_viewport_backdrop.dart';
@@ -114,12 +113,16 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
     _cryPlayer = ref.read(pokemonCryPlayerProvider.notifier);
     _descriptionTts = ref.read(pokemonDescriptionTtsProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       ref
           .read(appAnalyticsProvider)
           .pokemonViewed(
             pokemonId: widget.pokemon.id,
             name: widget.pokemon.displayName,
           );
+      unawaited(
+        ref.read(recentPokemonProvider.notifier).record(widget.pokemon.id),
+      );
     });
   }
 
@@ -129,6 +132,11 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
     if (oldWidget.pokemonId != widget.pokemonId) {
       unawaited(_cryPlayer?.stop());
       unawaited(_descriptionTts?.stop());
+      final pokemonId = widget.pokemon.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(ref.read(recentPokemonProvider.notifier).record(pokemonId));
+      });
     }
   }
 
@@ -164,48 +172,23 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: _HeroSection(
-                  pokemonId: widget.pokemonId,
-                  pokemon: pokemon,
+                child: PokemonDetailHeader(
                   primaryType: primaryType,
                   headerColor: headerColor,
                   isFavorite: isFavorite,
+                  onBack: () => context.pop(),
                   onFavoriteTap: () => _toggleFavorite(context),
+                  sprite: PokemonDetailHeroSprite(
+                    pokemonId: widget.pokemonId,
+                    pokemon: pokemon,
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 44, 16, 8),
-                  child: DetailSurfaceCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          pokemon.displayName,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          PokemonFormatters.displayNumber(pokemon.id),
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface
-                                    .withValues(alpha: 0.6),
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 4,
-                          children: pokemon.types
-                              .map((t) => PokemonTypeChip(type: t))
-                              .toList(),
-                        ),
-                      ],
-                    ),
-                  ),
+                child: PokemonDetailIdentityCard(
+                  displayName: pokemon.displayName,
+                  pokemonId: pokemon.id,
+                  types: pokemon.types,
                 ),
               ),
               SliverToBoxAdapter(
@@ -251,120 +234,6 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
   }
 }
 
-class const _HeroSection({
-  required final int pokemonId,
-  required final PokemonDetail pokemon,
-  required final PokemonType? primaryType,
-  required final Color headerColor,
-  required final bool isFavorite,
-  required final VoidCallback onFavoriteTap,
-}) extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final headerActionColor = Theme.of(context).colorScheme.onSurface;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    const headerHeight = PokemonSpriteLayoutSizes.detailHeaderHeight;
-    const circleSize = PokemonSpriteLayoutSizes.detailHeaderCircleDiameter;
-    final typeIconSize = PokemonSpriteLayoutSizes.detailTypeIconSize(
-      circleSize,
-    );
-    final circleTop = PokemonSpriteLayoutSizes.detailHeaderCircleTop(
-      headerHeight,
-    );
-    final circleGradientColors = isDark
-        ? [
-            headerColor.withValues(alpha: 0.55),
-            headerColor.withValues(alpha: 0.18),
-          ]
-        : [headerColor, Color.lerp(headerColor, Colors.white, 0.28)!];
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final circleLeft = (constraints.maxWidth - circleSize) / 2;
-
-        return SizedBox(
-          height: headerHeight,
-          child: Stack(
-            fit: StackFit.expand,
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                top: circleTop,
-                left: circleLeft,
-                width: circleSize,
-                height: circleSize,
-                child: Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: circleSize,
-                      height: circleSize,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: circleGradientColors,
-                        ),
-                      ),
-                    ),
-                    if (primaryType != null)
-                      PokemonPrimaryTypeBackdrop(
-                        type: primaryType!,
-                        size: typeIconSize,
-                        opacity: isDark
-                            ? PokemonPrimaryTypeBackdrop.detailOpacity
-                            : PokemonPrimaryTypeBackdrop.detailLightOpacity,
-                      ),
-                    PokemonDetailHeroSprite(
-                      pokemonId: pokemonId,
-                      pokemon: pokemon,
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                top: 4,
-                left: 4,
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    sizeVariant: ButtonSizeVariant.medium,
-                    shapeVariant: ButtonShapeVariant.round,
-                  ),
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: headerActionColor,
-                  ),
-                  onPressed: () => context.pop(),
-                ),
-              ),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    sizeVariant: ButtonSizeVariant.medium,
-                    shapeVariant: ButtonShapeVariant.round,
-                  ),
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : headerActionColor,
-                    size: 28,
-                  ),
-                  onPressed: onFavoriteTap,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
 class const _EvolutionSection({
   required final int pokemonId,
   required final EvolutionChain evolution,
@@ -406,9 +275,18 @@ class const _EvolutionSection({
                       root: evolution.root,
                       currentSpeciesId: evolution.currentSpeciesId,
                       embedded: true,
-                      onNodeTap: (targetPokemonId) {
-                        if (targetPokemonId == pokemonId) return;
-                        unawaited(context.push('/pokemon/$targetPokemonId'));
+                      onNodeTap: (node) {
+                        final targetId = node.pokemonId ?? node.speciesId;
+                        if (targetId == null || targetId == pokemonId) return;
+                        openPokemonDetail(
+                          context,
+                          PokemonDetailPreview(
+                            id: targetId,
+                            displayName: node.displayName,
+                            spriteUrl: node.spriteUrl,
+                            types: node.types,
+                          ),
+                        );
                       },
                     ),
             ),

@@ -1286,6 +1286,24 @@ abstract class AppLocalizations {
   /// **'No Pokémon found'**
   String get filterNoPokemonFound;
 
+  /// Home section title for recently viewed Pokémon
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recentPokemonTitle;
+
+  /// Action that clears the recently viewed Pokémon history
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get recentPokemonClear;
+
+  /// Semantics label for a recently viewed Pokémon chip
+  ///
+  /// In en, this message translates to:
+  /// **'Open {name}'**
+  String recentPokemonOpenSemantics(String name);
+
   /// No description provided for @sortNumberAsc.
   ///
   /// In en, this message translates to:

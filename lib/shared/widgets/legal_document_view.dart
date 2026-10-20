@@ -22,37 +22,39 @@ class const LegalDocumentView({
     return content.when(
       loading: () => const LegalDocumentSkeleton(),
       error: (_, _) => Center(child: Text(loadErrorMessage)),
-      data: (documentContent) => _LegalMarkdownBody(
-        markdown: documentContent.markdown,
-      ),
+      data: (documentContent) =>
+          _LegalMarkdownBody(markdown: documentContent.markdown),
     );
   }
 }
 
-class const _LegalMarkdownBody({
-  required final String markdown,
-}) extends StatelessWidget {
+class const _LegalMarkdownBody({required final String markdown})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final bodyStyle = textTheme.bodyMedium?.copyWith(height: 1.6);
 
-    return SingleChildScrollView(
-      padding: LegalDocumentSkeleton.contentPadding,
-      child: MarkdownBody(
-        data: markdown,
-        selectable: true,
-        styleSheet: MarkdownStyleSheet(
-          p: bodyStyle,
-          h1: textTheme.headlineMedium,
-          h2: textTheme.titleLarge,
-          h3: textTheme.titleMedium,
-          h4: textTheme.titleSmall,
-          strong: bodyStyle?.copyWith(fontWeight: FontWeight.w700),
-          em: bodyStyle?.copyWith(fontStyle: FontStyle.italic),
-          a: bodyStyle?.copyWith(color: theme.colorScheme.primary),
-          listBullet: bodyStyle,
+    // Markdown's selectable text recreates SelectableText with a new key
+    // whenever dependencies change, which crashes an in-progress selection.
+    // SelectionArea selects the plain text instead.
+    return SelectionArea(
+      child: SingleChildScrollView(
+        padding: LegalDocumentSkeleton.contentPadding,
+        child: MarkdownBody(
+          data: markdown,
+          styleSheet: MarkdownStyleSheet(
+            p: bodyStyle,
+            h1: textTheme.headlineMedium,
+            h2: textTheme.titleLarge,
+            h3: textTheme.titleMedium,
+            h4: textTheme.titleSmall,
+            strong: bodyStyle?.copyWith(fontWeight: FontWeight.w700),
+            em: bodyStyle?.copyWith(fontStyle: FontStyle.italic),
+            a: bodyStyle?.copyWith(color: theme.colorScheme.primary),
+            listBullet: bodyStyle,
+          ),
         ),
       ),
     );

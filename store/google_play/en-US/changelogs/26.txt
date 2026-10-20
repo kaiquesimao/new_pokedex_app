@@ -1,0 +1,1 @@
+Recently viewed Pokémon stay at the top of the Pokédex (up to 12, on this device). Opening one shows its photo and name immediately, and the list fades out behind the detail screen.

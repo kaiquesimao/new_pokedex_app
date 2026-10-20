@@ -1,0 +1,1 @@
+Pokémon vistos recentemente ficam no topo da Pokédex (até 12, neste aparelho). Ao abrir um, a foto e o nome aparecem na hora, e a lista some atrás da tela de detalhes.

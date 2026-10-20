@@ -14,26 +14,31 @@ import 'package:pokedex_app/core/logging/browser_console_bridge.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-
-  if (kDebugMode && kIsWeb) {
-    installBrowserConsoleBridge();
-    // Prefer dart.tool.dart2wasm over identical(NaN, NaN) (Flutter Wasm docs).
-    developer.log(
-      'Web compiler: '
-      '${const bool.fromEnvironment('dart.tool.dart2wasm') ? 'dart2wasm' : 'dart2js'}',
-      name: 'flutter.web',
-    );
-  }
-
-  final packageInfo = await PackageInfo.fromPlatform();
   final sentryEnabled = isCrashReportingEnabled();
 
   await installCrashReporting(
-    appVersion: packageInfo.version,
-    buildNumber: packageInfo.buildNumber,
+    // On web, Sentry runs this callback inside runZonedGuarded. Bindings must
+    // be created here so they share that zone with runApp.
     appRunner: () async {
+      final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+      FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+      if (kDebugMode && kIsWeb) {
+        installBrowserConsoleBridge();
+        // Prefer dart.tool.dart2wasm over identical(NaN, NaN) (Flutter Wasm docs).
+        developer.log(
+          'Web compiler: '
+          '${const bool.fromEnvironment('dart.tool.dart2wasm') ? 'dart2wasm' : 'dart2js'}',
+          name: 'flutter.web',
+        );
+      }
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      await bindCrashReportingAppIdentity(
+        appVersion: packageInfo.version,
+        buildNumber: packageInfo.buildNumber,
+      );
+
       final coldStart = await runColdStart();
 
       FlutterNativeSplash.remove();

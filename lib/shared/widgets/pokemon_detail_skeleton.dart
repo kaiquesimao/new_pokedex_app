@@ -46,16 +46,8 @@ class const PokemonDetailSkeleton({super.key}) extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Positioned(
-                      top: 8,
-                      left: 8,
-                      child: _ActionStub(),
-                    ),
-                    const Positioned(
-                      top: 8,
-                      right: 8,
-                      child: _ActionStub(),
-                    ),
+                    const Positioned(top: 8, left: 8, child: _ActionStub()),
+                    const Positioned(top: 8, right: 8, child: _ActionStub()),
                   ],
                 );
               },
@@ -100,29 +92,32 @@ class const PokemonDetailSkeleton({super.key}) extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _SectionBlock(
-                    index: 0,
-                    color: base,
-                    bodyHeight: 48,
-                  ),
-                  const SizedBox(height: 24),
-                  _SectionBlock(
-                    index: 1,
-                    color: base,
-                    bodyHeight: 28,
-                  ),
-                  const SizedBox(height: 24),
-                  _SectionBlock(
-                    index: 2,
-                    color: base,
-                    bodyHeight: 72,
-                  ),
+                  const PokemonDetailSectionBlocks(),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Placeholder blocks for about, weakness, and evolution while detail loads.
+class PokemonDetailSectionBlocks extends StatelessWidget {
+  const new({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final base = SkeletonShimmerColors.base(context);
+    return Column(
+      children: [
+        _SectionBlock(index: 0, color: base, bodyHeight: 48),
+        const SizedBox(height: 24),
+        _SectionBlock(index: 1, color: base, bodyHeight: 28),
+        const SizedBox(height: 24),
+        _SectionBlock(index: 2, color: base, bodyHeight: 72),
+      ],
     );
   }
 }
