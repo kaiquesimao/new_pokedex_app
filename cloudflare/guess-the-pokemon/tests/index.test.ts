@@ -77,13 +77,15 @@ describe('top-level Worker routing', () => {
       headers: {
         origin: 'http://localhost:5000',
         'access-control-request-method': 'GET',
-        'access-control-request-headers': 'authorization,content-type,x-pokedata-client',
+        'access-control-request-headers': 'authorization,content-type,x-pokedata-client,baggage,sentry-trace',
       },
     }), testEnv);
     expect(preflight.status).toBe(204);
     expect(preflight.headers.get('access-control-allow-origin')).toBe('http://localhost:5000');
-    expect(preflight.headers.get('access-control-allow-headers')?.toLowerCase())
-      .toContain('x-pokedata-client');
+    const allowHeaders = preflight.headers.get('access-control-allow-headers')?.toLowerCase();
+    expect(allowHeaders).toContain('x-pokedata-client');
+    expect(allowHeaders).toContain('baggage');
+    expect(allowHeaders).toContain('sentry-trace');
 
     const leaderboard = await worker.fetch(new Request('https://test/v1/leaderboards?scope=global', {
       headers: { origin: 'http://127.0.0.1:5000' },
