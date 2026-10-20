@@ -155,6 +155,15 @@ jobs:
             "$BASE_URL/v1/leaderboards?scope=weekly&limit=1")
           test "$CODE" = "200"
           echo "CORS origin poke data site ok ($CODE)"
+          curl -fsS -D /tmp/cors-preflight.txt -o /dev/null \
+            -X OPTIONS \
+            -H "Origin: https://pokedata.kaique.site" \
+            -H "Access-Control-Request-Method: GET" \
+            -H "Access-Control-Request-Headers: authorization,content-type,baggage,sentry-trace" \
+            "$BASE_URL/v1/leaderboards?scope=global"
+          grep -qi 'access-control-allow-headers:.*sentry-trace' /tmp/cors-preflight.txt
+          grep -qi 'access-control-allow-headers:.*baggage' /tmp/cors-preflight.txt
+          echo "CORS preflight allows Sentry tracing headers"
 
   deploy-web:
     name: Deploy web (production)

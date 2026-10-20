@@ -35,16 +35,22 @@ export function isAllowedOrigin(origin: string, env: Cloudflare.Env): boolean {
   return allowedOrigins(env).has(origin) || isLocalDevOrigin(origin);
 }
 
+/** Headers the Flutter web client may send. Browsers reject the request if any is missing here. */
+const ALLOWED_REQUEST_HEADERS = [
+  'Authorization',
+  'Content-Type',
+  'X-PokeData-Client',
+  // sentry_dio tracing on Flutter web.
+  'baggage',
+  'sentry-trace',
+].join(', ');
+
 function applyCorsHeaders(headers: Headers, origin: string | undefined, env: Cloudflare.Env): void {
   headers.set('vary', 'Origin');
   if (origin && isAllowedOrigin(origin, env)) {
     headers.set('access-control-allow-origin', origin);
     headers.set('access-control-allow-methods', 'GET, POST, PATCH, OPTIONS');
-    // Flutter web Dio sends X-PokeData-Client; omitting it fails browser preflight.
-    headers.set(
-      'access-control-allow-headers',
-      'Authorization, Content-Type, X-PokeData-Client',
-    );
+    headers.set('access-control-allow-headers', ALLOWED_REQUEST_HEADERS);
     headers.set('access-control-max-age', '600');
   }
 }
