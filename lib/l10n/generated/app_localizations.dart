@@ -1022,6 +1022,18 @@ abstract class AppLocalizations {
   /// **'Could not open the store listing. Try again later.'**
   String get profileRateAppError;
 
+  /// SnackBar after a flexible Play in-app update finishes downloading
+  ///
+  /// In en, this message translates to:
+  /// **'Update downloaded. Restart to install.'**
+  String get appUpdateReadyMessage;
+
+  /// SnackBar action that applies a downloaded flexible update
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get appUpdateRestartAction;
+
   /// No description provided for @profileActionSuccess.
   ///
   /// In en, this message translates to:

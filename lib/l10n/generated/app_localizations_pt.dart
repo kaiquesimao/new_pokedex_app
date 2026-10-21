@@ -516,6 +516,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível abrir a loja. Tente de novo mais tarde.';
 
   @override
+  String get appUpdateReadyMessage =>
+      'Atualização baixada. Reinicie para instalar.';
+
+  @override
+  String get appUpdateRestartAction => 'Reiniciar';
+
+  @override
   String get profileActionSuccess => 'Ação realizada com sucesso';
 
   @override
