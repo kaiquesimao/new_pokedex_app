@@ -30,7 +30,6 @@ void main() {
     test('maps updateAvailable + flags from Play info', () async {
       final service = PlayAppUpdateService(
         checkForUpdateFn: () async => _info(
-          flexible: true,
           immediate: false,
           status: InstallStatus.downloaded,
           versionCode: 30,
