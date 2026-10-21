@@ -1,0 +1,1 @@
+No Android, o app agora pode oferecer atualizações da Play Store dentro do próprio app, para você receber a versão mais recente mais cedo sem precisar procurar na loja.

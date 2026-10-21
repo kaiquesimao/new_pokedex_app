@@ -1,0 +1,1 @@
+On Android, the app can now offer Play Store updates inside the app so you get the latest version sooner without hunting for it in the store.
