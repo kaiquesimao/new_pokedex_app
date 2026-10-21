@@ -152,5 +152,50 @@ void main() {
 
       expect(service.completeCalls, 1);
     });
+
+    test('returns none when flexible is not allowed and immediate is off',
+        () async {
+      final service = _FakeAppUpdateService()
+        ..info = const AppUpdateAvailabilityInfo(
+          updateAvailable: true,
+          flexibleAllowed: false,
+          immediateAllowed: false,
+          alreadyDownloaded: false,
+          availableVersionCode: 27,
+        );
+      final controller = AppUpdateController(
+        service: service,
+        minimumRequiredVersionCode: 0,
+        readInstalledVersionCode: () async => 26,
+      );
+
+      expect(await controller.checkOnLaunch(), AppUpdateLaunchOutcome.none);
+      expect(service.flexibleCalls, 0);
+      expect(service.immediateCalls, 0);
+    });
+
+    test('falls back to flexible when below min but immediate disallowed',
+        () async {
+      final service = _FakeAppUpdateService()
+        ..info = const AppUpdateAvailabilityInfo(
+          updateAvailable: true,
+          flexibleAllowed: true,
+          immediateAllowed: false,
+          alreadyDownloaded: false,
+          availableVersionCode: 30,
+        );
+      final controller = AppUpdateController(
+        service: service,
+        minimumRequiredVersionCode: 28,
+        readInstalledVersionCode: () async => 26,
+      );
+
+      expect(
+        await controller.checkOnLaunch(),
+        AppUpdateLaunchOutcome.flexibleReadyToInstall,
+      );
+      expect(service.immediateCalls, 0);
+      expect(service.flexibleCalls, 1);
+    });
   });
 }
