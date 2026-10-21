@@ -45,5 +45,12 @@ abstract final class Env {
   /// Sentry DSN for crash reporting (Android + web). Empty disables Sentry.
   static const String sentryDsn = String.fromEnvironment('SENTRY_DSN');
 
+  /// When > 0 and the installed Android `versionCode` is below this value,
+  /// prefer a blocking immediate Play in-app update (POK-68 hook).
+  /// Default 0 = never force immediate; flexible updates remain the default.
+  static const int androidMinRequiredVersionCode = int.fromEnvironment(
+    'ANDROID_MIN_REQUIRED_VERSION_CODE',
+  );
+
   static bool get isFirebaseConfigured => projectId.isNotEmpty;
 }

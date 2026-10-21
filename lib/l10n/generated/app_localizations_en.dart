@@ -515,6 +515,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not open the store listing. Try again later.';
 
   @override
+  String get appUpdateReadyMessage => 'Update downloaded. Restart to install.';
+
+  @override
+  String get appUpdateRestartAction => 'Restart';
+
+  @override
   String get profileActionSuccess => 'Action completed';
 
   @override

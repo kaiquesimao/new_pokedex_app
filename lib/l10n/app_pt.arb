@@ -287,6 +287,14 @@
   "profileAboutLabel": "Sobre",
   "profileRateAppLabel": "Avaliar o app",
   "profileRateAppError": "Não foi possível abrir a loja. Tente de novo mais tarde.",
+  "appUpdateReadyMessage": "Atualização baixada. Reinicie para instalar.",
+  "@appUpdateReadyMessage": {
+    "description": "SnackBar após o download de uma atualização in-app flexível da Play"
+  },
+  "appUpdateRestartAction": "Reiniciar",
+  "@appUpdateRestartAction": {
+    "description": "Ação do SnackBar que aplica a atualização flexível baixada"
+  },
   "profileActionSuccess": "Ação realizada com sucesso"
 ,
   "evolutionTriggerLevel": "Nível {minLevel}",

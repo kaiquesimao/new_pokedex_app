@@ -7,6 +7,7 @@ import 'package:pokedex_app/core/providers/theme_provider.dart';
 import 'package:pokedex_app/core/router/app_router.dart';
 import 'package:pokedex_app/core/theme/app_scroll_behavior.dart';
 import 'package:pokedex_app/core/theme/app_theme.dart';
+import 'package:pokedex_app/features/app_update/presentation/widgets/app_update_host.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_session_effects_provider.dart';
 import 'package:pokedex_app/l10n/app_localization_delegates.dart';
 import 'package:pokedex_app/shared/widgets/offline_banner.dart';
@@ -37,6 +38,7 @@ class const PokedexApp({super.key}) extends ConsumerWidget {
         children: [
           const WideViewportBackdrop(),
           WideViewportTheme(child: AppOfflineShell(child: child)),
+          const AppUpdateHost(),
         ],
       ),
     );

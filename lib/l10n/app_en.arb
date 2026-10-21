@@ -294,7 +294,15 @@
   "profileHelpLabel": "Help",
   "profileAboutLabel": "About",
   "profileRateAppLabel": "Rate the app",
-  "profileRateAppError": "Could not open the store listing. Try again later."
+  "profileRateAppError": "Could not open the store listing. Try again later.",
+  "appUpdateReadyMessage": "Update downloaded. Restart to install.",
+  "@appUpdateReadyMessage": {
+    "description": "SnackBar after a flexible Play in-app update finishes downloading"
+  },
+  "appUpdateRestartAction": "Restart",
+  "@appUpdateRestartAction": {
+    "description": "SnackBar action that applies a downloaded flexible update"
+  }
 ,
   "profileActionSuccess": "Action completed"
 ,
