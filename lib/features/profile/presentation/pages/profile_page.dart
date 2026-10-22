@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
+import 'package:pokedex_app/core/support/app_support_links.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
@@ -88,6 +89,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
             ],
             const SizedBox(height: 24),
+            _SupportProjectSection(
+              onSupportTap: () => _handleSupportProject(context),
+            ),
+            const SizedBox(height: 24),
             _SettingsSections(
               settings: settings,
               versionLabel: versionLabel,
@@ -98,13 +103,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     .read(profileSettingsProvider.notifier)
                     .setNotifyNewPokemon(value: value),
               ),
-               onToggleNotifyUpdates: (value) => _saveSetting(
+              onToggleNotifyUpdates: (value) => _saveSetting(
                 context,
                 ref,
                 () => ref
                     .read(profileSettingsProvider.notifier)
                     .setNotifyAppUpdates(value: value),
-               ),
+              ),
               onToggleAppLanguage: () => _saveSetting(
                 context,
                 ref,
@@ -147,6 +152,25 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           content: Text(
             AppLocalizations.of(context).profileRateAppError,
           ),
+        ),
+      );
+    }
+  }
+
+  static Future<void> _handleSupportProject(BuildContext context) async {
+    try {
+      final opened = await AppSupportLinks.openDonationPage();
+      if (opened || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).profileSupportError),
+        ),
+      );
+    } on Object {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).profileSupportError),
         ),
       );
     }
@@ -297,6 +321,39 @@ class const _AccountSection({
             value: '••••••••',
             onTap: onChangePassword,
           ),
+      ],
+    );
+  }
+}
+
+class const _SupportProjectSection({
+  required final VoidCallback onSupportTap,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return _SettingsGroup(
+      title: l10n.profileSupportLabel,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            l10n.aboutSupportBody,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              height: 1.4,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: AppButton(
+            label: l10n.aboutSupportButton,
+            onPressed: onSupportTap,
+          ),
+        ),
       ],
     );
   }

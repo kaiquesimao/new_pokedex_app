@@ -245,6 +245,33 @@ void main() {
     );
   });
 
+  testWidgets('profile shows voluntary Ko-fi support section', (tester) async {
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+      ],
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Doar no Ko-fi'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Apoiar o projeto'), findsOneWidget);
+    expect(find.text('Doar no Ko-fi'), findsOneWidget);
+    expect(
+      find.textContaining('sem anúncios e nada fica travado'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('profile shows rate app row and opens review flow', (
     tester,
   ) async {

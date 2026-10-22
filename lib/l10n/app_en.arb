@@ -293,6 +293,14 @@
   "profileAccountDeletionLabel": "Account and data deletion",
   "profileHelpLabel": "Help",
   "profileAboutLabel": "About",
+  "profileSupportLabel": "Support the project",
+  "@profileSupportLabel": {
+    "description": "Profile/About: open voluntary donation page (Ko-fi)"
+  },
+  "profileSupportError": "Could not open the donation page. Try again later.",
+  "@profileSupportError": {
+    "description": "SnackBar when url_launcher fails to open the donation link"
+  },
   "profileRateAppLabel": "Rate the app",
   "profileRateAppError": "Could not open the store listing. Try again later.",
   "appUpdateReadyMessage": "Update downloaded. Restart to install.",
@@ -459,22 +467,46 @@
   "@aboutVersion": { "placeholders": { "version": {}, "build": {} } },
   "aboutVersionLoading": "Version …",
   "aboutVersionUnavailable": "Version unavailable",
-  "aboutTagline": "A fan-made Pokédex to explore Pokémon, regions, favorites, and details with up-to-date PokéAPI data.",
-  "aboutDevelopedBy": "Developed by",
-  "aboutAcknowledgments": "Acknowledgments",
+  "aboutTagline": "A fan-made Pokédex to explore Pokémon, regions, favorites, and details — with data from PokéAPI.",
+  "aboutDevelopedBy": "Created by",
+  "aboutAcknowledgments": "Thanks",
   "aboutCredits": "Credits",
   "aboutKaiqueTitle": "Kaique Simão",
-  "aboutKaiqueBody": "Creator and developer of PokeData.",
+  "aboutKaiqueBody": "Creator of PokeData.",
   "aboutJuniorTitle": "Junior Saraiva",
-  "aboutJuniorBody": "Created the Figma Community design that served as the visual reference for this project.",
+  "aboutJuniorBody": "Created the visual design that inspired this app.",
   "aboutLinkedInProfile": "LinkedIn profile",
-  "aboutFigmaProject": "Figma project",
+  "aboutFigmaProject": "View original design",
   "aboutCreditPokeApiTitle": "PokéAPI",
-  "aboutCreditPokeApiBody": "Pokémon, species, type, and evolution data.",
-  "aboutCreditFlutterTitle": "Flutter",
-  "aboutCreditFlutterBody": "Cross-platform app framework.",
-  "aboutCreditFirebaseTitle": "Firebase",
-  "aboutCreditFirebaseBody": "Authentication, favorites, and cloud sync.",
+  "aboutCreditPokeApiBody": "Thanks for the Pokémon, species, type, and evolution data used in this app.",
+  "aboutSupportTitle": "Support the project",
+  "@aboutSupportTitle": {
+    "description": "About page section title for voluntary donations"
+  },
+  "aboutSupportBody": "PokeData is free for everyone — no ads, and nothing is locked. If you'd like to help keep it that way, an optional contribution is always welcome. There's no pressure, and supporting doesn't change anything in the app.",
+  "@aboutSupportBody": {
+    "description": "About page copy clarifying donations are voluntary"
+  },
+  "aboutSupportButton": "Donate on Ko-fi",
+  "@aboutSupportButton": {
+    "description": "About page CTA that opens the Ko-fi donation page"
+  },
+  "supportPromptTitle": "Thanks for supporting PokeData",
+  "@supportPromptTitle": {
+    "description": "Opportunistic Ko-fi support dialog title"
+  },
+  "supportPromptBody": "If you can, a coffee helps keep the app running and makes it even better.",
+  "@supportPromptBody": {
+    "description": "Opportunistic Ko-fi support dialog body"
+  },
+  "supportPromptNotNow": "Not now",
+  "@supportPromptNotNow": {
+    "description": "Opportunistic Ko-fi support dialog dismiss action"
+  },
+  "favoritesEmptySupportCta": "Support with a coffee",
+  "@favoritesEmptySupportCta": {
+    "description": "Soft CTA on empty Favorites that opens the Ko-fi support dialog"
+  },
   "aboutDisclaimer": "PokeData is an unofficial fan app. It is not developed, endorsed, or affiliated with Nintendo, Creatures Inc., GAME FREAK, or The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.",
 
   "errorNetworkOffline": "No internet connection.",

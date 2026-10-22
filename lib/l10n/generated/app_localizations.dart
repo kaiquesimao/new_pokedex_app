@@ -1010,6 +1010,18 @@ abstract class AppLocalizations {
   /// **'About'**
   String get profileAboutLabel;
 
+  /// Profile/About: open voluntary donation page (Ko-fi)
+  ///
+  /// In en, this message translates to:
+  /// **'Support the project'**
+  String get profileSupportLabel;
+
+  /// SnackBar when url_launcher fails to open the donation link
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the donation page. Try again later.'**
+  String get profileSupportError;
+
   /// No description provided for @profileRateAppLabel.
   ///
   /// In en, this message translates to:
@@ -1745,19 +1757,19 @@ abstract class AppLocalizations {
   /// No description provided for @aboutTagline.
   ///
   /// In en, this message translates to:
-  /// **'A fan-made Pokédex to explore Pokémon, regions, favorites, and details with up-to-date PokéAPI data.'**
+  /// **'A fan-made Pokédex to explore Pokémon, regions, favorites, and details — with data from PokéAPI.'**
   String get aboutTagline;
 
   /// No description provided for @aboutDevelopedBy.
   ///
   /// In en, this message translates to:
-  /// **'Developed by'**
+  /// **'Created by'**
   String get aboutDevelopedBy;
 
   /// No description provided for @aboutAcknowledgments.
   ///
   /// In en, this message translates to:
-  /// **'Acknowledgments'**
+  /// **'Thanks'**
   String get aboutAcknowledgments;
 
   /// No description provided for @aboutCredits.
@@ -1775,7 +1787,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutKaiqueBody.
   ///
   /// In en, this message translates to:
-  /// **'Creator and developer of PokeData.'**
+  /// **'Creator of PokeData.'**
   String get aboutKaiqueBody;
 
   /// No description provided for @aboutJuniorTitle.
@@ -1787,7 +1799,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutJuniorBody.
   ///
   /// In en, this message translates to:
-  /// **'Created the Figma Community design that served as the visual reference for this project.'**
+  /// **'Created the visual design that inspired this app.'**
   String get aboutJuniorBody;
 
   /// No description provided for @aboutLinkedInProfile.
@@ -1799,7 +1811,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutFigmaProject.
   ///
   /// In en, this message translates to:
-  /// **'Figma project'**
+  /// **'View original design'**
   String get aboutFigmaProject;
 
   /// No description provided for @aboutCreditPokeApiTitle.
@@ -1811,32 +1823,50 @@ abstract class AppLocalizations {
   /// No description provided for @aboutCreditPokeApiBody.
   ///
   /// In en, this message translates to:
-  /// **'Pokémon, species, type, and evolution data.'**
+  /// **'Thanks for the Pokémon, species, type, and evolution data used in this app.'**
   String get aboutCreditPokeApiBody;
 
-  /// No description provided for @aboutCreditFlutterTitle.
+  /// About page section title for voluntary donations
   ///
   /// In en, this message translates to:
-  /// **'Flutter'**
-  String get aboutCreditFlutterTitle;
+  /// **'Support the project'**
+  String get aboutSupportTitle;
 
-  /// No description provided for @aboutCreditFlutterBody.
+  /// About page copy clarifying donations are voluntary
   ///
   /// In en, this message translates to:
-  /// **'Cross-platform app framework.'**
-  String get aboutCreditFlutterBody;
+  /// **'PokeData is free for everyone — no ads, and nothing is locked. If you\'d like to help keep it that way, an optional contribution is always welcome. There\'s no pressure, and supporting doesn\'t change anything in the app.'**
+  String get aboutSupportBody;
 
-  /// No description provided for @aboutCreditFirebaseTitle.
+  /// About page CTA that opens the Ko-fi donation page
   ///
   /// In en, this message translates to:
-  /// **'Firebase'**
-  String get aboutCreditFirebaseTitle;
+  /// **'Donate on Ko-fi'**
+  String get aboutSupportButton;
 
-  /// No description provided for @aboutCreditFirebaseBody.
+  /// Opportunistic Ko-fi support dialog title
   ///
   /// In en, this message translates to:
-  /// **'Authentication, favorites, and cloud sync.'**
-  String get aboutCreditFirebaseBody;
+  /// **'Thanks for supporting PokeData'**
+  String get supportPromptTitle;
+
+  /// Opportunistic Ko-fi support dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'If you can, a coffee helps keep the app running and makes it even better.'**
+  String get supportPromptBody;
+
+  /// Opportunistic Ko-fi support dialog dismiss action
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get supportPromptNotNow;
+
+  /// Soft CTA on empty Favorites that opens the Ko-fi support dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Support with a coffee'**
+  String get favoritesEmptySupportCta;
 
   /// No description provided for @aboutDisclaimer.
   ///

@@ -166,7 +166,11 @@ class _PokemonDetailRouteState extends ConsumerState<PokemonDetailRoute> {
       unawaited(showLoginRequiredBottomSheet(context));
       return;
     }
-    toggleAuthenticatedFavorite(ref, pokemonId: widget.pokemonId);
+    toggleAuthenticatedFavorite(
+      ref,
+      pokemonId: widget.pokemonId,
+      context: context,
+    );
   }
 }
 

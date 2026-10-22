@@ -509,6 +509,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileAboutLabel => 'Sobre';
 
   @override
+  String get profileSupportLabel => 'Apoiar o projeto';
+
+  @override
+  String get profileSupportError =>
+      'Não foi possível abrir a página de doação. Tente de novo mais tarde.';
+
+  @override
   String get profileRateAppLabel => 'Avaliar o app';
 
   @override
@@ -917,10 +924,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutTagline =>
-      'Pokedéx feita por fãs para explorar Pokémon, regiões, favoritos e detalhes com dados atualizados da PokéAPI.';
+      'Pokédex feita por fãs para explorar Pokémon, regiões, favoritos e detalhes — com dados da PokéAPI.';
 
   @override
-  String get aboutDevelopedBy => 'Desenvolvido por';
+  String get aboutDevelopedBy => 'Criado por';
 
   @override
   String get aboutAcknowledgments => 'Agradecimentos';
@@ -932,40 +939,49 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aboutKaiqueTitle => 'Kaique Simão';
 
   @override
-  String get aboutKaiqueBody => 'Criador e desenvolvedor do PokeData.';
+  String get aboutKaiqueBody => 'Criador do PokeData.';
 
   @override
   String get aboutJuniorTitle => 'Junior Saraiva';
 
   @override
-  String get aboutJuniorBody =>
-      'Criou o design no Figma Community que serviu de referência visual para este projeto.';
+  String get aboutJuniorBody => 'Criou o design visual que inspirou este app.';
 
   @override
   String get aboutLinkedInProfile => 'Perfil no LinkedIn';
 
   @override
-  String get aboutFigmaProject => 'Projeto no Figma';
+  String get aboutFigmaProject => 'Ver o design original';
 
   @override
   String get aboutCreditPokeApiTitle => 'PokéAPI';
 
   @override
   String get aboutCreditPokeApiBody =>
-      'Dados de Pokémon, espécies, tipos e evoluções.';
+      'Agradecemos pelos dados de Pokémon, espécies, tipos e evoluções usados neste app.';
 
   @override
-  String get aboutCreditFlutterTitle => 'Flutter';
+  String get aboutSupportTitle => 'Apoiar o projeto';
 
   @override
-  String get aboutCreditFlutterBody => 'Framework multiplataforma do app.';
+  String get aboutSupportBody =>
+      'O PokeData é gratuito para todo mundo — sem anúncios e nada fica travado. Se quiser ajudar a manter assim, uma contribuição opcional é sempre bem-vinda. Sem pressão: apoiar não muda nada na sua experiência no app.';
 
   @override
-  String get aboutCreditFirebaseTitle => 'Firebase';
+  String get aboutSupportButton => 'Doar no Ko-fi';
 
   @override
-  String get aboutCreditFirebaseBody =>
-      'Autenticação, favoritos e sincronização em nuvem.';
+  String get supportPromptTitle => 'Obrigado por apoiar o PokeData';
+
+  @override
+  String get supportPromptBody =>
+      'Se puder, um café ajuda a manter o app no ar e a melhorar ele.';
+
+  @override
+  String get supportPromptNotNow => 'Agora não';
+
+  @override
+  String get favoritesEmptySupportCta => 'Apoie com um café';
 
   @override
   String get aboutDisclaimer =>

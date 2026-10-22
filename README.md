@@ -196,6 +196,17 @@ Production shipping target is Android (Play Store) plus Web. **iOS is a planned 
 
 ---
 
+## Support the project
+
+PokeData is free for everyone — **no ads, and nothing is locked**. If you'd like to help keep it that way, an optional contribution is always welcome. There's no pressure, and supporting doesn't change anything in the app.
+
+- In the app: **Profile → Support the project** (Donate on Ko-fi) and the same CTA on **About**
+- On the web: [Ko-fi — kaiquesimao](https://ko-fi.com/kaiquesimao)
+
+Ko-fi is the only contribution channel in this release. Other methods may come later.
+
+---
+
 ## Disclaimer
 
 PokeData is a **fan-made** project. It is not developed, endorsed, or affiliated with Nintendo, The Pokémon Company, Game Freak, or Creatures Inc. Pokémon and Pokémon character names are trademarks of their respective owners. Species data is sourced from [PokéAPI](https://pokeapi.co/).

@@ -196,6 +196,17 @@ O alvo de produção atual é Android (Play Store) + Web. **iOS é plataforma fu
 
 ---
 
+## Apoiar o projeto
+
+O PokeData é gratuito para todo mundo — **sem anúncios e nada fica travado**. Se quiser ajudar a manter assim, uma contribuição opcional é sempre bem-vinda. Sem pressão: apoiar não muda nada na sua experiência no app.
+
+- No app: **Perfil → Apoiar o projeto** (Doar no Ko-fi) e o mesmo CTA em **Sobre**
+- Na web: [Ko-fi — kaiquesimao](https://ko-fi.com/kaiquesimao)
+
+Ko-fi é o único canal de contribuição nesta versão. Outros métodos podem vir depois.
+
+---
+
 ## Aviso legal
 
 PokeData é um projeto **fan-made**. Não é desenvolvido, endossado ou afiliado à Nintendo, The Pokémon Company, Game Freak ou Creatures Inc. Pokémon e nomes de personagens Pokémon são marcas de seus respectivos proprietários. Dados de espécies vêm da [PokéAPI](https://pokeapi.co/).

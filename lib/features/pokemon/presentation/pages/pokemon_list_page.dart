@@ -273,7 +273,7 @@ class _PokemonListPageState extends ConsumerState<PokemonListPage> {
       return;
     }
 
-    toggleAuthenticatedFavorite(ref, pokemonId: pokemonId);
+    toggleAuthenticatedFavorite(ref, pokemonId: pokemonId, context: context);
   }
 }
 
