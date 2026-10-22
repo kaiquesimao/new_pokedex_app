@@ -38,6 +38,12 @@ void main() {
     expect(find.text('Junior Saraiva'), findsOneWidget);
     expect(find.text('Perfil no LinkedIn'), findsNWidgets(2));
     expect(find.text('Projeto no Figma'), findsOneWidget);
+    expect(find.text('Apoiar o projeto'), findsOneWidget);
+    expect(find.text('Doar no Ko-fi'), findsOneWidget);
+    expect(
+      find.textContaining('sem anúncios e sem paywall'),
+      findsOneWidget,
+    );
     expect(
       find.textContaining('Não é desenvolvido, endossado ou afiliado'),
       findsOneWidget,
