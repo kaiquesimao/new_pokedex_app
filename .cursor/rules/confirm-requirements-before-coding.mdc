@@ -1,0 +1,21 @@
+---
+description: Stop and ask the user before inventing missing product requirements
+alwaysApply: true
+---
+
+# Confirm requirements before writing code
+
+Before implementing a Linear issue, GitHub issue, or feature request:
+
+1. **Gap-check first.** List what is specified vs missing: product choices, external accounts/URLs, monetization/donation methods, API keys, brand/copy, acceptance criteria, and store/policy constraints.
+2. **Stop and ask** in chat when anything material is undecided. Prefer a short numbered list of open questions over guessing.
+3. **Do not invent** third-party services, usernames, donation/payment URLs, API keys, brand choices, or "reasonable defaults" for product decisions — even if the ticket lists examples (e.g. Ko-fi / Pix / Sponsors) and says "define in the PR".
+4. **Align before code.** When the means/approach is open, run a planning conversation and wait for confirmation (or an explicit "proceed with these assumptions") before writing implementation, opening a shipping PR, or moving the issue to In Review.
+5. **Scaffolding exception:** You may sketch a plan or list options in chat without committing fake destinations. Do not hardcode placeholder provider URLs into the app, README, FUNDING.yml, changelogs, or tests.
+
+```text
+❌ BAD — pick Ko-fi, invent https://ko-fi.com/<username>, ship a PR, mark In Review
+✅ GOOD — ask: which donation method? real URL/account? Profile and/or About? copy OK?
+```
+
+Shipping code that depends on an unconfirmed external account or URL is a process failure even if tests pass.
