@@ -1010,6 +1010,18 @@ abstract class AppLocalizations {
   /// **'About'**
   String get profileAboutLabel;
 
+  /// Profile/About: open voluntary donation page (Ko-fi)
+  ///
+  /// In en, this message translates to:
+  /// **'Support the project'**
+  String get profileSupportLabel;
+
+  /// SnackBar when url_launcher fails to open the donation link
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the donation page. Try again later.'**
+  String get profileSupportError;
+
   /// No description provided for @profileRateAppLabel.
   ///
   /// In en, this message translates to:
@@ -1837,6 +1849,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Authentication, favorites, and cloud sync.'**
   String get aboutCreditFirebaseBody;
+
+  /// About page section title for voluntary donations
+  ///
+  /// In en, this message translates to:
+  /// **'Support the project'**
+  String get aboutSupportTitle;
+
+  /// About page copy clarifying donations are voluntary
+  ///
+  /// In en, this message translates to:
+  /// **'PokeData is free — no ads and no paywall. Optional donations help cover hosting, APIs, the Play Console, and development time. Support is voluntary and unlocks nothing exclusive.'**
+  String get aboutSupportBody;
+
+  /// About page CTA that opens the Ko-fi donation page
+  ///
+  /// In en, this message translates to:
+  /// **'Donate on Ko-fi'**
+  String get aboutSupportButton;
 
   /// No description provided for @aboutDisclaimer.
   ///

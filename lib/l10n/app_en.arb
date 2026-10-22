@@ -293,6 +293,14 @@
   "profileAccountDeletionLabel": "Account and data deletion",
   "profileHelpLabel": "Help",
   "profileAboutLabel": "About",
+  "profileSupportLabel": "Support the project",
+  "@profileSupportLabel": {
+    "description": "Profile/About: open voluntary donation page (Ko-fi)"
+  },
+  "profileSupportError": "Could not open the donation page. Try again later.",
+  "@profileSupportError": {
+    "description": "SnackBar when url_launcher fails to open the donation link"
+  },
   "profileRateAppLabel": "Rate the app",
   "profileRateAppError": "Could not open the store listing. Try again later.",
   "appUpdateReadyMessage": "Update downloaded. Restart to install.",
@@ -475,6 +483,18 @@
   "aboutCreditFlutterBody": "Cross-platform app framework.",
   "aboutCreditFirebaseTitle": "Firebase",
   "aboutCreditFirebaseBody": "Authentication, favorites, and cloud sync.",
+  "aboutSupportTitle": "Support the project",
+  "@aboutSupportTitle": {
+    "description": "About page section title for voluntary donations"
+  },
+  "aboutSupportBody": "PokeData is free — no ads and no paywall. Optional donations help cover hosting, APIs, the Play Console, and development time. Support is voluntary and unlocks nothing exclusive.",
+  "@aboutSupportBody": {
+    "description": "About page copy clarifying donations are voluntary"
+  },
+  "aboutSupportButton": "Donate on Ko-fi",
+  "@aboutSupportButton": {
+    "description": "About page CTA that opens the Ko-fi donation page"
+  },
   "aboutDisclaimer": "PokeData is an unofficial fan app. It is not developed, endorsed, or affiliated with Nintendo, Creatures Inc., GAME FREAK, or The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.",
 
   "errorNetworkOffline": "No internet connection.",

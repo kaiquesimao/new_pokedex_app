@@ -509,6 +509,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileAboutLabel => 'Sobre';
 
   @override
+  String get profileSupportLabel => 'Apoiar o projeto';
+
+  @override
+  String get profileSupportError =>
+      'Não foi possível abrir a página de doação. Tente de novo mais tarde.';
+
+  @override
   String get profileRateAppLabel => 'Avaliar o app';
 
   @override
@@ -966,6 +973,16 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get aboutCreditFirebaseBody =>
       'Autenticação, favoritos e sincronização em nuvem.';
+
+  @override
+  String get aboutSupportTitle => 'Apoiar o projeto';
+
+  @override
+  String get aboutSupportBody =>
+      'O PokeData é gratuito — sem anúncios e sem paywall. Doações opcionais ajudam a cobrir hosting, APIs, a Play Console e o tempo de desenvolvimento. O apoio é voluntário e não libera nada exclusivo.';
+
+  @override
+  String get aboutSupportButton => 'Doar no Ko-fi';
 
   @override
   String get aboutDisclaimer =>

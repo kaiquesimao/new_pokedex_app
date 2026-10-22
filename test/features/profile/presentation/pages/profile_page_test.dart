@@ -245,6 +245,28 @@ void main() {
     );
   });
 
+  testWidgets('profile shows support the project row', (tester) async {
+    await pumpLocalizedApp(
+      tester,
+      child: const ProfilePage(),
+      overrides: [
+        firebaseUnavailableOverride,
+        authProvider.overrideWithBuild(
+          (ref, notifier) => const AuthState(isInitialized: true),
+        ),
+      ],
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Apoiar o projeto'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Apoiar o projeto'), findsOneWidget);
+  });
+
   testWidgets('profile shows rate app row and opens review flow', (
     tester,
   ) async {

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
+import 'package:pokedex_app/core/support/app_support_links.dart';
 import 'package:pokedex_app/l10n/generated/app_localizations.dart';
 import 'package:pokedex_app/shared/widgets/safe_page_body.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -148,6 +151,18 @@ class const AboutPage({super.key}) extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  l10n.aboutSupportTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _SupportCard(l10n: l10n),
+              const SizedBox(height: 24),
               _DisclaimerCard(theme: theme, text: l10n.aboutDisclaimer),
             ],
           ),
@@ -259,6 +274,60 @@ class const _CreditTile({
         ),
       ),
     );
+  }
+}
+
+class const _SupportCard({required final AppLocalizations l10n})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.aboutSupportBody,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () {
+                  unawaited(_openDonation(context));
+                },
+                icon: const Icon(Icons.favorite_outline, size: 18),
+                label: Text(l10n.aboutSupportButton),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Future<void> _openDonation(BuildContext context) async {
+    try {
+      final opened = await AppSupportLinks.openDonationPage();
+      if (opened || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).profileSupportError)),
+      );
+    } on Object {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).profileSupportError)),
+      );
+    }
   }
 }
 

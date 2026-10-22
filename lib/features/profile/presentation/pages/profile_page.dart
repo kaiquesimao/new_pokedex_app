@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/providers/package_info_provider.dart';
+import 'package:pokedex_app/core/support/app_support_links.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
@@ -116,6 +117,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               onPrivacyTap: () => context.push('/legal/privacy'),
               onRateTap: () => _handleRateApp(context, ref),
               onHelpTap: () => context.push('/profile/help'),
+              onSupportTap: () => _handleSupportProject(context),
               onAboutTap: () => context.push('/profile/about'),
             ),
             if (auth.isAuthenticated) ...[
@@ -147,6 +149,25 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           content: Text(
             AppLocalizations.of(context).profileRateAppError,
           ),
+        ),
+      );
+    }
+  }
+
+  static Future<void> _handleSupportProject(BuildContext context) async {
+    try {
+      final opened = await AppSupportLinks.openDonationPage();
+      if (opened || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).profileSupportError),
+        ),
+      );
+    } on Object {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).profileSupportError),
         ),
       );
     }
@@ -312,6 +333,7 @@ class const _SettingsSections({
   required final VoidCallback onPrivacyTap,
   required final VoidCallback onRateTap,
   required final VoidCallback onHelpTap,
+  required final VoidCallback onSupportTap,
   required final VoidCallback onAboutTap,
 }) extends StatelessWidget {
   @override
@@ -372,6 +394,10 @@ class const _SettingsSections({
             _ChevronRow(
               label: l10n.profileHelpLabel,
               onTap: onHelpTap,
+            ),
+            _ChevronRow(
+              label: l10n.profileSupportLabel,
+              onTap: onSupportTap,
             ),
             _ChevronRow(
               label: l10n.profileAboutLabel,
