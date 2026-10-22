@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/analytics/app_analytics.dart';
 import 'package:pokedex_app/core/network/network_errors.dart';
 import 'package:pokedex_app/core/providers/connectivity_provider.dart';
+import 'package:pokedex_app/core/support/support_prompt_controller.dart';
 import 'package:pokedex_app/core/theme/app_colors.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/login_required_bottom_sheet.dart';
@@ -123,6 +124,7 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
       unawaited(
         ref.read(recentPokemonProvider.notifier).record(widget.pokemon.id),
       );
+      _recordSupportPromptDetailOpen();
     });
   }
 
@@ -136,8 +138,17 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         unawaited(ref.read(recentPokemonProvider.notifier).record(pokemonId));
+        _recordSupportPromptDetailOpen();
       });
     }
+  }
+
+  void _recordSupportPromptDetailOpen() {
+    scheduleSupportPrompt(
+      () => ref
+          .read(supportPromptControllerProvider)
+          .onPokemonDetailOpened(context),
+    );
   }
 
   @override
@@ -230,7 +241,11 @@ class _PokemonDetailContentState extends ConsumerState<_PokemonDetailContent> {
       return;
     }
 
-    toggleAuthenticatedFavorite(ref, pokemonId: widget.pokemonId);
+    toggleAuthenticatedFavorite(
+      ref,
+      pokemonId: widget.pokemonId,
+      context: context,
+    );
   }
 }
 

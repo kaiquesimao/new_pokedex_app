@@ -971,6 +971,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aboutSupportButton => 'Doar no Ko-fi';
 
   @override
+  String get supportPromptTitle => 'Obrigado por apoiar o PokeData';
+
+  @override
+  String get supportPromptBody =>
+      'Se puder, um café ajuda a manter o app no ar e a melhorar ele.';
+
+  @override
+  String get supportPromptNotNow => 'Agora não';
+
+  @override
+  String get favoritesEmptySupportCta => 'Apoie com um café';
+
+  @override
   String get aboutDisclaimer =>
       'O PokeData é um aplicativo de fãs, não oficial. Não é desenvolvido, endossado ou afiliado à Nintendo, Creatures Inc., GAME FREAK ou The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.';
 

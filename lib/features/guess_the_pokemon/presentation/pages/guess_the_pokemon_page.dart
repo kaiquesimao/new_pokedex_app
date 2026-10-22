@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pokedex_app/core/support/support_prompt_controller.dart';
+import 'package:pokedex_app/core/support/support_prompt_policy.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/data/models/game_api_models.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/game_result_view.dart';
 import 'package:pokedex_app/features/guess_the_pokemon/presentation/pages/game_round_view.dart';
@@ -31,6 +33,35 @@ class const GuessThePokemonPage({super.key}) extends ConsumerWidget {
     final showAbandon =
         state.status == GuessThePokemonStatus.playing ||
         state.status == GuessThePokemonStatus.answering;
+
+    // Support prompt (POK-41): after a streak of 3 correct answers in a row
+    // (score is the streak; a wrong answer ends the session and resets it),
+    // and only if the shared daily cooldown allows. Shown after reveal settles.
+    ref.listen<GuessThePokemonState>(guessThePokemonControllerProvider, (
+      previous,
+      next,
+    ) {
+      final enteredReveal =
+          next.status == GuessThePokemonStatus.answering &&
+          next.lastAnswerCorrect == true &&
+          previous?.status != GuessThePokemonStatus.answering;
+      if (!enteredReveal) return;
+      if (!SupportPromptPolicy.shouldPromptAfterGameStreak(
+        answerCorrect: true,
+        scoreBeforeAnswer: next.score,
+      )) {
+        return;
+      }
+      scheduleSupportPrompt(
+        () => ref
+            .read(supportPromptControllerProvider)
+            .maybeAfterGameStreak(
+              context,
+              answerCorrect: true,
+              scoreBeforeAnswer: next.score,
+            ),
+      );
+    });
 
     return Scaffold(
       body: SafePageBody(

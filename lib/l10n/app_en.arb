@@ -491,6 +491,22 @@
   "@aboutSupportButton": {
     "description": "About page CTA that opens the Ko-fi donation page"
   },
+  "supportPromptTitle": "Thanks for supporting PokeData",
+  "@supportPromptTitle": {
+    "description": "Opportunistic Ko-fi support dialog title"
+  },
+  "supportPromptBody": "If you can, a coffee helps keep the app running and makes it even better.",
+  "@supportPromptBody": {
+    "description": "Opportunistic Ko-fi support dialog body"
+  },
+  "supportPromptNotNow": "Not now",
+  "@supportPromptNotNow": {
+    "description": "Opportunistic Ko-fi support dialog dismiss action"
+  },
+  "favoritesEmptySupportCta": "Support with a coffee",
+  "@favoritesEmptySupportCta": {
+    "description": "Soft CTA on empty Favorites that opens the Ko-fi support dialog"
+  },
   "aboutDisclaimer": "PokeData is an unofficial fan app. It is not developed, endorsed, or affiliated with Nintendo, Creatures Inc., GAME FREAK, or The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.",
 
   "errorNetworkOffline": "No internet connection.",

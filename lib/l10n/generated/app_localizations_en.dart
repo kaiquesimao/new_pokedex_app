@@ -967,6 +967,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutSupportButton => 'Donate on Ko-fi';
 
   @override
+  String get supportPromptTitle => 'Thanks for supporting PokeData';
+
+  @override
+  String get supportPromptBody =>
+      'If you can, a coffee helps keep the app running and makes it even better.';
+
+  @override
+  String get supportPromptNotNow => 'Not now';
+
+  @override
+  String get favoritesEmptySupportCta => 'Support with a coffee';
+
+  @override
   String get aboutDisclaimer =>
       'PokeData is an unofficial fan app. It is not developed, endorsed, or affiliated with Nintendo, Creatures Inc., GAME FREAK, or The Pokémon Company. Pokémon © Nintendo / Creatures Inc. / GAME FREAK.';
 

@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pokedex_app/core/constants/app_assets.dart';
 import 'package:pokedex_app/core/constants/trainer_avatars.dart';
 import 'package:pokedex_app/core/providers/core_providers.dart';
+import 'package:pokedex_app/core/support/support_prompt_controller.dart';
 import 'package:pokedex_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:pokedex_app/features/auth/presentation/widgets/auth_hub_action_frame.dart';
 import 'package:pokedex_app/features/favorites/presentation/providers/favorites_provider.dart';
@@ -64,7 +65,30 @@ class const _GuestFavoritesBody({required final VoidCallback onAuth})
   }
 }
 
-class const _EmptyFavoritesBody() extends StatelessWidget {
+class const _EmptyFavoritesBody() extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_EmptyFavoritesBody> createState() =>
+      _EmptyFavoritesBodyState();
+}
+
+class _EmptyFavoritesBodyState extends ConsumerState<_EmptyFavoritesBody> {
+  var _autoPromptScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _autoPromptScheduled) return;
+      _autoPromptScheduled = true;
+      // Soft moment: auto-popup only when the shared daily cooldown allows.
+      scheduleSupportPrompt(
+        () => ref
+            .read(supportPromptControllerProvider)
+            .maybeOnEmptyFavorites(context),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -74,6 +98,17 @@ class const _EmptyFavoritesBody() extends StatelessWidget {
         imageAsset: AppAssets.patternMagikarp,
         title: l10n.favoritesEmptyTitle,
         subtitle: l10n.favoritesEmptySubtitle,
+        action: AppButton(
+          label: l10n.favoritesEmptySupportCta,
+          variant: AppButtonVariant.outline,
+          onPressed: () {
+            scheduleSupportPrompt(
+              () => ref
+                  .read(supportPromptControllerProvider)
+                  .showFromUserAction(context),
+            );
+          },
+        ),
       ),
     );
   }

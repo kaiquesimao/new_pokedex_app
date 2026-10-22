@@ -1844,6 +1844,30 @@ abstract class AppLocalizations {
   /// **'Donate on Ko-fi'**
   String get aboutSupportButton;
 
+  /// Opportunistic Ko-fi support dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for supporting PokeData'**
+  String get supportPromptTitle;
+
+  /// Opportunistic Ko-fi support dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'If you can, a coffee helps keep the app running and makes it even better.'**
+  String get supportPromptBody;
+
+  /// Opportunistic Ko-fi support dialog dismiss action
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get supportPromptNotNow;
+
+  /// Soft CTA on empty Favorites that opens the Ko-fi support dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Support with a coffee'**
+  String get favoritesEmptySupportCta;
+
   /// No description provided for @aboutDisclaimer.
   ///
   /// In en, this message translates to:
