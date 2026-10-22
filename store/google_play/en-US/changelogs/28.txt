@@ -1,0 +1,1 @@
+The first time you open the app after an update, it shows what changed in this version. From there you can rate the app or jump into the game.

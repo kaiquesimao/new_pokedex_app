@@ -1499,4 +1499,33 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get leaderboardSignInGuidance =>
       'Entre para publicar sua pontuação e aparecer com seu nome de treinador.';
+
+  @override
+  String get whatsNewTitle => 'O que há de novo';
+
+  @override
+  String whatsNewVersionLabel(String version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get whatsNewDismissButton => 'Entendi';
+
+  @override
+  String get whatsNewRateButton => 'Avaliar o app';
+
+  @override
+  String get whatsNewPlayButton => 'Jogar';
+
+  @override
+  String get whatsNewSheetSemantics => 'Novidades desta versão';
+
+  @override
+  String get whatsNewDismissSemantics => 'Fechar novidades';
+
+  @override
+  String get whatsNewRateSemantics => 'Avaliar o app na loja';
+
+  @override
+  String get whatsNewPlaySemantics => 'Abrir o jogo de adivinhar';
 }

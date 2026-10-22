@@ -2779,6 +2779,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in to publish your score and appear with your trainer name.'**
   String get leaderboardSignInGuidance;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new'**
+  String get whatsNewTitle;
+
+  /// No description provided for @whatsNewVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String whatsNewVersionLabel(String version);
+
+  /// No description provided for @whatsNewDismissButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get whatsNewDismissButton;
+
+  /// No description provided for @whatsNewRateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app'**
+  String get whatsNewRateButton;
+
+  /// No description provided for @whatsNewPlayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get whatsNewPlayButton;
+
+  /// No description provided for @whatsNewSheetSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new in this version'**
+  String get whatsNewSheetSemantics;
+
+  /// No description provided for @whatsNewDismissSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Close what\'s new'**
+  String get whatsNewDismissSemantics;
+
+  /// No description provided for @whatsNewRateSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the app on the store'**
+  String get whatsNewRateSemantics;
+
+  /// No description provided for @whatsNewPlaySemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the guessing game'**
+  String get whatsNewPlaySemantics;
 }
 
 class _AppLocalizationsDelegate

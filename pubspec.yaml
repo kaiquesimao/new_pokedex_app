@@ -81,6 +81,8 @@ flutter:
     - assets/images/regions/
     - assets/legal/
     - assets/game/catalog-v1.json
+    - store/google_play/en-US/changelogs/
+    - store/google_play/pt-BR/changelogs/
   fonts:
     - family: Poppins
       fonts:

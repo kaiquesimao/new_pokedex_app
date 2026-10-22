@@ -1493,4 +1493,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get leaderboardSignInGuidance =>
       'Sign in to publish your score and appear with your trainer name.';
+
+  @override
+  String get whatsNewTitle => 'What\'s new';
+
+  @override
+  String whatsNewVersionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get whatsNewDismissButton => 'Got it';
+
+  @override
+  String get whatsNewRateButton => 'Rate the app';
+
+  @override
+  String get whatsNewPlayButton => 'Play';
+
+  @override
+  String get whatsNewSheetSemantics => 'What\'s new in this version';
+
+  @override
+  String get whatsNewDismissSemantics => 'Close what\'s new';
+
+  @override
+  String get whatsNewRateSemantics => 'Rate the app on the store';
+
+  @override
+  String get whatsNewPlaySemantics => 'Open the guessing game';
 }

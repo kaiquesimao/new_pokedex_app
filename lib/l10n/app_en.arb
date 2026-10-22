@@ -688,5 +688,20 @@
   "leaderboardOffline": "Leaderboard unavailable offline.",
   "leaderboardError": "Could not load the leaderboard.",
   "leaderboardRetry": "Try again",
-  "leaderboardSignInGuidance": "Sign in to publish your score and appear with your trainer name."
+  "leaderboardSignInGuidance": "Sign in to publish your score and appear with your trainer name.",
+
+  "whatsNewTitle": "What's new",
+  "whatsNewVersionLabel": "Version {version}",
+  "@whatsNewVersionLabel": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "whatsNewDismissButton": "Got it",
+  "whatsNewRateButton": "Rate the app",
+  "whatsNewPlayButton": "Play",
+  "whatsNewSheetSemantics": "What's new in this version",
+  "whatsNewDismissSemantics": "Close what's new",
+  "whatsNewRateSemantics": "Rate the app on the store",
+  "whatsNewPlaySemantics": "Open the guessing game"
 }

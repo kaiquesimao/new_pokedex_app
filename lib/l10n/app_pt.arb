@@ -658,5 +658,20 @@
   "leaderboardOffline": "O ranking está indisponível offline.",
   "leaderboardError": "Não foi possível carregar o ranking.",
   "leaderboardRetry": "Tentar novamente",
-  "leaderboardSignInGuidance": "Entre para publicar sua pontuação e aparecer com seu nome de treinador."
+  "leaderboardSignInGuidance": "Entre para publicar sua pontuação e aparecer com seu nome de treinador.",
+
+  "whatsNewTitle": "O que há de novo",
+  "whatsNewVersionLabel": "Versão {version}",
+  "@whatsNewVersionLabel": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "whatsNewDismissButton": "Entendi",
+  "whatsNewRateButton": "Avaliar o app",
+  "whatsNewPlayButton": "Jogar",
+  "whatsNewSheetSemantics": "Novidades desta versão",
+  "whatsNewDismissSemantics": "Fechar novidades",
+  "whatsNewRateSemantics": "Avaliar o app na loja",
+  "whatsNewPlaySemantics": "Abrir o jogo de adivinhar"
 }
