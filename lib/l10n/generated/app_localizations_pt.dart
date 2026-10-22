@@ -924,10 +924,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutTagline =>
-      'Pokedéx feita por fãs para explorar Pokémon, regiões, favoritos e detalhes com dados atualizados da PokéAPI.';
+      'Pokédex feita por fãs para explorar Pokémon, regiões, favoritos e detalhes — com dados da PokéAPI.';
 
   @override
-  String get aboutDevelopedBy => 'Desenvolvido por';
+  String get aboutDevelopedBy => 'Criado por';
 
   @override
   String get aboutAcknowledgments => 'Agradecimentos';
@@ -939,40 +939,26 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aboutKaiqueTitle => 'Kaique Simão';
 
   @override
-  String get aboutKaiqueBody => 'Criador e desenvolvedor do PokeData.';
+  String get aboutKaiqueBody => 'Criador do PokeData.';
 
   @override
   String get aboutJuniorTitle => 'Junior Saraiva';
 
   @override
-  String get aboutJuniorBody =>
-      'Criou o design no Figma Community que serviu de referência visual para este projeto.';
+  String get aboutJuniorBody => 'Criou o design visual que inspirou este app.';
 
   @override
   String get aboutLinkedInProfile => 'Perfil no LinkedIn';
 
   @override
-  String get aboutFigmaProject => 'Projeto no Figma';
+  String get aboutFigmaProject => 'Ver o design original';
 
   @override
   String get aboutCreditPokeApiTitle => 'PokéAPI';
 
   @override
   String get aboutCreditPokeApiBody =>
-      'Dados de Pokémon, espécies, tipos e evoluções.';
-
-  @override
-  String get aboutCreditFlutterTitle => 'Flutter';
-
-  @override
-  String get aboutCreditFlutterBody => 'Framework multiplataforma do app.';
-
-  @override
-  String get aboutCreditFirebaseTitle => 'Firebase';
-
-  @override
-  String get aboutCreditFirebaseBody =>
-      'Autenticação, favoritos e sincronização em nuvem.';
+      'Agradecemos pelos dados de Pokémon, espécies, tipos e evoluções usados neste app.';
 
   @override
   String get aboutSupportTitle => 'Apoiar o projeto';

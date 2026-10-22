@@ -919,13 +919,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutTagline =>
-      'A fan-made Pokédex to explore Pokémon, regions, favorites, and details with up-to-date PokéAPI data.';
+      'A fan-made Pokédex to explore Pokémon, regions, favorites, and details — with data from PokéAPI.';
 
   @override
-  String get aboutDevelopedBy => 'Developed by';
+  String get aboutDevelopedBy => 'Created by';
 
   @override
-  String get aboutAcknowledgments => 'Acknowledgments';
+  String get aboutAcknowledgments => 'Thanks';
 
   @override
   String get aboutCredits => 'Credits';
@@ -934,40 +934,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutKaiqueTitle => 'Kaique Simão';
 
   @override
-  String get aboutKaiqueBody => 'Creator and developer of PokeData.';
+  String get aboutKaiqueBody => 'Creator of PokeData.';
 
   @override
   String get aboutJuniorTitle => 'Junior Saraiva';
 
   @override
   String get aboutJuniorBody =>
-      'Created the Figma Community design that served as the visual reference for this project.';
+      'Created the visual design that inspired this app.';
 
   @override
   String get aboutLinkedInProfile => 'LinkedIn profile';
 
   @override
-  String get aboutFigmaProject => 'Figma project';
+  String get aboutFigmaProject => 'View original design';
 
   @override
   String get aboutCreditPokeApiTitle => 'PokéAPI';
 
   @override
   String get aboutCreditPokeApiBody =>
-      'Pokémon, species, type, and evolution data.';
-
-  @override
-  String get aboutCreditFlutterTitle => 'Flutter';
-
-  @override
-  String get aboutCreditFlutterBody => 'Cross-platform app framework.';
-
-  @override
-  String get aboutCreditFirebaseTitle => 'Firebase';
-
-  @override
-  String get aboutCreditFirebaseBody =>
-      'Authentication, favorites, and cloud sync.';
+      'Thanks for the Pokémon, species, type, and evolution data used in this app.';
 
   @override
   String get aboutSupportTitle => 'Support the project';

@@ -1757,19 +1757,19 @@ abstract class AppLocalizations {
   /// No description provided for @aboutTagline.
   ///
   /// In en, this message translates to:
-  /// **'A fan-made Pokédex to explore Pokémon, regions, favorites, and details with up-to-date PokéAPI data.'**
+  /// **'A fan-made Pokédex to explore Pokémon, regions, favorites, and details — with data from PokéAPI.'**
   String get aboutTagline;
 
   /// No description provided for @aboutDevelopedBy.
   ///
   /// In en, this message translates to:
-  /// **'Developed by'**
+  /// **'Created by'**
   String get aboutDevelopedBy;
 
   /// No description provided for @aboutAcknowledgments.
   ///
   /// In en, this message translates to:
-  /// **'Acknowledgments'**
+  /// **'Thanks'**
   String get aboutAcknowledgments;
 
   /// No description provided for @aboutCredits.
@@ -1787,7 +1787,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutKaiqueBody.
   ///
   /// In en, this message translates to:
-  /// **'Creator and developer of PokeData.'**
+  /// **'Creator of PokeData.'**
   String get aboutKaiqueBody;
 
   /// No description provided for @aboutJuniorTitle.
@@ -1799,7 +1799,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutJuniorBody.
   ///
   /// In en, this message translates to:
-  /// **'Created the Figma Community design that served as the visual reference for this project.'**
+  /// **'Created the visual design that inspired this app.'**
   String get aboutJuniorBody;
 
   /// No description provided for @aboutLinkedInProfile.
@@ -1811,7 +1811,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutFigmaProject.
   ///
   /// In en, this message translates to:
-  /// **'Figma project'**
+  /// **'View original design'**
   String get aboutFigmaProject;
 
   /// No description provided for @aboutCreditPokeApiTitle.
@@ -1823,32 +1823,8 @@ abstract class AppLocalizations {
   /// No description provided for @aboutCreditPokeApiBody.
   ///
   /// In en, this message translates to:
-  /// **'Pokémon, species, type, and evolution data.'**
+  /// **'Thanks for the Pokémon, species, type, and evolution data used in this app.'**
   String get aboutCreditPokeApiBody;
-
-  /// No description provided for @aboutCreditFlutterTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Flutter'**
-  String get aboutCreditFlutterTitle;
-
-  /// No description provided for @aboutCreditFlutterBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Cross-platform app framework.'**
-  String get aboutCreditFlutterBody;
-
-  /// No description provided for @aboutCreditFirebaseTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Firebase'**
-  String get aboutCreditFirebaseTitle;
-
-  /// No description provided for @aboutCreditFirebaseBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Authentication, favorites, and cloud sync.'**
-  String get aboutCreditFirebaseBody;
 
   /// About page section title for voluntary donations
   ///

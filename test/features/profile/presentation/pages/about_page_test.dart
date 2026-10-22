@@ -30,14 +30,18 @@ void main() {
     expect(find.text('PokeData'), findsOneWidget);
     expect(find.text('Versão 2.0.0 (42)'), findsOneWidget);
     expect(find.text('PokéAPI'), findsOneWidget);
-    expect(find.text('Flutter'), findsOneWidget);
-    expect(find.text('Firebase'), findsOneWidget);
-    expect(find.text('Desenvolvido por'), findsOneWidget);
+    expect(find.text('Flutter'), findsNothing);
+    expect(find.text('Firebase'), findsNothing);
+    expect(find.text('Criado por'), findsOneWidget);
     expect(find.text('Kaique Simão'), findsOneWidget);
     expect(find.text('Agradecimentos'), findsOneWidget);
     expect(find.text('Junior Saraiva'), findsOneWidget);
     expect(find.text('Perfil no LinkedIn'), findsNWidgets(2));
-    expect(find.text('Projeto no Figma'), findsOneWidget);
+    expect(find.text('Ver o design original'), findsOneWidget);
+    expect(
+      find.textContaining('Agradecemos pelos dados de Pokémon'),
+      findsOneWidget,
+    );
     expect(find.text('Apoiar o projeto'), findsOneWidget);
     expect(find.text('Doar no Ko-fi'), findsOneWidget);
     expect(

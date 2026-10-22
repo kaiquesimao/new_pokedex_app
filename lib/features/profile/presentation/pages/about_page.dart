@@ -20,11 +20,6 @@ class const AboutPage({super.key}) extends ConsumerWidget {
     AppLocalizations l10n,
   ) => [
     (title: l10n.aboutCreditPokeApiTitle, body: l10n.aboutCreditPokeApiBody),
-    (title: l10n.aboutCreditFlutterTitle, body: l10n.aboutCreditFlutterBody),
-    (
-      title: l10n.aboutCreditFirebaseTitle,
-      body: l10n.aboutCreditFirebaseBody,
-    ),
   ];
 
   @override
