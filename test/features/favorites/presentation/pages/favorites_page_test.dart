@@ -99,7 +99,7 @@ void main() {
             displayName: 'Trainer',
           ),
         ),
-        favoritesProvider.overrideWith(() => _EmptyFavoritesNotifier()),
+        favoritesProvider.overrideWith(_EmptyFavoritesNotifier.new),
       ],
     );
 
