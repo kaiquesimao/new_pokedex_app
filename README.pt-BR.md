@@ -198,12 +198,12 @@ O alvo de produção atual é Android (Play Store) + Web. **iOS é plataforma fu
 
 ## Apoiar o projeto
 
-O PokeData é gratuito — **sem anúncios e sem paywall**. Doações opcionais ajudam a cobrir hosting, APIs, a Play Console e o tempo de desenvolvimento. O apoio é voluntário e não libera nada exclusivo.
+O PokeData é gratuito para todo mundo — **sem anúncios e nada fica travado**. Se quiser ajudar a manter assim, uma contribuição opcional é sempre bem-vinda. Sem pressão: apoiar não muda nada na sua experiência no app.
 
 - No app: **Perfil → Apoiar o projeto** (Doar no Ko-fi) e o mesmo CTA em **Sobre**
 - Na web: [Ko-fi — kaiquesimao](https://ko-fi.com/kaiquesimao)
 
-Ko-fi é o único canal de doação nesta versão. Pix e outros métodos ficam para depois.
+Ko-fi é o único canal de contribuição nesta versão. Outros métodos podem vir depois.
 
 ---
 

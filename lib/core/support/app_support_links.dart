@@ -2,8 +2,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// External voluntary-support destinations for PokeData.
 ///
-/// Provider (POK-41): **Ko-fi only** — one-time tips, no ads, no paywall, no IAP.
-/// Pix and other methods are deferred; do not add them here until product asks.
+/// Provider (POK-41): **Ko-fi only** — optional tips; no ads; nothing locked in the app.
+/// Other contribution methods are deferred; do not add them here until product asks.
 abstract final class AppSupportLinks {
   /// Confirmed public Ko-fi page for optional donations.
   static final Uri donationUri = Uri.parse('https://ko-fi.com/kaiquesimao');

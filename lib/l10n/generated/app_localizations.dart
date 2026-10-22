@@ -1859,7 +1859,7 @@ abstract class AppLocalizations {
   /// About page copy clarifying donations are voluntary
   ///
   /// In en, this message translates to:
-  /// **'PokeData is free — no ads and no paywall. Optional donations help cover hosting, APIs, the Play Console, and development time. Support is voluntary and unlocks nothing exclusive.'**
+  /// **'PokeData is free for everyone — no ads, and nothing is locked. If you\'d like to help keep it that way, an optional contribution is always welcome. There\'s no pressure, and supporting doesn\'t change anything in the app.'**
   String get aboutSupportBody;
 
   /// About page CTA that opens the Ko-fi donation page

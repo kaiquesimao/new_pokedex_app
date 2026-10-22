@@ -41,7 +41,7 @@ void main() {
     expect(find.text('Apoiar o projeto'), findsOneWidget);
     expect(find.text('Doar no Ko-fi'), findsOneWidget);
     expect(
-      find.textContaining('sem anúncios e sem paywall'),
+      find.textContaining('sem anúncios e nada fica travado'),
       findsOneWidget,
     );
     expect(

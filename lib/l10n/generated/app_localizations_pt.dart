@@ -979,7 +979,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutSupportBody =>
-      'O PokeData é gratuito — sem anúncios e sem paywall. Doações opcionais ajudam a cobrir hosting, APIs, a Play Console e o tempo de desenvolvimento. O apoio é voluntário e não libera nada exclusivo.';
+      'O PokeData é gratuito para todo mundo — sem anúncios e nada fica travado. Se quiser ajudar a manter assim, uma contribuição opcional é sempre bem-vinda. Sem pressão: apoiar não muda nada na sua experiência no app.';
 
   @override
   String get aboutSupportButton => 'Doar no Ko-fi';
